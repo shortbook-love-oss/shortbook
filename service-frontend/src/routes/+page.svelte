@@ -1,2 +1,3 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1>ShortBook</h1>
+<p>有料記事投稿サービス</p>
+<p>2024年6月30日リリースまでお待ちください！</p>
