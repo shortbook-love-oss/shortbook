@@ -1,5 +1,6 @@
 {
 	"catch_copy": "You are a writer today!",
-	"draft_placeholder": "What knowledge only you have?",
-	"save_label": "Save draft"
+	"editor_label": "What knowledge only you have?",
+	"save_info": "Save automatically. Not send to server.",
+	"saved_status": "Saved draft."
 }

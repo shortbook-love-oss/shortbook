@@ -1,27 +1,48 @@
 <script lang="ts">
-	import { Button, Textarea } from 'flowbite-svelte';
+	import { onMount } from 'svelte';
+	import { Textarea } from 'flowbite-svelte';
 	import { t } from '$lib/translations/translations';
 
 	let value = '';
+	let showSavedMark = false;
+
+	onMount(() => {
+		value = localStorage.getItem('article') ?? '';
+	});
 
 	function saveDraft() {
-		console.log(value);
+		window.localStorage.setItem('article', value);
+		showSavedMark = true;
+		setTimeout(() => {
+			showSavedMark = false;
+		}, 2000);
 	}
 </script>
 
 <div class="h-screen bg-stone-50 px-4 py-8">
-	<div class="mx-auto flex max-w-4xl flex-col items-center">
-		<img src="/shortbook-logotype.svg" class="mb-16 w-3/5 max-w-96" alt={$t('common.logo_alt')} />
+	<main class="mx-auto flex max-w-4xl flex-col items-center">
+		<h1 class="w-full">
+			<img
+				src="/shortbook-logotype.svg"
+				class="mx-auto mb-16 w-3/5 max-w-96"
+				alt={$t('common.logo_alt')}
+			/>
+		</h1>
 		<p class="mb-4 text-3xl">{$t('index.catch_copy')}</p>
 		<Textarea
-			placeholder={$t('index.draft_placeholder')}
 			rows="12"
-			class="border-primary-700 mb-4 w-full"
+			class="border-primary-700 mb-4 w-full bg-white text-base"
 			bind:value
-		/>
-		<Button
-			class="to-primary-700 bg-gradient-to-b from-yellow-500 text-2xl"
-			on:click={() => saveDraft()}>{$t('index.save_label')}</Button
+			on:input={() => saveDraft()}
 		>
-	</div>
+			<p slot="header">{$t('index.editor_label')}</p>
+			<div slot="footer">
+				{#if showSavedMark}
+					<p>{$t('index.saved_status')}</p>
+				{:else}
+					<p>{$t('index.save_info')}</p>
+				{/if}
+			</div>
+		</Textarea>
+	</main>
 </div>
