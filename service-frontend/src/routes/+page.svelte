@@ -3,6 +3,8 @@
 	import { Textarea } from 'flowbite-svelte';
 	import { t } from '$lib/translations/translations';
 
+	import Footer from '$lib/components/service/footer.svelte';
+
 	let value = '';
 	let showSavedMark = false;
 
@@ -20,7 +22,7 @@
 </script>
 
 <div class="h-screen bg-stone-50 px-4 py-8">
-	<main class="mx-auto flex max-w-4xl flex-col items-center">
+	<main class="mx-auto mb-8 flex max-w-4xl flex-col items-center">
 		<h1 class="w-full">
 			<img
 				src="/shortbook-logotype.svg"
@@ -45,4 +47,5 @@
 			</div>
 		</Textarea>
 	</main>
+	<Footer />
 </div>

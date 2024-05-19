@@ -1,3 +1,8 @@
 {
-	"logo_alt": "ショートブックのロゴ"
+	"logo_alt": "ショートブックのロゴ",
+	"company_name": "合同会社ShortBook",
+	"company_nav": {
+		"about": "会社について",
+		"contact": "お問い合わせ"
+	}
 }
