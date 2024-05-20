@@ -9,10 +9,10 @@
 	}
 </script>
 
-<footer class="justify-center gap-16 sm:flex">
-	<div class="mb-4">
-		<img src="/shortbook-logotype.svg" class="mb-2 w-36" alt={$t('common.logo_alt')} />
-		<small class="block text-xs">©{yearPeriod} {$t('common.company_name')}</small>
+<footer class="justify-center gap-16 p-8 sm:flex">
+	<div class="mb-4 sm:pt-1">
+		<img src="/shortbook-logotype.svg" class="mb-2 w-48" alt={$t('common.logo_alt')} />
+		<small class="block text-base">©{yearPeriod} {$t('common.company_name')}</small>
 	</div>
 	<nav class="text-lg">
 		<h2 class="mb-2 font-bold">About</h2>
