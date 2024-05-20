@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Button, Textarea } from 'flowbite-svelte';
+	import { Textarea } from 'flowbite-svelte';
 	import { t } from '$lib/translations/translations';
 
 	import Footer from '$lib/components/service/footer.svelte';
@@ -20,6 +20,10 @@
 		}, 2000);
 	}
 </script>
+
+<svelte:head>
+	<title>{$t('index.page_title')}</title>
+</svelte:head>
 
 <div>
 	<main>
