@@ -1,4 +1,8 @@
-.DS_Store
 .env
 .env.*
 !.env.example
+
+# OS desktop settings
+.DS_Store
+desktop.ini
+Thumbs.db
