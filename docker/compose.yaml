@@ -1,0 +1,23 @@
+services:
+  service-frontend:
+    build:
+      context: ../service-frontend
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    ports:
+      - "55011:3000" # for build
+      - "55012:5173" # for dev
+    volumes:
+      - type: volume
+        source: service-frontend
+        target: /usr/src/app
+      - type: volume
+        source: service-frontend-module
+        target: /usr/src/app/node_modules
+      - type: bind # Sync "/usr/src/app" and "../frontend"
+        source: ../service-frontend
+        target: /usr/src/app
+volumes:
+  service-frontend:
+  service-frontend-module:
