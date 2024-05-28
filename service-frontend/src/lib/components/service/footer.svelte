@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { t } from '$lib/translations/translations';
-
 	let yearPeriod = '2024';
 	const currentYear = new Date().getFullYear();
 
@@ -11,17 +9,15 @@
 
 <footer class="justify-center gap-16 p-8 sm:flex">
 	<div class="mb-4 sm:pt-1">
-		<img src="/shortbook-logotype.svg" class="mb-2 w-48" alt={$t('common.logo_alt')} />
-		<small class="block text-base">©{yearPeriod} {$t('common.company_name')}</small>
+		<img src="/shortbook-logotype.svg" class="mb-2 w-48" alt="common.logo_alt" />
+		<small class="block text-base">©{yearPeriod} ShortBook</small>
 	</div>
 	<nav class="text-lg">
 		<h2 class="mb-2 font-bold">About</h2>
 		<ul class="text-primary-600">
-			<li class="mb-2"><a href="/about">{$t('common.company_nav.about')}</a></li>
+			<li class="mb-2"><a href="/about">common.company_nav.about</a></li>
 			<li class="mb-2">
-				<a href="https://form.run/@shortbook-contact" target="_blank"
-					>{$t('common.company_nav.contact')}</a
-				>
+				<a href="https://form.run/@shortbook-contact" target="_blank">common.company_nav.contact</a>
 			</li>
 		</ul>
 	</nav>
