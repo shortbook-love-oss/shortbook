@@ -1,8 +1,8 @@
 services:
   service-frontend:
     build:
-      context: ../service-frontend
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: ./service-frontend/Dockerfile
       target: dev
     tty: true
     ports:
@@ -18,14 +18,40 @@ services:
       - type: volume
         source: service-frontend-module
         target: /usr/src/app/node_modules
-      - type: bind # Sync "/usr/src/app" and "../frontend"
+      - type: bind # Sync "/usr/src/app" and "../service-frontend"
         source: ../service-frontend
+        target: /usr/src/app
+      - type: volume
+        source: lib-frontend
+        target: /usr/src/app/lib
+      - type: bind
+        source: ../lib-frontend
+        target: /usr/src/app/lib
+  lib-frontend:
+    build:
+      context: ../
+      dockerfile: ./lib-frontend/Dockerfile
+    tty: true
+    ports:
+      - "55013:3000"
+    networks:
+      - external
+      - internal
+    volumes:
+      - type: volume
+        source: lib-frontend
+        target: /usr/src/app
+      - type: volume
+        source: lib-frontend-module
+        target: /usr/src/app/node_modules
+      - type: bind
+        source: ../lib-frontend
         target: /usr/src/app
   database:
     env_file: ../database/.env
     build:
-      context: ../database
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: ./database/Dockerfile
     ports:
       - "3314:3306"
     networks:
@@ -51,4 +77,6 @@ networks:
 volumes:
   service-frontend:
   service-frontend-module:
+  lib-frontend:
+  lib-frontend-module:
   database:

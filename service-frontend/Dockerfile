@@ -3,10 +3,11 @@ FROM node:22.2.0-bookworm-slim as base
 WORKDIR /usr/src/app
 
 # Include devDependencies for build
-COPY package*.json .
+COPY ./service-frontend/package*.json .
 RUN npm ci
 
-COPY . .
+COPY ./service-frontend .
+COPY ./lib-frontend ./lib
 
 # Production-setting build
 ENV NODE_ENV=production

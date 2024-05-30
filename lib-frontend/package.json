@@ -1,0 +1,9 @@
+{
+	"name": "lib-frontend",
+	"version": "0.0.1",
+	"private": true,
+	"devDependencies": {
+		"prisma": "^5.14.0"
+	},
+	"type": "module"
+}

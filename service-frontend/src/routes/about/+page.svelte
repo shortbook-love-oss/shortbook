@@ -1,7 +1,7 @@
-<script lang="ts">
+<script>
 	import CompanyInfoItem from '$lib/components/service/about/company-info-item.svelte';
 	import Footer from '$lib/components/service/footer.svelte';
-	import * as m from '$lib/paraglide/messages.js';
+	import * as m from '$lib/i18n/paraglide/messages.js';
 </script>
 
 <svelte:head>

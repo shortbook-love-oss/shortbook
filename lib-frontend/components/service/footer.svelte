@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	let yearPeriod = '2024';
 	const currentYear = new Date().getFullYear();
 
