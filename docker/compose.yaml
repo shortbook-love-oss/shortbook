@@ -21,9 +21,6 @@ services:
       - type: bind # Sync "/usr/src/app" and "../service-frontend"
         source: ../service-frontend
         target: /usr/src/app
-      - type: volume
-        source: lib-frontend
-        target: /usr/src/app/lib
       - type: bind
         source: ../lib-frontend
         target: /usr/src/app/lib
