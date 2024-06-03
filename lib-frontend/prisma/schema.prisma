@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------
+// User
+// -----------------------------------------------------------------------
+
+model users {
+  id                      String              @id @default(cuid())
+  slug                    String              @unique @db.VarChar(40) // Length 1 - 40
+  pen_name                String              @db.VarChar(210) // Length 1 - 50
+  self_info               String?             @db.MediumText
+  profile_icon_url        String?             @db.Text
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+  followers               user_followers[]
+  fans                    user_fans[]
+  account                 accounts?
+  articles                articles[]
+}
+
+model user_followers {
+  target_user             users               @relation(fields: [target_user_id], references: [id])
+  id                      String              @id @default(cuid())
+  target_user_id          String
+  follow_user_id          String
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+}
+
+model user_fans {
+  target_user             users               @relation(fields: [target_user_id], references: [id])
+  id                      String              @id @default(cuid())
+  target_user_id          String
+  support_user_id         String
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+}
+
+model accounts {
+  user                    users               @relation(fields: [user_id], references: [id])
+  id                      String              @id @default(cuid())
+  user_id                 String              @unique
+  email                   String              @unique @db.VarChar(628) // Max length is 255
+  email_hash              String
+  verified_email          Int                 @db.SmallInt // 0: Not verified 2: Verified
+  password                String              @db.VarChar(255) // Length 10 - 255
+  password_updated_at     DateTime            @default(now())
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+  sessions                login_sessions[]
+}
+
+model login_sessions {
+  account                 accounts            @relation(fields: [account_id], references: [id])
+  id                      String              @id @default(cuid())
+  account_id              String
+  session_token           String              @unique
+  ip_address              String?
+  user_agent              String?             @db.VarChar(2000)
+  last_login_at           DateTime            @default(now())
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+}
+
+// -----------------------------------------------------------------------
+// Articles
+// -----------------------------------------------------------------------
+
+model articles {
+  user                    users               @relation(fields: [user_id], references: [id])
+  id                      String              @id @default(cuid())
+  user_id                 String
+  status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
+  price                   Float               @db.Double
+  favorite_count          Int                 // For faster index/get
+  published_at            DateTime            @default(now())
+  edited_at               DateTime            @default(now())
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+  languages               article_languages[]
+  tags                    article_tags[]
+  buys                    article_buys[]
+  favorites               article_favorites[]
+}
+
+model article_languages {
+  article                 articles            @relation(fields: [article_id], references: [id])
+  id                      String              @id @default(cuid())
+  article_id              String
+  lang_tag                String              @db.VarChar(5)
+  thumbnail_url           String              @db.VarChar(628)
+  title                   String              @db.VarChar(628) // Max length is 255
+  introduction            String              @db.LongText
+  content                 String              @db.LongText
+  sales_message           String              @db.VarChar(4000) // Max length is 1000
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+}
+
+model article_tags {
+  article                 articles            @relation(fields: [article_id], references: [id])
+  id                      String              @id @default(cuid())
+  article_id              String
+  name                    String              @db.VarChar(128) // Max length is 32
+  sort                    Int                 @db.SmallInt
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+}
+
+model article_buys {
+  article                 articles            @relation(fields: [article_id], references: [id])
+  id                      String              @id @default(cuid())
+  article_id              String
+  user_id                 String
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+}
+
+model article_favorites {
+  article                 articles            @relation(fields: [article_id], references: [id])
+  id                      String              @id @default(cuid())
+  article_id              String
+  user_id                 String
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              Boolean             @default(false)
+}
