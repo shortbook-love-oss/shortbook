@@ -6,8 +6,8 @@ services:
       target: dev
     tty: true
     ports:
-      - "55011:3000" # for build
-      - "55012:5173" # for dev
+      - "55021:3000" # for build
+      - "55022:5173" # for dev
     networks:
       - external
       - internal
@@ -30,7 +30,7 @@ services:
       dockerfile: ./lib-frontend/Dockerfile
     tty: true
     ports:
-      - "55013:3000"
+      - "55023:3000"
     networks:
       - external
       - internal
@@ -50,7 +50,7 @@ services:
       context: ../
       dockerfile: ./database/Dockerfile
     ports:
-      - "3314:3306"
+      - "55024:3306"
     networks:
       - external
       - internal
