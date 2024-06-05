@@ -3,10 +3,15 @@
 </script>
 
 <svelte:head>
-	<title>"index.page_title"</title>
+	<title>ShortBook</title>
 </svelte:head>
 
 <div>
-	<main></main>
+	<main>
+		<p>Top</p>
+		<p>Contents for guest</p>
+		<p>Contents for auth user</p>
+		<a href="/signup" class="pa-2 bg-primary-200">Sign up / Sign in</a>
+	</main>
 	<Footer />
 </div>
