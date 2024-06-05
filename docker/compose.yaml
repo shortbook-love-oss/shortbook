@@ -5,6 +5,9 @@ services:
       dockerfile: ./service-frontend/Dockerfile
       target: dev
     tty: true
+    depends_on:
+      - database
+      - cache
     ports:
       - "55021:3000" # for build
       - "55022:5173" # for dev
@@ -64,6 +67,19 @@ services:
       - type: bind # Initialize DB
         source: ../database/initialize
         target: /docker-entrypoint-initdb.d
+  cache:
+    image: "amazon/dynamodb-local:latest"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    ports:
+      - "55025:8000"
+    networks:
+      - external
+      - internal
+    working_dir: /home/dynamodblocal
+    volumes:
+      - type: bind
+        source: ../cache/dynamodb
+        target: /home/dynamodblocal/data
 networks:
   external:
     driver: bridge
@@ -77,3 +93,4 @@ volumes:
   lib-frontend:
   lib-frontend-module:
   database:
+  cache:
