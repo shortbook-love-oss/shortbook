@@ -64,9 +64,6 @@ services:
       - type: bind # Persistent DB data
         source: ../database/.data
         target: /var/lib/mysql
-      - type: bind # Initialize DB
-        source: ../database/initialize
-        target: /docker-entrypoint-initdb.d
   cache:
     image: "amazon/dynamodb-local:latest"
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
