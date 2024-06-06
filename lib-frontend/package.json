@@ -2,6 +2,11 @@
 	"name": "lib-frontend",
 	"version": "0.0.1",
 	"private": true,
+	"scripts": {
+		"premigrate-dev": "node prisma/set_charset.js utf8mb4 utf8mb4_unicode_ci",
+		"migrate-dev": "prisma migrate dev --name ${npm_config_name}",
+		"postmigrate-dev": "node prisma/set_charset.js utf8mb4 utf8mb4_bin"
+	},
 	"dependencies": {
 		"@prisma/client": "^5.14.0"
 	},
