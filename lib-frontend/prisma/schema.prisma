@@ -26,7 +26,6 @@ model User {
   Authenticator           Authenticator[]
   sessions                Session[]
   profiles                user_profiles[]
-  followers               user_followers[]
   fans                    user_fans[]
   articles                articles[]
 
@@ -57,13 +56,13 @@ model Account {
 }
 
 model Authenticator {
-  credentialID            String              @unique
-  userId                  String
-  providerAccountId       String
-  credentialPublicKey     String
+  credentialID            String              @unique @map("credential_id")
+  userId                  String              @map("user_id")
+  providerAccountId       String              @map("provider_account_id")
+  credentialPublicKey     String              @map("credential_public_key")
   counter                 Int
-  credentialDeviceType    String
-  credentialBackedUp      Boolean
+  credentialDeviceType    String              @map("credential_device_type")
+  credentialBackedUp      Boolean             @map("credential_backed_up")
   transports              String?
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
@@ -106,17 +105,6 @@ model user_profiles {
   lang_tag                String              @db.VarChar(5)
   pen_name                String              @db.VarChar(210) // Length 1 - 50
   self_info               String?             @db.MediumText
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
-}
-
-model user_followers {
-  target_user             User                @relation(fields: [target_user_id], references: [id])
-
-  id                      String              @id @default(cuid())
-  target_user_id          String
-  follow_user_id          String
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              Boolean             @default(false)
