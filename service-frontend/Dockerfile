@@ -11,6 +11,9 @@ RUN npm ci
 COPY ./service-frontend .
 COPY ./lib-frontend ./lib
 
+# Generate Prisma client
+RUN npm run schemagenerate
+
 # Production-setting build
 ENV NODE_ENV=production
 RUN npm run build

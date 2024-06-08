@@ -27,26 +27,6 @@ services:
       - type: bind
         source: ../lib-frontend
         target: /usr/src/app/lib
-  lib-frontend:
-    build:
-      context: ../
-      dockerfile: ./lib-frontend/Dockerfile
-    tty: true
-    ports:
-      - "55023:3000"
-    networks:
-      - external
-      - internal
-    volumes:
-      - type: volume
-        source: lib-frontend
-        target: /usr/src/app
-      - type: volume
-        source: lib-frontend-module
-        target: /usr/src/app/node_modules
-      - type: bind
-        source: ../lib-frontend
-        target: /usr/src/app
   database:
     env_file: ../database/.env
     build:
@@ -87,7 +67,5 @@ networks:
 volumes:
   service-frontend:
   service-frontend-module:
-  lib-frontend:
-  lib-frontend-module:
   database:
   cache:
