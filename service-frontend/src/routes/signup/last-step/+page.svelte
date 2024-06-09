@@ -22,6 +22,10 @@
 		/>
 	</label>
 	<label>
+		<span>Email</span>
+		<input type="email" name="email" bind:value={$form.email} class="border border-primary-600" />
+	</label>
+	<label>
 		<span>Password</span>
 		<input
 			type="password"
