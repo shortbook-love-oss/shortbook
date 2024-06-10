@@ -32,4 +32,4 @@ COPY --from=base --chown=nonroot:nonroot /usr/src/app/build ./build
 # Node use 3000 port
 EXPOSE 3000
 
-CMD ["node", "./build"]
+CMD ["npm", "run", "preview"]

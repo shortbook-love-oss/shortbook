@@ -1,6 +1,7 @@
 .env
 .env.*
 !.env.example
+*.pem
 
 # OS desktop settings
 .DS_Store
