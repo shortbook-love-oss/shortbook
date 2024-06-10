@@ -18,19 +18,6 @@
 			<SignOut>
 				<span slot="submitButton" class="pa-2 bg-primary-200">Signout</span>
 			</SignOut>
-			<div>
-				<form method="POST" action="/signup/credential">
-					<div>
-						<label for="email">Email</label>
-						<input type="email" id="email" name="email" required />
-					</div>
-					<div>
-						<label for="password">Password</label>
-						<input type="password" id="password" name="password" required />
-					</div>
-					<button class="pa-2 bg-primary-200"> Sign In with no script </button>
-				</form>
-			</div>
 		</div>
 	</main>
 	<Footer />
