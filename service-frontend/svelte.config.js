@@ -3,19 +3,31 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
-	// for more information about preprocessors
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
-		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter(),
 
 		files: {
 			// $lib alias change './src/lib' to './lib'
 			lib: 'lib'
+		},
+
+		csp: {
+			mode: 'hash',
+			directives: {
+				'base-uri': ['self'],
+				'connect-src': ['self', 'wss://localhost:*'],
+				'script-src': ['self'],
+				'style-src': ['self', 'unsafe-inline'],
+				'media-src': ['self', 'data:'],
+				'img-src': ['self', 'data:'],
+				'object-src': ['self'],
+				'font-src': ['self', 'data:'],
+				'form-action': ['self'],
+				'frame-ancestors': ['none'], // For click-jacking protection
+				'default-src': ['self']
+			}
 		}
 	}
 };
