@@ -9,7 +9,7 @@
 
 <footer class="justify-center gap-16 p-8 sm:flex">
 	<div class="mb-4 sm:pt-1">
-		<img src="/shortbook-logotype.svg" class="mb-2 w-48" alt="common.logo_alt" />
+		<img src="/assets/shortbook-logotype.svg" class="mb-2 w-48" alt="common.logo_alt" />
 		<small class="block text-base">©{yearPeriod} ShortBook</small>
 	</div>
 	<nav class="text-lg">

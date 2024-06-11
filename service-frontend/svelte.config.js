@@ -10,7 +10,8 @@ const config = {
 
 		files: {
 			// $lib alias change './src/lib' to './lib'
-			lib: 'lib'
+			lib: 'lib',
+			assets: 'lib/static'
 		},
 
 		csp: {
