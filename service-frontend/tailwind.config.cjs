@@ -3,6 +3,7 @@
 const config = {
 	content: [
 		'./src/**/*.{html,js,svelte,ts}',
+		'./lib/components/**/*.{html,js,svelte,ts}',
 	],
 
 	plugins: [],
@@ -12,6 +13,7 @@ const config = {
 	theme: {
 		extend: {
 			colors: {
+				// ShortBook brand color (standard is #924240)
 				primary: {
 					50: '#FCF9F9',
 					100: '#F4E7E7',
@@ -24,7 +26,10 @@ const config = {
 					800: '#592827',
 					900: '#2F1514'
 				}
-			}
+			},
+      aspectRatio: {
+        'logotype': '3170 / 512',
+      }
 		}
 	}
 };
