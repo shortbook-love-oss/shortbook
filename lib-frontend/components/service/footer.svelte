@@ -7,21 +7,21 @@
 	}
 </script>
 
-<footer class="justify-center gap-16 p-8 pb-36 sm:flex sm:pb-8">
-	<div class="mb-4 sm:pt-1">
+<footer class="justify-center gap-16 border-t border-stone-300 p-8 pb-24 sm:flex sm:pb-8">
+	<div class="mb-8 sm:pt-1">
 		<img
 			src="/assets/shortbook-logotype.svg"
 			class="mb-2 aspect-logotype w-48"
 			alt="common.logo_alt"
 		/>
-		<small class="block text-base">© {yearPeriod} ShortBook</small>
+		<small class="block text-base">© {yearPeriod} ShortBook LLC</small>
 	</div>
 	<nav class="text-lg">
 		<h2 class="mb-2 font-bold">About</h2>
 		<ul class="text-primary-600">
-			<li class="mb-2"><a href="/about">common.company_nav.about</a></li>
+			<li class="mb-2"><a href="/about">About</a></li>
 			<li class="mb-2">
-				<a href="https://form.run/@shortbook-contact" target="_blank">common.company_nav.contact</a>
+				<a href="https://form.run/@shortbook-contact" target="_blank">Contact</a>
 			</li>
 		</ul>
 	</nav>
