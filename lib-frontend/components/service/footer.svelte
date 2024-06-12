@@ -7,7 +7,7 @@
 	}
 </script>
 
-<footer class="justify-center gap-16 p-8 sm:flex">
+<footer class="justify-center gap-16 p-8 pb-36 sm:flex sm:pb-8">
 	<div class="mb-4 sm:pt-1">
 		<img
 			src="/assets/shortbook-logotype.svg"
