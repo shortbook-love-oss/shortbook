@@ -10,13 +10,13 @@
 </script>
 
 <header>
-	<div class="mb-4 mb-6 px-4">
+	<a href="/" class="block mb-4 mb-6 px-4">
 		<img
 			src="/assets/shortbook-logotype.svg"
 			class="m-auto mb-2 aspect-logotype w-full max-w-60"
 			alt="Short book logo"
 		/>
-	</div>
+	</a>
 	<nav>
 		<ul>
 			<li>
