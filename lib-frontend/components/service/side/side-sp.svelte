@@ -81,7 +81,7 @@
 	</nav>
 </header>
 
-<style lang="scss">
+<style lang="postcss">
 	#common_submenu_open:not(:checked) ~ #common_submenu {
 		display: none;
 	}
