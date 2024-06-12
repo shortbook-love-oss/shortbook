@@ -18,10 +18,7 @@ services:
       - type: volume
         source: service-frontend
         target: /usr/src/app
-      - type: volume
-        source: service-frontend-module
-        target: /usr/src/app/node_modules
-      - type: bind # Sync "/usr/src/app" and "../service-frontend"
+      - type: bind
         source: ../service-frontend
         target: /usr/src/app
       - type: bind
@@ -66,6 +63,5 @@ networks:
     internal: true
 volumes:
   service-frontend:
-  service-frontend-module:
   database:
   cache:
