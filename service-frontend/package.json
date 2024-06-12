@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "npm run schemagenerate && vite dev",
-		"build": "npm run schemagenerate && vite build",
+		"build": "npm run schemagenerate && vite build && ./fix_dirname_error.sh",
 		"preview": "vite preview",
 		"schemagenerate": "prisma generate --schema=./lib/prisma/schema.prisma",
 		"premigrate-dev": "node ./lib/prisma/set_charset.js utf8mb4 utf8mb4_unicode_ci",
