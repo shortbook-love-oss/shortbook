@@ -9,6 +9,22 @@ const prisma = new PrismaClient();
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: true,
 	adapter: PrismaAdapter(prisma),
+	secret: process.env.AUTH_SECRET, // Include env to build directory
 	providers: [LinkedIn, GitHub],
-	secret: process.env.AUTH_SECRET // Include env to build directory
+	callbacks: {
+		async session({ session, user }: any) {
+			// Send properties to the client, like an access_token and user id from a provider
+			// Filter only using properties
+			session = {
+				expires: session.expires,
+				user: {
+					id: user.id,
+					email: user.email,
+					name: user.name,
+					image: user.image
+				}
+			};
+			return session;
+		}
+	}
 });
