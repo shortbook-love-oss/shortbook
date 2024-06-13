@@ -5,8 +5,8 @@
 	import IconUser from '~icons/mdi/user';
 	import IconMore from '~icons/mdi/more-horiz';
 	import IconSignin from '~icons/mdi/user-check-outline';
-	import SideLinkSp from './side-link-sp.svelte';
-	import SideLinkSmall from './side-link-small.svelte';
+	import NavLinkSp from './nav-link-sp.svelte';
+	import NavLinkSmall from './nav-link-small.svelte';
 	import { page } from '$app/stores';
 </script>
 
@@ -14,38 +14,38 @@
 	<nav>
 		<ul class="relative flex justify-center">
 			<li>
-				<SideLinkSp name="Home" href="/">
+				<NavLinkSp name="Home" href="/">
 					<IconHome width="28" height="28" />
-				</SideLinkSp>
+				</NavLinkSp>
 			</li>
 			{#if $page.data.session?.user}
 				<li>
-					<SideLinkSp name="Profile" href="/">
+					<NavLinkSp name="Profile" href="/">
 						<IconUser width="28" height="28" />
-					</SideLinkSp>
+					</NavLinkSp>
 				</li>
 			{:else}
 				<li>
 					<SignIn className="bg-primary-800 text-primary-50">
 						<svelte:fragment slot="submitButton">
-							<SideLinkSp name="Sign in">
+							<NavLinkSp name="Sign in">
 								<IconSignin width="28" height="28" />
-							</SideLinkSp>
+							</NavLinkSp>
 						</svelte:fragment>
 					</SignIn>
 				</li>
 			{/if}
 			<li>
-				<SideLinkSp name="Setting" href="/mypage">
+				<NavLinkSp name="Setting" href="/mypage">
 					<IconSetting width="28" height="28" />
-				</SideLinkSp>
+				</NavLinkSp>
 			</li>
 			<li>
 				<button type="button" class="hover:bg-stone-200 focus:bg-stone-200">
 					<label for="common_submenu_open">
-						<SideLinkSp name="More">
+						<NavLinkSp name="More">
 							<IconMore width="28" height="28" />
-						</SideLinkSp>
+						</NavLinkSp>
 					</label>
 				</button>
 				<input type="radio" name="menu_more" id="common_submenu_open" class="hidden" />
@@ -61,17 +61,17 @@
 						</li>
 					{/if}
 					<li>
-						<SideLinkSmall name="Term of use" href="/" />
+						<NavLinkSmall name="Term of use" href="/" />
 					</li>
 					<li>
-						<SideLinkSmall name="Privacy policy" href="/" />
+						<NavLinkSmall name="Privacy policy" href="/" />
 					</li>
 					<li>
-						<SideLinkSmall name="Support" href="/" />
+						<NavLinkSmall name="Support" href="/" />
 					</li>
 					<li class="mt-2 border-t border-stone-300 pt-2">
 						<label>
-							<SideLinkSmall name="Close menu" />
+							<NavLinkSmall name="Close menu" />
 							<input type="radio" name="menu_more" id="common_submenu_close" class="hidden" />
 						</label>
 					</li>
