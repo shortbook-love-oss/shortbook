@@ -69,7 +69,7 @@
 					<li>
 						<SideLinkSmall name="Support" href="/" />
 					</li>
-					<li>
+					<li class="mt-2 border-t border-stone-300 pt-2">
 						<label>
 							<SideLinkSmall name="Close menu" />
 							<input type="radio" name="menu_more" id="common_submenu_close" class="hidden" />
