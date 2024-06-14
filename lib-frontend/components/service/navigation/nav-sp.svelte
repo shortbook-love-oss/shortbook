@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
 	import { SignIn, SignOut } from '@auth/sveltekit/components';
+	import { clickoutside } from '@svelte-put/clickoutside';
 	import IconHome from '~icons/mdi/home-outline';
 	import IconSetting from '~icons/mdi/settings-outline';
 	import IconUser from '~icons/mdi/user';
@@ -8,6 +9,20 @@
 	import NavLinkSp from './nav-link-sp.svelte';
 	import NavLinkSmall from './nav-link-small.svelte';
 	import { page } from '$app/stores';
+
+	// Close submenu if open
+	const outsideClickThreshold = 50;
+	let outsideClickTimeout = 0;
+	function closeSubmenu() {
+		const closeSwitch = document.getElementById('common_submenu_close') as HTMLInputElement;
+		if (outsideClickTimeout === 0) {
+			closeSwitch.checked = true;
+		}
+		// Anti-chattering measures
+		outsideClickTimeout = window.setTimeout(() => {
+			outsideClickTimeout = 0;
+		}, outsideClickThreshold);
+	}
 </script>
 
 <header class="border-t-2 border-primary-700 bg-white">
@@ -52,6 +67,8 @@
 				<ul
 					id="common_submenu"
 					class="absolute bottom-20 right-2 rounded-xl border border-stone-400 bg-white p-2"
+					use:clickoutside
+					on:clickoutside={closeSubmenu}
 				>
 					{#if $page.data.session?.user}
 						<li>
@@ -72,7 +89,13 @@
 					<li class="mt-2 border-t border-stone-300 pt-2">
 						<label>
 							<NavLinkSmall name="Close menu" />
-							<input type="radio" name="menu_more" id="common_submenu_close" class="hidden" />
+							<input
+								type="radio"
+								name="menu_more"
+								checked
+								id="common_submenu_close"
+								class="hidden"
+							/>
 						</label>
 					</li>
 				</ul>
