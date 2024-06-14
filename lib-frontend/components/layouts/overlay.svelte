@@ -41,7 +41,7 @@
 <!-- Overlay -->
 <div
 	id="common_overlay_{name}"
-	class="t-0 l-0 fixed z-40 hidden h-dvh h-screen border-r border-primary-300 bg-white peer-checked/common_overlay_open:block"
+	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen overflow-x-auto border-r border-primary-300 bg-white peer-checked/common_overlay_open:block"
 	use:clickoutside
 	on:clickoutside={closeOverlay}
 >
