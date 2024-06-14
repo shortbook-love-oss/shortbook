@@ -63,10 +63,15 @@
 						</NavLinkSp>
 					</label>
 				</button>
-				<input type="radio" name="menu_more" id="common_submenu_open" class="hidden" />
+				<input
+					type="radio"
+					name="menu_more"
+					id="common_submenu_open"
+					class="peer/common_submenu_open hidden"
+				/>
 				<ul
 					id="common_submenu"
-					class="absolute bottom-20 right-2 rounded-xl border border-stone-400 bg-white p-2"
+					class="absolute bottom-20 right-2 hidden rounded-xl border border-stone-400 bg-white p-2 peer-checked/common_submenu_open:block"
 					use:clickoutside
 					on:clickoutside={closeSubmenu}
 				>
@@ -103,9 +108,3 @@
 		</ul>
 	</nav>
 </header>
-
-<style lang="postcss">
-	#common_submenu_open:not(:checked) ~ #common_submenu {
-		display: none;
-	}
-</style>
