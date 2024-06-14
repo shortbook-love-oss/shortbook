@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { clickoutside } from '@svelte-put/clickoutside';
+	import IconMenu from '~icons/mdi/menu';
 
 	export let name: string;
 
@@ -18,13 +19,18 @@
 	}
 </script>
 
-<button type="button" class="w-fit hover:bg-stone-200 focus:bg-stone-200">
-	<label for="common_overlay_open_{name}">
-		<slot name="opener">
-			<p>Click to show overlay</p>
-		</slot>
-	</label>
-</button>
+<div class="flex items-center border-b-2 border-primary-700 bg-white">
+	<button type="button" class="mr-2 flex w-fit items-center hover:bg-stone-200 focus:bg-stone-200">
+		<label for="common_overlay_open_{name}">
+			<slot name="opener">
+				<div class="p-2">
+					<IconMenu width="28" height="28" />
+				</div>
+			</slot>
+		</label>
+	</button>
+	<slot name="title" />
+</div>
 <input
 	type="radio"
 	name="common_overlay_{name}"
@@ -53,7 +59,7 @@
 			/>
 		</label>
 	</div>
-  <div class="px-2 -mt-2">
-	  <slot />
-  </div>
+	<div class="-mt-6 px-2">
+		<slot />
+	</div>
 </div>
