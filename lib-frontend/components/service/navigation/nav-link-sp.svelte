@@ -8,13 +8,17 @@
 		{href}
 		class="flex flex-col items-center rounded-md px-3 py-2 text-stone-950 hover:bg-stone-200 focus:bg-stone-200"
 	>
-		<div><slot></slot></div>
+		{#if $$slots.default}
+			<div><slot></slot></div>
+		{/if}
 		<p class="text-center">{name}</p>
 	</a>
 {:else}
 	<!-- use inside focusable element -->
 	<div class="flex flex-col items-center px-3 py-2">
-		<div><slot></slot></div>
+		{#if $$slots.default}
+			<div><slot></slot></div>
+		{/if}
 		<p>{name}</p>
 	</div>
 {/if}
