@@ -65,7 +65,7 @@
 				</button>
 				<input
 					type="radio"
-					name="menu_more"
+					name="common_submenu"
 					id="common_submenu_open"
 					class="peer/common_submenu_open hidden"
 				/>
@@ -96,7 +96,7 @@
 							<NavLinkSmall name="Close menu" />
 							<input
 								type="radio"
-								name="menu_more"
+								name="common_submenu"
 								checked
 								id="common_submenu_close"
 								class="hidden"
