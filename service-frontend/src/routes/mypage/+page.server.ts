@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
 
-export async function load({ url }) {
-	throw redirect(302, url.pathname + '/personnel/profile');
+export const load = function (param) {
+	throw redirect(302, param.url.pathname + '/personnel/profile');
 }
