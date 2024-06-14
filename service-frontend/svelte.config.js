@@ -22,7 +22,12 @@ const config = {
 				'script-src': ['self'],
 				'style-src': ['self', 'unsafe-inline'],
 				'media-src': ['self', 'data:'],
-				'img-src': ['self', 'data:'],
+				'img-src': [
+					'self',
+					'data:',
+					'https://media.licdn.com/dms/image/',
+					'https://avatars.githubusercontent.com/u/'
+				],
 				'object-src': ['self'],
 				'font-src': ['self', 'data:'],
 				'form-action': ['self'],
