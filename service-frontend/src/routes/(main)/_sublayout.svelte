@@ -1,6 +1,5 @@
 <script>
 	import IconArrowLeft from '~icons/mdi/arrow-left';
-	import NavSp from '$lib/components/service/navigation/nav-sp.svelte';
 
 	export let isShowBack = false;
 </script>
@@ -24,9 +23,6 @@
 			<slot name="nav"></slot>
 		</nav>
 	</header>
-</div>
-<div class="fixed bottom-0 left-0 w-full sm:hidden">
-	<NavSp />
 </div>
 <main class="flex-1">
 	<slot></slot>
