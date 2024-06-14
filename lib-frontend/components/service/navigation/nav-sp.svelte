@@ -2,8 +2,8 @@
 	import { SignIn, SignOut } from '@auth/sveltekit/components';
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import IconHome from '~icons/mdi/home-outline';
-	import IconSetting from '~icons/mdi/settings-outline';
-	import IconUser from '~icons/mdi/user';
+	import IconWrite from '~icons/mdi/pencil-plus';
+	import IconUser from '~icons/mdi/user-outline';
 	import IconMore from '~icons/mdi/more-horiz';
 	import IconSignin from '~icons/mdi/user-check-outline';
 	import NavLinkSp from './nav-link-sp.svelte';
@@ -30,13 +30,18 @@
 		<ul class="relative flex justify-center">
 			<li>
 				<NavLinkSp name="Home" href="/">
-					<IconHome width="28" height="28" />
+					<IconHome width="32" height="32" />
 				</NavLinkSp>
 			</li>
 			{#if $page.data.session?.user}
 				<li>
-					<NavLinkSp name="Profile" href="/">
-						<IconUser width="28" height="28" />
+					<NavLinkSp name="Write" href="/">
+						<IconWrite width="32" height="32" />
+					</NavLinkSp>
+				</li>
+				<li>
+					<NavLinkSp name="Mypage" href="/mypage">
+						<IconUser width="32" height="32" />
 					</NavLinkSp>
 				</li>
 			{:else}
@@ -44,22 +49,17 @@
 					<SignIn className="bg-primary-800 text-primary-50">
 						<svelte:fragment slot="submitButton">
 							<NavLinkSp name="Sign in">
-								<IconSignin width="28" height="28" />
+								<IconSignin width="32" height="32" />
 							</NavLinkSp>
 						</svelte:fragment>
 					</SignIn>
 				</li>
 			{/if}
 			<li>
-				<NavLinkSp name="Setting" href="/mypage">
-					<IconSetting width="28" height="28" />
-				</NavLinkSp>
-			</li>
-			<li>
 				<button type="button" class="hover:bg-stone-200 focus:bg-stone-200">
 					<label for="common_submenu_open">
 						<NavLinkSp name="More">
-							<IconMore width="28" height="28" />
+							<IconMore width="32" height="32" />
 						</NavLinkSp>
 					</label>
 				</button>

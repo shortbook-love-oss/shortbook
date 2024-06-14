@@ -1,8 +1,8 @@
 <script>
 	import { SignIn, SignOut } from '@auth/sveltekit/components';
 	import IconHome from '~icons/mdi/home-outline';
-	import IconSetting from '~icons/mdi/settings-outline';
-	import IconUser from '~icons/mdi/user';
+	import IconWrite from '~icons/mdi/pencil-plus';
+	import IconUser from '~icons/mdi/user-outline';
 	import IconArrowRight from '~icons/mdi/arrow-right-thick';
 	import NavLink from './nav-link.svelte';
 	import NavLinkSmall from './nav-link-small.svelte';
@@ -17,16 +17,16 @@
 	</li>
 	{#if $page.data.session?.user}
 		<li>
-			<NavLink name={$page.data.session.user.name ?? 'User'} href="/">
+			<NavLink name="Write" href="/">
+				<IconWrite width="28" height="28" />
+			</NavLink>
+		</li>
+		<li>
+			<NavLink name="Mypage" href="/mypage">
 				<IconUser width="28" height="28" />
 			</NavLink>
 		</li>
 	{/if}
-	<li>
-		<NavLink name="Setting" href="/mypage">
-			<IconSetting width="28" height="28" />
-		</NavLink>
-	</li>
 	<li>
 		<NavLinkSmall name="Support" href="/" />
 	</li>
