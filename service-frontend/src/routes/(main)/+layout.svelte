@@ -1,16 +1,22 @@
 <script>
-	import NavSp from '$lib/components/service/navigation/nav-sp.svelte';
-	import Footer from '$lib/components/service/footer.svelte';
+	import Nav from '$lib/components/service/navigation/nav.svelte';
+	import LayoutRule from '../_layout-rule.svelte';
 </script>
 
-<div class="flex min-h-screen flex-col">
-	<div
-		class="mx-auto w-full max-w-[90rem] flex-1 gap-12 px-4 pb-16 pt-12 sm:flex md:px-8 lg:gap-20"
-	>
+<LayoutRule>
+	<header slot="side">
+		<a href="/" class="mb-4 mb-6 block px-4">
+			<img
+				src="/assets/shortbook-logotype.svg"
+				class="m-auto mb-2 aspect-logotype w-full max-w-60"
+				alt="Short book logo"
+			/>
+		</a>
+		<nav>
+			<Nav />
+		</nav>
+	</header>
+	<main>
 		<slot></slot>
-	</div>
-	<div class="fixed bottom-0 left-0 w-full sm:hidden">
-		<NavSp />
-	</div>
-	<Footer />
-</div>
+	</main>
+</LayoutRule>

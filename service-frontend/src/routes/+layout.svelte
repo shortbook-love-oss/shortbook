@@ -5,7 +5,5 @@
 </script>
 
 <ParaglideJS {i18n}>
-	<div class="text-stone-950">
-		<slot></slot>
-	</div>
+	<slot></slot>
 </ParaglideJS>
