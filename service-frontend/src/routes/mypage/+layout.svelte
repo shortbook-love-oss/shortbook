@@ -9,6 +9,7 @@
 	<svelte:fragment slot="header">
 		<div class="sm:hidden">
 			<Overlay name="mypage">
+				<p slot="title" class="text-xl">Mypage</p>
 				<Nav />
 			</Overlay>
 		</div>
