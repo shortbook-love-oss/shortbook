@@ -2,7 +2,7 @@
 	import Nav from '$lib/components/service/navigation/nav.svelte';
 </script>
 
-<header class="border-b border-stone-300 px-4 md:px-8 py-1">
+<header class="border-b border-stone-300 px-4 sm:px-6 md:px-8 py-1">
 	<div class="m-auto flex max-w-[90rem] justify-between gap-4">
 		<a
 			href="/"

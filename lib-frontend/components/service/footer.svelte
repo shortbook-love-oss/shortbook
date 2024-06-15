@@ -9,7 +9,7 @@
 	}
 </script>
 
-<footer class="flex justify-center gap-16 border-t border-stone-300 p-8">
+<footer class="flex justify-center gap-16 border-t border-stone-300 p-4 sm:px-6 md:px-8">
 	<nav class="flex max-w-[90rem] flex-wrap gap-x-16 gap-y-8 text-lg">
 		<div class="w-full sm:w-auto sm:pt-1">
 			<a href="/" class=" mb-2 block">
