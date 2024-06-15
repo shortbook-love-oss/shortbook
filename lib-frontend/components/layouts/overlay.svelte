@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import IconMenu from '~icons/mdi/menu';
+	import IconClose from '~icons/mdi/close';
 
 	// Need for unique attribute value
 	export let name: string;
@@ -42,25 +43,34 @@
 <!-- Overlay -->
 <div
 	id="common_overlay_{name}"
-	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen overflow-x-auto border-r border-primary-300 bg-white peer-checked/common_overlay_open:block"
-	use:clickoutside
-	on:clickoutside={closeOverlay}
+	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen w-screen bg-stone-400/30 peer-checked/common_overlay_open:block"
 >
-	<div class="text-end">
-		<label class="inline-block">
-			<slot name="closer">
-				<div class="px-3 py-2 text-end hover:bg-stone-200 focus:bg-stone-200">Close</div>
-			</slot>
-			<input
-				type="radio"
-				name="common_overlay_{name}"
-				checked
-				id="common_overlay_close_{name}"
-				class="hidden"
-			/>
-		</label>
-	</div>
-	<div class="-mt-6 px-2">
-		<slot />
+	<div
+		class="inline-flex h-full flex-col border-r border-primary-300 bg-white"
+		use:clickoutside
+		on:clickoutside={closeOverlay}
+	>
+		<div class="flex justify-end">
+			<label class="inline-block">
+				<slot name="closer">
+					<IconClose
+						width="44"
+						height="44"
+						class="ml-auto p-1 hover:bg-stone-200 focus:bg-stone-200"
+						aria-label="Cancel and close dialog"
+					/>
+				</slot>
+				<input
+					type="radio"
+					name="common_overlay_{name}"
+					checked
+					id="common_overlay_close_{name}"
+					class="hidden"
+				/>
+			</label>
+		</div>
+		<div class="flex-1 overflow-x-auto p-2">
+			<slot />
+		</div>
 	</div>
 </div>

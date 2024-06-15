@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { clickoutside } from '@svelte-put/clickoutside';
+	import IconClose from '~icons/mdi/close';
 
 	// Need for unique attribute value
 	export let name: string;
@@ -46,17 +47,24 @@
 <!-- Dialog -->
 <div
 	id="common_dialog_{name}"
-	class="fixed left-0 top-0 z-50 hidden h-dvh h-screen w-screen items-center justify-center bg-stone-400/30 px-4 peer-checked/common_dialog_open:flex sm:px-6 md:px-8"
+	class="fixed left-0 top-0 z-50 hidden h-dvh h-screen w-screen items-center justify-center bg-stone-400/30 p-4 peer-checked/common_dialog_open:flex"
 >
 	<div
-		class="w-fit max-w-2xl rounded-xl border-2 border-primary-300 bg-white"
+		class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
 		use:clickoutside
 		on:clickoutside={closeDialog}
 	>
-		<div class="mb-2 text-end">
+		<div class="flex justify-end pb-1">
 			<label class="inline-block">
 				<slot name="closer">
-					<div class="px-3 py-2 hover:bg-stone-200 focus:bg-stone-200">Close</div>
+					<div class="leading-none">
+						<IconClose
+							width="44"
+							height="44"
+							class="ml-auto p-1 hover:bg-stone-200 focus:bg-stone-200"
+							aria-label="Cancel and close dialog"
+						/>
+					</div>
 				</slot>
 				<input
 					type="radio"
@@ -67,10 +75,10 @@
 				/>
 			</label>
 		</div>
-		<div class="overflow-x-auto px-4 py-3 sm:pr-6 md:pl-6 md:pr-8">
+		<div class="overflow-x-auto px-4 py-1 sm:pr-6 md:pl-6 md:pr-8">
 			<slot />
 		</div>
-		<div class="mt-1 px-4 pb-4">
+		<div class="px-4 pb-4 pt-1">
 			<slot name="actions" />
 		</div>
 	</div>
