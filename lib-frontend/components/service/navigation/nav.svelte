@@ -26,17 +26,6 @@
 				<IconUser width="28" height="28" />
 			</NavLink>
 		</li>
-	{/if}
-	<li>
-		<NavLinkSmall name="Support" href="/" />
-	</li>
-	<li>
-		<NavLinkSmall name="Term of use" href="/" />
-	</li>
-	<li>
-		<NavLinkSmall name="Privacy policy" href="/" />
-	</li>
-	{#if $page.data.session?.user}
 		<li>
 			<SignOut className="w-fit rounded-lg hover:bg-stone-200 focus:bg-stone-200">
 				<p slot="submitButton" class="px-3 py-2 text-lg text-red-800">Sign out</p>

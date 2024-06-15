@@ -55,56 +55,47 @@
 					</SignIn>
 				</li>
 			{/if}
-			<li>
-				<button type="button" class="hover:bg-stone-200 focus:bg-stone-200">
-					<label for="common_submenu_open">
-						<NavLinkSp name="More">
-							<IconMore width="32" height="32" />
-						</NavLinkSp>
-					</label>
-				</button>
-				<input
-					type="radio"
-					name="common_submenu"
-					id="common_submenu_open"
-					class="peer/common_submenu_open hidden"
-				/>
-				<ul
-					id="common_submenu"
-					class="absolute bottom-20 right-2 hidden rounded-xl border border-stone-400 bg-white p-2 peer-checked/common_submenu_open:block"
-					use:clickoutside
-					on:clickoutside={closeSubmenu}
-				>
-					{#if $page.data.session?.user}
+			{#if $page.data.session?.user}
+				<li>
+					<button type="button" class="hover:bg-stone-200 focus:bg-stone-200">
+						<label for="common_submenu_open">
+							<NavLinkSp name="More">
+								<IconMore width="32" height="32" />
+							</NavLinkSp>
+						</label>
+					</button>
+					<input
+						type="radio"
+						name="common_submenu"
+						id="common_submenu_open"
+						class="peer/common_submenu_open hidden"
+					/>
+					<ul
+						id="common_submenu"
+						class="absolute bottom-20 right-2 hidden rounded-xl border border-stone-400 bg-white p-2 peer-checked/common_submenu_open:block"
+						use:clickoutside
+						on:clickoutside={closeSubmenu}
+					>
 						<li>
 							<SignOut className="w-fit rounded-lg hover:bg-stone-200 focus:bg-stone-200">
 								<p slot="submitButton" class="px-3 py-2 text-lg text-red-800">Sign out</p>
 							</SignOut>
 						</li>
-					{/if}
-					<li>
-						<NavLinkSmall name="Term of use" href="/" />
-					</li>
-					<li>
-						<NavLinkSmall name="Privacy policy" href="/" />
-					</li>
-					<li>
-						<NavLinkSmall name="Support" href="/" />
-					</li>
-					<li class="mt-2 border-t border-stone-300 pt-2">
-						<label>
-							<NavLinkSmall name="Close menu" />
-							<input
-								type="radio"
-								name="common_submenu"
-								checked
-								id="common_submenu_close"
-								class="hidden"
-							/>
-						</label>
-					</li>
-				</ul>
-			</li>
+						<li class="mt-2 border-t border-stone-300 pt-2">
+							<label>
+								<NavLinkSmall name="Close menu" />
+								<input
+									type="radio"
+									name="common_submenu"
+									checked
+									id="common_submenu_close"
+									class="hidden"
+								/>
+							</label>
+						</li>
+					</ul>
+				</li>
+			{/if}
 		</ul>
 	</nav>
 </header>
