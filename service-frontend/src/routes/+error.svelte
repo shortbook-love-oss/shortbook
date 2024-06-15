@@ -1,4 +1,5 @@
 <script>
+	import { SignIn } from '@auth/sveltekit/components';
 	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import { page } from '$app/stores';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -19,7 +20,17 @@
 	</div>
 	<p class="text-2xl">{$page.status}</p>
 	<p class="mb-8 text-lg">{$page.error?.message}</p>
-	<NavLinkSmall name="Back to home" href="/">
-		<IconArrowLeft width="24" height="24" class="-mx-1" />
-	</NavLinkSmall>
+	{#if $page.status === 401}
+		<SignIn
+			className="w-fit rounded-lg border-2 border-primary-700 hover:bg-stone-200 focus:bg-stone-200"
+		>
+			<p slot="submitButton" class="px-4 py-3 text-2xl font-semibold text-red-800">
+				Sign in / Sign up
+			</p>
+		</SignIn>
+	{:else}
+		<NavLinkSmall name="Back to home" href="/">
+			<IconArrowLeft width="24" height="24" class="-mx-1" />
+		</NavLinkSmall>
+	{/if}
 </div>
