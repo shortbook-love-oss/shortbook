@@ -102,9 +102,9 @@ model user_profiles {
   id                      String              @id @default(cuid())
   user_id                 String
   slug                    String              @unique @db.VarChar(30) // Length 1 - 30
-  native_lang             String              @db.VarChar(5)
-  location                String
-  birthday                DateTime            @db.Date()
+  native_lang             String?             @db.VarChar(5)
+  location                String?
+  birthday                DateTime?           @db.Date()
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              Boolean             @default(false)
