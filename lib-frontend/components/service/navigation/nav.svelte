@@ -24,8 +24,10 @@
 		</li>
 	{:else}
 		<li>
-			<SignIn className="w-fit rounded-lg hover:bg-stone-200 focus:bg-stone-200">
-				<p slot="submitButton" class="px-3 py-2 text-lg text-red-800">Sign in / Sign up</p>
+			<SignIn
+				className="border-2 border-primary-700 rounded-lg hover:bg-stone-200 focus:bg-stone-200"
+			>
+				<p slot="submitButton" class="px-4 py-1 text-lg text-red-800">Sign in / Sign up</p>
 			</SignIn>
 		</li>
 	{/if}
