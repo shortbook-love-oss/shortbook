@@ -9,8 +9,10 @@
 	}
 </script>
 
-<footer class="flex justify-center gap-16 border-t border-stone-300 p-4 sm:px-6 md:px-8">
-	<nav class="flex max-w-[90rem] flex-wrap gap-x-16 gap-y-8 text-lg">
+<footer class="flex flex-col justify-center border-t border-stone-300">
+	<nav
+		class="m-auto flex w-full max-w-[90rem] flex-wrap gap-x-16 gap-y-8 p-4 text-lg sm:w-fit sm:px-6 md:px-8"
+	>
 		<div class="w-full sm:w-auto sm:pt-1">
 			<a href="/" class=" mb-2 block">
 				<img

@@ -30,7 +30,7 @@
 		</SignIn>
 	{:else}
 		<NavLinkSmall name="Back to home" href="/">
-			<IconArrowLeft width="24" height="24" class="-mx-1" />
+			<IconArrowLeft width="24" height="24" class="-mx-2" />
 		</NavLinkSmall>
 	{/if}
 </div>

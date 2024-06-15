@@ -20,7 +20,7 @@
 	</svelte:fragment>
 	<header slot="side">
 		<a href="/" class="mb-6 flex items-center gap-1 px-4">
-			<IconArrowLeft width="24" height="24" class="-ml-1.5 mr-1" />
+			<IconArrowLeft width="24" height="24" class="-ml-2 mr-1" />
 			<p class="text-lg font-semibold">Back to service</p>
 		</a>
 		<nav>
