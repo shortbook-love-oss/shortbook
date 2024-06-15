@@ -1,8 +1,9 @@
 <script>
-	import { SignIn, SignOut } from '@auth/sveltekit/components';
+	import { SignIn } from '@auth/sveltekit/components';
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconUser from '~icons/mdi/user-outline';
 	import NavLinkSmall from './nav-link-small.svelte';
+	import Signout from '$lib/components/service/auth/signout.svelte';
 	import { page } from '$app/stores';
 </script>
 
@@ -19,9 +20,7 @@
 			</NavLinkSmall>
 		</li>
 		<li>
-			<SignOut className="w-fit rounded-lg hover:bg-stone-200 focus:bg-stone-200">
-				<p slot="submitButton" class="px-3 py-2 text-lg text-red-800">Sign out</p>
-			</SignOut>
+			<Signout dialogName="header_signout" />
 		</li>
 	{:else}
 		<li>

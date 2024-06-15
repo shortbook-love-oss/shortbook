@@ -2,6 +2,7 @@
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import IconMenu from '~icons/mdi/menu';
 
+	// Need for unique attribute value
 	export let name: string;
 
 	// Close submenu if open
@@ -48,7 +49,7 @@
 	<div class="text-end">
 		<label class="inline-block">
 			<slot name="closer">
-				<div class="px-2 px-3 px-3 py-2 text-end hover:bg-stone-200 focus:bg-stone-200">Close</div>
+				<div class="px-3 py-2 text-end hover:bg-stone-200 focus:bg-stone-200">Close</div>
 			</slot>
 			<input
 				type="radio"

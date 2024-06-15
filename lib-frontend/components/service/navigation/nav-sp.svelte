@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SignIn, SignOut } from '@auth/sveltekit/components';
+	import { SignIn } from '@auth/sveltekit/components';
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import IconHome from '~icons/mdi/home-outline';
 	import IconWrite from '~icons/mdi/pencil-plus';
@@ -8,6 +8,7 @@
 	import IconSignin from '~icons/mdi/user-check-outline';
 	import NavLinkSp from './nav-link-sp.svelte';
 	import NavLinkSmall from './nav-link-small.svelte';
+	import Signout from '$lib/components/service/auth/signout.svelte';
 	import { page } from '$app/stores';
 
 	// Close submenu if open
@@ -77,9 +78,7 @@
 						on:clickoutside={closeSubmenu}
 					>
 						<li>
-							<SignOut className="w-fit rounded-lg hover:bg-stone-200 focus:bg-stone-200">
-								<p slot="submitButton" class="px-3 py-2 text-lg text-red-800">Sign out</p>
-							</SignOut>
+							<Signout dialogName="footer_signout" />
 						</li>
 						<li class="mt-2 border-t border-stone-300 pt-2">
 							<label>
