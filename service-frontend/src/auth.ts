@@ -10,7 +10,16 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: true,
 	adapter: PrismaAdapter(prisma),
 	secret: process.env.AUTH_SECRET, // Include env to build directory
-	providers: [LinkedIn, GitHub],
+	providers: [
+		LinkedIn({
+			clientId: process.env.AUTH_LINKEDIN_ID,
+			clientSecret: process.env.AUTH_LINKEDIN_SECRET
+		}),
+		GitHub({
+			clientId: process.env.AUTH_GITHUB_ID,
+			clientSecret: process.env.AUTH_GITHUB_SECRET
+		})
+	],
 	events: {
 		async signIn({ user }) {
 			// Create initialized user profile
