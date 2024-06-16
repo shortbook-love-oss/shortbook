@@ -1,9 +1,12 @@
 <script>
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconUser from '~icons/mdi/user-outline';
+	import { page } from '$app/stores';
 	import NavLinkSmall from './nav-link-small.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
-	import { page } from '$app/stores';
+
+	// After sign-in/sign-up redirect to
+	let redirectPathname = encodeURIComponent($page.url.pathname + $page.url.search);
 </script>
 
 <ul class="flex items-center">
@@ -23,12 +26,12 @@
 		</li>
 	{:else}
 		<li>
-			<NavLinkSmall name="Sign in" href="/signin">
+			<NavLinkSmall name="Sign in" href="/signin?callback={redirectPathname}">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>
 		<li>
-			<NavLinkSmall name="Sign up" href="/signup">
+			<NavLinkSmall name="Sign up" href="/signup?callback={redirectPathname}">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>

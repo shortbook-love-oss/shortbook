@@ -1,15 +1,27 @@
 <script lang="ts">
-	import { SignIn } from '@auth/sveltekit/components';
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import IconHome from '~icons/mdi/home-outline';
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconUser from '~icons/mdi/user-outline';
 	import IconMore from '~icons/mdi/more-horiz';
 	import IconSignin from '~icons/mdi/user-check-outline';
+	import IconSignup from '~icons/mdi/register-outline';
+	import { page } from '$app/stores';
+	import { removeLangTag } from '$lib/utilities/url';
 	import NavLinkSp from './nav-link-sp.svelte';
 	import NavLinkSmall from './nav-link-small.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
-	import { page } from '$app/stores';
+
+	// After sign-in/up redirect to
+	let redirectPathname = '';
+	if (['/signin', '/signup'].includes(removeLangTag($page.url.pathname))) {
+		// On sign-in/up → sign-in/up page move, keep callback url;
+		const callbackUrl = $page.url.searchParams.get('callback') ?? '';
+		redirectPathname = encodeURIComponent(callbackUrl);
+	} else {
+		// On (any page) → sign-in/up page move, show the (any page) after sign-in/up
+		redirectPathname = encodeURIComponent($page.url.pathname + $page.url.search);
+	}
 
 	// Close submenu if open
 	const outsideClickThreshold = 50;
@@ -47,13 +59,14 @@
 				</li>
 			{:else}
 				<li>
-					<SignIn className="bg-primary-800 text-primary-50">
-						<svelte:fragment slot="submitButton">
-							<NavLinkSp name="Sign in">
-								<IconSignin width="32" height="32" />
-							</NavLinkSp>
-						</svelte:fragment>
-					</SignIn>
+					<NavLinkSp name="Sign in" href="/signin?callback={redirectPathname}">
+						<IconSignin width="32" height="32" />
+					</NavLinkSp>
+				</li>
+				<li>
+					<NavLinkSp name="Sign up" href="/signup?callback={redirectPathname}">
+						<IconSignup width="32" height="32" />
+					</NavLinkSp>
 				</li>
 			{/if}
 			{#if $page.data.session?.user}
