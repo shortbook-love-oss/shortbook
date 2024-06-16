@@ -12,7 +12,7 @@
 </p>
 <div class="flex flex-col">
 	<div class="mx-auto inline-block">
-		<SignInByOAuth providerName="LinkedIn" className="mb-4" />
-		<SignInByOAuth providerName="GitHub" />
+		<SignInByOAuth isSignUp providerName="LinkedIn" className="mb-4" />
+		<SignInByOAuth isSignUp providerName="GitHub" />
 	</div>
 </div>

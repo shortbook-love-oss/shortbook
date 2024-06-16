@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { SignIn } from '@auth/sveltekit/components';
 
+	export let isSignUp = false;
 	export let className = '';
 	export let providerName: 'LinkedIn' | 'GitHub';
 </script>
@@ -16,6 +17,6 @@
 			class="w-8"
 			alt="{providerName} logo"
 		/>
-		<span>Sign up with {providerName}</span>
+		<span>Sign {isSignUp ? 'up' : 'in'} with {providerName}</span>
 	</div>
 </SignIn>
