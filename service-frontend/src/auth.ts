@@ -3,27 +3,38 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { PrismaClient } from '@prisma/client';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
+import {
+	AUTH_SECRET,
+	AUTH_LINKEDIN_ID,
+	AUTH_LINKEDIN_SECRET,
+	AUTH_GITHUB_ID,
+	AUTH_GITHUB_SECRET
+} from '$env/static/private';
 
 const prisma = new PrismaClient();
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: true,
 	adapter: PrismaAdapter(prisma),
-	secret: process.env.AUTH_SECRET, // Include env to build directory
+	secret: AUTH_SECRET, // Include env to build directory
 	providers: [
 		LinkedIn({
-			clientId: process.env.AUTH_LINKEDIN_ID,
-			clientSecret: process.env.AUTH_LINKEDIN_SECRET
+			clientId: AUTH_LINKEDIN_ID,
+			clientSecret: AUTH_LINKEDIN_SECRET
 		}),
 		GitHub({
-			clientId: process.env.AUTH_GITHUB_ID,
-			clientSecret: process.env.AUTH_GITHUB_SECRET
+			clientId: AUTH_GITHUB_ID,
+			clientSecret: AUTH_GITHUB_SECRET
 		})
 	],
+	pages: {
+		signIn: '/signin',
+		newUser: '/signup'
+	},
 	events: {
-		async signIn({ user }) {
+		async createUser({ user }) {
 			// Create initialized user profile
-			// Does not retain location
+			// Does not retain "location"
 			await prisma.user_profiles.create({
 				data: {
 					user_id: user.id as string,

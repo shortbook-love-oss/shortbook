@@ -1,5 +1,4 @@
 <script>
-	import { SignIn } from '@auth/sveltekit/components';
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconUser from '~icons/mdi/user-outline';
 	import NavLinkSmall from './nav-link-small.svelte';
@@ -24,11 +23,14 @@
 		</li>
 	{:else}
 		<li>
-			<SignIn
-				className="border-2 border-primary-700 rounded-lg hover:bg-stone-200 focus:bg-stone-200"
-			>
-				<p slot="submitButton" class="px-4 py-1 text-lg text-red-800">Sign in / Sign up</p>
-			</SignIn>
+			<NavLinkSmall name="Sign in" href="/signin">
+				<IconUser width="20" height="20" />
+			</NavLinkSmall>
+		</li>
+		<li>
+			<NavLinkSmall name="Sign up" href="/signup">
+				<IconUser width="20" height="20" />
+			</NavLinkSmall>
 		</li>
 	{/if}
 </ul>

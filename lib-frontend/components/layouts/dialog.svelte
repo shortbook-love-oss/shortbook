@@ -30,7 +30,7 @@
 
 <button
 	type="button"
-	class="w-fit hover:bg-stone-200 focus:bg-stone-200"
+	class="w-fit hover:bg-stone-200 focus:bg-stone-200 rounded-lg"
 	on:click|self={openDialog}
 >
 	<label for="common_dialog_open_{name}">
