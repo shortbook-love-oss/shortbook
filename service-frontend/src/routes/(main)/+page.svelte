@@ -3,4 +3,4 @@
 </svelte:head>
 
 <p class="mb-4">Top</p>
-<a href="/mypage" class="mb-4">My page</a>
+<a href="/mypage/personnel/profile" class="mb-4">My page</a>
