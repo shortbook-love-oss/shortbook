@@ -1,25 +1,18 @@
 <script lang="ts">
-	import { SignIn } from '@auth/sveltekit/components';
+	import SignInByOAuth from '$lib/components/service/auth/signin-by-oauth.svelte';
 </script>
 
-<h1 class="text-xl font-semibold">Sign up</h1>
-<p>
-	By creating an account, you agree to our <a href="/policies/term">Terms of use</a> and
-	<a href="/policies/privacy">Privacy policy</a>.
+<h1 class="mb-2 text-center text-4xl font-semibold">Sign up</h1>
+<p class="mb-12 text-xl">
+	By creating an account, you agree to the <a href="/policies/term" class="underline"
+		>Terms of use</a
+	>
+	and
+	<a href="/policies/privacy" class="underline">Privacy policy</a>.
 </p>
-<div>
-	<SignIn
-		provider="linkedin"
-		signInPage="signin"
-		className="w-full p-4 text-xl mb-2 rounded-lg hover:bg-stone-200 focus:bg-stone-200"
-	>
-		<div slot="submitButton">Sign in with LinkedIn</div>
-	</SignIn>
-	<SignIn
-		provider="github"
-		signInPage="signin"
-		className="w-full p-4 text-xl rounded-lg hover:bg-stone-200 focus:bg-stone-200"
-	>
-		<div slot="submitButton">Sign in with GitHub</div>
-	</SignIn>
+<div class="flex flex-col">
+	<div class="mx-auto inline-block">
+		<SignInByOAuth providerName="LinkedIn" className="mb-4" />
+		<SignInByOAuth providerName="GitHub" />
+	</div>
 </div>
