@@ -27,7 +27,7 @@
 			<Nav />
 		</nav>
 	</header>
-	<main>
+	<main class="flex-1 sm:pr-3">
 		<slot></slot>
 	</main>
 </LayoutRule>

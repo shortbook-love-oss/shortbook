@@ -7,7 +7,7 @@
 	<div slot="header" class="hidden sm:block">
 		<Header />
 	</div>
-	<main>
+	<main class="flex-1">
 		<slot></slot>
 	</main>
 </LayoutRule>
