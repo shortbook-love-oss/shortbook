@@ -21,6 +21,5 @@ mkdir ./cache/dynamodb
 ### Run Docker
 
 ```bash
-cd docker
-docker compose up -d --build
+docker compose -f docker/compose.yaml up -d --build
 ```
