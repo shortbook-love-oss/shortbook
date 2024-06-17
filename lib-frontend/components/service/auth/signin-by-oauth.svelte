@@ -1,22 +1,21 @@
 <script lang="ts">
-	import { SignIn } from '@auth/sveltekit/components';
+	import SignInByOAuthButton from '$lib/components/service/auth/signin-by-oauth-button.svelte';
+	import { onMount } from 'svelte';
 
 	export let isSignUp = false;
-	export let className = '';
 	export let providerName: 'LinkedIn' | 'GitHub';
+	export let className = '';
+
+	let callbackUrl = '';
+
+	onMount(() => {
+		callbackUrl = new URLSearchParams(location.search).get('callbackUrl') ?? '';
+	});
 </script>
 
-<SignIn
-	provider={providerName.toLowerCase()}
-	signInPage="signin"
-	className="flex w-full rounded-lg border border-stone-400 bg-white p-4 text-xl hover:bg-stone-200 focus:bg-stone-200 sm:px-6 {className}"
->
-	<div slot="submitButton" class="flex items-center gap-3 text-start">
-		<img
-			src="/assets/brands/{providerName.toLowerCase()}-logo.png"
-			class="w-8"
-			alt="{providerName} logo"
-		/>
-		<span>Sign {isSignUp ? 'up' : 'in'} with {providerName}</span>
-	</div>
-</SignIn>
+{#if callbackUrl}
+	<SignInByOAuthButton {isSignUp} {providerName} {className} {callbackUrl} />
+{:else}
+	<!-- if disable JS or after failed, set callbackUrl="/" -->
+	<SignInByOAuthButton {isSignUp} {providerName} {className} />
+{/if}
