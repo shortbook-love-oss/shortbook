@@ -1,8 +1,8 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
+import prisma from '$lib/prisma/connect';
 import {
 	AUTH_SECRET,
 	AUTH_LINKEDIN_ID,
@@ -10,8 +10,6 @@ import {
 	AUTH_GITHUB_ID,
 	AUTH_GITHUB_SECRET
 } from '$env/static/private';
-
-const prisma = new PrismaClient();
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: true,
