@@ -86,7 +86,7 @@
 					/>
 					<ul
 						id="common_submenu"
-						class="absolute bottom-20 right-2 hidden rounded-xl border border-stone-400 bg-white p-2 peer-checked/common_submenu_open:block"
+						class="absolute bottom-20 right-1/2 hidden translate-x-36 rounded-xl border border-stone-400 bg-white p-2 peer-checked/common_submenu_open:block"
 						use:clickoutside
 						on:clickoutside={closeSubmenu}
 					>
