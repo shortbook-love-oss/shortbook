@@ -119,7 +119,8 @@ model user_profile_langs {
   profile_id              String
   lang_tag                String              @db.VarChar(5)
   pen_name                String              @db.VarChar(210) // Length 1 - 50
-  self_info               String?             @db.MediumText
+  headline                String?             @db.VarChar(210) // Length 1 - 50
+  self_intro              String?             @db.MediumText
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              Boolean             @default(false)
