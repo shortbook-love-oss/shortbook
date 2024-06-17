@@ -48,11 +48,12 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 				// Allows relative callback URLs
 				fullUrl = baseUrl + url;
 			}
-			const callbackPathName = new URL(fullUrl).searchParams.get('callback');
-			if (callbackPathName) {
-				// Need baseUrl for prevent redirection to external domains.
+			const callbackUrl = new URL(fullUrl).searchParams.get('callbackUrl');
+			if (callbackUrl) {
+				// Need "baseUrl" for prevent redirection to external domains.
 				// If you allow users to use their own domain, able to redirect if it matches the domain registered in the DB.
-				return baseUrl + decodeURIComponent(callbackPathName);
+				const callbackUrlParsed = new URL(decodeURIComponent(callbackUrl));
+				return baseUrl + callbackUrlParsed.pathname + callbackUrlParsed.search;
 			}
 
 			return baseUrl;

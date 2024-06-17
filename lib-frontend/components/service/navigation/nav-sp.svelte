@@ -16,11 +16,11 @@
 	let redirectPathname = '';
 	if (['/signin', '/signup'].includes(removeLangTag($page.url.pathname))) {
 		// On sign-in/up → sign-in/up page move, keep callback url;
-		const callbackUrl = $page.url.searchParams.get('callback') ?? '';
+		const callbackUrl = $page.url.searchParams.get('callbackUrl') ?? '';
 		redirectPathname = encodeURIComponent(callbackUrl);
 	} else {
 		// On (any page) → sign-in/up page move, show the (any page) after sign-in/up
-		redirectPathname = encodeURIComponent($page.url.pathname + $page.url.search);
+		redirectPathname = encodeURIComponent($page.url.href);
 	}
 
 	// Close submenu if open
@@ -59,12 +59,12 @@
 				</li>
 			{:else}
 				<li>
-					<NavLinkSp name="Sign in" href="/signin?callback={redirectPathname}">
+					<NavLinkSp name="Sign in" href="/signin?callbackUrl={redirectPathname}">
 						<IconSignin width="32" height="32" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name="Sign up" href="/signup?callback={redirectPathname}">
+					<NavLinkSp name="Sign up" href="/signup?callbackUrl={redirectPathname}">
 						<IconSignup width="32" height="32" />
 					</NavLinkSp>
 				</li>

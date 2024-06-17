@@ -6,7 +6,7 @@
 	import Signout from '$lib/components/service/auth/signout.svelte';
 
 	// After sign-in/sign-up redirect to
-	let redirectPathname = encodeURIComponent($page.url.pathname + $page.url.search);
+	let redirectUrl = encodeURIComponent($page.url.href);
 </script>
 
 <ul class="flex items-center">
@@ -26,12 +26,12 @@
 		</li>
 	{:else}
 		<li>
-			<NavLinkSmall name="Sign in" href="/signin?callback={redirectPathname}">
+			<NavLinkSmall name="Sign in" href="/signin?callbackUrl={redirectUrl}">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>
 		<li>
-			<NavLinkSmall name="Sign up" href="/signup?callback={redirectPathname}">
+			<NavLinkSmall name="Sign up" href="/signup?callbackUrl={redirectUrl}">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>

@@ -2,6 +2,9 @@
 	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import { page } from '$app/stores';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
+
+	// After sign-in/sign-up redirect to
+	let redirectUrl = encodeURIComponent($page.url.href);
 </script>
 
 <svelte:head>
@@ -23,12 +26,12 @@
 		<div class="flex gap-4">
 			<NavLinkSmall
 				name="Sign in"
-				href="/signin"
+				href="/signin?callbackUrl={redirectUrl}"
 				className="border-2 border-primary-700 text-2xl text-red-800"
 			/>
 			<NavLinkSmall
 				name="Sign up"
-				href="/signup"
+				href="/signup?callbackUrl={redirectUrl}"
 				className="border-2 border-primary-700 text-2xl text-red-800"
 			/>
 		</div>
