@@ -70,7 +70,7 @@
 				</li>
 			{/if}
 			{#if $page.data.session?.user}
-				<li>
+				<li class="relative">
 					<button type="button" class="hover:bg-stone-200 focus:bg-stone-200">
 						<label for="common_submenu_open">
 							<NavLinkSp name="More">
@@ -86,7 +86,7 @@
 					/>
 					<ul
 						id="common_submenu"
-						class="absolute bottom-20 right-1/2 hidden translate-x-36 rounded-xl border border-stone-400 bg-white p-2 peer-checked/common_submenu_open:block"
+						class="absolute bottom-20 right-0 hidden min-w-40 rounded-xl border border-stone-400 bg-white p-2 peer-checked/common_submenu_open:block"
 						use:clickoutside
 						on:clickoutside={closeSubmenu}
 					>
