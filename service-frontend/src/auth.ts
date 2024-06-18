@@ -43,20 +43,11 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	},
 	callbacks: {
 		async redirect({ url, baseUrl }) {
-			let fullUrl = url;
-			if (url.startsWith('/')) {
-				// Allows relative callback URLs
-				fullUrl = baseUrl + url;
+			if (url.startsWith(baseUrl) && new URL(url).origin === baseUrl) {
+				return Promise.resolve(url);
+			} else {
+				return Promise.resolve(baseUrl);
 			}
-			const callbackUrl = new URL(fullUrl).searchParams.get('callbackUrl');
-			if (callbackUrl) {
-				// Need "baseUrl" for prevent redirection to external domains.
-				// If you allow users to use their own domain, able to redirect if it matches the domain registered in the DB.
-				const callbackUrlParsed = new URL(callbackUrl);
-				return baseUrl + callbackUrlParsed.pathname + callbackUrlParsed.search;
-			}
-
-			return url;
 		},
 		async session({ session, user }: any) {
 			// Send properties to the client, like an access_token and user id from a provider.
@@ -70,7 +61,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					image: user.image
 				}
 			};
-			return session;
+			return Promise.resolve(session);
 		}
 	}
 });
