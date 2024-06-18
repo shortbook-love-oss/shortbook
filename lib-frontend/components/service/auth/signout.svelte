@@ -9,6 +9,11 @@
 	onMount(() => {
 		showDialog = true;
 	});
+
+	function onSignOut() {
+		// Hide the components for signed-in user
+		location.reload();
+	}
 </script>
 
 <div>
@@ -26,6 +31,7 @@
 			<SignOut
 				slot="actions"
 				className="w-fit rounded-lg mx-auto hover:bg-stone-200 focus:bg-stone-200"
+				on:submit={onSignOut}
 			>
 				<p slot="submitButton" class="px-3 py-2 text-xl text-red-800">Sign out</p>
 			</SignOut>
