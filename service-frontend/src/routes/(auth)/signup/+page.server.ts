@@ -1,6 +1,4 @@
 import { redirect } from '@sveltejs/kit';
-import { signIn } from '../../../auth';
-import type { Actions } from './$types';
 
 export async function load({ locals, url }) {
 	const session = await locals.auth();
@@ -13,5 +11,3 @@ export async function load({ locals, url }) {
 		}
 	}
 }
-
-export const actions = { default: signIn } satisfies Actions;

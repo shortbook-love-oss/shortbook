@@ -52,11 +52,11 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			if (callbackUrl) {
 				// Need "baseUrl" for prevent redirection to external domains.
 				// If you allow users to use their own domain, able to redirect if it matches the domain registered in the DB.
-				const callbackUrlParsed = new URL(decodeURIComponent(callbackUrl));
+				const callbackUrlParsed = new URL(callbackUrl);
 				return baseUrl + callbackUrlParsed.pathname + callbackUrlParsed.search;
 			}
 
-			return baseUrl;
+			return url;
 		},
 		async session({ session, user }: any) {
 			// Send properties to the client, like an access_token and user id from a provider.
