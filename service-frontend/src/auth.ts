@@ -32,11 +32,20 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	events: {
 		async createUser({ user }) {
 			// Create initialized user profile
-			// Does not retain "location"
 			await prisma.user_profiles.create({
 				data: {
 					user_id: user.id as string,
-					slug: crypto.randomUUID().replaceAll('-', '').slice(0, 16)
+					slug: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
+					native_lang: '',
+					location: '',
+					langs: {
+						create: {
+							lang_tag: '',
+							pen_name: user.name ?? '',
+							headline: '',
+							self_intro: ''
+						}
+					}
 				}
 			});
 		}
