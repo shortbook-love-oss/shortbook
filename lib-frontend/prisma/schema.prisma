@@ -24,7 +24,7 @@ model User {
   accounts                Account[]
   Authenticator           Authenticator[]
   sessions                Session[]
-  profiles                user_profiles[]
+  profiles                user_profiles?
   fans                    user_fans[]
   articles                articles[]
 
@@ -55,6 +55,8 @@ model Account {
 }
 
 model Authenticator {
+  user                    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   credentialID            String              @unique @map("credential_id")
   userId                  String              @map("user_id")
   providerAccountId       String              @map("provider_account_id")
@@ -66,8 +68,6 @@ model Authenticator {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              Boolean             @default(false)
-
-  user                    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
   @@map("authenticator")
@@ -100,7 +100,7 @@ model user_profiles {
   user                    User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   id                      String              @id @default(cuid())
-  user_id                 String
+  user_id                 String              @unique
   slug                    String              @unique @db.VarChar(30) // Length 1 - 30
   native_lang             String              @db.VarChar(5)
   location                String
@@ -124,6 +124,8 @@ model user_profile_langs {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              Boolean             @default(false)
+
+  @@unique([profile_id, lang_tag])
 }
 
 model user_fans {
