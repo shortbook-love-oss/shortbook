@@ -8,7 +8,7 @@
 		? 'cursor-wait border-stone-400 bg-stone-100 text-stone-500'
 		: ''} {className}"
 	type={isLoading ? 'button' : 'submit'}
-	aria-disabled={isLoading}
+	aria-disabled={isLoading ? true : undefined}
 >
 	<slot />
 </button>

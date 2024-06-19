@@ -6,7 +6,7 @@
 	export let label = '';
 	export let required = false;
 	export let inputClass = '';
-	export let errorMessage = '';
+	export let errorMessages: string[] | undefined = undefined;
 
 	type Item = {
 		value: string;
@@ -31,16 +31,21 @@
 			{name}
 			{required}
 			bind:value
-			class="invalid block w-full appearance-none rounded-md border py-2 pl-3 pr-10 invalid:border-2 invalid:border-red-600 disabled:bg-stone-100 disabled:text-stone-500 disabled:opacity-100 {errorMessage
-				? 'bborder-2 order-red-700'
+			class="invalid block w-full appearance-none rounded-md border py-2 pl-3 pr-10 invalid:border-2 invalid:border-red-700 disabled:bg-stone-100 disabled:text-stone-500 disabled:opacity-100 {errorMessages?.length
+				? 'border-2 border-red-700'
 				: 'border-stone-600'} {inputClass}"
+			aria-invalid={errorMessages?.length ? true : undefined}
 		>
 			{#each list as item}
 				<option value={item.value} selected={item.value === value}>{item.text}</option>
 			{/each}
 		</select>
 	</div>
-	{#if errorMessage}
-		<p class="mt-2 text-red-800">{errorMessage}</p>
+	{#if errorMessages?.length}
+		<div class="mt-2 text-red-800">
+			{#each errorMessages as errorMessage}
+				<p class="mt-1">{errorMessage}</p>
+			{/each}
+		</div>
 	{/if}
 </label>
