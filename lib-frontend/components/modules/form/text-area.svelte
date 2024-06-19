@@ -24,7 +24,7 @@
 			{name}
 			{required}
 			bind:value
-			class="overflow-none absolute left-0 top-0 block h-full w-full resize-none rounded-md border px-4 py-2 invalid:border-2 invalid:border-red-600 {errorMessage
+			class="overflow-none absolute left-0 top-0 block h-full w-full resize-none rounded-md border px-4 py-2 invalid:border-2 invalid:border-red-600 disabled:bg-stone-100 disabled:text-stone-500 {errorMessage
 				? 'border-2 border-red-700'
 				: 'border-stone-600'} {inputClass}"
 		/>

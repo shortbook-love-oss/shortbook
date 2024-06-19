@@ -31,7 +31,7 @@
 			{name}
 			{required}
 			bind:value
-			class="invalid block w-full appearance-none rounded-md border py-2 pl-3 pr-10 invalid:border-2 invalid:border-red-600 {errorMessage
+			class="invalid block w-full appearance-none rounded-md border py-2 pl-3 pr-10 invalid:border-2 invalid:border-red-600 disabled:bg-stone-100 disabled:text-stone-500 disabled:opacity-100 {errorMessage
 				? 'bborder-2 order-red-700'
 				: 'border-stone-600'} {inputClass}"
 		>
