@@ -27,6 +27,16 @@ const config = {
 			},
 			aspectRatio: {
 				logotype: '3170 / 512'
+			},
+			animation: {
+				'hide-delay': 'fadeout 0.5s 3s linear forwards'
+			},
+			keyframes: {
+				fadeout: {
+					'0%': { opacity: '1' },
+					'99.9%, 100%': { opacity: '0' },
+					'100%': { display: 'none' }
+				}
 			}
 		}
 	}
