@@ -6,6 +6,7 @@
 	import Select from '$lib/components/modules/form/select.svelte';
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
+	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import { removeLangTag } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/scheme/profile-update';
 
@@ -26,22 +27,11 @@
 </script>
 
 <svelte:head>
-	<title>My page | ShortBook</title>
+	<title>Edit my profile | ShortBook</title>
 </svelte:head>
 
 <h1 class="mb-4 text-2xl font-semibold">Public profile</h1>
-<div class="mb-8 flex items-center gap-3 rounded-lg">
-	{#if user?.image}
-		<img
-			src={user?.image}
-			class="h-16 w-16 rounded-md border border-stone-300"
-			alt="Profile icon"
-		/>
-	{/if}
-	<div>
-		<p class="break-all text-xl">{initPenName}</p>
-	</div>
-</div>
+<ProfileCard name={initPenName} imageSrc={user?.image ?? ''} className="mb-8" />
 <Form
 	method="POST"
 	action={actionUrl}
