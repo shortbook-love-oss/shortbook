@@ -129,7 +129,7 @@ model user_profile_langs {
 }
 
 model user_fans {
-  target_user             User                @relation(fields: [target_user_id], references: [id])
+  target_user             User                @relation(fields: [target_user_id], references: [id], onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   target_user_id          String
@@ -144,7 +144,7 @@ model user_fans {
 // -----------------------------------------------------------------------
 
 model articles {
-  user                    User                @relation(fields: [user_id], references: [id])
+  user                    User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String
@@ -164,7 +164,7 @@ model articles {
 }
 
 model article_languages {
-  article                 articles            @relation(fields: [article_id], references: [id])
+  article                 articles            @relation(fields: [article_id], references: [id], onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   article_id              String
@@ -180,7 +180,7 @@ model article_languages {
 }
 
 model article_tags {
-  article                 articles            @relation(fields: [article_id], references: [id])
+  article                 articles            @relation(fields: [article_id], references: [id], onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   article_id              String
@@ -192,7 +192,7 @@ model article_tags {
 }
 
 model article_buys {
-  article                 articles            @relation(fields: [article_id], references: [id])
+  article                 articles            @relation(fields: [article_id], references: [id], onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   article_id              String
@@ -203,7 +203,7 @@ model article_buys {
 }
 
 model article_favorites {
-  article                 articles            @relation(fields: [article_id], references: [id])
+  article                 articles            @relation(fields: [article_id], references: [id], onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   article_id              String
