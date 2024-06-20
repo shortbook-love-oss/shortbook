@@ -1,6 +1,6 @@
 <script lang="ts">
 	import IconCheck from '~icons/mdi/check';
-	import IconError from '~icons/mdi/warning-circle-outline';
+	import IconError from '~icons/mdi/warning-circle';
 	import SubmitButton from './submit-button.svelte';
 
 	export let enhance: Function;

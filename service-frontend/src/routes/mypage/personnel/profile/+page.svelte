@@ -15,7 +15,9 @@
 		resetForm: false, // Prevents reverting to initial value after submission
 		validators: zod(schema),
 		onUpdated({ form }) {
-			initPenName = form.data.penName;
+			if (form.valid) {
+				initPenName = form.data.penName;
+			}
 		}
 	});
 	const user = $page.data.session?.user;
@@ -37,7 +39,7 @@
 		/>
 	{/if}
 	<div>
-		<p class="text-xl">{initPenName}</p>
+		<p class="break-all text-xl">{initPenName}</p>
 	</div>
 </div>
 <Form
