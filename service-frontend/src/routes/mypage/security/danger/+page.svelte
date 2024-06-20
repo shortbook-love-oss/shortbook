@@ -23,6 +23,9 @@
 	});
 	const user = $page.data.session?.user;
 	const actionUrl = removeLangTag($page.url.pathname);
+	const warnMessage =
+		'If you delete a user, you can restore them for 30 days by simply signing in. However, after 30 days, user data will be permanently deleted.';
+	const errorMessage = 'There was an error, please check your input and resubmit.';
 </script>
 
 <svelte:head>
@@ -38,10 +41,9 @@
 	hasInvalid={$allErrors.length > 0}
 	isLoading={$submitting}
 	submitLabel="Delete user"
+	{warnMessage}
 	successMessage={$page.status === 200 ? $message : ''}
-	errorMessage={$page.status === 400
-		? 'There was an error, please check your input and resubmit.'
-		: ''}
+	errorMessage={$page.status === 400 ? errorMessage : ''}
 >
 	<input type="hidden" name="slug" value={$form.slug} />
 	<TextField
