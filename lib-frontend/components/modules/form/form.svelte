@@ -1,13 +1,20 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import IconCheck from '~icons/mdi/check';
 	import IconError from '~icons/mdi/warning-circle';
 	import SubmitButton from './submit-button.svelte';
 
 	export let enhance: Function;
+	export let hasInvalid = false;
 	export let isLoading = false;
 	export let submitLabel = 'Save';
 	export let successMessage = '';
 	export let errorMessage = '';
+
+	let isEnableJS = false;
+	onMount(() => {
+		isEnableJS = true;
+	});
 </script>
 
 <form use:enhance {...$$restProps}>
@@ -38,9 +45,11 @@
 	</fieldset>
 	<slot name="submit">
 		<div class="flex flex-col items-center gap-4 sm:flex-row">
-			<SubmitButton {isLoading} className="shrink-0">{submitLabel}</SubmitButton>
+			<SubmitButton hasInvalid={hasInvalid && isEnableJS} {isLoading} className="shrink-0">
+				{submitLabel}
+			</SubmitButton>
 			{#if successMessage}
-				<div class="animate-hide-delay flex items-center gap-1 text-emerald-900">
+				<div class="flex animate-hide-delay items-center gap-1 text-emerald-900">
 					<IconCheck width="28" height="28" class="shrink-0" />
 					<p class="text-lg leading-snug">{successMessage}</p>
 				</div>

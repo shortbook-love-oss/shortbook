@@ -12,7 +12,7 @@
 
 	export let data;
 
-	const { form, enhance, submitting, message, errors } = superForm(data.form, {
+	const { form, enhance, submitting, message, errors, allErrors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
 		validators: zod(schema),
 		onUpdated({ form }) {
@@ -36,6 +36,7 @@
 	method="POST"
 	action={actionUrl}
 	{enhance}
+	hasInvalid={$allErrors.length > 0}
 	isLoading={$submitting}
 	submitLabel="Save profile"
 	successMessage={$message && $page.status === 200 ? $message : ''}
