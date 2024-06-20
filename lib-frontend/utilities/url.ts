@@ -11,3 +11,15 @@ export function removeLangTag(pathname: string) {
 		return pathname;
 	}
 }
+
+// "/de/mypage/personnel" → "del"
+// "/mypage/personnel" → ""
+// "/de" → "de"
+export function getLangTag(pathname: string) {
+	const firstDirName = pathname.split('/')[1] ?? '';
+	if (isAvailableLanguageTag(firstDirName)) {
+		return firstDirName;
+	} else {
+		return '';
+	}
+}
