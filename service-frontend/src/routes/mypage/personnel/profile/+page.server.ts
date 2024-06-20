@@ -5,7 +5,7 @@ import { availableLanguageTags } from '$lib/i18n/paraglide/runtime.js';
 import prisma from '$lib/prisma/connect';
 import { getUserId, keyUserId } from '$lib/utilities/cookie.js';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
-import { schema } from '$lib/validation/scheme/profile-update';
+import { schema } from '$lib/validation/schema/profile-update';
 
 export const load = async ({ request, cookies }) => {
 	const form = await superValidate(zod(schema));

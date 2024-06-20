@@ -8,7 +8,7 @@
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import { removeLangTag } from '$lib/utilities/url';
-	import { schema } from '$lib/validation/scheme/profile-update';
+	import { schema } from '$lib/validation/schema/profile-update';
 
 	export let data;
 
