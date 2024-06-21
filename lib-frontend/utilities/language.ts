@@ -1,4 +1,4 @@
-import { availableLanguageTags } from '$lib/i18n/paraglide/runtime';
+import { sourceLanguageTag, availableLanguageTags } from '$lib/i18n/paraglide/runtime';
 import { getLangTag } from '$lib/utilities/url';
 
 type AvailableLanguageTags = (typeof availableLanguageTags)[number];
@@ -24,5 +24,5 @@ export function guessNativeLangFromRequest(request: Request) {
 		}
 	}
 
-	return nativeLang;
+	return nativeLang || sourceLanguageTag;
 }

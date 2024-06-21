@@ -1,15 +1,15 @@
 import prisma from '$lib/prisma/connect';
 import { getSessionToken, getUserId } from '$lib/utilities/cookie';
-import { getLangTag } from '$lib/utilities/url';
+import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 const brandNames = {
 	linkedin: 'LinkedIn',
 	github: 'GitHub'
 };
 
-export const load = async ({ url, cookies }) => {
+export const load = async ({ request, cookies }) => {
 	const sessionToken = getSessionToken(cookies);
-	const langTag = getLangTag(url.pathname) || 'en';
+	const langTag = guessNativeLangFromRequest(request);
 
 	const user = await prisma.user.findUnique({
 		where: { id: getUserId(cookies) },
