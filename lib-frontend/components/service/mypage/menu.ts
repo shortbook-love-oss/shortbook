@@ -9,8 +9,7 @@ export const categories: MypageItem[] = [
 		name: 'Personnel information',
 		href: 'personnel',
 		childs: [
-			{ name: 'Public profile', href: 'profile' },
-			{ name: 'Translate languages', href: 'languages' }
+			{ name: 'Public profile', href: 'profile' }
 		]
 	},
 	{
