@@ -40,10 +40,10 @@
 </script>
 
 <svelte:head>
-	<title>Delete user | ShortBook</title>
+	<title>Danger action | ShortBook</title>
 </svelte:head>
 
-<h1 class="mb-4 text-2xl font-semibold">Delete user</h1>
+<h1 class="mb-4 text-2xl font-semibold">Danger action — Delete user</h1>
 <ProfileCard name={data.penName} imageSrc={user?.image ?? ''} className="mb-8" />
 <Form
 	method="POST"

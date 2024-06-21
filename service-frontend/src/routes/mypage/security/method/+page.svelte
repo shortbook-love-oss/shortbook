@@ -6,6 +6,7 @@
 	<title>Sign in method | ShortBook</title>
 </svelte:head>
 
+<h1 class="mb-4 text-2xl font-semibold">Sign in method</h1>
 <div
 	class="mb-4 inline-flex items-center gap-2 rounded-lg border border-stone-400 bg-white p-1 py-2 pr-4 sm:flex-row"
 >
