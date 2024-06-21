@@ -2,6 +2,8 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
+import { dbUserProfileCreate } from '$lib/model/user/profile/create';
+import { dbUserEmailUpdate } from '$lib/model/user/update-email';
 import prisma from '$lib/prisma/connect';
 import {
 	AUTH_SECRET,
@@ -32,29 +34,18 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	events: {
 		async createUser({ user }) {
 			// Create initialized user profile
-			await prisma.user_profiles.create({
-				data: {
-					user_id: user.id as string,
-					slug: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
-					native_lang: '',
-					location: '',
-					langs: {
-						create: {
-							lang_tag: '',
-							pen_name: user.name ?? '',
-							headline: '',
-							self_intro: ''
-						}
-					}
-				}
+			await dbUserProfileCreate({
+				userId: user.id as string,
+				slug: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
+				penName: user.name as string
 			});
 		},
 		async signIn({ user, profile }) {
 			if (user.id && profile?.email) {
 				// Sync with email address registered in external service
-				await prisma.user.update({
-					where: { id: user.id },
-					data: { email: profile.email }
+				await dbUserEmailUpdate({
+					userId: user.id,
+					email: profile.email
 				});
 			}
 		}

@@ -1,4 +1,5 @@
-import prisma from '$lib/prisma/connect';
+import { fail } from '@sveltejs/kit';
+import { dbUserSessionGet } from '$lib/model/user/session/get';
 import { getSessionToken, getUserId } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
@@ -11,21 +12,20 @@ export const load = async ({ request, cookies }) => {
 	const sessionToken = getSessionToken(cookies);
 	const langTag = guessNativeLangFromRequest(request);
 
-	const user = await prisma.user.findUnique({
-		where: { id: getUserId(cookies) },
-		include: {
-			accounts: true,
-			sessions: {
-				where: { sessionToken: sessionToken },
-				take: 1
-			}
-		}
+	const { user, session, error } = await dbUserSessionGet({
+		userId: getUserId(cookies),
+		sessionToken
 	});
+	if (error) {
+		return fail(500, {
+			message: 'Server error: Failed to get user.'
+		});
+	}
 
 	const providerNameLowercase = (user?.accounts[0].provider ?? '') as keyof typeof brandNames;
 	const providerName = brandNames[providerNameLowercase] ?? '';
 	const userCreatedAt = user?.created_at?.toLocaleString(langTag) ?? '';
-	const lastSignedAt = user?.sessions[0]?.created_at?.toLocaleString(langTag) ?? '';
+	const lastSignedAt = session?.created_at?.toLocaleString(langTag) ?? '';
 
 	return { providerName, userCreatedAt, lastSignedAt };
 };

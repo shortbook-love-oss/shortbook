@@ -2,8 +2,9 @@ import { fail } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { availableLanguageTags } from '$lib/i18n/paraglide/runtime.js';
-import prisma from '$lib/prisma/connect';
-import { getUserId, keyUserId } from '$lib/utilities/cookie.js';
+import { dbUserProfileGet } from '$lib/model/user/profile/get';
+import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
+import { getUserId, keyUserId } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/profile-update';
 
@@ -13,21 +14,21 @@ export const load = async ({ request, cookies }) => {
 	// e.g. "/ja/mypage" → ja
 	const nativeLang = guessNativeLangFromRequest(request);
 
-	const userProfile = await prisma.user_profiles.findFirst({
-		where: {
-			user_id: cookies.get(keyUserId)
-		},
-		include: {
-			langs: true
-		}
+	const { profile, error } = await dbUserProfileGet({
+		userId: cookies.get(keyUserId) ?? ''
 	});
-	const userProfileLangs = userProfile?.langs[0];
+	if (error) {
+		return fail(500, {
+			message: 'Server error: Failed to get user.'
+		});
+	}
+	const profileLangs = profile?.langs[0];
 
-	form.data.slug = userProfile?.slug ?? '';
+	form.data.slug = profile?.slug ?? '';
 	form.data.nativeLang = nativeLang;
-	form.data.penName = userProfileLangs?.pen_name ?? '';
-	form.data.headline = userProfileLangs?.headline ?? '';
-	form.data.selfIntro = userProfileLangs?.self_intro ?? '';
+	form.data.penName = profileLangs?.pen_name ?? '';
+	form.data.headline = profileLangs?.headline ?? '';
+	form.data.selfIntro = profileLangs?.self_intro ?? '';
 
 	const list = {
 		langTags: [
@@ -50,32 +51,15 @@ export const actions = {
 			return fail(401, { message: 'Unauthorized' });
 		}
 
-		await prisma.$transaction(async (tx) => {
-			const profile = await tx.user_profiles.update({
-				where: { user_id: userId },
-				data: {
-					slug: form.data.slug,
-					native_lang: form.data.nativeLang
-				},
-				include: {
-					langs: true
-				}
-			});
-			await tx.user_profile_langs.deleteMany({
-				where: { profile_id: profile.id }
-			});
-			await tx.user_profile_langs.createMany({
-				data: [
-					{
-						profile_id: profile.id,
-						lang_tag: form.data.nativeLang,
-						pen_name: form.data.penName,
-						headline: form.data.headline,
-						self_intro: form.data.selfIntro
-					}
-				]
-			});
+		const { error } = await dbUserProfileUpdate({
+			userId,
+			...form.data
 		});
+		if (error) {
+			return fail(500, {
+				message: 'Server error: Failed to update user.'
+			});
+		}
 
 		return message(form, 'Profile updated successfully.');
 	}
