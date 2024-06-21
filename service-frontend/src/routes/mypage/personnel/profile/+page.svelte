@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
@@ -12,15 +13,25 @@
 
 	export let data;
 
-	const { form, enhance, submitting, message, errors, allErrors } = superForm(data.form, {
+	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
 		validators: zod(schema),
-		onUpdated({ form }) {
+		onUpdated: ({ form }) => {
 			if (form.valid) {
 				initPenName = form.data.penName;
 			}
 		}
 	});
+
+	// Validate and set enable/disable submit button when the input value changes
+	let hasVaild = true;
+	function validateBackground() {
+		validateForm().then((result) => (hasVaild = result.valid));
+	}
+	const formObserver = form.subscribe(() => validateBackground());
+	onMount(() => validateBackground());
+	onDestroy(() => formObserver());
+
 	const user = $page.data.session?.user;
 	const actionUrl = removeLangTag($page.url.pathname);
 	let initPenName = $form.penName;
@@ -36,10 +47,10 @@
 	method="POST"
 	action={actionUrl}
 	{enhance}
-	hasInvalid={$allErrors.length > 0}
+	hasInvalid={!hasVaild}
 	isLoading={$submitting}
 	submitLabel="Save profile"
-	successMessage={$message && $page.status === 200 ? $message : ''}
+	successMessage={$page.status === 200 && $message ? $message : ''}
 	errorMessage={$page.status === 400
 		? 'There was an error, please check your input and resubmit.'
 		: ''}
