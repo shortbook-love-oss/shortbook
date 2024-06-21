@@ -18,20 +18,21 @@ const config = {
 			mode: 'hash',
 			directives: {
 				'base-uri': ['self'],
-				'connect-src': ['self', 'wss://localhost:*'],
+				'form-action': ['self'],
+				'frame-ancestors': ['none'], // For click-jacking protection
 				'script-src': ['self'],
+				'worker-src': ['self'],
+				'connect-src': ['self', 'wss://localhost:*'],
 				'style-src': ['self', 'unsafe-inline'],
-				'media-src': ['self', 'data:'],
 				'img-src': [
 					'self',
 					'data:',
 					'https://media.licdn.com/dms/image/',
 					'https://avatars.githubusercontent.com/u/'
 				],
+				'media-src': ['self', 'data:'],
 				'object-src': ['self'],
 				'font-src': ['self', 'data:'],
-				'form-action': ['self'],
-				'frame-ancestors': ['none'], // For click-jacking protection
 				'default-src': ['self']
 			}
 		}
