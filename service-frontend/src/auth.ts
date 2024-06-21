@@ -74,7 +74,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 				expires: session.expires,
 				user: {
 					id: user.id,
-					email: user.email,
 					name: user.name,
 					image: user.image
 				}
