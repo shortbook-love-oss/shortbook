@@ -48,6 +48,15 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					}
 				}
 			});
+		},
+		async signIn({ user, profile }) {
+			if (user.id && profile?.email) {
+				// Sync with email address registered in external service
+				await prisma.user.update({
+					where: { id: user.id },
+					data: { email: profile.email }
+				});
+			}
 		}
 	},
 	callbacks: {
