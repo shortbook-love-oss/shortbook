@@ -2,12 +2,12 @@ import { fail } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import prisma from '$lib/prisma/connect';
-import { getUserId, keyUserId } from '$lib/utilities/cookie.js';
+import { getUserId } from '$lib/utilities/cookie.js';
 import { schema } from '$lib/validation/schema/user-delete';
 
 export const load = async ({ cookies }) => {
 	const userProfile = await prisma.user_profiles.findFirst({
-		where: { user_id: cookies.get(keyUserId) },
+		where: { user_id: getUserId(cookies) },
 		include: { langs: true }
 	});
 
