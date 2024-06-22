@@ -23,7 +23,10 @@
 				<p class="px-3 py-2 text-lg">{category.name}</p>
 			</li>
 			{#each category.childs as item, i (item.href)}
-				<li class={category.childs.length - 1 === i ? 'mb-6' : ''}>
+				<li
+					class={category.childs.length - 1 === i ? 'mb-6' : ''}
+					aria-current={isMatchPath(category.href, item.href) ? 'page' : undefined}
+				>
 					<NavLinkSmall
 						name={item.name}
 						href="/mypage/{category.href}/{item.href}"
