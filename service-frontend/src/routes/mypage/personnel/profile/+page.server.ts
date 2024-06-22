@@ -10,8 +10,7 @@ import { schema } from '$lib/validation/schema/profile-update';
 
 export const load = async ({ request, cookies }) => {
 	const form = await superValidate(zod(schema));
-	// e.g. "/ja/mypage" → ja
-	const nativeLang = guessNativeLangFromRequest(request);
+	const langTags = languageAndNotSelect;
 
 	const userId = getUserId(cookies);
 	if (!userId) {
@@ -25,14 +24,13 @@ export const load = async ({ request, cookies }) => {
 		});
 	}
 	const profileLangs = profile?.langs[0];
+	const nativeLang = guessNativeLangFromRequest(request);
 
 	form.data.slug = profile?.slug ?? '';
-	form.data.nativeLang = nativeLang;
+	form.data.nativeLang = profile?.native_lang || nativeLang;
 	form.data.penName = profileLangs?.pen_name ?? '';
 	form.data.headline = profileLangs?.headline ?? '';
 	form.data.selfIntro = profileLangs?.self_intro ?? '';
-
-	const langTags = languageAndNotSelect;
 
 	return { form, langTags };
 };

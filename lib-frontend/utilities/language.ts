@@ -35,6 +35,7 @@ export function isLanguageTag(maybeLangTag: string) {
 }
 
 export function guessNativeLangFromRequest(request: Request) {
+	// e.g. "/ja/mypage" → ja
 	let textLang = getLangTag(new URL(request.url).pathname);
 	if (!textLang) {
 		// e.g. reqAcceptLang = "ja,en-US;q=0.9,en;q=0.8,ar;q=0.7,ru;q=0.6,zh-CN;q=0.5,zh;q=0.4,sv;q=0.3"
