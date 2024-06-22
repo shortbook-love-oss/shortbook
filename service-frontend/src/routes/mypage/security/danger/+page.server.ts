@@ -4,7 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserDelete } from '$lib/model/user/delete';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getUserId } from '$lib/utilities/cookie';
-import { getLangTag } from '$lib/utilities/url';
+import { getLangTagPathPart } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user-delete';
 
 export const load = async ({ cookies }) => {
@@ -43,6 +43,6 @@ export const actions = {
 			});
 		}
 
-		redirect(303, `/${getLangTag(url.pathname)}/goodbye`);
+		redirect(303, `${getLangTagPathPart(url.pathname)}/goodbye`);
 	}
 };

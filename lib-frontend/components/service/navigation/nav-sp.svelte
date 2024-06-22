@@ -7,14 +7,14 @@
 	import IconSignin from '~icons/mdi/user-check-outline';
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
-	import { removeLangTag } from '$lib/utilities/url';
+	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import NavLinkSp from './nav-link-sp.svelte';
 	import NavLinkSmall from './nav-link-small.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 
 	// After sign-in/up redirect to
 	let redirectPathname = '';
-	if (['/signin', '/signup'].includes(removeLangTag($page.url.pathname))) {
+	if (['/signin', '/signup'].includes(removeLangTagFromPath($page.url.pathname))) {
 		// On sign-in/up → sign-in/up page move, keep callback url;
 		const callbackUrl = $page.url.searchParams.get('callbackUrl') ?? '';
 		redirectPathname = encodeURIComponent(callbackUrl);

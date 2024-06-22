@@ -6,7 +6,7 @@
 	import Form from '$lib/components/modules/form/form.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
-	import { removeLangTag } from '$lib/utilities/url';
+	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/user-delete';
 
 	export let data;
@@ -26,7 +26,7 @@
 	onDestroy(() => formObserver());
 
 	const user = $page.data.session?.user;
-	const actionUrl = removeLangTag($page.url.pathname);
+	const actionUrl = removeLangTagFromPath($page.url.pathname);
 	const warnMessage =
 		'If you delete a user, you can restore them for 30 days by simply signing in. However, after 30 days, user data will be permanently deleted.';
 	const errorMessage = 'There was an error, please check your input and resubmit.';

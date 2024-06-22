@@ -8,7 +8,7 @@
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
-	import { removeLangTag } from '$lib/utilities/url';
+	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/profile-update';
 
 	export let data;
@@ -33,7 +33,7 @@
 	onDestroy(() => formObserver());
 
 	const user = $page.data.session?.user;
-	const actionUrl = removeLangTag($page.url.pathname);
+	const actionUrl = removeLangTagFromPath($page.url.pathname);
 	let initPenName = $form.penName;
 </script>
 

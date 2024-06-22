@@ -2,13 +2,13 @@
 	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import { page } from '$app/stores';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
-	import { getLangTag } from '$lib/utilities/url';
+	import { getLangTagPathPart } from '$lib/utilities/url';
 	import LayoutRule from '../_layout-rule.svelte';
 </script>
 
 <svelte:head>
 	<title>Thank you for using | ShortBook</title>
-	<meta http-equiv="refresh" content="5; url=/{getLangTag($page.url.pathname)}" />
+	<meta http-equiv="refresh" content="5; url={getLangTagPathPart($page.url.pathname)}" />
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
