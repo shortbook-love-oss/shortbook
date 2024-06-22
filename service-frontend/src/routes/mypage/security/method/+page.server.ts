@@ -1,4 +1,4 @@
-import { fail } from '@sveltejs/kit';
+import { error as kitError } from '@sveltejs/kit';
 import { dbUserSessionGet } from '$lib/model/user/session/get';
 import { getSessionToken, getUserId } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
@@ -17,7 +17,7 @@ export const load = async ({ request, cookies }) => {
 		sessionToken
 	});
 	if (error) {
-		return fail(500, {
+		return kitError(500, {
 			message: 'Server error: Failed to get user.'
 		});
 	}

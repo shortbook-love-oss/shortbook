@@ -1,5 +1,5 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { superValidate, message } from 'sveltekit-superforms';
+import { redirect, fail, error as kitError } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserDelete } from '$lib/model/user/delete';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
@@ -14,7 +14,7 @@ export const load = async ({ cookies }) => {
 		userId: getUserId(cookies)
 	});
 	if (error) {
-		return fail(500, {
+		return kitError(500, {
 			message: 'Server error: Failed to get user.'
 		});
 	}
@@ -33,12 +33,12 @@ export const actions = {
 		}
 		const userId = getUserId(cookies);
 		if (!userId) {
-			return fail(401, { message: 'Unauthorized' });
+			return kitError(401, { message: 'Unauthorized' });
 		}
 
 		const { error } = await dbUserDelete({ userId });
 		if (error) {
-			return fail(500, {
+			return kitError(500, {
 				message: 'Server error: Failed to delete user.'
 			});
 		}

@@ -1,4 +1,4 @@
-import { fail } from '@sveltejs/kit';
+import { fail, error as kitError } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { availableLanguageTags } from '$lib/i18n/paraglide/runtime.js';
@@ -18,7 +18,7 @@ export const load = async ({ request, cookies }) => {
 		userId: cookies.get(keyUserId) ?? ''
 	});
 	if (error) {
-		return fail(500, {
+		return kitError(500, {
 			message: 'Server error: Failed to get user.'
 		});
 	}
@@ -48,7 +48,7 @@ export const actions = {
 		}
 		const userId = getUserId(cookies);
 		if (!userId) {
-			return fail(401, { message: 'Unauthorized' });
+			return kitError(401, { message: 'Unauthorized' });
 		}
 
 		const { error } = await dbUserProfileUpdate({
@@ -56,7 +56,7 @@ export const actions = {
 			...form.data
 		});
 		if (error) {
-			return fail(500, {
+			return kitError(500, {
 				message: 'Server error: Failed to update user.'
 			});
 		}
