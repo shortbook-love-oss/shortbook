@@ -6,7 +6,7 @@ export interface DbUserEmailUpdateRequest {
 }
 
 export async function dbUserEmailUpdate(req: DbUserEmailUpdateRequest) {
-	let error: Error | undefined;
+	let dbError: Error | undefined;
 
 	const user = await prisma.user
 		.update({
@@ -18,9 +18,9 @@ export async function dbUserEmailUpdate(req: DbUserEmailUpdateRequest) {
 			}
 		})
 		.catch((e: Error) => {
-			error = e;
+			dbError = e;
 			return undefined;
 		});
 
-	return { user, error };
+	return { user, dbError };
 }

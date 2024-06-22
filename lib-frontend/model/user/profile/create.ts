@@ -7,7 +7,7 @@ export interface DbUserCreateRequest {
 }
 
 export async function dbUserProfileCreate(req: DbUserCreateRequest) {
-	let error: Error | undefined;
+	let dbError: Error | undefined;
 
 	const user = await prisma.user_profiles
 		.create({
@@ -27,9 +27,9 @@ export async function dbUserProfileCreate(req: DbUserCreateRequest) {
 			}
 		})
 		.catch((e: Error) => {
-			error = e;
+			dbError = e;
 			return undefined;
 		});
 
-	return { user, error };
+	return { user, dbError };
 }

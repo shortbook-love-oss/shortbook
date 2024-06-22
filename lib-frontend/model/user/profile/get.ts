@@ -5,7 +5,7 @@ export interface DbUserProfileGetRequest {
 }
 
 export async function dbUserProfileGet(req: DbUserProfileGetRequest) {
-	let error: Error | undefined;
+	let dbError: Error | undefined;
 
 	const profile = await prisma.user_profiles
 		.findFirst({
@@ -17,9 +17,9 @@ export async function dbUserProfileGet(req: DbUserProfileGetRequest) {
 			}
 		})
 		.catch((e: Error) => {
-			error = e;
+			dbError = e;
 			return undefined;
 		});
 
-	return { profile, error };
+	return { profile, dbError };
 }

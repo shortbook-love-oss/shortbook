@@ -6,7 +6,7 @@ export interface DbUserSessionGetRequest {
 }
 
 export async function dbUserSessionGet(req: DbUserSessionGetRequest) {
-	let error: Error | undefined;
+	let dbError: Error | undefined;
 
 	const user = await prisma.user
 		.findUnique({
@@ -23,11 +23,11 @@ export async function dbUserSessionGet(req: DbUserSessionGetRequest) {
 			}
 		})
 		.catch((e: Error) => {
-			error = e;
+			dbError = e;
 			return undefined;
     });
 
   const session = user?.sessions[0];
 
-	return { user, session, error };
+	return { user, session, dbError };
 }

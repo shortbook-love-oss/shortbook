@@ -10,7 +10,7 @@ export interface DbUserUpdateRequest {
 }
 
 export async function dbUserProfileUpdate(req: DbUserUpdateRequest) {
-	let error: Error | undefined;
+	let dbError: Error | undefined;
 
 	const profile = await prisma
 		.$transaction(async (tx) => {
@@ -47,9 +47,9 @@ export async function dbUserProfileUpdate(req: DbUserUpdateRequest) {
 			return profile;
 		})
 		.catch((e: Error) => {
-			error = e;
+			dbError = e;
 			return undefined;
 		});
 
-	return { profile, error };
+	return { profile, dbError };
 }

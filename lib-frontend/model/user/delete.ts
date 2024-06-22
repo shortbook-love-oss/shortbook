@@ -5,7 +5,7 @@ export interface DbUserDeleteRequest {
 }
 
 export async function dbUserDelete(req: DbUserDeleteRequest) {
-	let error: Error | undefined;
+	let dbError: Error | undefined;
 
 	await prisma
 		.$transaction(async (tx) => {
@@ -62,9 +62,9 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 			}
 		})
 		.catch((e: Error) => {
-			error = e;
+			dbError = e;
 			return undefined;
 		});
 
-	return { error };
+	return { dbError };
 }
