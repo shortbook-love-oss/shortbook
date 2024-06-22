@@ -6,6 +6,10 @@
 	import Overlay from '$lib/components/layouts/overlay.svelte';
 </script>
 
+<svelte:head>
+	<meta name="robots" content="noindex" />
+</svelte:head>
+
 <LayoutRule>
 	<svelte:fragment slot="header">
 		<div class="hidden sm:block">
