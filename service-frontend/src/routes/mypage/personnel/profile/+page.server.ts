@@ -4,19 +4,22 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { availableLanguageTags } from '$lib/i18n/paraglide/runtime.js';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
-import { getUserId, keyUserId } from '$lib/utilities/cookie';
+import { dbUserGetBySlug } from '$lib/model/user/get-by-slug';
+import { getUserId } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/profile-update';
 
 export const load = async ({ request, cookies }) => {
 	const form = await superValidate(zod(schema));
-
 	// e.g. "/ja/mypage" → ja
 	const nativeLang = guessNativeLangFromRequest(request);
 
-	const { profile, dbError } = await dbUserProfileGet({
-		userId: cookies.get(keyUserId) ?? ''
-	});
+	const userId = getUserId(cookies);
+	if (!userId) {
+		return error(401, { message: 'Unauthorized' });
+	}
+
+	const { profile, dbError } = await dbUserProfileGet({ userId });
 	if (dbError) {
 		return error(500, {
 			message: 'Server error: Failed to get user.'
@@ -42,13 +45,28 @@ export const load = async ({ request, cookies }) => {
 
 export const actions = {
 	default: async ({ request, cookies }) => {
-		const form = await superValidate(request, zod(schema));
-		if (!form.valid) {
-			return fail(400, { form });
-		}
 		const userId = getUserId(cookies);
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
+		}
+
+		const form = await superValidate(request, zod(schema));
+		if (form.valid) {
+			// If already use slug, show error message near the slug input
+			const { user, dbError } = await dbUserGetBySlug({ slug: form.data.slug });
+			if (dbError) {
+				return error(500, {
+					message: 'Server error: Failed to get user.'
+				});
+			}
+			if (user && user.id !== userId) {
+				form.valid = false;
+				form.errors.slug = form.errors.slug ?? [];
+				form.errors.slug.push('This slug is in use by another user');
+			}
+		}
+		if (!form.valid) {
+			return fail(400, { form });
 		}
 
 		const { dbError } = await dbUserProfileUpdate({
