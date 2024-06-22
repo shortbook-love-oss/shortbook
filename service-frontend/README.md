@@ -28,5 +28,13 @@ Work at https://localhost:55021/
 ### After changed Prisma schema
 
 ```bash
-npm run migrate-dev --name=some-unique-name
+npm run migrate-dev --name="some-unique-name"
 ```
+
+## Major update timing
+
+**svelte**
+[to v5](https://github.com/sveltejs/svelte/milestone/9)
+
+**typescript-eslint**
+[to v8](https://typescript-eslint.io/blog/announcing-typescript-eslint-v8-beta/)

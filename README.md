@@ -9,9 +9,17 @@ cd service-frontend
 mkcert localhost
 ```
 
-### Docker
+### Make directory and file
 
 ```bash
-cd docker
-docker compose up -d --build
+chmod 755 ./fix_dirname_error.sh
+mkdir ./database/.data
+mkdir ./cache/.data
+mkdir ./cache/dynamodb
+```
+
+### Run Docker
+
+```bash
+docker compose -f docker/compose.yaml up -d --build
 ```

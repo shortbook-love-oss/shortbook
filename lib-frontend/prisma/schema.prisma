@@ -19,12 +19,12 @@ model User {
   image                   String?
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 
   accounts                Account[]
   Authenticator           Authenticator[]
   sessions                Session[]
-  profiles                user_profiles[]
+  profiles                user_profiles?
   fans                    user_fans[]
   articles                articles[]
 
@@ -32,7 +32,7 @@ model User {
 }
 
 model Account {
-  user                    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   userId                  String              @map("user_id")
@@ -48,13 +48,15 @@ model Account {
   session_state           String?
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
 
 model Authenticator {
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
   credentialID            String              @unique @map("credential_id")
   userId                  String              @map("user_id")
   providerAccountId       String              @map("provider_account_id")
@@ -65,16 +67,14 @@ model Authenticator {
   transports              String?
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
-
-  user                    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deleted_at              DateTime?
 
   @@id([userId, credentialID])
   @@map("authenticator")
 }
 
 model Session {
-  user                    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   sessionToken            String              @unique @map("session_token")
@@ -82,7 +82,7 @@ model Session {
   expires                 DateTime
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 
   @@map("sessions")
 }
@@ -97,43 +97,46 @@ model VerificationToken {
 }
 
 model user_profiles {
-  user                    User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
-  user_id                 String
+  user_id                 String              @unique
   slug                    String              @unique @db.VarChar(30) // Length 1 - 30
   native_lang             String              @db.VarChar(5)
   location                String
-  birthday                DateTime            @db.Date()
+  birthday                DateTime?           @db.Date()
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 
   langs                   user_profile_langs[]
 }
 
 model user_profile_langs {
-  user_profile            user_profiles       @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  user_profile            user_profiles       @relation(fields: [profile_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   profile_id              String
   lang_tag                String              @db.VarChar(5)
   pen_name                String              @db.VarChar(210) // Length 1 - 50
-  self_info               String?             @db.MediumText
+  headline                String              @db.VarChar(210) // Length 1 - 50
+  self_intro              String              @db.MediumText
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
+
+  @@unique([profile_id, lang_tag])
 }
 
 model user_fans {
-  target_user             User                @relation(fields: [target_user_id], references: [id])
+  target_user             User                @relation(fields: [target_user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   target_user_id          String
   support_user_id         String
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 }
 
 // -----------------------------------------------------------------------
@@ -141,7 +144,7 @@ model user_fans {
 // -----------------------------------------------------------------------
 
 model articles {
-  user                    User                @relation(fields: [user_id], references: [id])
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String
@@ -152,7 +155,7 @@ model articles {
   edited_at               DateTime            @default(now())
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 
   languages               article_languages[]
   tags                    article_tags[]
@@ -161,7 +164,7 @@ model articles {
 }
 
 model article_languages {
-  article                 articles            @relation(fields: [article_id], references: [id])
+  article                 articles            @relation(fields: [article_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   article_id              String
@@ -173,11 +176,11 @@ model article_languages {
   sales_message           String              @db.VarChar(4000) // Max length is 1000
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 }
 
 model article_tags {
-  article                 articles            @relation(fields: [article_id], references: [id])
+  article                 articles            @relation(fields: [article_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   article_id              String
@@ -185,27 +188,27 @@ model article_tags {
   sort                    Int                 @db.SmallInt
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 }
 
 model article_buys {
-  article                 articles            @relation(fields: [article_id], references: [id])
+  article                 articles            @relation(fields: [article_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   article_id              String
   user_id                 String
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 }
 
 model article_favorites {
-  article                 articles            @relation(fields: [article_id], references: [id])
+  article                 articles            @relation(fields: [article_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
   article_id              String
   user_id                 String
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
-  deleted_at              Boolean             @default(false)
+  deleted_at              DateTime?
 }
