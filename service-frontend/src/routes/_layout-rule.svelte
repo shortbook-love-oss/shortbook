@@ -3,7 +3,7 @@
 	import Footer from '$lib/components/service/footer.svelte';
 </script>
 
-<div class="flex h-dvh h-screen flex-col text-stone-950 tracking-wide">
+<div class="flex h-dvh h-screen flex-col tracking-wide text-stone-950">
 	<slot name="alert" />
 	<slot name="header" />
 	<div class="flex flex-1 flex-col overflow-x-auto">
