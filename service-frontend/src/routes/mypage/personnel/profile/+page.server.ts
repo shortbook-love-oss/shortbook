@@ -62,7 +62,7 @@ export const actions = {
 			if (user && user.id !== userId) {
 				form.valid = false;
 				form.errors.slug = form.errors.slug ?? [];
-				form.errors.slug.push('This slug is in use by another user');
+				form.errors.slug.push('This ID is in use by another user');
 			}
 		}
 		if (!form.valid) {

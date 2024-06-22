@@ -6,6 +6,6 @@ export const schema = z
 		deleteKey: z.string().min(1)
 	})
 	.refine((data) => data.slug === data.deleteKey, {
-		message: 'Input value does not match user slug.',
+		message: 'Input value does not match user ID.',
 		path: ['deleteKey']
 	});

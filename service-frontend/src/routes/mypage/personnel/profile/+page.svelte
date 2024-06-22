@@ -59,7 +59,7 @@
 		bind:value={$form.slug}
 		name="slug"
 		required={true}
-		label="Slug"
+		label="User ID"
 		errorMessages={$errors.slug}
 		className="mb-8"
 	/>
