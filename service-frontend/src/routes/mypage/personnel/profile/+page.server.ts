@@ -1,12 +1,11 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { availableLanguageTags } from '$lib/i18n/paraglide/runtime.js';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
 import { dbUserGetBySlug } from '$lib/model/user/get-by-slug';
 import { getUserId } from '$lib/utilities/cookie';
-import { guessNativeLangFromRequest } from '$lib/utilities/language';
+import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/profile-update';
 
 export const load = async ({ request, cookies }) => {
@@ -33,14 +32,9 @@ export const load = async ({ request, cookies }) => {
 	form.data.headline = profileLangs?.headline ?? '';
 	form.data.selfIntro = profileLangs?.self_intro ?? '';
 
-	const list = {
-		langTags: [
-			{ value: '', text: 'Select your language' },
-			...availableLanguageTags.map((tag) => ({ value: tag, text: tag }))
-		]
-	};
+	const langTags = languageAndNotSelect;
 
-	return { form, list };
+	return { form, langTags };
 };
 
 export const actions = {
