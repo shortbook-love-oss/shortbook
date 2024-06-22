@@ -1,9 +1,10 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserDelete } from '$lib/model/user/delete';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getUserId } from '$lib/utilities/cookie';
+import { getLangTag } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user-delete';
 
 export const load = async ({ cookies }) => {
@@ -25,7 +26,7 @@ export const load = async ({ cookies }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, url, cookies }) => {
 		const form = await superValidate(request, zod(schema));
 		if (!form.valid) {
 			return fail(400, { form });
@@ -42,6 +43,6 @@ export const actions = {
 			});
 		}
 
-		return message(form, 'User deleted successfully.');
+		redirect(303, `/${getLangTag(url.pathname)}/goodbye`);
 	}
 };

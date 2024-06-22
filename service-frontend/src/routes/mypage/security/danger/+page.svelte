@@ -6,21 +6,14 @@
 	import Form from '$lib/components/modules/form/form.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
-	import { getLangTag, removeLangTag } from '$lib/utilities/url';
+	import { removeLangTag } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/user-delete';
 
 	export let data;
 
-	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
+	const { form, enhance, validateForm, submitting, errors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
-		validators: zod(schema),
-		onUpdated: ({ form }) => {
-			if (form.valid) {
-				setTimeout(() => {
-					location.href = '/' + getLangTag(location.pathname);
-				}, 2000);
-			}
-		}
+		validators: zod(schema)
 	});
 
 	// Validate and set enable/disable submit button when the input value changes
@@ -53,7 +46,6 @@
 	isLoading={$submitting}
 	submitLabel="Delete user"
 	{warnMessage}
-	successMessage={$page.status === 200 && $message ? $message : ''}
 	errorMessage={$page.status === 400 ? errorMessage : ''}
 >
 	<input type="hidden" name="slug" value={$form.slug} />
