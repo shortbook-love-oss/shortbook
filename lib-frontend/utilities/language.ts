@@ -9,7 +9,7 @@ export interface LanguageSelect {
 	english: string;
 }
 
-const languageSelect: LanguageSelect[] = [
+export const languageSelect: LanguageSelect[] = [
 	{ value: 'en', text: 'English', english: 'English' },
 	{ value: 'ja', text: '日本語', english: 'Japanese' },
 	{ value: 'ar-ae', text: 'العربية (الإمارات العربية المتحدة)', english: 'Arabic (U.A.E.)' },
