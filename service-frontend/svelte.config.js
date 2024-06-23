@@ -18,7 +18,11 @@ const config = {
 			mode: 'hash',
 			directives: {
 				'base-uri': ['self'],
-				'form-action': ['self'],
+				'form-action': [
+					'self',
+					'https://github.com/login/oauth/',
+					'https://www.linkedin.com/oauth/'
+				],
 				'frame-ancestors': ['none'], // For click-jacking protection
 				'script-src': ['self'],
 				'worker-src': ['self'],
