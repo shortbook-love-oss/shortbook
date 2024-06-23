@@ -5,6 +5,8 @@
 	import { languageTag } from '$lib/i18n/paraglide/runtime';
 	import { i18n } from '$lib/i18n/i18n';
 	import { languageSelect } from '$lib/utilities/language';
+	import Dropdown from '$lib/components/layouts/dropdown.svelte';
+	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
 	let yearPeriod = '2024';
 	const currentYear = new Date().getFullYear();
@@ -17,8 +19,8 @@
 	<nav
 		class="m-auto flex w-full max-w-[90rem] flex-wrap gap-x-16 gap-y-8 p-4 sm:w-fit sm:px-6 md:px-8"
 	>
-		<div class="w-full sm:w-auto sm:pt-1">
-			<a href="/" class="mb-2 block">
+		<div class="relative w-full sm:w-auto sm:pt-1">
+			<a href="/" class="mb-2 inline-block">
 				<img
 					src="/assets/shortbook-logotype.svg"
 					class="aspect-logotype w-48"
@@ -27,31 +29,34 @@
 			</a>
 			<small class="mb-4 block text-lg">© {yearPeriod} ShortBook LLC</small>
 			<!-- Language select -->
-			<label
-				for="common_footer_lang_open"
-				class="peer/common_footer_lang_control inline-flex items-center rounded-md border border-stone-400 px-2 py-1"
-			>
-				<input
-					type="checkbox"
-					name="common_footer_lang"
-					id="common_footer_lang_open"
-					class="peer/common_footer_lang_open hidden"
-				/>
-				<p class="inline-block px-1">Change language</p>
-				<IconArrow width="28" height="28" class="peer-checked/common_footer_lang_open:rotate-180" />
-			</label>
-			<ul class="hidden pt-2 peer-has-[:checked]/common_footer_lang_control:block">
-				{#each languageSelect as lang}
-					<li class="mb-2">
-						<a
-							href={i18n.route($page.url.pathname)}
-							hreflang={lang.value}
-							class="hover:underline"
-							aria-current={lang.value === languageTag() ? 'page' : undefined}>{lang.text}</a
-						>
+			<Dropdown name="sp_submenu" dropdownClass="bottom-2 min-w-40">
+				<div slot="opener" class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
+					<p class="inline-block px-1">Change language</p>
+					<IconArrow
+						width="28"
+						height="28"
+						class="peer-checked/common_footer_lang_open:rotate-180"
+					/>
+				</div>
+				<NavLinkSmall slot="closer" name="Close menu" />
+				<ul class="grid grid-cols-2 gap-6 p-3">
+					<li class="col-span-2" aria-current="page">
+						<p>Current :</p>
+						<p>{languageSelect.find((lang) => lang.value === languageTag())?.text}</p>
 					</li>
-				{/each}
-			</ul>
+					{#each languageSelect as lang}
+						{#if lang.value !== languageTag()}
+							<li class="{lang.text.length >= 12 ? 'col-span-2' : ''}">
+								<a
+									href={i18n.route($page.url.pathname)}
+									hreflang={lang.value}
+									class="hover:underline">{lang.text}</a
+								>
+							</li>
+						{/if}
+					{/each}
+				</ul>
+			</Dropdown>
 		</div>
 		{#each categories as category (category.name)}
 			<div class="text-lg">

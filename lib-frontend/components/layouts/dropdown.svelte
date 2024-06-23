@@ -22,30 +22,28 @@
 	}
 </script>
 
-<button type="button" class="inline-flex items-center hover:bg-stone-200 focus:bg-stone-200">
-	<label for="common_dropdown_open_{name}">
+<button
+	type="button"
+	class="peer/common_dropdown_open inline-flex hover:bg-stone-200 focus:bg-stone-200"
+>
+	<label>
 		<slot name="opener" />
+		<input
+			type="radio"
+			name="common_dropdown_{name}"
+			id="common_dropdown_open_{name}"
+			class="hidden"
+		/>
 	</label>
 </button>
-<input
-	type="radio"
-	name="common_dropdown_{name}"
-	id="common_dropdown_open_{name}"
-	class="peer/common_dropdown_open hidden"
-/>
 
 <!-- Dropdown -->
 <div
 	id="common_dropdown_{name}"
-	class="max-w-screen absolute z-40 hidden max-h-dvh max-h-screen flex-col rounded-lg border-2 border-stone-400 bg-white peer-checked/common_dropdown_open:flex {dropdownClass}"
+	class="max-w-screen invisible fixed left-[999%] z-40 flex max-h-dvh max-h-screen flex-col rounded-lg border-2 border-stone-400 bg-white peer-has-[:checked]/common_dropdown_open:visible peer-has-[:checked]/common_dropdown_open:left-auto {dropdownClass}"
 	use:clickoutside
 	on:clickoutside={closeDropdown}
 >
-	<div class="border-b border-stone-400 p-2">
-		<label for="common_dropdown_close_{name}" class="block">
-			<slot name="closer" />
-		</label>
-	</div>
 	<input
 		type="radio"
 		name="common_dropdown_{name}"
@@ -55,5 +53,10 @@
 	/>
 	<div class="flex-1 overflow-x-auto p-2">
 		<slot />
+	</div>
+	<div class="border-t border-stone-400 p-2">
+		<label for="common_dropdown_close_{name}" class="block">
+			<slot name="closer" />
+		</label>
 	</div>
 </div>
