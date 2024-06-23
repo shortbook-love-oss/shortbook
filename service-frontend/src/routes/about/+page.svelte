@@ -18,6 +18,7 @@
 	/>
 </div>
 <CompanyInfoItem heading="会社名" content={m.company_name()} />
+<CompanyInfoItem heading="適格請求書発行事業者の登録番号" content="T8180303006124" />
 <CompanyInfoItem heading="所在地" content="〒444-0326 愛知県西尾市富山町於三28番地15" />
 <CompanyInfoItem heading="代表者" content="倉地 俊輔" />
 <CompanyInfoItem heading="設立日" content="2024年5月中予定" />
