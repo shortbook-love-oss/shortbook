@@ -13,7 +13,7 @@
 </svelte:head>
 
 <LayoutRule>
-	<div slot="contents" class="flex h-full min-h-96 flex-col items-center justify-center p-8">
+	<div slot="contents" class="flex h-full min-h-80 flex-col items-center justify-center p-8">
 		<p class="mb-2 text-center text-2xl">Thank you for using.</p>
 		<p class="mb-12 text-center text-2xl">Good bye.</p>
 		<p class="mb-2">Will be redirect to home in 5 seconds.</p>

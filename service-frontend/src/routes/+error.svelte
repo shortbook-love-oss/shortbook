@@ -14,7 +14,7 @@
 </svelte:head>
 
 <LayoutRule>
-	<div slot="contents" class="flex h-full min-h-96 flex-col items-center justify-center p-8">
+	<div slot="contents" class="flex h-full min-h-80 flex-col items-center justify-center p-8">
 		<p class="text-4xl">{$page.status}</p>
 		<p class="mb-8 text-xl">{$page.error?.message}</p>
 		{#if $page.status === 401}

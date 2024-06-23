@@ -10,7 +10,7 @@
 		<div class="flex-1">
 			<slot name="contents">
 				<div
-					class="mx-auto w-full max-w-[90rem] flex-1 gap-12 px-4 pb-16 pt-12 sm:flex sm:px-6 md:px-8 lg:gap-20"
+					class="mx-auto min-h-80 w-full max-w-[90rem] flex-1 gap-12 px-4 pb-16 pt-12 sm:flex sm:px-6 md:px-8 lg:gap-20"
 				>
 					{#if $$slots.side}
 						<div class="hidden w-48 sm:block">
