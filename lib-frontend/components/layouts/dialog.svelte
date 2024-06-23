@@ -30,24 +30,19 @@
 
 <button
 	type="button"
-	class="w-fit hover:bg-stone-200 focus:bg-stone-200 rounded-lg"
+	class="peer/common_dialog_open w-fit rounded-lg hover:bg-stone-200 focus:bg-stone-200"
 	on:click|self={openDialog}
 >
 	<label for="common_dialog_open_{name}">
 		<slot name="opener" />
 	</label>
+	<input type="radio" name="common_dialog_{name}" id="common_dialog_open_{name}" class="hidden" />
 </button>
-<input
-	type="radio"
-	name="common_dialog_{name}"
-	id="common_dialog_open_{name}"
-	class="peer/common_dialog_open hidden"
-/>
 
 <!-- Dialog -->
 <div
 	id="common_dialog_{name}"
-	class="fixed left-0 top-0 z-50 hidden h-dvh h-screen w-screen items-center justify-center bg-stone-400/30 p-4 peer-checked/common_dialog_open:flex"
+	class="fixed left-0 top-0 z-50 hidden h-dvh h-screen w-screen items-center justify-center bg-stone-400/30 p-4 peer-has-[:checked]/common_dialog_open:flex"
 >
 	<div
 		class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
@@ -61,7 +56,7 @@
 						<IconClose
 							width="44"
 							height="44"
-							class="ml-auto p-1 hover:bg-stone-200 focus:bg-stone-200"
+							class="ml-auto rounded-es rounded-se-[0.625rem] p-1 hover:bg-stone-200 focus:bg-stone-200"
 							aria-label="Cancel and close dialog"
 						/>
 					</div>
