@@ -10,7 +10,6 @@
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 	import NavLinkSp from './nav-link-sp.svelte';
-	import NavLinkSmall from './nav-link-small.svelte';
 
 	// After sign-in/up redirect to
 	let redirectPathname = '';
@@ -57,11 +56,10 @@
 			{/if}
 			{#if $page.data.session?.user}
 				<li class="relative">
-					<Dropdown name="sp_submenu" dropdownClass="bottom-20 end-0 min-w-40">
+					<Dropdown name="sp_submenu" dropdownClass="bottom-20 end-[10%] min-w-40">
 						<NavLinkSp slot="opener" name="More">
 							<IconMore width="32" height="32" />
 						</NavLinkSp>
-						<NavLinkSmall slot="closer" name="Close menu" />
 						<ul>
 							<li>
 								<Signout dialogName="footer_signout" />

@@ -6,7 +6,6 @@
 	import { i18n } from '$lib/i18n/i18n';
 	import { languageSelect } from '$lib/utilities/language';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
-	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
 	let yearPeriod = '2024';
 	const currentYear = new Date().getFullYear();
@@ -29,7 +28,7 @@
 			</a>
 			<small class="mb-4 block text-lg">© {yearPeriod} ShortBook LLC</small>
 			<!-- Language select -->
-			<Dropdown name="sp_submenu" dropdownClass="bottom-2 min-w-40">
+			<Dropdown name="lang_select" dropdownClass="bottom-2 min-w-40">
 				<div slot="opener" class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
 					<p class="inline-block px-1">Change language</p>
 					<IconArrow
@@ -38,7 +37,6 @@
 						class="peer-checked/common_footer_lang_open:rotate-180"
 					/>
 				</div>
-				<NavLinkSmall slot="closer" name="Close menu" />
 				<ul class="grid grid-cols-2 gap-6 p-3">
 					<li class="col-span-2" aria-current="page">
 						<p>Current :</p>
