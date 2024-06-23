@@ -10,7 +10,7 @@
 		class="flex items-center gap-2 rounded-lg px-3 py-2 text-lg hover:bg-stone-200 focus:bg-stone-200 {className}"
 	>
 		{#if $$slots.default}
-			<div class="shrink-0"><slot></slot></div>
+			<div class="-mx-1 shrink-0"><slot></slot></div>
 		{/if}
 		<p>{name}</p>
 	</a>
@@ -20,7 +20,7 @@
 		class="flex items-center gap-2 rounded-lg px-3 py-2 text-lg hover:bg-stone-200 focus:bg-stone-200 {className}"
 	>
 		{#if $$slots.default}
-			<div class="shrink-0"><slot></slot></div>
+			<div class="-mx-1 shrink-0"><slot></slot></div>
 		{/if}
 		<p>{name}</p>
 	</div>
