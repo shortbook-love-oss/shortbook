@@ -18,7 +18,7 @@
 		<p class="mb-12 text-center text-2xl">Good bye.</p>
 		<p class="mb-2">Will be redirect to home in 5 seconds.</p>
 		<NavLinkSmall name="Back to home" href="/">
-			<IconArrowLeft width="24" height="24" class="-ml-1" />
+			<IconArrowLeft width="24" height="24" class="-mx-1" />
 		</NavLinkSmall>
 	</div>
 </LayoutRule>

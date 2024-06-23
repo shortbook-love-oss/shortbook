@@ -21,18 +21,15 @@
 	}
 </script>
 
-<div class="flex items-center border-b-2 border-primary-700 bg-white">
-	<button type="button" class="mr-2 flex w-fit items-center hover:bg-stone-200 focus:bg-stone-200">
-		<label for="common_overlay_open_{name}">
-			<slot name="opener">
-				<div class="p-2">
-					<IconMenu width="28" height="28" />
-				</div>
-			</slot>
-		</label>
-	</button>
-	<slot name="title" />
-</div>
+<button type="button" class="inline-flex items-center hover:bg-stone-200 focus:bg-stone-200">
+	<label for="common_overlay_open_{name}">
+		<slot name="opener">
+			<div class="p-2">
+				<IconMenu width="28" height="28" />
+			</div>
+		</slot>
+	</label>
+</button>
 <input
 	type="radio"
 	name="common_overlay_{name}"
@@ -51,12 +48,12 @@
 		on:clickoutside={closeOverlay}
 	>
 		<div class="flex justify-end">
-			<label class="inline-block">
+			<label class="ms-auto block">
 				<slot name="closer">
 					<IconClose
 						width="44"
 						height="44"
-						class="ml-auto p-1 hover:bg-stone-200 focus:bg-stone-200"
+						class="p-1 hover:bg-stone-200 focus:bg-stone-200"
 						aria-label="Cancel and close dialog"
 					/>
 				</slot>

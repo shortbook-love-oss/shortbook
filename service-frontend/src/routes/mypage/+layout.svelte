@@ -15,23 +15,23 @@
 		<div class="hidden sm:block">
 			<Header />
 		</div>
-		<div class="sm:hidden">
+		<div class="flex items-center gap-1 border-b-2 border-primary-700 bg-white sm:hidden">
 			<Overlay name="mypage">
-				<p slot="title" class="text-xl">Mypage</p>
 				<Nav />
 			</Overlay>
+			<p class="pe-4 text-xl">Mypage</p>
 		</div>
 	</svelte:fragment>
 	<header slot="side">
-		<a href="/" class="mb-6 flex items-center gap-1 px-4">
-			<IconArrowLeft width="24" height="24" class="-ml-2 mr-1" />
-			<p class="text-lg font-semibold">Back to service</p>
+		<a href="/" class="mb-6 flex items-center gap-1 gap-3 px-4">
+			<IconArrowLeft width="24" height="24" class="-mx-2" />
+			<p class="text-lg font-semibold">Back to home</p>
 		</a>
 		<nav>
 			<Nav />
 		</nav>
 	</header>
-	<main class="flex-1 sm:pr-3">
+	<main class="flex-1 sm:pe-3">
 		<slot></slot>
 	</main>
 </LayoutRule>

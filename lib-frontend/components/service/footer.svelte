@@ -29,7 +29,7 @@
 			<!-- Language select -->
 			<label
 				for="common_footer_lang_open"
-				class="peer/common_footer_lang_control inline-flex items-center rounded-md border border-stone-400 py-1 pl-3 pr-2"
+				class="peer/common_footer_lang_control inline-flex items-center rounded-md border border-stone-400 px-2 py-1"
 			>
 				<input
 					type="checkbox"
@@ -37,7 +37,7 @@
 					id="common_footer_lang_open"
 					class="peer/common_footer_lang_open hidden"
 				/>
-				<span>Change language</span>
+				<p class="inline-block px-1">Change language</p>
 				<IconArrow width="28" height="28" class="peer-checked/common_footer_lang_open:rotate-180" />
 			</label>
 			<ul class="hidden pt-2 peer-has-[:checked]/common_footer_lang_control:block">
