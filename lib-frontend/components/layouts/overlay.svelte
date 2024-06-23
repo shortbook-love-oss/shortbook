@@ -2,9 +2,14 @@
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import IconMenu from '~icons/mdi/menu';
 	import IconClose from '~icons/mdi/close';
+	import { onNavigate } from '$app/navigation';
 
 	// Need for unique attribute value
 	export let name: string;
+
+	onNavigate(() => {
+		closeOverlay();
+	});
 
 	// Close submenu if open
 	const outsideClickThreshold = 50;
