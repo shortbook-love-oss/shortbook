@@ -30,7 +30,7 @@
 
 <button
 	type="button"
-	class="peer/common_dialog_open w-fit rounded-lg hover:bg-stone-200 focus:bg-stone-200"
+	class="peer/common_dialog_open w-full rounded-lg text-start hover:bg-stone-200 focus:bg-stone-200"
 	on:click|self={openDialog}
 >
 	<label for="common_dialog_open_{name}">
@@ -42,7 +42,7 @@
 <!-- Dialog -->
 <div
 	id="common_dialog_{name}"
-	class="fixed left-0 top-0 z-50 hidden h-dvh h-screen w-screen items-center justify-center bg-stone-400/30 p-4 peer-has-[:checked]/common_dialog_open:flex"
+	class="invisible fixed left-[999%] top-0 z-50 flex h-dvh h-screen w-screen items-center justify-center bg-stone-400/30 p-4 peer-has-[:checked]/common_dialog_open:visible peer-has-[:checked]/common_dialog_open:left-0"
 >
 	<div
 		class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
