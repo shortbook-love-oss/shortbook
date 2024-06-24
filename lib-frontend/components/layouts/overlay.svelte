@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { clickoutside } from '@svelte-put/clickoutside';
+	import { onMount } from 'svelte';
 	import IconMenu from '~icons/mdi/menu';
 	import IconClose from '~icons/mdi/close';
 	import { onNavigate } from '$app/navigation';
@@ -7,68 +7,53 @@
 	// Need for unique attribute value
 	export let name: string;
 
+	let isEnableJS = false;
+	onMount(() => {
+		isEnableJS = true;
+	});
+
 	onNavigate(() => {
 		closeOverlay();
 	});
 
-	// Close submenu if open
-	const outsideClickThreshold = 50;
-	let outsideClickTimeout = 0;
 	function closeOverlay() {
-		const closeSwitch = document.getElementById('common_overlay_close_' + name) as HTMLInputElement;
-		if (outsideClickTimeout === 0) {
-			closeSwitch.checked = true;
-		}
-		// Anti-chattering measures
-		outsideClickTimeout = window.setTimeout(() => {
-			outsideClickTimeout = 0;
-		}, outsideClickThreshold);
+		const openSwitch = document.getElementById('common_overlay_open_' + name) as HTMLInputElement;
+		openSwitch.checked = false;
 	}
 </script>
 
-<button type="button" class="inline-flex items-center hover:bg-stone-200 focus:bg-stone-200">
-	<label for="common_overlay_open_{name}">
-		<slot name="opener">
-			<div class="p-2">
-				<IconMenu width="28" height="28" />
-			</div>
-		</slot>
-	</label>
-</button>
-<input
-	type="radio"
-	name="common_overlay_{name}"
-	id="common_overlay_open_{name}"
-	class="peer/common_overlay_open hidden"
-/>
+<label class="peer/common_overlay_open relative focus-within:bg-stone-200 hover:bg-stone-200">
+	<slot name="opener">
+		<div class="p-2">
+			<IconMenu width="28" height="28" />
+		</div>
+	</slot>
+	<input
+		type="checkbox"
+		name="common_overlay_{name}"
+		id="common_overlay_open_{name}"
+		class="absolute left-0 top-0 h-full w-full opacity-0"
+	/>
+</label>
 
 <!-- Overlay -->
 <div
 	id="common_overlay_{name}"
-	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen w-screen bg-stone-400/30 peer-checked/common_overlay_open:block"
+	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen w-screen bg-stone-400/30 peer-has-[:checked]/common_overlay_open:block"
 >
-	<div
-		class="inline-flex h-full flex-col border-r border-primary-300 bg-white"
-		use:clickoutside
-		on:clickoutside={closeOverlay}
-	>
-		<div class="flex justify-end">
-			<label class="ms-auto block">
-				<slot name="closer">
-					<IconClose
-						width="44"
-						height="44"
-						class="p-1 hover:bg-stone-200 focus:bg-stone-200"
-						aria-label="Cancel and close dialog"
-					/>
-				</slot>
-				<input
-					type="radio"
-					name="common_overlay_{name}"
-					checked
-					id="common_overlay_close_{name}"
-					class="hidden"
+	<div class="inline-flex h-full flex-col border-r border-primary-300 bg-white">
+		<div class="relative ms-auto inline-block flex focus-within:bg-stone-200 hover:bg-stone-200">
+			{#if isEnableJS}
+				<button
+					type="button"
+					class="absolute left-0 top-0 h-full w-full opacity-0"
+					on:click|self={closeOverlay}
 				/>
+			{/if}
+			<label for="common_overlay_open_{name}" class="ms-auto block">
+				<slot name="closer">
+					<IconClose width="44" height="44" class="p-1" aria-label="Cancel and close dialog" />
+				</slot>
 			</label>
 		</div>
 		<div class="flex-1 overflow-x-auto p-2">
