@@ -5,10 +5,7 @@
 </script>
 
 <div class="peer/common_dropdown_open">
-	<button
-		type="button"
-		class="relative inline-block focus-within:bg-stone-200 hover:bg-stone-200"
-	>
+	<button type="button" class="inline-block hover:bg-stone-200 focus:bg-stone-200">
 		<slot name="opener" />
 	</button>
 </div>
