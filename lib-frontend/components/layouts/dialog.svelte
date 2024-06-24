@@ -37,37 +37,43 @@
 <!-- Dialog -->
 <div
 	id="common_dialog_{name}"
-	class="fixed left-0 top-0 z-50 flex hidden h-dvh h-screen w-screen items-center justify-center bg-stone-400/30 p-4 peer-has-[:checked]/common_dialog_open:flex"
+	class="fixed left-0 top-0 z-50 flex hidden h-dvh h-screen w-screen justify-center bg-stone-400/30 peer-has-[:checked]/common_dialog_open:flex"
 >
-	<div
-		class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
-	>
+	<label for="common_dialog_open_{name}" class="min-w-[16px] flex-1" aria-hidden="true" />
+	<div class="flex flex-col">
+		<label for="common_dialog_open_{name}" class="min-h-[16px] flex-1" aria-hidden="true" />
 		<div
-			class="relative ms-auto inline-flex leading-none focus-within:bg-stone-200 hover:bg-stone-200"
+			class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
 		>
-			{#if isEnableJS}
-				<button
-					type="button"
-					class="absolute left-0 top-0 h-full w-full opacity-0"
-					on:click|self={closeDialog}
-				/>
-			{/if}
-			<label for="common_dialog_open_{name}" class="inline-block">
-				<slot name="closer">
-					<IconClose
-						width="44"
-						height="44"
-						class="ml-auto rounded-es rounded-se-[0.625rem] p-1"
-						aria-label="Cancel and close dialog"
+			<div
+				class="relative ms-auto inline-flex leading-none focus-within:bg-stone-200 hover:bg-stone-200"
+			>
+				{#if isEnableJS}
+					<button
+						type="button"
+						class="absolute left-0 top-0 h-full w-full opacity-0"
+						on:click|self={closeDialog}
 					/>
-				</slot>
-			</label>
+				{/if}
+				<label for="common_dialog_open_{name}" class="inline-block">
+					<slot name="closer">
+						<IconClose
+							width="44"
+							height="44"
+							class="ml-auto rounded-es rounded-se-[0.625rem] p-1"
+							aria-label="Cancel and close dialog"
+						/>
+					</slot>
+				</label>
+			</div>
+			<div class="overflow-x-auto px-4 py-1 sm:pr-6 md:pl-6 md:pr-8">
+				<slot />
+			</div>
+			<div class="px-4 pb-4 pt-1">
+				<slot name="actions" />
+			</div>
 		</div>
-		<div class="overflow-x-auto px-4 py-1 sm:pr-6 md:pl-6 md:pr-8">
-			<slot />
-		</div>
-		<div class="px-4 pb-4 pt-1">
-			<slot name="actions" />
-		</div>
+		<label for="common_dialog_open_{name}" class="min-h-[16px] flex-1" aria-hidden="true" />
 	</div>
+	<label for="common_dialog_open_{name}" class="min-w-[16px] flex-1" aria-hidden="true" />
 </div>
