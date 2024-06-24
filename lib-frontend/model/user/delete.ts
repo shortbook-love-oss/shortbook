@@ -55,10 +55,6 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 					data: { deleted_at: deletedAt }
 				});
 				// Don't delete book_buys
-				await tx.book_favorites.updateMany({
-					where: { book_id: { in: deleteArticleIds } },
-					data: { deleted_at: deletedAt }
-				});
 			}
 		})
 		.catch((e: Error) => {

@@ -159,7 +159,6 @@ model books {
   languages               book_languages[]
   tags                    book_tags[]
   buys                    book_buys[]
-  favorites               book_favorites[]
 }
 
 model book_languages {
@@ -191,17 +190,6 @@ model book_tags {
 }
 
 model book_buys {
-  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
-  id                      String              @id @default(cuid())
-  book_id                 String
-  user_id                 String
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              DateTime?
-}
-
-model book_favorites {
   book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   id                      String              @id @default(cuid())
