@@ -46,17 +46,17 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 					where: { user_id: req.userId },
 					data: { deleted_at: deletedAt }
 				});
-				await tx.article_languages.updateMany({
-					where: { article_id: { in: deleteArticleIds } },
+				await tx.book_languages.updateMany({
+					where: { book_id: { in: deleteArticleIds } },
 					data: { deleted_at: deletedAt }
 				});
-				await tx.article_tags.updateMany({
-					where: { article_id: { in: deleteArticleIds } },
+				await tx.book_tags.updateMany({
+					where: { book_id: { in: deleteArticleIds } },
 					data: { deleted_at: deletedAt }
 				});
-				// Don't soft delete article_buys
-				await tx.article_favorites.updateMany({
-					where: { article_id: { in: deleteArticleIds } },
+				// Don't delete book_buys
+				await tx.book_favorites.updateMany({
+					where: { book_id: { in: deleteArticleIds } },
 					data: { deleted_at: deletedAt }
 				});
 			}

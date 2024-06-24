@@ -36,7 +36,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			// Create initialized user profile
 			await dbUserProfileCreate({
 				userId: user.id as string,
-				slug: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
+				keyName: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
 				penName: user.name as string
 			});
 		},
