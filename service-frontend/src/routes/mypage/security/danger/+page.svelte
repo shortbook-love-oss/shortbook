@@ -48,11 +48,11 @@
 	{warnMessage}
 	errorMessage={$page.status === 400 ? errorMessage : ''}
 >
-	<input type="hidden" name="slug" value={$form.slug} />
+	<input type="hidden" name="keyName" value={$form.keyName} />
 	<TextField
 		bind:value={$form.deleteKey}
 		name="deleteKey"
-		label="Type &quot;{$form.slug}&quot; to delete user data."
+		label="Type &quot;{$form.keyName}&quot; to delete user data."
 		errorMessages={$errors.deleteKey}
 		className="mb-8"
 	/>

@@ -56,20 +56,20 @@
 		: ''}
 >
 	<TextField
-		bind:value={$form.slug}
-		name="slug"
+		bind:value={$form.keyName}
+		name="keyName"
 		required={true}
 		label="User ID"
-		errorMessages={$errors.slug}
+		errorMessages={$errors.keyName}
 		className="mb-8"
 	/>
 	<Select
-		bind:value={$form.nativeLang}
+		bind:value={$form.nativeLanguage}
 		name="nativeLang"
 		list={data.langTags}
 		required={true}
 		label="Native language"
-		errorMessages={$errors.nativeLang}
+		errorMessages={$errors.nativeLanguage}
 		className="mb-8 max-w-72"
 	/>
 	<TextField
@@ -88,10 +88,10 @@
 		className="mb-8"
 	/>
 	<TextArea
-		bind:value={$form.selfIntro}
+		bind:value={$form.selfIntroduction}
 		name="selfIntro"
 		label="Self Intro"
-		errorMessages={$errors.selfIntro}
+		errorMessages={$errors.selfIntroduction}
 		className="mb-8"
 	/>
 </Form>

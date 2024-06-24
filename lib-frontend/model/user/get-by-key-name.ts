@@ -1,17 +1,17 @@
 import prisma from '$lib/prisma/connect';
 
-export interface DbUserGetBySlugRequest {
-	slug: string;
+export interface DbUserGetByKeyNameRequest {
+	keyName: string;
 }
 
-export async function dbUserGetBySlug(req: DbUserGetBySlugRequest) {
+export async function dbUserGetByKeyName(req: DbUserGetByKeyNameRequest) {
 	let dbError: Error | undefined;
 
 	const user = await prisma.user
 		.findFirst({
 			where: {
 				profiles: {
-					slug: req.slug
+					key_name: req.keyName
 				}
 			}
 		})

@@ -13,7 +13,7 @@ export async function dbUserProfileGet(req: DbUserProfileGetRequest) {
 				user_id: req.userId
 			},
 			include: {
-				langs: true
+				languages: true
 			}
 		})
 		.catch((e: Error) => {

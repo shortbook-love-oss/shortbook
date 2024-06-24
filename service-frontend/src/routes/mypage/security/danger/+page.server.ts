@@ -18,9 +18,9 @@ export const load = async ({ cookies }) => {
 			message: 'Server error: Failed to get user.'
 		});
 	}
-	const penName = profile?.langs[0]?.pen_name ?? '';
+	const penName = profile?.languages[0]?.pen_name ?? '';
 
-	form.data.slug = profile?.slug ?? '';
+	form.data.keyName = profile?.key_name ?? '';
 
 	return { form, penName };
 };

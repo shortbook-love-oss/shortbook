@@ -3,7 +3,7 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
-import { dbUserGetBySlug } from '$lib/model/user/get-by-slug';
+import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
 import { getUserId } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/profile-update';
@@ -23,14 +23,14 @@ export const load = async ({ request, cookies }) => {
 			message: 'Server error: Failed to get user.'
 		});
 	}
-	const profileLangs = profile?.langs[0];
+	const profileLangs = profile?.languages[0];
 	const nativeLang = guessNativeLangFromRequest(request);
 
-	form.data.slug = profile?.slug ?? '';
-	form.data.nativeLang = profile?.native_lang || nativeLang;
+	form.data.keyName = profile?.key_name ?? '';
+	form.data.nativeLanguage = profile?.native_language || nativeLang;
 	form.data.penName = profileLangs?.pen_name ?? '';
 	form.data.headline = profileLangs?.headline ?? '';
-	form.data.selfIntro = profileLangs?.self_intro ?? '';
+	form.data.selfIntroduction = profileLangs?.self_introduction ?? '';
 
 	return { form, langTags };
 };
@@ -44,8 +44,8 @@ export const actions = {
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
-			// If already use slug, show error message near the slug input
-			const { user, dbError } = await dbUserGetBySlug({ slug: form.data.slug });
+			// If already use key-name, show error message near the input
+			const { user, dbError } = await dbUserGetByKeyName({ keyName: form.data.keyName });
 			if (dbError) {
 				return error(500, {
 					message: 'Server error: Failed to get user.'
@@ -53,8 +53,8 @@ export const actions = {
 			}
 			if (user && user.id !== userId) {
 				form.valid = false;
-				form.errors.slug = form.errors.slug ?? [];
-				form.errors.slug.push('This ID is in use by another user');
+				form.errors.keyName = form.errors.keyName ?? [];
+				form.errors.keyName.push('This ID is in use by another user');
 			}
 		}
 		if (!form.valid) {

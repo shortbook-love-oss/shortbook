@@ -2,11 +2,11 @@ import prisma from '$lib/prisma/connect';
 
 export interface DbUserUpdateRequest {
 	userId: string;
-	slug: string;
-	nativeLang: string;
+	keyName: string;
+	nativeLanguage: string;
 	penName: string;
 	headline: string;
-	selfIntro: string;
+	selfIntroduction: string;
 }
 
 export async function dbUserProfileUpdate(req: DbUserUpdateRequest) {
@@ -19,11 +19,11 @@ export async function dbUserProfileUpdate(req: DbUserUpdateRequest) {
 					user_id: req.userId
 				},
 				data: {
-					slug: req.slug,
-					native_lang: req.nativeLang
+					key_name: req.keyName,
+					native_language: req.nativeLanguage
 				}
 			});
-			await tx.user_profile_langs.deleteMany({
+			await tx.user_profile_languages.deleteMany({
 				where: {
 					profile_id: profile.id
 				}
@@ -32,14 +32,14 @@ export async function dbUserProfileUpdate(req: DbUserUpdateRequest) {
 				throw new Error(`Can't find profile of userId=${req.userId}.`);
 			}
 
-			await tx.user_profile_langs.createMany({
+			await tx.user_profile_languages.createMany({
 				data: [
 					{
 						profile_id: profile.id,
-						lang_tag: req.nativeLang,
+						language_code: req.nativeLanguage,
 						pen_name: req.penName,
 						headline: req.headline,
-						self_intro: req.selfIntro
+						self_introduction: req.selfIntroduction
 					}
 				]
 			});

@@ -22,7 +22,7 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				throw new Error(`Can't find user of id=${req.userId}.`);
 			}
 
-			await tx.user_profile_langs.updateMany({
+			await tx.user_profile_languages.updateMany({
 				where: { profile_id: deletedProfile.id },
 				data: { deleted_at: deletedAt }
 			});
@@ -37,21 +37,21 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				where: { userId: req.userId }
 			});
 
-			const deleteArticles = await tx.user_profiles.findMany({
+			const deleteBooks = await tx.user_profiles.findMany({
 				where: { user_id: req.userId }
 			});
-			const deleteArticleIds = deleteArticles.map((item) => item.id);
-			if (deleteArticleIds.length) {
+			const deleteBookIds = deleteBooks.map((item) => item.id);
+			if (deleteBookIds.length) {
 				await tx.user_profiles.updateMany({
 					where: { user_id: req.userId },
 					data: { deleted_at: deletedAt }
 				});
 				await tx.book_languages.updateMany({
-					where: { book_id: { in: deleteArticleIds } },
+					where: { book_id: { in: deleteBookIds } },
 					data: { deleted_at: deletedAt }
 				});
 				await tx.book_tags.updateMany({
-					where: { book_id: { in: deleteArticleIds } },
+					where: { book_id: { in: deleteBookIds } },
 					data: { deleted_at: deletedAt }
 				});
 				// Don't delete book_buys
