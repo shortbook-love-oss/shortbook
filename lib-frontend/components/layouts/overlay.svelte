@@ -39,7 +39,7 @@
 <!-- Overlay -->
 <div
 	id="common_overlay_{name}"
-	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen w-screen bg-stone-400/30 peer-has-[:checked]/common_overlay_open:block"
+	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen w-screen bg-stone-400/30 peer-has-[:checked]/common_overlay_open:flex"
 >
 	<div class="inline-flex h-full flex-col border-r border-primary-300 bg-white">
 		<div class="relative ms-auto inline-block flex focus-within:bg-stone-200 hover:bg-stone-200">
@@ -52,7 +52,7 @@
 			{/if}
 			<label for="common_overlay_open_{name}" class="ms-auto block">
 				<slot name="closer">
-					<IconClose width="44" height="44" class="p-1" aria-label="Cancel and close dialog" />
+					<IconClose width="44" height="44" class="p-1" aria-label="Cancel and close overlay" />
 				</slot>
 			</label>
 		</div>
@@ -60,4 +60,5 @@
 			<slot />
 		</div>
 	</div>
+	<label for="common_overlay_open_{name}" class="flex-1" aria-hidden="true" />
 </div>
