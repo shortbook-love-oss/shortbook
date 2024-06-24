@@ -14,9 +14,9 @@ datasource db {
 model User {
   id                      String              @id @default(cuid())
   name                    String?
-  email                   String?             @unique
+  email                   String?             @unique @db.VarChar(254)
   emailVerified           DateTime?           @map("email_verified")
-  image                   String?
+  image                   String?             @db.VarChar(510)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
@@ -103,7 +103,7 @@ model user_profiles {
   user_id                 String              @unique
   key_name                String              @unique @db.VarChar(30) // Length 1 - 30
   native_language         String              @db.VarChar(5)
-  location                String
+  location                String              @db.VarChar(1022)
   birthday                DateTime?           @db.Date()
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
@@ -167,11 +167,11 @@ model book_languages {
   id                      String              @id @default(cuid())
   book_id                 String
   language_code           String              @db.VarChar(5)
-  thumbnail_url           String              @db.VarChar(628)
-  title                   String              @db.VarChar(628) // Max length is 255
+  thumbnail_url           String              @db.VarChar(255)
+  title                   String              @db.VarChar(1022) // Max length is 100
   introduction            String              @db.LongText
   content                 String              @db.LongText
-  sales_message           String              @db.VarChar(4000) // Max length is 1000
+  sales_message           String              @db.VarChar(8090) // Max length is 800
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
@@ -182,7 +182,7 @@ model book_tags {
 
   id                      String              @id @default(cuid())
   book_id                 String
-  name                    String              @db.VarChar(128) // Max length is 32
+  name                    String              @db.VarChar(510) // Max length is 50
   sort                    Int                 @db.SmallInt
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
