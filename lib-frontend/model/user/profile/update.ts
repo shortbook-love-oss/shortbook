@@ -1,6 +1,6 @@
 import prisma from '$lib/prisma/connect';
 
-export interface DbUserUpdateRequest {
+export interface DbUserProfileUpdateRequest {
 	userId: string;
 	keyName: string;
 	nativeLanguage: string;
@@ -9,7 +9,7 @@ export interface DbUserUpdateRequest {
 	selfIntroduction: string;
 }
 
-export async function dbUserProfileUpdate(req: DbUserUpdateRequest) {
+export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 	let dbError: Error | undefined;
 
 	const profile = await prisma

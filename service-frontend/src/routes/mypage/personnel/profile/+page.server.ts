@@ -24,10 +24,10 @@ export const load = async ({ request, cookies }) => {
 		});
 	}
 	const profileLangs = profile?.languages[0];
-	const nativeLang = guessNativeLangFromRequest(request);
+	const requestLang = guessNativeLangFromRequest(request);
 
 	form.data.keyName = profile?.key_name ?? '';
-	form.data.nativeLanguage = profile?.native_language || nativeLang;
+	form.data.nativeLanguage = profile?.native_language || requestLang;
 	form.data.penName = profileLangs?.pen_name ?? '';
 	form.data.headline = profileLangs?.headline ?? '';
 	form.data.selfIntroduction = profileLangs?.self_introduction ?? '';
