@@ -1,4 +1,4 @@
-FROM node:22.2.0-bookworm-slim as base
+FROM node:22.3.0-bookworm-slim as base
 
 WORKDIR /usr/src/app
 
@@ -22,7 +22,7 @@ ENV NODE_ENV=development
 # SvelteKit(Vite) use 5173 port
 EXPOSE 5173
 
-FROM node:22.2.0-bookworm-slim as prd
+FROM node:22.3.0-bookworm-slim as prd
 
 WORKDIR /usr/src/app
 
