@@ -152,7 +152,6 @@ model books {
   status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
   price                   Float               @db.Double
   published_at            DateTime            @default(now())
-  edited_at               DateTime            @default(now())
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
