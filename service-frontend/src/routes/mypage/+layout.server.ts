@@ -14,7 +14,7 @@ export const load = async ({ locals, url, cookies }) => {
 		}
 		const redirectTo = new URL(url.origin + getLangTagPathPart(url.pathname) + redirectToPathname);
 		redirectTo.searchParams.set('callbackUrl', url.href);
-		throw redirect(303, redirectTo.href);
+		redirect(303, redirectTo.href);
 	}
 
 	return {
