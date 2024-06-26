@@ -33,7 +33,7 @@
 			</li>
 			{#if $page.data.session?.user}
 				<li>
-					<NavLinkSp name="Write" href="/">
+					<NavLinkSp name="Write" href="/write">
 						<IconWrite width="32" height="32" />
 					</NavLinkSp>
 				</li>

@@ -12,7 +12,7 @@
 <ul class="flex items-center">
 	{#if $page.data.session?.user}
 		<li>
-			<NavLinkSmall name="Write" href="/">
+			<NavLinkSmall name="Write" href="/write">
 				<IconWrite width="20" height="20" />
 			</NavLinkSmall>
 		</li>
