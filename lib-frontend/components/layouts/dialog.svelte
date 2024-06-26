@@ -46,7 +46,7 @@
 			class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
 		>
 			<div
-				class="relative ms-auto inline-flex leading-none focus-within:bg-stone-200 hover:bg-stone-200"
+				class="relative ms-auto inline-flex rounded-es rounded-se-[0.625rem] leading-none focus-within:bg-stone-200 hover:bg-stone-200"
 			>
 				{#if isEnableJS}
 					<button
@@ -60,7 +60,7 @@
 						<IconClose
 							width="44"
 							height="44"
-							class="ml-auto rounded-es rounded-se-[0.625rem] p-1"
+							class="ml-auto p-1"
 							aria-label="Cancel and close dialog"
 						/>
 					</slot>
