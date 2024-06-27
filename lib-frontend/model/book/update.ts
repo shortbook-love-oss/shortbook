@@ -10,7 +10,8 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 
 	const bookBeforeEdit = await prisma.books.findUnique({
 		select: {
-			user_id: true
+			user_id: true,
+			published_at: true
 		},
 		where: {
 			id: req.bookId
@@ -20,6 +21,11 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 		throw new Error(`Can't edit book written by other writer.`);
 	}
 
+	let publishedAt = new Date();
+	if (req.status === 0) {
+		publishedAt = bookBeforeEdit.published_at;
+	}
+
 	const book = await prisma
 		.$transaction(async (tx) => {
 			const book = await tx.books.update({
@@ -27,7 +33,8 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 					id: req.bookId
 				},
 				data: {
-					status: req.status
+					status: req.status,
+					published_at: publishedAt
 				}
 			});
 			await tx.book_languages.deleteMany({
