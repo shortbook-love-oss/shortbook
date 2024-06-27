@@ -19,10 +19,11 @@ export function encrypt(originalData: string, password: string, salt: string) {
 	const encryptTarget = cipher.update(originalData);
 	const encryptedBuffer = Buffer.concat([encryptTarget, cipher.final()]);
 
-	return {
+	const encrypted: Encrypted = {
 		encryptedData: encryptedBuffer.toString('base64'),
 		iv: ivBuffer.toString('base64')
 	};
+	return encrypted;
 }
 
 export function decrypt(encryptedData: string, iv: string, password: string, salt: string) {
@@ -37,10 +38,10 @@ export function decrypt(encryptedData: string, iv: string, password: string, sal
 	return decryptedData.toString('utf8');
 }
 
-export function setAuthUserId(cookie: Cookies, encryptedValue: Encrypted) {
+export function setAuthUserId(cookie: Cookies, value: string) {
+	const encryptedValue = encrypt(value, ENCRYPT_PASSWORD_USER_ID, ENCRYPT_SALT);
 	cookie.set(keyAuthUserId, JSON.stringify(encryptedValue), setOption);
 }
-
 export function getAuthUserId(cookie: Cookies) {
 	const value = cookie.get(keyAuthUserId);
 	if (!value) {

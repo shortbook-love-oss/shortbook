@@ -1,3 +1,4 @@
+import type { DefaultSession } from '@auth/sveltekit';
 import 'unplugin-icons/types/svelte';
 
 // See https://kit.svelte.dev/docs/types#app
@@ -5,7 +6,9 @@ import 'unplugin-icons/types/svelte';
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			session: DefaultSession | null;
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
