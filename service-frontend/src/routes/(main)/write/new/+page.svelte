@@ -12,12 +12,16 @@
 
 	export let data;
 
-	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
-		resetForm: false, // Prevents reverting to initial value after submission
-		validators: zod(schema),
-		validationMethod: 'onblur'
-	});
+	const { form, enhance, capture, restore, validateForm, submitting, message, errors } = superForm(
+		data.form,
+		{
+			resetForm: false, // Prevents reverting to initial value after submission
+			validators: zod(schema),
+			validationMethod: 'onblur'
+		}
+	);
 	const actionUrl = removeLangTagFromPath($page.url.pathname);
+	export const snapshot = { capture, restore };
 
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = true;
