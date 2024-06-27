@@ -4,7 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
-import { getUserId } from '$lib/utilities/cookie';
+import { getAuthUserId } from '$lib/utilities/server/crypto';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/profile-update';
 
@@ -12,7 +12,7 @@ export const load = async ({ request, cookies }) => {
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
 
-	const userId = getUserId(cookies);
+	const userId = getAuthUserId(cookies);
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
@@ -37,7 +37,7 @@ export const load = async ({ request, cookies }) => {
 
 export const actions = {
 	default: async ({ request, cookies }) => {
-		const userId = getUserId(cookies);
+		const userId = getAuthUserId(cookies);
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}

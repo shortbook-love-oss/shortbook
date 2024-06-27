@@ -3,19 +3,19 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookCreateRequest } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getUserId } from '$lib/utilities/cookie';
+import { getAuthUserId } from '$lib/utilities/server/crypto';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import { getLangTagPathPart } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
 
 export const load = async ({ request, cookies }) => {
-	const form = await superValidate(zod(schema));
-	const langTags = languageAndNotSelect;
-
-	const userId = getUserId(cookies);
+	const userId = getAuthUserId(cookies);
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
+
+	const form = await superValidate(zod(schema));
+	const langTags = languageAndNotSelect;
 
 	const { profile, dbError } = await dbUserProfileGet({ userId });
 	if (dbError) {
@@ -37,7 +37,7 @@ export const load = async ({ request, cookies }) => {
 
 export const actions = {
 	default: async ({ request, cookies, url }) => {
-		const userId = getUserId(cookies);
+		const userId = getAuthUserId(cookies);
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}

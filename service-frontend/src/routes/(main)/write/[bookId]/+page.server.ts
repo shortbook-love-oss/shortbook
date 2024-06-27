@@ -4,19 +4,19 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookDeleteRequest } from '$lib/model/book/delete';
 import { dbBookUpdateRequest } from '$lib/model/book/update';
 import { dbBookGet } from '$lib/model/book/get';
-import { getUserId } from '$lib/utilities/cookie';
+import { getAuthUserId } from '$lib/utilities/server/crypto';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { getLangTagPathPart } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
 
 export const load = async ({ cookies, params }) => {
-	const form = await superValidate(zod(schema));
-	const langTags = languageAndNotSelect;
-
-	const userId = getUserId(cookies);
+	const userId = getAuthUserId(cookies);
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
+
+	const form = await superValidate(zod(schema));
+	const langTags = languageAndNotSelect;
 
 	const { book, dbError } = await dbBookGet({ bookId: params.bookId });
 	if (dbError) {
@@ -38,7 +38,7 @@ export const load = async ({ cookies, params }) => {
 
 export const actions = {
 	update: async ({ request, cookies, url, params }) => {
-		const userId = getUserId(cookies);
+		const userId = getAuthUserId(cookies);
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}
@@ -64,7 +64,7 @@ export const actions = {
 	},
 
 	delete: async ({ cookies, url, params }) => {
-		const userId = getUserId(cookies);
+		const userId = getAuthUserId(cookies);
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}

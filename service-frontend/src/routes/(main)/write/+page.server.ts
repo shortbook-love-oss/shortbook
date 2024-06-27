@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
-import { getUserId } from '$lib/utilities/cookie';
+import { getAuthUserId } from '$lib/utilities/server/crypto';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 interface ResponseBookList {
@@ -12,7 +12,7 @@ interface ResponseBookList {
 }
 
 export const load = async ({ request, cookies }) => {
-	const userId = getUserId(cookies);
+	const userId = getAuthUserId(cookies);
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
