@@ -20,7 +20,15 @@
 		const openSwitch = document.getElementById('common_dialog_open_' + name) as HTMLInputElement;
 		openSwitch.checked = false;
 	}
+
+	function onKeyDown(e: KeyboardEvent) {
+		if (e.code === 'Escape') {
+			closeDialog();
+		}
+	}
 </script>
+
+<svelte:window on:keydown={onKeyDown} />
 
 <label class="peer/common_dialog_open relative">
 	<div class="focus-within:bg-stone-200 hover:bg-stone-200 {openerClass}">
@@ -43,6 +51,7 @@
 	<div class="flex flex-col">
 		<label for="common_dialog_open_{name}" class="min-h-[16px] flex-1" aria-hidden="true" />
 		<div
+			role="dialog"
 			class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
 		>
 			<div
