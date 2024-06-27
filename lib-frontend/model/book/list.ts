@@ -10,7 +10,8 @@ export async function dbBookList(req: DbBookListRequest) {
 	const books = await prisma.books
 		.findMany({
 			where: {
-				user_id: req.userId
+				user_id: req.userId,
+				deleted_at: null
 			},
 			include: {
 				languages: {
