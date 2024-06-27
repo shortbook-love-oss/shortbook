@@ -12,7 +12,7 @@
 
 <Dialog name={dialogName} openerClass="rounded-lg">
 	<p slot="opener" class="w-full px-3 py-2 text-lg text-red-800">Sign out</p>
-	<p class="text-lg">Are you sure you want to sign out?</p>
+	<p>Do you want to sign out?</p>
 	<SignOut
 		slot="actions"
 		className="w-fit rounded-lg mx-auto hover:bg-stone-200 focus-within:bg-stone-200"

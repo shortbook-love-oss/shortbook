@@ -66,7 +66,7 @@
 					</slot>
 				</label>
 			</div>
-			<div class="overflow-x-auto px-4 py-1 sm:pr-6 md:pl-6 md:pr-8">
+			<div class="overflow-x-auto px-4 py-1 text-lg sm:pr-6 md:pl-6 md:pr-8">
 				<slot />
 			</div>
 			<div class="px-4 pb-4 pt-1">
