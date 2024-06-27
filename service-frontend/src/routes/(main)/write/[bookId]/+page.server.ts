@@ -1,6 +1,7 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { dbBookDeleteRequest } from '$lib/model/book/delete';
 import { dbBookUpdateRequest } from '$lib/model/book/update';
 import { dbBookGet } from '$lib/model/book/get';
 import { getUserId } from '$lib/utilities/cookie';
@@ -36,7 +37,7 @@ export const load = async ({ cookies, params }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies, url, params }) => {
+	update: async ({ request, cookies, url, params }) => {
 		const userId = getUserId(cookies);
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
@@ -55,7 +56,26 @@ export const actions = {
 		});
 		if (dbError) {
 			return error(500, {
-				message: 'Server error: Failed to update user.'
+				message: 'Server error: Failed to update book.'
+			});
+		}
+
+		redirect(303, getLangTagPathPart(url.pathname) + '/write');
+	},
+
+	delete: async ({ cookies, url, params }) => {
+		const userId = getUserId(cookies);
+		if (!userId) {
+			return error(401, { message: 'Unauthorized' });
+		}
+
+		const { dbError } = await dbBookDeleteRequest({
+			bookId: params.bookId,
+			userId
+		});
+		if (dbError) {
+			return error(500, {
+				message: 'Server error: Failed to delete book.'
 			});
 		}
 
