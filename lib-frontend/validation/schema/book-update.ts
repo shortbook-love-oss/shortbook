@@ -3,7 +3,7 @@ import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { validateOnlyVisibleChar } from '$lib/utilities/validate';
 
 export const schema = z.object({
-	title: z.string().min(1).max(100).refine(validateOnlyVisibleChar, {
+	title: z.string().min(1).max(140).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),
 	nativeLanguage: z.string().max(5).refine(isAvailableLanguageTag, {
