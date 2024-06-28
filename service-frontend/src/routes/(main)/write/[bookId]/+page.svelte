@@ -67,10 +67,10 @@
 		className="mb-8 max-w-72"
 	/>
 	<TextArea
-		bind:value={$form.introduction}
-		name="introduction"
+		bind:value={$form.prologue}
+		name="prologue"
 		label="Prologue"
-		errorMessages={$errors.introduction}
+		errorMessages={$errors.prologue}
 		className="mb-8"
 	/>
 	<TextArea

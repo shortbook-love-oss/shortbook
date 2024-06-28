@@ -29,7 +29,7 @@ export const load = async ({ cookies, params }) => {
 
 	form.data.title = bookLang?.title ?? '';
 	form.data.nativeLanguage = bookLang?.language_code ?? '';
-	form.data.introduction = bookLang?.introduction ?? '';
+	form.data.prologue = bookLang?.prologue ?? '';
 	form.data.content = bookLang?.content ?? '';
 	form.data.salesMessage = bookLang?.sales_message ?? '';
 

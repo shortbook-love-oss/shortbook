@@ -169,7 +169,7 @@ model book_languages {
   language_code           String              @db.VarChar(5)
   thumbnail_url           String              @db.VarChar(255)
   title                   String              @db.VarChar(1022) // Max length is 140
-  introduction            String              @db.LongText
+  prologue            String              @db.LongText
   content                 String              @db.LongText
   sales_message           String              @db.Text // Max length is 1000
   preview_content         String              @db.VarChar(3000) // Max length is 400

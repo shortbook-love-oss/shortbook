@@ -60,10 +60,10 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 						language_code: req.nativeLanguage,
 						thumbnail_url: '',
 						title: req.title,
-						introduction: req.introduction,
+						prologue: req.prologue,
 						content: req.content,
 						sales_message: req.salesMessage,
-						preview_content: req.introduction.slice(0, 400)
+						preview_content: req.prologue.slice(0, 400)
 					}
 				]
 			});

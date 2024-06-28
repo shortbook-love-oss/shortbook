@@ -5,6 +5,7 @@ import { dbBookCreateRequest } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getAuthUserId } from '$lib/utilities/server/crypto';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { getLangTagPathPart } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
 
@@ -24,8 +25,8 @@ export const load = async ({ request, cookies }) => {
 	const requestLang = guessNativeLangFromRequest(request);
 
 	form.data.title = '';
-	form.data.nativeLanguage = profile?.native_language || requestLang;
-	form.data.introduction = '';
+	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTags;
+	form.data.prologue = '';
 	form.data.content = '';
 	form.data.salesMessage = 'Read this! Will be helpful to you!';
 	const status = 0;

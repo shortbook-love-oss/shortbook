@@ -16,7 +16,7 @@ export async function dbBookList(req: DbBookListRequest) {
 			include: {
 				languages: {
 					omit: {
-						introduction: true,
+						prologue: true,
 						content: true,
 						sales_message: true
 					},
