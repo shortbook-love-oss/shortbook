@@ -55,7 +55,6 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 					deleted_at: deletedAt
 				}
 			});
-			// Don't delete book_buys
 		})
 		.catch(() => {
 			dbError ??= new Error(`Failed to delete book. Book ID=${req.bookId}`);

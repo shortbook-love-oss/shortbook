@@ -83,7 +83,6 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 					},
 					data: { deleted_at: deletedAt }
 				});
-				// Don't delete book_buys
 			}
 		})
 		.catch(() => {
