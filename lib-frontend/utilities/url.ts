@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { Cookies } from '@sveltejs/kit';
 import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { getUserId } from './cookie';
+import type { AvailableLanguageTags } from './language';
 
 // "/de/mypage/personnel" → "/mypage/personnel"
 // "/mypage/personnel" → "/mypage/personnel"
@@ -18,7 +19,7 @@ export function removeLangTagFromPath(pathname: string) {
 // "/de/mypage/personnel" → "de"
 // "/mypage/personnel" → ""
 // "/de" → "de"
-export function getLangTag(pathname: string) {
+export function getLangTag(pathname: string): AvailableLanguageTags | '' {
 	const firstDirName = pathname.split('/')[1] ?? '';
 	if (isAvailableLanguageTag(firstDirName)) {
 		return firstDirName;

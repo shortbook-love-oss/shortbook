@@ -1,6 +1,7 @@
+import type { CookieSerializeOptions } from 'cookie';
 import type { Cookies } from '@sveltejs/kit';
 
-export const setOption: import('cookie').CookieSerializeOptions & { path: string } = {
+export const setOption: CookieSerializeOptions & { path: string } = {
 	httpOnly: true,
 	secure: true,
 	path: '/',

@@ -1,7 +1,7 @@
-import { sourceLanguageTag, availableLanguageTags } from '$lib/i18n/paraglide/runtime';
+import { sourceLanguageTag, availableLanguageTags, isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { getLangTag } from '$lib/utilities/url';
 
-type AvailableLanguageTags = (typeof availableLanguageTags)[number];
+export type AvailableLanguageTags = (typeof availableLanguageTags)[number];
 
 export interface LanguageSelect {
 	value: AvailableLanguageTags | '';
@@ -30,11 +30,7 @@ export const languageAndNotSelect: LanguageSelect[] = [
 	...languageSelect
 ];
 
-export function isLanguageTag(maybeLangTag: string) {
-	return availableLanguageTags.includes(maybeLangTag as AvailableLanguageTags);
-}
-
-export function guessNativeLangFromRequest(request: Request) {
+export function guessNativeLangFromRequest(request: Request): AvailableLanguageTags {
 	// e.g. "/ja/mypage" → ja
 	let textLang = getLangTag(new URL(request.url).pathname);
 	if (!textLang) {
@@ -44,7 +40,7 @@ export function guessNativeLangFromRequest(request: Request) {
 		const acceptLangs = (reqAcceptLang || '').match(/[a-zA-Z-]{2,5}/g);
 		if (acceptLangs) {
 			for (const acceptLang of acceptLangs) {
-				if (isLanguageTag(acceptLang)) {
+				if (isAvailableLanguageTag(acceptLang)) {
 					textLang = acceptLang;
 					break;
 				}
