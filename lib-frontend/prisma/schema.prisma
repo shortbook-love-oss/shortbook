@@ -171,7 +171,8 @@ model book_languages {
   title                   String              @db.VarChar(1022) // Max length is 140
   introduction            String              @db.LongText
   content                 String              @db.LongText
-  sales_message           String              @db.VarChar(8190) // Max length is 1000
+  sales_message           String              @db.Text // Max length is 1000
+  preview_content         String              @db.VarChar(3000) // Max length is 400
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

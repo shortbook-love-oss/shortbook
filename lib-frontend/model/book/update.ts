@@ -62,7 +62,8 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 						title: req.title,
 						introduction: req.introduction,
 						content: req.content,
-						sales_message: req.salesMessage
+						sales_message: req.salesMessage,
+						preview_content: req.introduction.slice(0, 400)
 					}
 				]
 			});
