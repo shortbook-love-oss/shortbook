@@ -27,8 +27,7 @@ export async function dbBookCreateRequest(req: DbBookCreateRequest) {
 							title: req.title,
 							prologue: req.prologue,
 							content: req.content,
-							sales_message: req.salesMessage,
-							preview_content: req.prologue.slice(0, 400)
+							sales_message: req.salesMessage
 						}
 					}
 				}
