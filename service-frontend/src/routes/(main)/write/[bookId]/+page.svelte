@@ -100,6 +100,7 @@
 			</NavLinkSmall>
 			<p class="mb-2 mt-4 text-lg">Do you want to delete it?</p>
 			<SubmitText
+				slot="actions"
 				formaction="?/delete"
 				hasInvalid={!hasVaild}
 				isLoading={$submitting}
