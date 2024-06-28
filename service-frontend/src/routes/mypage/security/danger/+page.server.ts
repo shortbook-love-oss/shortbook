@@ -14,9 +14,7 @@ export const load = async ({ cookies }) => {
 		userId: getAuthUserId(cookies)
 	});
 	if (dbError) {
-		return error(500, {
-			message: 'Server error: Failed to get user.'
-		});
+		return error(500, { message: dbError.message });
 	}
 	const penName = profile?.languages[0]?.pen_name ?? '';
 
@@ -39,9 +37,7 @@ export const actions = {
 
 		const { dbError } = await dbUserDelete({ userId });
 		if (dbError) {
-			return error(500, {
-				message: 'Server error: Failed to delete user.'
-			});
+			return error(500, { message: dbError.message });
 		}
 
 		redirect(303, `${getLangTagPathPart(url.pathname)}/goodbye`);

@@ -19,9 +19,7 @@ export const load = async ({ request, cookies }) => {
 
 	const { profile, dbError } = await dbUserProfileGet({ userId });
 	if (dbError) {
-		return error(500, {
-			message: 'Server error: Failed to get user.'
-		});
+		return error(500, { message: dbError.message });
 	}
 	const profileLangs = profile?.languages[0];
 	const requestLang = guessNativeLangFromRequest(request);
@@ -47,9 +45,7 @@ export const actions = {
 			// If already use key-name, show error message near the input
 			const { user, dbError } = await dbUserGetByKeyName({ keyName: form.data.keyName });
 			if (dbError) {
-				return error(500, {
-					message: 'Server error: Failed to get user.'
-				});
+				return error(500, { message: dbError.message });
 			}
 			if (user && user.id !== userId) {
 				form.valid = false;
@@ -66,9 +62,7 @@ export const actions = {
 			...form.data
 		});
 		if (dbError) {
-			return error(500, {
-				message: 'Server error: Failed to update user.'
-			});
+			return error(500, { message: dbError.message });
 		}
 
 		return message(form, 'Profile updated successfully.');

@@ -19,9 +19,7 @@ export const load = async ({ request, cookies }) => {
 
 	const { books, dbError } = await dbBookList({ userId });
 	if (dbError) {
-		return error(500, {
-			message: 'Server error: Failed to get books.'
-		});
+		return error(500, { message: dbError.message });
 	}
 	const requestLang = guessNativeLangFromRequest(request);
 

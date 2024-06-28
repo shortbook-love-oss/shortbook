@@ -19,9 +19,7 @@ export const load = async ({ request, cookies }) => {
 
 	const { profile, dbError } = await dbUserProfileGet({ userId });
 	if (dbError) {
-		return error(500, {
-			message: 'Server error: Failed to get user.'
-		});
+		return error(500, { message: dbError.message });
 	}
 	const requestLang = guessNativeLangFromRequest(request);
 
@@ -53,9 +51,7 @@ export const actions = {
 			...form.data
 		});
 		if (dbError) {
-			return error(500, {
-				message: 'Server error: Failed to update user.'
-			});
+			return error(500, { message: dbError.message });
 		}
 
 		redirect(303, getLangTagPathPart(url.pathname) + '/write');

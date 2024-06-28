@@ -35,8 +35,8 @@ export async function dbBookCreateRequest(req: DbBookCreateRequest) {
 
 			return book;
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to create book. User ID=${req.userId}`);
 			return undefined;
 		});
 

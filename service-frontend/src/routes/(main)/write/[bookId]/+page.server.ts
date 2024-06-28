@@ -56,9 +56,7 @@ export const actions = {
 			...form.data
 		});
 		if (dbError) {
-			return error(500, {
-				message: 'Server error: Failed to update book.'
-			});
+			return error(500, { message: dbError.message });
 		}
 
 		redirect(303, getLangTagPathPart(url.pathname) + '/write');
@@ -75,9 +73,7 @@ export const actions = {
 			userId
 		});
 		if (dbError) {
-			return error(500, {
-				message: 'Server error: Failed to delete book.'
-			});
+			return error(500, { message: dbError.message });
 		}
 
 		redirect(303, getLangTagPathPart(url.pathname) + '/write');

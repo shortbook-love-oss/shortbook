@@ -15,8 +15,8 @@ export async function dbUserGetByKeyName(req: DbUserGetByKeyNameRequest) {
 				}
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to get user. Display user ID=${req.keyName}`);
 			return undefined;
 		});
 

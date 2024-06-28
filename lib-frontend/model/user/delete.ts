@@ -10,16 +10,27 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 	await prisma
 		.$transaction(async (tx) => {
 			const deletedAt = new Date();
-			await tx.user.update({
-				where: { id: req.userId },
+			const user = await tx.user.update({
+				where: {
+					id: req.userId,
+					deleted_at: null
+				},
 				data: { deleted_at: deletedAt }
 			});
+			if (!user) {
+				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
+				throw dbError;
+			}
 			const deletedProfile = await tx.user_profiles.update({
-				where: { user_id: req.userId },
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
 				data: { deleted_at: deletedAt }
 			});
 			if (!deletedProfile?.id) {
-				throw new Error(`Can't find user of id=${req.userId}.`);
+				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
+				throw dbError;
 			}
 
 			await tx.user_profile_languages.updateMany({
@@ -38,7 +49,10 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 			});
 
 			const deleteBooks = await tx.user_profiles.findMany({
-				where: { user_id: req.userId }
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				}
 			});
 			const deleteBookIds = deleteBooks.map((item) => item.id);
 			if (deleteBookIds.length) {
@@ -57,8 +71,8 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				// Don't delete book_buys
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to delete user. User ID=${req.userId}`);
 			return undefined;
 		});
 

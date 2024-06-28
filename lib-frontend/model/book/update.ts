@@ -18,7 +18,8 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 		}
 	});
 	if (bookBeforeEdit?.user_id !== req.userId) {
-		throw new Error(`Can't edit book written by other writer.`);
+		dbError = new Error(`Can't update book written by other writer. Book ID=${req.bookId}`);
+		return { dbError };
 	}
 
 	let publishedAt = new Date();
@@ -43,7 +44,8 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 				}
 			});
 			if (!book?.id) {
-				throw new Error(`Can't find book of bookId=${req.bookId}.`);
+				dbError = new Error(`Can't find book. Book ID=${req.bookId}`);
+				throw dbError;
 			}
 
 			await tx.book_languages.createMany({
@@ -62,8 +64,8 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 
 			return book;
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
 			return undefined;
 		});
 

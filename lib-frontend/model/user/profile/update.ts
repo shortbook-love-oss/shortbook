@@ -29,7 +29,8 @@ export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 				}
 			});
 			if (!profile?.id) {
-				throw new Error(`Can't find profile of userId=${req.userId}.`);
+				dbError ??= new Error(`Can't find user profile. User ID=${req.userId}`);
+				throw dbError;
 			}
 
 			await tx.user_profile_languages.createMany({
@@ -46,8 +47,8 @@ export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 
 			return profile;
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to get user profile. User ID=${req.userId}`);
 			return undefined;
 		});
 

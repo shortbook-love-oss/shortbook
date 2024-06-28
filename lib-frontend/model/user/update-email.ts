@@ -17,8 +17,8 @@ export async function dbUserEmailUpdate(req: DbUserEmailUpdateRequest) {
 				email: req.email
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to update user email. User ID=${req.userId}`);
 			return undefined;
 		});
 

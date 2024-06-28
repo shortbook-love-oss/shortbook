@@ -20,13 +20,13 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		})
 		.then((book) => {
 			if (book?.user_id !== req.userId) {
-				dbError = new Error("Can't edit book written by other writer.");
+				dbError ??= new Error(`Can't edit book written by other writer. Book ID=${req.bookId}`);
 				return undefined;
 			}
 			return book;
 		})
 		.catch(() => {
-			dbError = new Error('Failed to get book.');
+			dbError ??= new Error(`Failed to get book. Book ID=${req.bookId}`);
 			return undefined;
 		});
 

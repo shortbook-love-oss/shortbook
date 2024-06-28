@@ -24,8 +24,8 @@ export async function dbBookList(req: DbBookListRequest) {
 				tags: true
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to get books. User ID=${req.userId}`);
 			return undefined;
 		});
 

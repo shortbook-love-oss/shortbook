@@ -22,12 +22,12 @@ export async function dbUserSessionGet(req: DbUserSessionGetRequest) {
 				}
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to get user session. User ID=${req.userId}`);
 			return undefined;
-    });
+		});
 
-  const session = user?.sessions[0];
+	const session = user?.sessions[0];
 
 	return { user, session, dbError };
 }

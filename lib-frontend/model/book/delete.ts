@@ -13,11 +13,17 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 			user_id: true
 		},
 		where: {
-			id: req.bookId
+			id: req.bookId,
+			deleted_at: null
 		}
 	});
+	if (!bookBeforeDelete) {
+		dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
+		return { dbError };
+	}
 	if (bookBeforeDelete?.user_id !== req.userId) {
-		throw new Error(`Can't delete book written by other writer.`);
+		dbError ??= new Error(`Can't delete book written by other writer. Book ID=${req.bookId}`);
+		return { dbError };
 	}
 
 	await prisma
@@ -49,8 +55,8 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 			});
 			// Don't delete book_buys
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to delete book. Book ID=${req.bookId}`);
 			return undefined;
 		});
 

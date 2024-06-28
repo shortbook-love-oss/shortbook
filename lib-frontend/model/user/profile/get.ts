@@ -16,8 +16,8 @@ export async function dbUserProfileGet(req: DbUserProfileGetRequest) {
 				languages: true
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to get user. User ID=${req.userId}`);
 			return undefined;
 		});
 

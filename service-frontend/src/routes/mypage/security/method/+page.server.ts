@@ -22,9 +22,7 @@ export const load = async ({ request, cookies }) => {
 		sessionToken
 	});
 	if (dbError) {
-		return error(500, {
-			message: 'Server error: Failed to get user.'
-		});
+		return error(500, { message: dbError.message });
 	}
 
 	const providerNameLowercase = (user?.accounts[0].provider ?? '') as keyof typeof brandNames;
