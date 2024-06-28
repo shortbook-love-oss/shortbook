@@ -20,8 +20,7 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 	if (!bookBeforeDelete) {
 		dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
 		return { dbError };
-	}
-	if (bookBeforeDelete?.user_id !== req.userId) {
+	} else if (bookBeforeDelete.user_id !== req.userId) {
 		dbError ??= new Error(`Can't delete book written by other writer. Book ID=${req.bookId}`);
 		return { dbError };
 	}
@@ -31,7 +30,8 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 			const deletedAt = new Date();
 			await tx.books.update({
 				where: {
-					id: req.bookId
+					id: req.bookId,
+					deleted_at: null
 				},
 				data: {
 					deleted_at: deletedAt
@@ -39,7 +39,8 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 			});
 			await tx.book_languages.updateMany({
 				where: {
-					book_id: req.bookId
+					book_id: req.bookId,
+					deleted_at: null
 				},
 				data: {
 					deleted_at: deletedAt
@@ -47,7 +48,8 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 			});
 			await tx.book_tags.updateMany({
 				where: {
-					book_id: req.bookId
+					book_id: req.bookId,
+					deleted_at: null
 				},
 				data: {
 					deleted_at: deletedAt

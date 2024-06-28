@@ -14,11 +14,15 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 			published_at: true
 		},
 		where: {
-			id: req.bookId
+			id: req.bookId,
+			deleted_at: null
 		}
 	});
-	if (bookBeforeEdit?.user_id !== req.userId) {
-		dbError = new Error(`Can't update book written by other writer. Book ID=${req.bookId}`);
+	if (!bookBeforeEdit) {
+		dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
+		return { dbError };
+	} else if (bookBeforeEdit.user_id !== req.userId) {
+		dbError ??= new Error(`Can't edit book written by other writer. Book ID=${req.bookId}`);
 		return { dbError };
 	}
 
@@ -31,23 +35,24 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 		.$transaction(async (tx) => {
 			const book = await tx.books.update({
 				where: {
-					id: req.bookId
+					id: req.bookId,
+					deleted_at: null
 				},
 				data: {
 					status: req.status,
 					published_at: publishedAt
 				}
 			});
+			if (!book?.id) {
+				dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
+				throw dbError;
+			}
+
 			await tx.book_languages.deleteMany({
 				where: {
 					book_id: book.id
 				}
 			});
-			if (!book?.id) {
-				dbError = new Error(`Can't find book. Book ID=${req.bookId}`);
-				throw dbError;
-			}
-
 			await tx.book_languages.createMany({
 				data: [
 					{
@@ -65,7 +70,7 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 			return book;
 		})
 		.catch(() => {
-			dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
+			dbError ??= new Error(`Failed to get book. Book ID=${req.bookId}`);
 			return undefined;
 		});
 

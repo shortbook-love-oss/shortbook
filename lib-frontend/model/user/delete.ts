@@ -34,11 +34,17 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 			}
 
 			await tx.user_profile_languages.updateMany({
-				where: { profile_id: deletedProfile.id },
+				where: {
+					profile_id: deletedProfile.id,
+					deleted_at: null
+				},
 				data: { deleted_at: deletedAt }
 			});
 			await tx.user_fans.updateMany({
-				where: { target_user_id: req.userId },
+				where: {
+					target_user_id: req.userId,
+					deleted_at: null
+				},
 				data: { deleted_at: deletedAt }
 			});
 			await tx.authenticator.deleteMany({
@@ -57,15 +63,24 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 			const deleteBookIds = deleteBooks.map((item) => item.id);
 			if (deleteBookIds.length) {
 				await tx.user_profiles.updateMany({
-					where: { user_id: req.userId },
+					where: {
+						user_id: req.userId,
+						deleted_at: null
+					},
 					data: { deleted_at: deletedAt }
 				});
 				await tx.book_languages.updateMany({
-					where: { book_id: { in: deleteBookIds } },
+					where: {
+						deleted_at: null,
+						book_id: { in: deleteBookIds }
+					},
 					data: { deleted_at: deletedAt }
 				});
 				await tx.book_tags.updateMany({
-					where: { book_id: { in: deleteBookIds } },
+					where: {
+						deleted_at: null,
+						book_id: { in: deleteBookIds }
+					},
 					data: { deleted_at: deletedAt }
 				});
 				// Don't delete book_buys

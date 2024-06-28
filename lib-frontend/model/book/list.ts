@@ -19,9 +19,12 @@ export async function dbBookList(req: DbBookListRequest) {
 						introduction: true,
 						content: true,
 						sales_message: true
-					}
+					},
+					where: { deleted_at: null }
 				},
-				tags: true
+				tags: {
+					where: { deleted_at: null }
+				}
 			}
 		})
 		.catch(() => {

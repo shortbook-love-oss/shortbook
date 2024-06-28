@@ -11,15 +11,23 @@ export async function dbBookGet(req: DbBookGetRequest) {
 	const book = await prisma.books
 		.findUnique({
 			where: {
-				id: req.bookId
+				id: req.bookId,
+				deleted_at: null
 			},
 			include: {
-				languages: true,
-				tags: true
+				languages: {
+					where: { deleted_at: null }
+				},
+				tags: {
+					where: { deleted_at: null }
+				}
 			}
 		})
 		.then((book) => {
-			if (book?.user_id !== req.userId) {
+			if (!book) {
+				dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
+				return undefined;
+			} else if (book.user_id !== req.userId) {
 				dbError ??= new Error(`Can't edit book written by other writer. Book ID=${req.bookId}`);
 				return undefined;
 			}

@@ -16,16 +16,12 @@ export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 		.$transaction(async (tx) => {
 			const profile = await tx.user_profiles.update({
 				where: {
-					user_id: req.userId
+					user_id: req.userId,
+					deleted_at: null
 				},
 				data: {
 					key_name: req.keyName,
 					native_language: req.nativeLanguage
-				}
-			});
-			await tx.user_profile_languages.deleteMany({
-				where: {
-					profile_id: profile.id
 				}
 			});
 			if (!profile?.id) {
@@ -33,6 +29,11 @@ export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 				throw dbError;
 			}
 
+			await tx.user_profile_languages.deleteMany({
+				where: {
+					profile_id: profile.id
+				}
+			});
 			await tx.user_profile_languages.createMany({
 				data: [
 					{
