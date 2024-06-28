@@ -15,7 +15,7 @@ export const schema = z.object({
 	content: z.string().min(1).max(5e8).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),
-	salesMessage: z.string().max(800).refine(validateOnlyVisibleChar, {
+	salesMessage: z.string().max(1000).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	})
 });
