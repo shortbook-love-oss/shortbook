@@ -1,5 +1,5 @@
 import { fail, error, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
+import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookCreateRequest } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
@@ -42,6 +42,7 @@ export const actions = {
 
 		const form = await superValidate(request, zod(schema));
 		if (!form.valid) {
+			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
 		}
 

@@ -29,8 +29,9 @@ export const load = async ({ request, cookies }) => {
 	form.data.penName = profileLangs?.pen_name ?? '';
 	form.data.headline = profileLangs?.headline ?? '';
 	form.data.selfIntroduction = profileLangs?.self_introduction ?? '';
+	const initPenName = form.data.penName;
 
-	return { form, langTags };
+	return { form, langTags, initPenName };
 };
 
 export const actions = {
@@ -54,6 +55,7 @@ export const actions = {
 			}
 		}
 		if (!form.valid) {
+			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
 		}
 

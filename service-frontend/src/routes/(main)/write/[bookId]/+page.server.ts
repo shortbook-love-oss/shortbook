@@ -1,5 +1,5 @@
 import { fail, error, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
+import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookDeleteRequest } from '$lib/model/book/delete';
 import { dbBookUpdateRequest } from '$lib/model/book/update';
@@ -32,9 +32,11 @@ export const load = async ({ cookies, params }) => {
 	form.data.introduction = bookLang?.introduction ?? '';
 	form.data.content = bookLang?.content ?? '';
 	form.data.salesMessage = bookLang?.sales_message ?? '';
+
+	const initTitle = form.data.title;
 	const status = book?.status ?? 0;
 
-	return { form, status, langTags };
+	return { form, langTags, status, initTitle };
 };
 
 export const actions = {
@@ -46,6 +48,7 @@ export const actions = {
 
 		const form = await superValidate(request, zod(schema));
 		if (!form.valid) {
+			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
 		}
 

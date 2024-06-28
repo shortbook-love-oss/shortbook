@@ -33,7 +33,7 @@
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
 
-	const initTitle = $form.title;
+	const initTitle = data.initTitle;
 </script>
 
 <svelte:head>
@@ -46,10 +46,8 @@
 	action={actionUrl}
 	{enhance}
 	isLoading={$submitting}
-	successMessage={$page.status === 200 && $message ? $message : ''}
-	errorMessage={$page.status === 400
-		? 'There was an error, please check your input and resubmit.'
-		: ''}
+	successMessage={$page.status === 200 ? $message : ''}
+	errorMessage={$page.status === 400 ? $message : ''}
 >
 	<TextField
 		bind:value={$form.title}

@@ -34,7 +34,7 @@
 
 	const user = $page.data.session?.user;
 	const actionUrl = removeLangTagFromPath($page.url.pathname);
-	let initPenName = $form.penName;
+	let initPenName = data.initPenName;
 </script>
 
 <svelte:head>
@@ -50,10 +50,8 @@
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}
 	submitLabel="Save profile"
-	successMessage={$page.status === 200 && $message ? $message : ''}
-	errorMessage={$page.status === 400
-		? 'There was an error, please check your input and resubmit.'
-		: ''}
+	successMessage={$page.status === 200 ? $message : ''}
+	errorMessage={$page.status === 400 ? $message : ''}
 >
 	<TextField
 		bind:value={$form.keyName}
