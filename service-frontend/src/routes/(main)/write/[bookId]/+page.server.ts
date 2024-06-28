@@ -18,11 +18,12 @@ export const load = async ({ cookies, params }) => {
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
 
-	const { book, dbError } = await dbBookGet({ bookId: params.bookId });
+	const { book, dbError } = await dbBookGet({
+		bookId: params.bookId,
+		userId
+	});
 	if (dbError) {
-		return error(500, {
-			message: 'Server error: Failed to get book.'
-		});
+		return error(500, { message: dbError.message });
 	}
 	let bookLang = book?.languages[0];
 

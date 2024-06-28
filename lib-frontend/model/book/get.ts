@@ -2,6 +2,7 @@ import prisma from '$lib/prisma/connect';
 
 export interface DbBookGetRequest {
 	bookId: string;
+	userId: string;
 }
 
 export async function dbBookGet(req: DbBookGetRequest) {
@@ -17,8 +18,15 @@ export async function dbBookGet(req: DbBookGetRequest) {
 				tags: true
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.then((book) => {
+			if (book?.user_id !== req.userId) {
+				dbError = new Error("Can't edit book written by other writer.");
+				return undefined;
+			}
+			return book;
+		})
+		.catch(() => {
+			dbError = new Error('Failed to get book.');
 			return undefined;
 		});
 
