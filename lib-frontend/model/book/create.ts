@@ -5,6 +5,7 @@ export interface DbBookCreateRequest {
 	status: number; // 0: Draft 1: Public 2: Fan club only
 	nativeLanguage: string;
 	title: string;
+	subtitle: string;
 	prologue: string;
 	content: string;
 	salesMessage: string;
@@ -25,6 +26,7 @@ export async function dbBookCreateRequest(req: DbBookCreateRequest) {
 							language_code: req.nativeLanguage,
 							thumbnail_url: '',
 							title: req.title,
+							subtitle: req.subtitle,
 							prologue: req.prologue,
 							content: req.content,
 							sales_message: req.salesMessage

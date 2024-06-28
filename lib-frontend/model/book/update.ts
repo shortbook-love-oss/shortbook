@@ -60,6 +60,7 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 						language_code: req.nativeLanguage,
 						thumbnail_url: '',
 						title: req.title,
+						subtitle: req.subtitle,
 						prologue: req.prologue,
 						content: req.content,
 						sales_message: req.salesMessage

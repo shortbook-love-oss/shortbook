@@ -57,6 +57,13 @@
 		errorMessages={$errors.title}
 		className="mb-8"
 	/>
+	<TextField
+		bind:value={$form.subtitle}
+		name="subtitle"
+		label="Subtitle"
+		errorMessages={$errors.subtitle}
+		className="mb-8"
+	/>
 	<Select
 		bind:value={$form.nativeLanguage}
 		name="nativeLanguage"

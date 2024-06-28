@@ -25,6 +25,7 @@ export const load = async ({ request, cookies }) => {
 	const requestLang = guessNativeLangFromRequest(request);
 
 	form.data.title = '';
+	form.data.subtitle = '';
 	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTags;
 	form.data.prologue = '';
 	form.data.content = '';

@@ -28,6 +28,7 @@ export const load = async ({ cookies, params }) => {
 	let bookLang = book?.languages[0];
 
 	form.data.title = bookLang?.title ?? '';
+	form.data.subtitle = bookLang?.subtitle ?? '';
 	form.data.nativeLanguage = bookLang?.language_code ?? '';
 	form.data.prologue = bookLang?.prologue ?? '';
 	form.data.content = bookLang?.content ?? '';
