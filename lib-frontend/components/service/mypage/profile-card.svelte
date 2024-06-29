@@ -12,7 +12,7 @@
 			alt="Profile icon"
 		/>
 	{/if}
-	<div>
-		<p class="break-all text-xl">{name}</p>
+	<div class="overflow-x-hidden">
+		<p class="whitespace-pre-wrap break-words text-xl">{name}</p>
 	</div>
 </div>

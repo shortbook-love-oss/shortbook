@@ -31,7 +31,7 @@
 			<Nav />
 		</nav>
 	</header>
-	<main class="flex-1">
+	<main class="w-full flex-1">
 		<slot></slot>
 	</main>
 </LayoutRule>
