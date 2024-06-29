@@ -22,7 +22,8 @@
 		validators: zod(schema),
 		validationMethod: 'onblur'
 	});
-	const actionUrl = removeLangTagFromPath($page.url.pathname) + '?/update';
+	const actionUpdateUrl = removeLangTagFromPath($page.url.pathname) + '?/update';
+	const actionDeleteUrl = removeLangTagFromPath($page.url.pathname) + '?/delete';
 
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = true;
@@ -43,7 +44,7 @@
 <h1 class="mb-8 text-2xl font-semibold">Edit "{initTitle}"</h1>
 <Form
 	method="POST"
-	action={actionUrl}
+	action={actionUpdateUrl}
 	{enhance}
 	isLoading={$submitting}
 	successMessage={$page.status === 200 ? $message : ''}
@@ -106,7 +107,7 @@
 			<p class="mb-2 mt-4 text-lg">Do you want to delete it?</p>
 			<SubmitText
 				slot="actions"
-				formaction="?/delete"
+				formaction={actionDeleteUrl}
 				hasInvalid={!hasVaild}
 				isLoading={$submitting}
 				className="mx-auto"
