@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { BookItem } from '$lib/utilities/book';
+	import type { MyBookItem } from '$lib/utilities/book';
 	import type { AvailableLanguageTags } from '$lib/utilities/language';
 
-	export let book: BookItem;
+	export let book: MyBookItem;
 	export let requestLang: AvailableLanguageTags;
 
 	let colorStart = '';

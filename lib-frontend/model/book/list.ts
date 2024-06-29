@@ -1,7 +1,7 @@
 import prisma from '$lib/prisma/connect';
 
 export interface DbBookListRequest {
-	userId: string;
+	userId?: string;
 }
 
 export async function dbBookList(req: DbBookListRequest) {
@@ -12,6 +12,9 @@ export async function dbBookList(req: DbBookListRequest) {
 			where: {
 				user_id: req.userId,
 				deleted_at: null
+			},
+			orderBy: {
+				updated_at: 'desc'
 			},
 			include: {
 				languages: {
@@ -24,6 +27,22 @@ export async function dbBookList(req: DbBookListRequest) {
 				},
 				tags: {
 					where: { deleted_at: null }
+				},
+				user: {
+					select: {
+						image: true,
+						profiles: {
+							select: {
+								key_name: true,
+								languages: {
+									select: {
+										language_code: true,
+										pen_name: true
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		})

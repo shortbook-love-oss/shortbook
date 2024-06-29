@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
 import { getAuthUserId } from '$lib/utilities/server/crypto';
-import type { BookItem } from '$lib/utilities/book';
+import type { MyBookItem } from '$lib/utilities/book';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 export const load = async ({ request, cookies }) => {
@@ -16,7 +16,7 @@ export const load = async ({ request, cookies }) => {
 	}
 	const requestLang = guessNativeLangFromRequest(request);
 
-	const bookList: BookItem[] =
+	const bookList: MyBookItem[] =
 		books?.map((book) => {
 			let langInfo = book.languages.find((lang) => lang.language_code === requestLang);
 			if (!langInfo && book.languages.length) {
