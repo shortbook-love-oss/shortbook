@@ -27,4 +27,6 @@
 			</li>
 		{/each}
 	</ul>
+{:else}
+	<p>Not written yet. <a href="/write/new" class="underline">Let's write it now</a></p>
 {/if}
