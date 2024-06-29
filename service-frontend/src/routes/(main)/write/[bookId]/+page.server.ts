@@ -1,6 +1,7 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbBookDeleteRequest } from '$lib/model/book/delete';
 import { dbBookUpdateRequest } from '$lib/model/book/update';
 import { dbBookGet } from '$lib/model/book/get';
@@ -29,7 +30,7 @@ export const load = async ({ cookies, params }) => {
 
 	form.data.title = bookLang?.title ?? '';
 	form.data.subtitle = bookLang?.subtitle ?? '';
-	form.data.nativeLanguage = bookLang?.language_code ?? '';
+	form.data.nativeLanguage = (bookLang?.language_code ?? '') as AvailableLanguageTag;
 	form.data.prologue = bookLang?.prologue ?? '';
 	form.data.content = bookLang?.content ?? '';
 	form.data.salesMessage = bookLang?.sales_message ?? '';

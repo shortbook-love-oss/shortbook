@@ -41,7 +41,9 @@
 	<title>Edit book | ShortBook</title>
 </svelte:head>
 
-<h1 class="mb-8 text-2xl font-semibold">Edit "{initTitle}"</h1>
+<h1 class="mb-8 whitespace-pre-wrap break-words text-2xl font-semibold">
+	Edit "{initTitle}"
+</h1>
 <Form
 	method="POST"
 	action={actionUpdateUrl}
