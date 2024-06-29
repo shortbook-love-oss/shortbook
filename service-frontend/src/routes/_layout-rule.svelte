@@ -11,7 +11,7 @@
 	<slot name="alert" />
 	<slot name="header" />
 	<div class="flex flex-1 flex-col overflow-x-auto">
-		<div class="flex-1">
+		<div class="w-full flex-1">
 			<slot name="contents">
 				<div
 					class="mx-auto min-h-80 w-full max-w-[90rem] flex-1 gap-12 px-4 pb-16 pt-12 sm:flex sm:px-6 md:px-8 lg:gap-20"
