@@ -15,9 +15,7 @@
 </script>
 
 <footer class="flex flex-col justify-center border-t border-stone-300">
-	<nav
-		class="m-auto flex w-full flex-wrap gap-x-16 gap-y-8 p-4 sm:w-fit sm:px-6 md:px-8"
-	>
+	<nav class="m-auto flex w-full flex-wrap gap-x-16 gap-y-8 p-4 sm:w-fit sm:px-6 md:px-8">
 		<div class="relative w-full sm:w-auto sm:pt-1">
 			<a href="/" class="mb-2 inline-block">
 				<img
@@ -64,7 +62,11 @@
 				<ul>
 					{#each category.childs as item (item.href)}
 						<li class="mb-2">
-							<a href="/{item.href}" class="hover:underline">{item.name}</a>
+							<a
+								href={item.href}
+								target={item.href.startsWith('http') ? '_blank' : undefined}
+								class="hover:underline">{item.name}</a
+							>
 						</li>
 					{/each}
 				</ul>

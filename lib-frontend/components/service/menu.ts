@@ -12,8 +12,8 @@ export const categories: FooterItem[] = [
 	{
 		name: 'About company',
 		childs: [
-			{ name: 'About', href: 'about' },
-			{ name: 'Contact', href: 'contact' }
+			{ name: 'About', href: '/about' },
+			{ name: 'Contact', href: 'https://www.linkedin.com/in/kurachiweb/' }
 		]
 	},
 	{
