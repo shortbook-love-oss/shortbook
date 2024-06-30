@@ -8,6 +8,10 @@
 	const publishedAt = data.bookDetail.publishedAt.toLocaleDateString(data.requestLang);
 </script>
 
+<svelte:head>
+	<title>{data.bookDetail.title} | {data.bookDetail.penName}</title>
+</svelte:head>
+
 <article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
 	<div class="hidden shrink-0 justify-end lg:flex">
 		<BookCover book={data.bookDetail} />
