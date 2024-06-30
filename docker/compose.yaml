@@ -1,0 +1,67 @@
+services:
+  service-frontend:
+    build:
+      context: ../
+      dockerfile: ./service-frontend/Dockerfile
+      target: dev
+    tty: true
+    depends_on:
+      - database
+      - cache
+    ports:
+      - "55021:3000" # for build
+      - "55022:5173" # for dev
+    networks:
+      - external
+      - internal
+    volumes:
+      - type: volume
+        source: service-frontend
+        target: /usr/src/app
+      - type: bind
+        source: ../service-frontend
+        target: /usr/src/app
+      - type: bind
+        source: ../lib-frontend
+        target: /usr/src/app/lib
+  database:
+    env_file: ../database/.env
+    build:
+      context: ../
+      dockerfile: ./database/Dockerfile
+    ports:
+      - "55024:3306"
+    networks:
+      - external
+      - internal
+    volumes:
+      - type: volume
+        source: database
+        target: /var/lib/mysql
+      - type: bind # Persistent DB data
+        source: ../database/.data
+        target: /var/lib/mysql
+  cache:
+    image: "amazon/dynamodb-local:latest"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    ports:
+      - "55025:8000"
+    networks:
+      - external
+      - internal
+    working_dir: /home/dynamodblocal
+    volumes:
+      - type: bind
+        source: ../cache/dynamodb
+        target: /home/dynamodblocal/data
+networks:
+  external:
+    driver: bridge
+    internal: false
+  internal:
+    driver: bridge
+    internal: true
+volumes:
+  service-frontend:
+  database:
+  cache:

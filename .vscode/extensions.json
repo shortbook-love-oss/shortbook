@@ -1,0 +1,8 @@
+{
+	"recommendations": [
+		"svelte.svelte-vscode",
+		"inlang.vs-code-extension",
+		"github.vscode-github-actions",
+		"prisma.prisma"
+	]
+}

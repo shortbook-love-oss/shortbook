@@ -1,0 +1,86 @@
+import { fail, error, redirect } from '@sveltejs/kit';
+import { superValidate, message } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
+import { dbBookDeleteRequest } from '$lib/model/book/delete';
+import { dbBookUpdateRequest } from '$lib/model/book/update';
+import { dbBookGet } from '$lib/model/book/get';
+import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { languageAndNotSelect } from '$lib/utilities/language';
+import { getLangTagPathPart } from '$lib/utilities/url';
+import { schema } from '$lib/validation/schema/book-update';
+
+export const load = async ({ cookies, params }) => {
+	const userId = getAuthUserId(cookies);
+	if (!userId) {
+		return error(401, { message: 'Unauthorized' });
+	}
+
+	const form = await superValidate(zod(schema));
+	const langTags = languageAndNotSelect;
+
+	const { book, dbError } = await dbBookGet({
+		bookId: params.bookId,
+		userId
+	});
+	if (dbError) {
+		return error(500, { message: dbError.message });
+	}
+	let bookLang = book?.languages[0];
+
+	form.data.title = bookLang?.title ?? '';
+	form.data.subtitle = bookLang?.subtitle ?? '';
+	form.data.nativeLanguage = (bookLang?.language_code ?? '') as AvailableLanguageTag;
+	form.data.prologue = bookLang?.prologue ?? '';
+	form.data.content = bookLang?.content ?? '';
+	form.data.salesMessage = bookLang?.sales_message ?? '';
+
+	const initTitle = form.data.title;
+	const status = book?.status ?? 0;
+
+	return { form, langTags, status, initTitle };
+};
+
+export const actions = {
+	update: async ({ request, cookies, url, params }) => {
+		const userId = getAuthUserId(cookies);
+		if (!userId) {
+			return error(401, { message: 'Unauthorized' });
+		}
+
+		const form = await superValidate(request, zod(schema));
+		if (!form.valid) {
+			message(form, 'There was an error. please check your input and resubmit.');
+			return fail(400, { form });
+		}
+
+		const { dbError } = await dbBookUpdateRequest({
+			bookId: params.bookId,
+			userId,
+			status: 1,
+			...form.data
+		});
+		if (dbError) {
+			return error(500, { message: dbError.message });
+		}
+
+		redirect(303, getLangTagPathPart(url.pathname) + '/write');
+	},
+
+	delete: async ({ cookies, url, params }) => {
+		const userId = getAuthUserId(cookies);
+		if (!userId) {
+			return error(401, { message: 'Unauthorized' });
+		}
+
+		const { dbError } = await dbBookDeleteRequest({
+			bookId: params.bookId,
+			userId
+		});
+		if (dbError) {
+			return error(500, { message: dbError.message });
+		}
+
+		redirect(303, getLangTagPathPart(url.pathname) + '/write');
+	}
+};

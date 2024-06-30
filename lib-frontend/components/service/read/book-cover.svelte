@@ -1,0 +1,29 @@
+<script lang="ts">
+	import type { MyBookItem } from '$lib/utilities/book';
+
+	export let book: MyBookItem;
+	export let sizeClass = 'h-[8.4rem] w-24 p-2 ps-4 lg:h-56 lg:w-40 lg:p-3 lg:ps-6 lg:text-lg';
+	export let className = '';
+
+	let colorStart = '';
+	let colorEnd = '';
+	const colorKey = parseInt(book.id.slice(-1), 36);
+	if (colorKey < 12) {
+		colorStart = 'from-primary-800';
+		colorEnd = 'to-primary-500';
+	} else if (colorKey < 24) {
+		colorStart = 'from-slate-800';
+		colorEnd = 'to-slate-500';
+	} else {
+		colorStart = 'from-cyan-900';
+		colorEnd = 'to-cyan-600';
+	}
+</script>
+
+<div
+	class="shrink-0 rounded-md bg-gradient-to-br overflow-hidden {colorStart} {colorEnd} {sizeClass} {className}"
+>
+	<p class="whitespace-pre-wrap break-words font-semibold text-white">
+		{book.title}
+	</p>
+</div>
