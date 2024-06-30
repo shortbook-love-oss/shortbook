@@ -8,12 +8,12 @@
 </svelte:head>
 
 <div class="mb-32 flex w-full items-center justify-between">
-	<section class="p-8 lg:px-16">
-		<h1 class="text-6xl font-bold">ShortBook</h1>
+	<section class="p-4 sm:p-8 lg:px-16">
+		<h1 class="text-5xl font-bold sm:text-6xl">ShortBook</h1>
 	</section>
 	<img
 		src="/assets/about/books-stand.jpg"
-		class="hidden w-1/2 rounded-l-lg md:block"
+		class="hidden w-1/2 rounded-lg md:block"
 		alt="index.about_sb.image_alt"
 	/>
 </div>
