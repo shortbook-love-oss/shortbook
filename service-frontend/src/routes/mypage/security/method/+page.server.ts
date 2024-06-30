@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { dbUserSessionGet } from '$lib/model/user/session/get';
-import { getSessionToken, getUserId } from '$lib/utilities/cookie';
+import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getSessionToken } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 const brandNames = {
@@ -9,17 +10,19 @@ const brandNames = {
 };
 
 export const load = async ({ request, cookies }) => {
+	const userId = getAuthUserId(cookies);
+	if (!userId) {
+		return error(401, { message: 'Unauthorized' });
+	}
 	const sessionToken = getSessionToken(cookies);
 	const langTag = guessNativeLangFromRequest(request);
 
 	const { user, session, dbError } = await dbUserSessionGet({
-		userId: getUserId(cookies),
+		userId,
 		sessionToken
 	});
 	if (dbError) {
-		return error(500, {
-			message: 'Server error: Failed to get user.'
-		});
+		return error(500, { message: dbError.message });
 	}
 
 	const providerNameLowercase = (user?.accounts[0].provider ?? '') as keyof typeof brandNames;

@@ -10,24 +10,41 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 	await prisma
 		.$transaction(async (tx) => {
 			const deletedAt = new Date();
-			await tx.user.update({
-				where: { id: req.userId },
+			const user = await tx.user.update({
+				where: {
+					id: req.userId,
+					deleted_at: null
+				},
 				data: { deleted_at: deletedAt }
 			});
+			if (!user) {
+				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
+				throw dbError;
+			}
 			const deletedProfile = await tx.user_profiles.update({
-				where: { user_id: req.userId },
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
 				data: { deleted_at: deletedAt }
 			});
 			if (!deletedProfile?.id) {
-				throw new Error(`Can't find user of id=${req.userId}.`);
+				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
+				throw dbError;
 			}
 
-			await tx.user_profile_langs.updateMany({
-				where: { profile_id: deletedProfile.id },
+			await tx.user_profile_languages.updateMany({
+				where: {
+					profile_id: deletedProfile.id,
+					deleted_at: null
+				},
 				data: { deleted_at: deletedAt }
 			});
 			await tx.user_fans.updateMany({
-				where: { target_user_id: req.userId },
+				where: {
+					target_user_id: req.userId,
+					deleted_at: null
+				},
 				data: { deleted_at: deletedAt }
 			});
 			await tx.authenticator.deleteMany({
@@ -37,32 +54,39 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				where: { userId: req.userId }
 			});
 
-			const deleteArticles = await tx.user_profiles.findMany({
-				where: { user_id: req.userId }
+			const deleteBooks = await tx.user_profiles.findMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				}
 			});
-			const deleteArticleIds = deleteArticles.map((item) => item.id);
-			if (deleteArticleIds.length) {
+			const deleteBookIds = deleteBooks.map((item) => item.id);
+			if (deleteBookIds.length) {
 				await tx.user_profiles.updateMany({
-					where: { user_id: req.userId },
+					where: {
+						user_id: req.userId,
+						deleted_at: null
+					},
 					data: { deleted_at: deletedAt }
 				});
-				await tx.article_languages.updateMany({
-					where: { article_id: { in: deleteArticleIds } },
+				await tx.book_languages.updateMany({
+					where: {
+						deleted_at: null,
+						book_id: { in: deleteBookIds }
+					},
 					data: { deleted_at: deletedAt }
 				});
-				await tx.article_tags.updateMany({
-					where: { article_id: { in: deleteArticleIds } },
-					data: { deleted_at: deletedAt }
-				});
-				// Don't soft delete article_buys
-				await tx.article_favorites.updateMany({
-					where: { article_id: { in: deleteArticleIds } },
+				await tx.book_tags.updateMany({
+					where: {
+						deleted_at: null,
+						book_id: { in: deleteBookIds }
+					},
 					data: { deleted_at: deletedAt }
 				});
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to delete user. User ID=${req.userId}`);
 			return undefined;
 		});
 

@@ -34,7 +34,7 @@
 
 	const user = $page.data.session?.user;
 	const actionUrl = removeLangTagFromPath($page.url.pathname);
-	let initPenName = $form.penName;
+	let initPenName = data.initPenName;
 </script>
 
 <svelte:head>
@@ -50,26 +50,24 @@
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}
 	submitLabel="Save profile"
-	successMessage={$page.status === 200 && $message ? $message : ''}
-	errorMessage={$page.status === 400
-		? 'There was an error, please check your input and resubmit.'
-		: ''}
+	successMessage={$page.status === 200 ? $message : ''}
+	errorMessage={$page.status === 400 ? $message : ''}
 >
 	<TextField
-		bind:value={$form.slug}
-		name="slug"
+		bind:value={$form.keyName}
+		name="keyName"
 		required={true}
 		label="User ID"
-		errorMessages={$errors.slug}
+		errorMessages={$errors.keyName}
 		className="mb-8"
 	/>
 	<Select
-		bind:value={$form.nativeLang}
-		name="nativeLang"
+		bind:value={$form.nativeLanguage}
+		name="nativeLanguage"
 		list={data.langTags}
 		required={true}
 		label="Native language"
-		errorMessages={$errors.nativeLang}
+		errorMessages={$errors.nativeLanguage}
 		className="mb-8 max-w-72"
 	/>
 	<TextField
@@ -88,10 +86,10 @@
 		className="mb-8"
 	/>
 	<TextArea
-		bind:value={$form.selfIntro}
+		bind:value={$form.selfIntroduction}
 		name="selfIntro"
 		label="Self Intro"
-		errorMessages={$errors.selfIntro}
+		errorMessages={$errors.selfIntroduction}
 		className="mb-8"
 	/>
 </Form>

@@ -2,7 +2,7 @@ import prisma from '$lib/prisma/connect';
 
 export interface DbUserCreateRequest {
 	userId: string;
-	slug: string;
+	keyName: string;
 	penName: string;
 }
 
@@ -13,15 +13,15 @@ export async function dbUserProfileCreate(req: DbUserCreateRequest) {
 		.create({
 			data: {
 				user_id: req.userId,
-				slug: req.slug,
-				native_lang: '',
+				key_name: req.keyName,
+				native_language: '',
 				location: '',
-				langs: {
+				languages: {
 					create: {
-						lang_tag: '',
+						language_code: '',
 						pen_name: req.penName,
 						headline: '',
-						self_intro: ''
+						self_introduction: ''
 					}
 				}
 			}

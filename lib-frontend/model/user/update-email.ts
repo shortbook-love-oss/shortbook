@@ -11,14 +11,22 @@ export async function dbUserEmailUpdate(req: DbUserEmailUpdateRequest) {
 	const user = await prisma.user
 		.update({
 			where: {
-				id: req.userId
+				id: req.userId,
+				deleted_at: null
 			},
 			data: {
 				email: req.email
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.then((user) => {
+			if (!user) {
+				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
+				return undefined;
+			}
+			return user;
+		})
+		.catch(() => {
+			dbError ??= new Error(`Failed to update user email. User ID=${req.userId}`);
 			return undefined;
 		});
 

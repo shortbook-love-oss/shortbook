@@ -9,7 +9,7 @@ export async function load({ locals, url }) {
 	if (session?.user) {
 		const callbackUrl = url.searchParams.get('callbackUrl');
 		if (callbackUrl) {
-			throw redirect(303, callbackUrl);
+			redirect(303, callbackUrl);
 		}
 	}
 }

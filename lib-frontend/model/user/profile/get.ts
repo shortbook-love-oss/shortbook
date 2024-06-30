@@ -10,14 +10,24 @@ export async function dbUserProfileGet(req: DbUserProfileGetRequest) {
 	const profile = await prisma.user_profiles
 		.findFirst({
 			where: {
-				user_id: req.userId
+				user_id: req.userId,
+				deleted_at: null
 			},
 			include: {
-				langs: true
+				languages: {
+					where: { deleted_at: null }
+				}
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.then((profile) => {
+			if (!profile) {
+				dbError ??= new Error(`Can't find user profile. User ID=${req.userId}`);
+				return undefined;
+			}
+			return profile;
+		})
+		.catch(() => {
+			dbError ??= new Error(`Failed to get user. User ID=${req.userId}`);
 			return undefined;
 		});
 

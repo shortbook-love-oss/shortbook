@@ -11,7 +11,7 @@
 
 	export let data;
 
-	const { form, enhance, validateForm, submitting, errors } = superForm(data.form, {
+	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
 		validators: zod(schema)
 	});
@@ -29,7 +29,6 @@
 	const actionUrl = removeLangTagFromPath($page.url.pathname);
 	const warnMessage =
 		'If you delete a user, you can restore them for 30 days by simply signing in. However, after 30 days, user data will be permanently deleted.';
-	const errorMessage = 'There was an error, please check your input and resubmit.';
 </script>
 
 <svelte:head>
@@ -46,13 +45,13 @@
 	isLoading={$submitting}
 	submitLabel="Delete user"
 	{warnMessage}
-	errorMessage={$page.status === 400 ? errorMessage : ''}
+	errorMessage={$page.status === 400 ? $message : ''}
 >
-	<input type="hidden" name="slug" value={$form.slug} />
+	<input type="hidden" name="keyName" value={$form.keyName} />
 	<TextField
 		bind:value={$form.deleteKey}
 		name="deleteKey"
-		label="Type &quot;{$form.slug}&quot; to delete user data."
+		label="Type &quot;{$form.keyName}&quot; to delete user data."
 		errorMessages={$errors.deleteKey}
 		className="mb-8"
 	/>

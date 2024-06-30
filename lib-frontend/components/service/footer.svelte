@@ -16,7 +16,7 @@
 
 <footer class="flex flex-col justify-center border-t border-stone-300">
 	<nav
-		class="m-auto flex w-full max-w-[90rem] flex-wrap gap-x-16 gap-y-8 p-4 sm:w-fit sm:px-6 md:px-8"
+		class="m-auto flex w-full flex-wrap gap-x-16 gap-y-8 p-4 sm:w-fit sm:px-6 md:px-8"
 	>
 		<div class="relative w-full sm:w-auto sm:pt-1">
 			<a href="/" class="mb-2 inline-block">
@@ -37,14 +37,16 @@
 						class="peer-checked/common_footer_lang_open:rotate-180"
 					/>
 				</div>
-				<ul class="grid grid-cols-2 gap-6 p-3">
-					<li class="col-span-2" aria-current="page">
-						<p>Current :</p>
-						<p>{languageSelect.find((lang) => lang.value === languageTag())?.text}</p>
+				<ul class="grid grid-cols-2">
+					<li class="col-span-2 mb-3 border-b border-stone-300 p-3 pb-5" aria-current="page">
+						<p>Current language</p>
+						<p class="text-2xl">
+							{languageSelect.find((lang) => lang.value === languageTag())?.text}
+						</p>
 					</li>
 					{#each languageSelect as lang}
 						{#if lang.value !== languageTag()}
-							<li class="{lang.text.length >= 12 ? 'col-span-2' : ''}">
+							<li class="p-3 {lang.text.length >= 12 ? 'col-span-2' : ''}">
 								<a
 									href={i18n.route($page.url.pathname)}
 									hreflang={lang.value}

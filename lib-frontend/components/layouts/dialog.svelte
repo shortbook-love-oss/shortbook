@@ -20,7 +20,15 @@
 		const openSwitch = document.getElementById('common_dialog_open_' + name) as HTMLInputElement;
 		openSwitch.checked = false;
 	}
+
+	function onKeyDown(e: KeyboardEvent) {
+		if (e.code === 'Escape') {
+			closeDialog();
+		}
+	}
 </script>
+
+<svelte:window on:keydown={onKeyDown} />
 
 <label class="peer/common_dialog_open relative">
 	<div class="focus-within:bg-stone-200 hover:bg-stone-200 {openerClass}">
@@ -43,10 +51,11 @@
 	<div class="flex flex-col">
 		<label for="common_dialog_open_{name}" class="min-h-[16px] flex-1" aria-hidden="true" />
 		<div
+			role="dialog"
 			class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
 		>
 			<div
-				class="relative ms-auto inline-flex leading-none focus-within:bg-stone-200 hover:bg-stone-200"
+				class="relative ms-auto inline-flex rounded-es rounded-se-[0.625rem] leading-none focus-within:bg-stone-200 hover:bg-stone-200"
 			>
 				{#if isEnableJS}
 					<button
@@ -60,13 +69,13 @@
 						<IconClose
 							width="44"
 							height="44"
-							class="ml-auto rounded-es rounded-se-[0.625rem] p-1"
+							class="ml-auto p-1"
 							aria-label="Cancel and close dialog"
 						/>
 					</slot>
 				</label>
 			</div>
-			<div class="overflow-x-auto px-4 py-1 sm:pr-6 md:pl-6 md:pr-8">
+			<div class="overflow-x-auto px-4 py-1 text-lg sm:pr-6 md:pl-6 md:pr-8">
 				<slot />
 			</div>
 			<div class="px-4 pb-4 pt-1">

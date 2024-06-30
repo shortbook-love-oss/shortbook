@@ -36,7 +36,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			// Create initialized user profile
 			await dbUserProfileCreate({
 				userId: user.id as string,
-				slug: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
+				keyName: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
 				penName: user.name as string
 			});
 		},
@@ -51,13 +51,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		}
 	},
 	callbacks: {
-		async redirect({ url, baseUrl }) {
-			if (url.startsWith(baseUrl) && new URL(url).origin === baseUrl) {
-				return Promise.resolve(url);
-			} else {
-				return Promise.resolve(baseUrl);
-			}
-		},
 		async session({ session, user }: any) {
 			// Send properties to the client, like an access_token and user id from a provider.
 			// Filter only using properties.
