@@ -91,13 +91,13 @@
 		errorMessages={$errors.content}
 		className="mb-8"
 	/>
-	<TextArea
+	<!-- <TextArea
 		bind:value={$form.salesMessage}
 		name="salesMessage"
 		label="&quot;Read this!&quot; appeal"
 		errorMessages={$errors.salesMessage}
 		className="mb-8"
-	/>
+	/> -->
 	<div slot="submit" class="flex flex-col items-center items-center gap-8 sm:flex-row">
 		<SubmitButton hasInvalid={!hasVaild} isLoading={$submitting}>
 			{data.status === 0 ? 'Publish book' : 'Republish book'}

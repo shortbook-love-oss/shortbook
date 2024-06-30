@@ -87,11 +87,11 @@
 		errorMessages={$errors.content}
 		className="mb-8"
 	/>
-	<TextArea
+	<!-- <TextArea
 		bind:value={$form.salesMessage}
 		name="salesMessage"
 		label="&quot;Read this!&quot; appeal"
 		errorMessages={$errors.salesMessage}
 		className="mb-8"
-	/>
+	/> -->
 </Form>
