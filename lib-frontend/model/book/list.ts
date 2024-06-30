@@ -38,6 +38,9 @@ export async function dbBookList(req: DbBookListRequest) {
 									select: {
 										language_code: true,
 										pen_name: true
+									},
+									where: {
+										deleted_at: null
 									}
 								}
 							}
