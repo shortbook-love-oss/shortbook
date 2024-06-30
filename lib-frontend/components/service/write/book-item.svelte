@@ -12,7 +12,7 @@
 		href="/write/{book.id}"
 		class="flex items-start gap-x-4 px-4 py-6 hover:bg-stone-200 focus:bg-stone-200 sm:gap-6"
 	>
-		<BookCover {book} sizeClass="h-20 w-20 text-xs" />
+		<BookCover {book} sizeClass="h-20 w-20 text-xs py-1 pe-1 ps-2" />
 		<div class="flex-1 overflow-x-hidden">
 			<h2
 				class="-mt-1.5 mb-2 line-clamp-3 whitespace-pre-wrap break-words text-2xl font-semibold lg:line-clamp-4"
