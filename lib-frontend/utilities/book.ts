@@ -12,3 +12,9 @@ export interface BookItem extends MyBookItem {
 	penName: string;
 	image: string;
 }
+
+export interface BookDetail extends BookItem {
+	prologue: string;
+	content: string;
+	sales_message: string;
+}
