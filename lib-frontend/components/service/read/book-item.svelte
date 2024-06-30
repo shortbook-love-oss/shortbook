@@ -2,6 +2,7 @@
 	import type { BookItem } from '$lib/utilities/book';
 	import type { AvailableLanguageTags } from '$lib/utilities/language';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
+	import ProfileCardSmall from '../mypage/profile-card-small.svelte';
 
 	export let book: BookItem;
 	export let requestLang: AvailableLanguageTags;
@@ -23,10 +24,7 @@
 			{#if book.subtitle}
 				<p class="mt-1 line-clamp-2 whitespace-pre-wrap lg:line-clamp-3">{book.subtitle}</p>
 			{/if}
-			<div class="mt-1 flex gap-1">
-				<img src={book.image} alt="{book.penName} profile icon" class="h-6 w-6" />
-				<p>{book.penName}</p>
-			</div>
+			<ProfileCardSmall name={book.penName} imageSrc={book.image} className="mt-1" />
 			<p class="mt-1">{book.publishedAt.toLocaleDateString(requestLang)}</p>
 		</div>
 	</a>
