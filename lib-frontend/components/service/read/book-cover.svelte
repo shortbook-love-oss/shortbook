@@ -9,19 +9,19 @@
 	let colorEnd = '';
 	const colorKey = parseInt(book.id.slice(-1), 36);
 	if (colorKey < 12) {
-		colorStart = 'primary-800';
-		colorEnd = 'primary-500';
+		colorStart = 'from-primary-800';
+		colorEnd = 'to-primary-500';
 	} else if (colorKey < 24) {
-		colorStart = 'slate-800';
-		colorEnd = 'slate-500';
+		colorStart = 'from-slate-800';
+		colorEnd = 'to-slate-500';
 	} else {
-		colorStart = 'cyan-900';
-		colorEnd = 'cyan-600';
+		colorStart = 'from-cyan-900';
+		colorEnd = 'to-cyan-600';
 	}
 </script>
 
 <div
-	class="shrink-0 rounded-md bg-gradient-to-br from-{colorStart} to-{colorEnd} overflow-hidden {sizeClass} {className}"
+	class="shrink-0 rounded-md bg-gradient-to-br overflow-hidden {colorStart} {colorEnd} {sizeClass} {className}"
 >
 	<p class="whitespace-pre-wrap break-words font-semibold text-white">
 		{book.title}
