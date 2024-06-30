@@ -2,11 +2,14 @@ import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { i18n } from '$lib/i18n/i18n';
 import { setAuthUserId, getAuthUserId } from '$lib/utilities/server/crypto';
-import { setUserId } from '$lib/utilities/cookie';
+import { setUserId, getSessionToken } from '$lib/utilities/cookie';
 import { handle as handleAuth } from './auth';
 
 const handleUser: Handle = async function ({ event, resolve }) {
-	const session = await event.locals.auth();
+	let session = null;
+	if (getSessionToken(event.cookies)) {
+		session = await event.locals.auth();
+	}
 	event.locals.session = session;
 
 	if (session?.user) {
@@ -16,7 +19,7 @@ const handleUser: Handle = async function ({ event, resolve }) {
 			setUserId(event.cookies, session.user.id ?? '');
 			setAuthUserId(event.cookies, session.user.id ?? '');
 		}
-  }
+	}
 
 	return resolve(event);
 };
