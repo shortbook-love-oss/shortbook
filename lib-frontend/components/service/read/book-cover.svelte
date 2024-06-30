@@ -2,7 +2,7 @@
 	import type { MyBookItem } from '$lib/utilities/book';
 
 	export let book: MyBookItem;
-	export let sizeClass = 'h-[8.4rem] w-24 py-3 pe-3 ps-6 lg:h-56 lg:w-40 lg:text-lg';
+	export let sizeClass = 'h-[8.4rem] w-24 p-2 ps-4 lg:h-56 lg:w-40 lg:p-3 lg:ps-6 lg:text-lg';
 	export let className = '';
 
 	let colorStart = '';
