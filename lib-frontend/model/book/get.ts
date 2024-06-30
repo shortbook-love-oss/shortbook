@@ -2,7 +2,7 @@ import prisma from '$lib/prisma/connect';
 
 export interface DbBookGetRequest {
 	bookId: string;
-	userId: string;
+	userId?: string;
 }
 
 export async function dbBookGet(req: DbBookGetRequest) {
@@ -19,7 +19,29 @@ export async function dbBookGet(req: DbBookGetRequest) {
 					where: { deleted_at: null }
 				},
 				tags: {
-					where: { deleted_at: null }
+					where: { deleted_at: null },
+					orderBy: {
+						sort: 'asc'
+					}
+				},
+				user: {
+					select: {
+						image: true,
+						profiles: {
+							select: {
+								key_name: true,
+								languages: {
+									select: {
+										language_code: true,
+										pen_name: true
+									},
+									where: {
+										deleted_at: null
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		})
@@ -27,7 +49,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			if (!book) {
 				dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
 				return undefined;
-			} else if (book.user_id !== req.userId) {
+			} else if (req.userId && book.user_id !== req.userId) {
 				dbError ??= new Error(`Can't edit book written by other writer. Book ID=${req.bookId}`);
 				return undefined;
 			}
