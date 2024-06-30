@@ -10,10 +10,10 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<LayoutRule>
+<LayoutRule isNarrow={true}>
 	<svelte:fragment slot="header">
 		<div class="hidden sm:block">
-			<Header />
+			<Header isNarrow={true} />
 		</div>
 		<div class="flex items-center gap-1 border-b-2 border-primary-700 bg-white sm:hidden">
 			<Overlay name="mypage">
