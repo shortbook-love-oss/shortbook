@@ -28,6 +28,7 @@ WORKDIR /usr/src/app
 
 # Copy only necessary files
 COPY --from=base --chown=nonroot:nonroot /usr/src/app/build ./build
+COPY --from=base --chown=nonroot:nonroot /usr/src/app/package.json .
 
 # Node use 3000 port
 EXPOSE 3000

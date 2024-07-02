@@ -2,6 +2,7 @@
 	"name": "service-frontend",
 	"version": "0.0.1",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"dev": "npm run schemagenerate && vite dev",
 		"build": "npm run schemagenerate && vite build && ./fix_dirname_error.sh",
@@ -18,7 +19,7 @@
 		"test:integration": "playwright test",
 		"test:unit": "vitest"
 	},
-	"devDependencies": {
+	"dependencies": {
 		"@auth/prisma-adapter": "^2.2.0",
 		"@auth/sveltekit": "^1.2.0",
 		"@iconify-json/mdi": "^1.1.66",
@@ -56,6 +57,5 @@
 		"@esbuild/linux-x64": "0.21.4",
 		"@rollup/rollup-darwin-x64": "4.18.0",
 		"@rollup/rollup-linux-arm64-gnu": "4.18.0"
-	},
-	"type": "module"
+	}
 }
