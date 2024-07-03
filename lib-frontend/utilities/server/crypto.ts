@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import type { Cookies } from '@sveltejs/kit';
 import { setOption, keyAuthUserId } from '$lib/utilities/cookie';
-import { ENCRYPT_PASSWORD_USER_ID, ENCRYPT_SALT } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 /** Don't call from client-side code */
 
@@ -39,7 +39,7 @@ export function decrypt(encryptedData: string, iv: string, password: string, sal
 }
 
 export function setAuthUserId(cookie: Cookies, value: string) {
-	const encryptedValue = encrypt(value, ENCRYPT_PASSWORD_USER_ID, ENCRYPT_SALT);
+	const encryptedValue = encrypt(value, env.ENCRYPT_PASSWORD_USER_ID, env.ENCRYPT_SALT);
 	cookie.set(keyAuthUserId, JSON.stringify(encryptedValue), setOption);
 }
 export function getAuthUserId(cookie: Cookies) {
@@ -48,5 +48,5 @@ export function getAuthUserId(cookie: Cookies) {
 		return '';
 	}
 	const encrypted: Encrypted = JSON.parse(value);
-	return decrypt(encrypted.encryptedData, encrypted.iv, ENCRYPT_PASSWORD_USER_ID, ENCRYPT_SALT);
+	return decrypt(encrypted.encryptedData, encrypted.iv, env.ENCRYPT_PASSWORD_USER_ID, env.ENCRYPT_SALT);
 }

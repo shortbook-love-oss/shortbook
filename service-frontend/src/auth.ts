@@ -5,28 +5,11 @@ import GitHub from '@auth/sveltekit/providers/github';
 import { dbUserProfileCreate } from '$lib/model/user/profile/create';
 import { dbUserEmailUpdate } from '$lib/model/user/update-email';
 import prisma from '$lib/prisma/connect';
-import {
-	AUTH_SECRET,
-	AUTH_LINKEDIN_ID,
-	AUTH_LINKEDIN_SECRET,
-	AUTH_GITHUB_ID,
-	AUTH_GITHUB_SECRET
-} from '$env/static/private';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: true,
 	adapter: PrismaAdapter(prisma),
-	secret: AUTH_SECRET, // Include env to build directory
-	providers: [
-		LinkedIn({
-			clientId: AUTH_LINKEDIN_ID,
-			clientSecret: AUTH_LINKEDIN_SECRET
-		}),
-		GitHub({
-			clientId: AUTH_GITHUB_ID,
-			clientSecret: AUTH_GITHUB_SECRET
-		})
-	],
+	providers: [LinkedIn, GitHub],
 	pages: {
 		signIn: '/signin',
 		newUser: '/signup'
