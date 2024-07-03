@@ -26,11 +26,16 @@ FROM node:22.3.0-bookworm-slim as prd
 
 WORKDIR /usr/src/app
 
+RUN apt-get update -y && apt-get install -y openssl
+
 # Copy only necessary files
+COPY --from=base --chown=nonroot:nonroot /usr/src/app/node_modules ./node_modules
 COPY --from=base --chown=nonroot:nonroot /usr/src/app/build ./build
 COPY --from=base --chown=nonroot:nonroot /usr/src/app/package.json .
 
+ENV PORT=443
+
 # Node use 3000 port
-EXPOSE 3000
+EXPOSE 443
 
 CMD ["node", "./build"]
