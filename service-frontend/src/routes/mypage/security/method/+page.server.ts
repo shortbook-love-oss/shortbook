@@ -5,6 +5,7 @@ import { getSessionToken } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 const brandNames = {
+	google: 'Google',
 	linkedin: 'LinkedIn',
 	github: 'GitHub'
 };

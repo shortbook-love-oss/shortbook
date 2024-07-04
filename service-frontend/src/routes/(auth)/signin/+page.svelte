@@ -9,6 +9,7 @@
 
 <h1 class="mb-4 text-center text-4xl font-semibold">Sign in</h1>
 <div class="mx-auto mb-12 w-fit">
+	<SignInByOAuth providerName="Google" className="mb-4" />
 	<SignInByOAuth providerName="LinkedIn" className="mb-4" />
 	<SignInByOAuth providerName="GitHub" />
 </div>

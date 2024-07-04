@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 
 	export let isSignUp = false;
-	export let providerName: 'LinkedIn' | 'GitHub';
+	export let providerName: 'Google' | 'LinkedIn' | 'GitHub';
 	export let className = '';
 
 	let callbackUrl = '';

@@ -16,6 +16,7 @@
 	<a href="/policies/privacy" class="underline">Privacy policy</a>.
 </p>
 <div class="mx-auto mb-12 w-fit">
+	<SignInByOAuth isSignUp providerName="Google" className="mb-4" />
 	<SignInByOAuth isSignUp providerName="LinkedIn" className="mb-4" />
 	<SignInByOAuth isSignUp providerName="GitHub" />
 </div>

@@ -2,7 +2,7 @@
 	import { SignIn } from '@auth/sveltekit/components';
 
 	export let isSignUp = false;
-	export let providerName: 'LinkedIn' | 'GitHub';
+	export let providerName: 'Google' | 'LinkedIn' | 'GitHub';
 	export let callbackUrl = '/';
 	export let className = '';
 </script>
