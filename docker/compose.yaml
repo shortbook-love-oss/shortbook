@@ -17,13 +17,13 @@ services:
     volumes:
       - type: volume
         source: service-frontend
-        target: /usr/src/app
+        target: /home/node
       - type: bind
         source: ../service-frontend
-        target: /usr/src/app
+        target: /home/node
       - type: bind
         source: ../lib-frontend
-        target: /usr/src/app/lib
+        target: /home/node/lib
   database:
     env_file: ../database/.env
     build:
