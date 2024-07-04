@@ -2,7 +2,7 @@ FROM node:22.4.0-bookworm-slim as base
 
 RUN apt-get update -y && apt-get install -y openssl
 
-WORKDIR /home/node
+WORKDIR /home/node/app
 
 # Develop ---------------------------------------------------
 FROM base as dev
@@ -20,13 +20,31 @@ EXPOSE 5173
 
 
 # Production ---------------------------------------------------
-FROM base as prd-builder
+FROM base as prd-process
 
 ENV NODE_ENV=production
 
-# Install the same minor version
 COPY ./service-frontend/package*.json .
-RUN npm ci
+
+# prd-install and prd-build are run in parallel.
+FROM prd-process as prd-install
+
+# Install prd-bundle in another directory
+RUN cd ../ \
+  && mkdir install \
+  && cp ./app/package.json ./install/ \
+  && cp ./app/package-lock.json ./install/ \
+  && cd install \
+  && npm ci --omit=dev
+
+COPY ./lib-frontend/prisma/schema.prisma ../install/lib/prisma/schema.prisma
+
+RUN cd ../install && npm run schema-generate
+
+FROM prd-process as prd-build
+
+# Install the same patch version
+RUN npm ci --include=dev
 
 COPY ./service-frontend .
 COPY ./lib-frontend ./lib
@@ -43,9 +61,9 @@ USER node
 WORKDIR /home/node
 
 # Copy only necessary files
-COPY --from=prd-builder --chown=node:node /home/node/node_modules ./node_modules
-COPY --from=prd-builder --chown=node:node /home/node/package.json .
-COPY --from=prd-builder --chown=node:node /home/node/build ./build
+COPY --chown=node:node --from=prd-install /home/node/install/node_modules ./node_modules
+COPY --chown=node:node --from=prd-build /home/node/app/package.json .
+COPY --chown=node:node --from=prd-build /home/node/app/build ./build
 
 # Change node port from 3000 to 443.
 ENV PORT=443

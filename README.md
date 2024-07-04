@@ -29,7 +29,7 @@ docker compose -f docker/compose.yaml up -d --build
 TODO: Use GitHub Action in the future.
 
 ```bash
-docker build -f ./service-frontend/Dockerfile --target prd -t shortbook-service-frontend:(((version-tag))) .
+docker build -f ./service-frontend/Dockerfile --target prd -t shortbook-service-frontend:(((version-tag))) . --progress=plain
 docker tag shortbook-service-frontend:(((version-tag))) us-west1-docker.pkg.dev/(((project-id)))/shortbook-service-frontend/shortbook-service-frontend:(((version-tag)))
 docker push us-west1-docker.pkg.dev/(((project-id)))/shortbook-service-frontend/shortbook-service-frontend:(((version-tag)))
 ```
