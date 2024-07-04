@@ -15,8 +15,10 @@
 </script>
 
 <footer class="flex flex-col justify-center border-t border-stone-300">
-	<nav class="m-auto flex w-full flex-wrap gap-x-16 gap-y-8 p-4 sm:w-fit sm:px-6 md:px-8">
-		<div class="relative w-full sm:w-auto sm:pt-1">
+	<nav
+		class="m-auto flex w-full flex-wrap gap-x-16 gap-y-8 px-4 pb-16 pt-12 sm:w-fit sm:px-6 md:px-8"
+	>
+		<div class="relative w-full sm:w-auto sm:pt-1.5">
 			<a href="/" class="mb-2 inline-block">
 				<img
 					src="/assets/shortbook-logotype.svg"
@@ -24,7 +26,7 @@
 					alt="Short book logo"
 				/>
 			</a>
-			<small class="mb-4 block text-lg">© {yearPeriod} ShortBook LLC</small>
+			<small class="mb-4 block text-base">© {yearPeriod} ShortBook LLC</small>
 			<!-- Language select -->
 			<Dropdown name="lang_select" dropdownClass="bottom-2 min-w-40">
 				<div slot="opener" class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
@@ -58,10 +60,10 @@
 		</div>
 		{#each categories as category (category.name)}
 			<div class="text-lg">
-				<h2 class="mb-2 font-bold">{category.name}</h2>
+				<h2 class="mb-3 font-bold">{category.name}</h2>
 				<ul>
 					{#each category.childs as item (item.href)}
-						<li class="mb-2">
+						<li class="mb-3">
 							<a
 								href={item.href}
 								target={item.href.startsWith('http') ? '_blank' : undefined}
