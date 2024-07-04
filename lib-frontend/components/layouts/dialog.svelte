@@ -38,6 +38,7 @@
 			name="common_dialog_{name}"
 			id="common_dialog_open_{name}"
 			class="absolute left-0 top-0 h-full w-full opacity-0"
+			tabindex="0"
 		/>
 	</div>
 </label>

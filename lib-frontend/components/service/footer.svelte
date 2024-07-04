@@ -50,7 +50,8 @@
 								<a
 									href={i18n.route($page.url.pathname)}
 									hreflang={lang.value}
-									class="hover:underline">{lang.text}</a
+									class="hover:underline"
+									tabindex="0">{lang.text}</a
 								>
 							</li>
 						{/if}
