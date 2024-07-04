@@ -22,10 +22,10 @@
 				{book.title}
 			</h2>
 			{#if book.subtitle}
-				<p class="mt-1 line-clamp-2 whitespace-pre-wrap lg:line-clamp-3">{book.subtitle}</p>
+				<p class="mt-2 line-clamp-2 whitespace-pre-wrap lg:line-clamp-3">{book.subtitle}</p>
 			{/if}
-			<ProfileCardSmall name={book.penName} imageSrc={book.image} className="mt-1" />
-			<p class="mt-1">{book.publishedAt.toLocaleDateString(requestLang)}</p>
+			<ProfileCardSmall name={book.penName} imageSrc={book.image} className="mt-2" />
+			<p class="mt-2">{book.publishedAt.toLocaleDateString(requestLang)}</p>
 		</div>
 	</a>
 </article>
