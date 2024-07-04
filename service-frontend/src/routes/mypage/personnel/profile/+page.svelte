@@ -87,8 +87,8 @@
 	/>
 	<TextArea
 		bind:value={$form.selfIntroduction}
-		name="selfIntro"
-		label="Self Intro"
+		name="selfIntroduction"
+		label="Self introduction"
 		errorMessages={$errors.selfIntroduction}
 		className="mb-8"
 	/>
