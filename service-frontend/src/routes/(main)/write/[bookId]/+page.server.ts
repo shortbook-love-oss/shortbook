@@ -54,17 +54,17 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { dbError } = await dbBookUpdateRequest({
+		const { book, dbError } = await dbBookUpdateRequest({
 			bookId: params.bookId,
 			userId,
 			status: 1,
 			...form.data
 		});
-		if (dbError) {
-			return error(500, { message: dbError.message });
+		if (!book || dbError) {
+			return error(500, { message: dbError?.message ?? '' });
 		}
 
-		redirect(303, getLangTagPathPart(url.pathname) + '/write');
+		redirect(303, `${getLangTagPathPart(url.pathname)}/book/${book.id}`);
 	},
 
 	delete: async ({ cookies, url, params }) => {

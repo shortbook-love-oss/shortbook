@@ -31,7 +31,11 @@
 				<p class="mt-1">{publishedAt}</p>
 			</ProfileCard>
 			{#if data.bookDetail.user_id === $page.data.session?.user.id}
-				<NavLinkSmall name="Edit" href="/write" className="-ms-1 mt-2 w-fit lg:hidden">
+				<NavLinkSmall
+					name="Edit"
+					href="/write/{data.bookDetail.id}"
+					className="-ms-1 mt-2 w-fit lg:hidden"
+				>
 					<IconWrite width="20" height="20" />
 				</NavLinkSmall>
 			{/if}
@@ -51,7 +55,7 @@
 		/>
 		<p class="mt-4">Published : {publishedAt}</p>
 		{#if data.bookDetail.user_id === $page.data.session?.user.id}
-			<NavLinkSmall name="Edit" href="/write" className="-ms-1 mt-2 w-fit">
+			<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-1 mt-2 w-fit">
 				<IconWrite width="20" height="20" />
 			</NavLinkSmall>
 		{/if}
