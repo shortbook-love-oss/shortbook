@@ -12,15 +12,16 @@
 	import NavLinkSp from './nav-link-sp.svelte';
 
 	// After sign-in/up redirect to
-	let redirectPathname = '';
-	if (['/signin', '/signup'].includes(removeLangTagFromPath($page.url.pathname))) {
-		// On sign-in/up → sign-in/up page move, keep callback url;
-		const callbackUrl = $page.url.searchParams.get(callbackParam) ?? '';
-		redirectPathname = encodeURIComponent(callbackUrl);
-	} else {
-		// On (any page) → sign-in/up page move, show the (any page) after sign-in/up
-		redirectPathname = encodeURIComponent($page.url.href);
-	}
+	$: redirectPathname = (() => {
+		if (['/signin', '/signup'].includes(removeLangTagFromPath($page.url.pathname))) {
+			// On sign-in/up → sign-in/up page move, keep callback url;
+			const callbackUrl = $page.url.searchParams.get(callbackParam) ?? '';
+			return encodeURIComponent(callbackUrl);
+		} else {
+			// On (any page) → sign-in/up page move, show the (any page) after sign-in/up
+			return encodeURIComponent($page.url.href);
+		}
+	})();
 </script>
 
 <header class="border-t-2 border-primary-700 bg-white">

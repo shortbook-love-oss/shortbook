@@ -7,7 +7,7 @@
 	import Signout from '$lib/components/service/auth/signout.svelte';
 
 	// After sign-in/sign-up redirect to
-	let redirectUrl = encodeURIComponent($page.url.href);
+	$: redirectUrl = encodeURIComponent($page.url.href);
 </script>
 
 <ul class="flex items-center">
