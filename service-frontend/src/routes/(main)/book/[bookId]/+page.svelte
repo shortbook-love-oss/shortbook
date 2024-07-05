@@ -26,16 +26,12 @@
 		{#if data.bookDetail.subtitle}
 			<p class="mt-4 whitespace-pre-wrap text-xl leading-normal">{data.bookDetail.subtitle}</p>
 		{/if}
-		<div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2">
+		<div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2 lg:hidden">
 			<ProfileCard name={data.bookDetail.penName} imageSrc={data.bookDetail.image}>
 				<p class="mt-1">{publishedAt}</p>
 			</ProfileCard>
 			{#if data.bookDetail.user_id === $page.data.session?.user?.id}
-				<NavLinkSmall
-					name="Edit"
-					href="/write/{data.bookDetail.id}"
-					className="-ms-1 mt-2 w-fit lg:hidden"
-				>
+				<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-1 mt-2 w-fit">
 					<IconWrite width="20" height="20" />
 				</NavLinkSmall>
 			{/if}
