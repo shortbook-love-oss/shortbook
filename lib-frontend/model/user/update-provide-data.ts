@@ -1,11 +1,12 @@
 import prisma from '$lib/prisma/connect';
 
-export interface DbUserEmailUpdateRequest {
+export interface DbUserProvideDataRequest {
 	userId: string;
 	email: string;
+	image: string;
 }
 
-export async function dbUserEmailUpdate(req: DbUserEmailUpdateRequest) {
+export async function dbUserProvideDataUpdate(req: DbUserProvideDataRequest) {
 	let dbError: Error | undefined;
 
 	const user = await prisma.user
@@ -15,7 +16,8 @@ export async function dbUserEmailUpdate(req: DbUserEmailUpdateRequest) {
 				deleted_at: null
 			},
 			data: {
-				email: req.email
+				email: req.email,
+				image: req.image
 			}
 		})
 		.then((user) => {

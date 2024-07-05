@@ -4,7 +4,7 @@ import Google from '@auth/sveltekit/providers/google';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
 import { dbUserProfileCreate } from '$lib/model/user/profile/create';
-import { dbUserEmailUpdate } from '$lib/model/user/update-email';
+import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
 import { env } from '$env/dynamic/private';
 
@@ -40,11 +40,12 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			});
 		},
 		async signIn({ user, profile }) {
-			if (user.id && profile?.email) {
+			if (user.id && profile?.email && typeof profile?.picture === 'string') {
 				// Sync with email address registered in external service
-				await dbUserEmailUpdate({
+				await dbUserProvideDataUpdate({
 					userId: user.id,
-					email: profile.email
+					email: profile.email,
+					image: profile.picture
 				});
 			}
 		}
