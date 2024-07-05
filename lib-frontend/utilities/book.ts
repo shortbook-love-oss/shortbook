@@ -1,5 +1,6 @@
 export interface MyBookItem {
 	id: string;
+	user_id: string;
 	status: number;
 	title: string;
 	subtitle: string;

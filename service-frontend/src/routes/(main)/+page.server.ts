@@ -24,6 +24,7 @@ export const load = async ({ request }) => {
 
 			return {
 				id: book.id,
+				user_id: book.user_id,
 				status: book.status,
 				title: bookLang?.title ?? '',
 				subtitle: bookLang?.subtitle ?? '',

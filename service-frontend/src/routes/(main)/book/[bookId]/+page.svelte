@@ -1,7 +1,10 @@
 <script lang="ts">
+	import IconWrite from '~icons/mdi/pencil-plus';
+	import { page } from '$app/stores';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import ProfileCardSmall from '$lib/components/service/mypage/profile-card-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
+	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
 	export let data;
 
@@ -23,10 +26,15 @@
 		{#if data.bookDetail.subtitle}
 			<p class="mt-4 whitespace-pre-wrap text-xl leading-normal">{data.bookDetail.subtitle}</p>
 		{/if}
-		<div class="mt-8 flex flex-wrap gap-x-8 gap-y-2">
+		<div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2">
 			<ProfileCard name={data.bookDetail.penName} imageSrc={data.bookDetail.image}>
 				<p class="mt-1">{publishedAt}</p>
 			</ProfileCard>
+			{#if data.bookDetail.user_id === $page.data.session?.user.id}
+				<NavLinkSmall name="Edit" href="/write" className="-ms-1 mt-2 w-fit lg:hidden">
+					<IconWrite width="20" height="20" />
+				</NavLinkSmall>
+			{/if}
 		</div>
 		{#if data.bookDetail.prologue}
 			<p class="mt-8 whitespace-pre-wrap border-t border-stone-300 pt-8 text-lg">
@@ -42,5 +50,10 @@
 			imageSizeClass="h-12 w-12"
 		/>
 		<p class="mt-4">Published : {publishedAt}</p>
+		{#if data.bookDetail.user_id === $page.data.session?.user.id}
+			<NavLinkSmall name="Edit" href="/write" className="-ms-1 mt-2 w-fit">
+				<IconWrite width="20" height="20" />
+			</NavLinkSmall>
+		{/if}
 	</div>
 </article>
