@@ -30,7 +30,7 @@
 			<ProfileCard name={data.bookDetail.penName} imageSrc={data.bookDetail.image}>
 				<p class="mt-1">{publishedAt}</p>
 			</ProfileCard>
-			{#if data.bookDetail.user_id === $page.data.session?.user.id}
+			{#if data.bookDetail.user_id === $page.data.session?.user?.id}
 				<NavLinkSmall
 					name="Edit"
 					href="/write/{data.bookDetail.id}"
@@ -45,7 +45,9 @@
 				{data.bookDetail.prologue}
 			</p>
 		{/if}
-		<p class="mt-8 border-t border-stone-300 pt-8 text-lg">{data.bookDetail.content}</p>
+		<p class="mt-8 whitespace-pre-wrap border-t border-stone-300 pt-8 text-lg">
+			{data.bookDetail.content}
+		</p>
 	</div>
 	<div class="hidden w-full max-w-xl shrink-0 gap-8 lg:block lg:w-60">
 		<ProfileCardSmall
@@ -54,7 +56,7 @@
 			imageSizeClass="h-12 w-12"
 		/>
 		<p class="mt-4">Published : {publishedAt}</p>
-		{#if data.bookDetail.user_id === $page.data.session?.user.id}
+		{#if data.bookDetail.user_id === $page.data.session?.user?.id}
 			<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-1 mt-2 w-fit">
 				<IconWrite width="20" height="20" />
 			</NavLinkSmall>
