@@ -53,3 +53,21 @@ export function redirectToSignInPage(url: URL, cookies: Cookies) {
 	redirectTo.searchParams.set(callbackParam, url.href);
 	redirect(303, redirectTo.href);
 }
+
+// Preventing access to unexpected origin.
+// "https://shortbook.life/de/write" → "https://shortbook.life/de/write"
+// "https://iamshortbook.writer/books" (safeOrigin: "https://iamshortbook.writer") → "https://iamshortbook.writer/books"
+// "https://evil.example/de/write" → "https://shortbook.life"
+// "invalidURL" → "https://shortbook.life"
+export function getSafetyUrl(url: string, safeOrigin: string) {
+	try {
+		const inputCallbackUrl = new URL(url);
+		if (inputCallbackUrl.origin === safeOrigin) {
+			return inputCallbackUrl;
+		} else {
+			return new URL(safeOrigin);
+		}
+	} catch {
+		return new URL(safeOrigin);
+	}
+}

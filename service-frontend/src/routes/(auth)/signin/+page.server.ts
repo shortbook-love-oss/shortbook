@@ -1,18 +1,24 @@
 import { redirect } from '@sveltejs/kit';
-import { callbackParam } from '$lib/utilities/url';
+import { callbackParam, getSafetyUrl } from '$lib/utilities/url';
 import { signIn } from '../../../auth';
 import type { Actions } from './$types';
 
 export async function load({ locals, url }) {
 	const session = await locals.auth();
 
-	// This page will not be displayed even if a signed-in user goes back in history
+	const maybeCallbackUrl = url.searchParams.get(callbackParam) ?? '';
+	const callbackUrl = getSafetyUrl(maybeCallbackUrl, url.origin);
 	if (session?.user) {
-		const callbackUrl = url.searchParams.get(callbackParam);
-		if (callbackUrl) {
-			redirect(303, callbackUrl);
-		}
+		// This page will not be displayed even if a signed-in user goes back in history
+		redirect(303, getSafetyUrl(callbackUrl.href, url.origin));
 	}
+	if (!URL.canParse(maybeCallbackUrl) || new URL(maybeCallbackUrl).origin !== url.origin) {
+		const redirectTo = new URL(url);
+		redirectTo.searchParams.set(callbackParam, url.origin);
+		redirect(303, redirectTo.href);
+	}
+
+	return { callbackUrl: callbackUrl.href };
 }
 
 export const actions = { default: signIn } satisfies Actions;
