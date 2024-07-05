@@ -1,6 +1,7 @@
 <script lang="ts">
-	import SignInByOAuthButton from '$lib/components/service/auth/signin-by-oauth-button.svelte';
 	import { onMount } from 'svelte';
+	import SignInByOAuthButton from '$lib/components/service/auth/signin-by-oauth-button.svelte';
+	import { callbackParam } from '$lib/utilities/url';
 
 	export let isSignUp = false;
 	export let providerName: 'Google' | 'LinkedIn' | 'GitHub';
@@ -9,7 +10,7 @@
 	let callbackUrl = '';
 
 	onMount(() => {
-		callbackUrl = new URLSearchParams(location.search).get('callbackUrl') ?? '';
+		callbackUrl = new URLSearchParams(location.search).get(callbackParam) ?? '';
 	});
 </script>
 

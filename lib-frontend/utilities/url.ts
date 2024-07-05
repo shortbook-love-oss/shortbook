@@ -4,6 +4,8 @@ import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { getUserId } from './cookie';
 import type { AvailableLanguageTags } from './language';
 
+export const callbackParam = 'callbackUrl';
+
 // "/de/mypage/personnel" → "/mypage/personnel"
 // "/mypage/personnel" → "/mypage/personnel"
 // "/de" → "/"
@@ -48,6 +50,6 @@ export function redirectToSignInPage(url: URL, cookies: Cookies) {
 		redirectToPathname = '/signin';
 	}
 	const redirectTo = new URL(url.origin + getLangTagPathPart(url.pathname) + redirectToPathname);
-	redirectTo.searchParams.set('callbackUrl', url.href);
+	redirectTo.searchParams.set(callbackParam, url.href);
 	redirect(303, redirectTo.href);
 }

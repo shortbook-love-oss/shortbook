@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconUser from '~icons/mdi/user-outline';
 	import { page } from '$app/stores';
+	import { callbackParam } from '$lib/utilities/url';
 	import NavLinkSmall from './nav-link-small.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 
@@ -26,12 +27,12 @@
 		</li>
 	{:else}
 		<li>
-			<NavLinkSmall name="Sign in" href="/signin?callbackUrl={redirectUrl}">
+			<NavLinkSmall name="Sign in" href="/signin?{callbackParam}={redirectUrl}">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>
 		<li>
-			<NavLinkSmall name="Sign up" href="/signup?callbackUrl={redirectUrl}">
+			<NavLinkSmall name="Sign up" href="/signup?{callbackParam}={redirectUrl}">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>

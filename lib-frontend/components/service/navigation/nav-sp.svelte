@@ -6,7 +6,7 @@
 	import IconSignin from '~icons/mdi/user-check-outline';
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
+	import { callbackParam, removeLangTagFromPath } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 	import NavLinkSp from './nav-link-sp.svelte';
@@ -15,7 +15,7 @@
 	let redirectPathname = '';
 	if (['/signin', '/signup'].includes(removeLangTagFromPath($page.url.pathname))) {
 		// On sign-in/up → sign-in/up page move, keep callback url;
-		const callbackUrl = $page.url.searchParams.get('callbackUrl') ?? '';
+		const callbackUrl = $page.url.searchParams.get(callbackParam) ?? '';
 		redirectPathname = encodeURIComponent(callbackUrl);
 	} else {
 		// On (any page) → sign-in/up page move, show the (any page) after sign-in/up
@@ -44,12 +44,12 @@
 				</li>
 			{:else}
 				<li>
-					<NavLinkSp name="Sign in" href="/signin?callbackUrl={redirectPathname}">
+					<NavLinkSp name="Sign in" href="/signin?{callbackParam}={redirectPathname}">
 						<IconSignin width="32" height="32" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name="Sign up" href="/signup?callbackUrl={redirectPathname}">
+					<NavLinkSp name="Sign up" href="/signup?{callbackParam}={redirectPathname}">
 						<IconSignup width="32" height="32" />
 					</NavLinkSp>
 				</li>
