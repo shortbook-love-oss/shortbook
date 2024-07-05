@@ -51,6 +51,7 @@
 									href={i18n.route($page.url.pathname)}
 									hreflang={lang.value}
 									class="hover:underline"
+									data-sveltekit-reload
 									tabindex="0">{lang.text}</a
 								>
 							</li>
