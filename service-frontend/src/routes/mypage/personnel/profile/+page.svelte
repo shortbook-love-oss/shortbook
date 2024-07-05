@@ -53,14 +53,14 @@
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
 >
-	<!-- <TextField
+	<TextField
 		bind:value={$form.keyName}
 		name="keyName"
 		required={true}
 		label="User ID"
 		errorMessages={$errors.keyName}
-		className="mb-8"
-	/> -->
+		className="mb-8 hidden"
+	/>
 	<Select
 		bind:value={$form.nativeLanguage}
 		name="nativeLanguage"

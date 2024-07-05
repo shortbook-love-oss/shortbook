@@ -1,6 +1,7 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
@@ -25,7 +26,7 @@ export const load = async ({ request, cookies }) => {
 	const requestLang = guessNativeLangFromRequest(request);
 
 	form.data.keyName = profile?.key_name ?? '';
-	form.data.nativeLanguage = profile?.native_language || requestLang;
+	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTag;
 	form.data.penName = profileLangs?.pen_name ?? '';
 	form.data.headline = profileLangs?.headline ?? '';
 	form.data.selfIntroduction = profileLangs?.self_introduction ?? '';
