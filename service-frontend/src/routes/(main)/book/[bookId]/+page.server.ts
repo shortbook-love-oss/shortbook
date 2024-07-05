@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
+import { contentsToMarkdown } from '$lib/utilities/book';
 import type { BookDetail } from '$lib/utilities/book';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
@@ -20,6 +21,9 @@ export const load = async ({ request, params }) => {
 		profileLang = profile.languages[0];
 	}
 
+	const bookPrologues = contentsToMarkdown(bookLang?.prologue ?? '');
+	const bookContent = contentsToMarkdown(bookLang?.content ?? '');
+
 	const bookDetail: BookDetail = {
 		id: book.id,
 		user_id: book.user_id,
@@ -31,8 +35,8 @@ export const load = async ({ request, params }) => {
 		keyName: profile?.key_name ?? '',
 		penName: profileLang?.pen_name ?? '',
 		image: book.user.image ?? '',
-		prologue: bookLang?.prologue ?? '',
-		content: bookLang?.content ?? '',
+		prologues: bookPrologues,
+		contents: bookContent,
 		sales_message: bookLang?.sales_message ?? ''
 	};
 
