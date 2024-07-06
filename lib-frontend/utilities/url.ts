@@ -1,7 +1,4 @@
-import { redirect } from '@sveltejs/kit';
-import type { Cookies } from '@sveltejs/kit';
 import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
-import { getUserId } from './cookie';
 import type { AvailableLanguageTags } from './language';
 
 export const callbackParam = 'callbackUrl';
@@ -40,18 +37,6 @@ export function getLangTagPathPart(pathname: string) {
 	} else {
 		return '';
 	}
-}
-
-// "/zh-cn/mypage" → "/de/signup?callbackUrl=https%3A%2F%2Fshortbook.life%2Fde%2Fmypage"
-export function redirectToSignInPage(url: URL, cookies: Cookies) {
-	let redirectToPathname = '/signup';
-	if (getUserId(cookies)) {
-		// "user-id" is set for devices where you have signed in
-		redirectToPathname = '/signin';
-	}
-	const redirectTo = new URL(url.origin + getLangTagPathPart(url.pathname) + redirectToPathname);
-	redirectTo.searchParams.set(callbackParam, url.href);
-	redirect(303, redirectTo.href);
 }
 
 // Preventing access to unexpected origin.
