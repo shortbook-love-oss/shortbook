@@ -3,10 +3,12 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import Google from '@auth/sveltekit/providers/google';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
+import { env } from '$env/dynamic/private';
 import { dbUserProfileCreate } from '$lib/model/user/profile/create';
+import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
-import { env } from '$env/dynamic/private';
+import { getGcsSignedUrl, uploadGcsBySignedUrl } from '$lib/utilities/server/file';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -38,14 +40,45 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 				keyName: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
 				penName: user.name as string
 			});
+
+			// Upload profile image using in external service CDN
+			if (user.id && user.image?.startsWith('https://')) {
+				// 1. Fetch from external service CDN
+				const blob = await fetch(user.image, { mode: 'no-cors' })
+					.then((res) => res.blob())
+					.then((blob) => blob)
+					.catch(() => undefined);
+
+				if (blob) {
+					// 2. Upload image to Google Cloud Storage
+					const uploadUrl = await getGcsSignedUrl(
+						env.GCP_STORAGE_BUCKET_NAME as string,
+						`profile-image/${user.id}`,
+						blob.type,
+						30
+					);
+					const uploaded = await uploadGcsBySignedUrl(blob, uploadUrl);
+					const isSuccessUpload = await uploaded
+						.text()
+						.then(() => true)
+						.catch(() => false);
+
+					if (isSuccessUpload) {
+						// 3. Save image URL to DB
+						await dbUserProfileImageUpdate({
+							userId: user.id,
+							image: `https://storage.googleapis.com/${env.GCP_STORAGE_BUCKET_NAME}/profile-image/${user.id}`
+						});
+					}
+				}
+			}
 		},
 		async signIn({ user, profile }) {
-			if (user.id && profile?.email && typeof profile?.picture === 'string') {
+			if (user.id && profile?.email) {
 				// Sync with email address registered in external service
 				await dbUserProvideDataUpdate({
 					userId: user.id,
-					email: profile.email,
-					image: profile.picture
+					email: profile.email
 				});
 			}
 		}
