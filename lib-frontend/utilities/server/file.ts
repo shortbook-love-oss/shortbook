@@ -27,6 +27,9 @@ export async function getGcsSignedUrl(
 export async function uploadGcsBySignedUrl(file: Blob, signedUrl: string) {
 	return await fetch(signedUrl, {
 		method: 'PUT',
-		body: file
+		body: file,
+		headers: {
+			'Cache-Control': 'public, max-age=20'
+		}
 	});
 }
