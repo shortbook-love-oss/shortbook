@@ -20,13 +20,5 @@ export const categories: MypageItem[] = [
 			{ name: 'Sign in method', href: 'method' },
 			{ name: 'Danger action', href: 'danger' }
 		]
-	},
-	{
-		name: 'Payment & point',
-		href: 'payment',
-		childs: [
-			{ name: 'Card', href: 'card' },
-			{ name: 'Point', href: 'point' }
-		]
 	}
 ];
