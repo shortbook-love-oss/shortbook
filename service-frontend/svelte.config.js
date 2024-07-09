@@ -31,9 +31,8 @@ const config = {
 				'img-src': [
 					'self',
 					'data:',
-					'https://*.googleusercontent.com/',
-					'https://media.licdn.com/dms/image/',
-					'https://avatars.githubusercontent.com/u/'
+					'blob:',
+					`https://storage.googleapis.com/`
 				],
 				'media-src': ['self', 'data:'],
 				'object-src': ['self'],
