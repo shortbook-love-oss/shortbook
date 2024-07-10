@@ -9,6 +9,18 @@
 	export let required = false;
 	export let inputClass = '';
 	export let errorMessages: string[] | undefined = undefined;
+
+	// When value changed by outside, reselect value-match item
+	interface DisplaySelectItem extends SelectItem<string | number> {
+		selected: boolean;
+	}
+	$: displayList = list.map((item) => {
+		const displayItem: DisplaySelectItem = {
+			...item,
+			selected: item.value === value
+		};
+		return displayItem;
+	});
 </script>
 
 <label class="block {className}">
@@ -33,8 +45,8 @@
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
 		>
-			{#each list as item}
-				<option value={item.value} selected={item.value === value}>{item.text}</option>
+			{#each displayList as item}
+				<option value={item.value} selected={item.selected}>{item.text}</option>
 			{/each}
 		</select>
 	</div>
