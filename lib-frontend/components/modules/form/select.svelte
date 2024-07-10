@@ -1,17 +1,14 @@
 <script lang="ts">
-	export let value: string;
-	export let list: Item[];
+	import type { SelectItem } from '$lib/utilities/select';
+
+	export let value: string | number;
+	export let list: SelectItem<string | number>[];
 	export let name: string;
 	export let className = '';
 	export let label = '';
 	export let required = false;
 	export let inputClass = '';
 	export let errorMessages: string[] | undefined = undefined;
-
-	type Item = {
-		value: string;
-		text: string;
-	};
 </script>
 
 <label class="block {className}">
