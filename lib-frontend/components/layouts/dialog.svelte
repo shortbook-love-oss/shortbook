@@ -7,6 +7,7 @@
 	export let name: string;
 	export let title = '';
 	export let openerClass = '';
+	export let dialogSizeClass = 'max-w-2xl';
 
 	let isEnableJS = false;
 	onMount(() => {
@@ -54,7 +55,7 @@
 		<label for="common_dialog_open_{name}" class="min-h-4 flex-1" aria-hidden="true" />
 		<div
 			role="dialog"
-			class="inline-flex max-h-full max-w-2xl flex-col overflow-y-auto rounded-xl border-2 border-primary-300 bg-white"
+			class="inline-flex max-h-full flex-col overflow-y-auto rounded-xl border-2 border-primary-300 bg-white {dialogSizeClass}"
 		>
 			<div class="flex items-center justify-end {title ? 'pb-2' : ''}">
 				<slot name="title">
