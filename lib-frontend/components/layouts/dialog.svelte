@@ -31,7 +31,7 @@
 
 <svelte:window on:keydown={onKeyDown} />
 
-<label class="peer/common_dialog_open relative">
+<label class="peer/common_dialog_open relative cursor-pointer">
 	<div class="focus-within:bg-stone-200 hover:bg-stone-200 {openerClass}">
 		<slot name="opener" />
 		<input
