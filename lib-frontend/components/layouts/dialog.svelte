@@ -5,6 +5,7 @@
 
 	// Need for unique attribute value
 	export let name: string;
+	export let title = '';
 	export let openerClass = '';
 
 	let isEnableJS = false;
@@ -48,33 +49,40 @@
 	id="common_dialog_{name}"
 	class="fixed left-0 top-0 z-50 flex hidden h-dvh h-screen w-screen justify-center bg-stone-400/30 peer-has-[:checked]/common_dialog_open:flex"
 >
-	<label for="common_dialog_open_{name}" class="min-w-[16px] flex-1" aria-hidden="true" />
+	<label for="common_dialog_open_{name}" class="min-w-4 flex-1" aria-hidden="true" />
 	<div class="flex flex-col">
-		<label for="common_dialog_open_{name}" class="min-h-[16px] flex-1" aria-hidden="true" />
+		<label for="common_dialog_open_{name}" class="min-h-4 flex-1" aria-hidden="true" />
 		<div
 			role="dialog"
-			class="inline-flex max-h-full max-w-2xl flex-col rounded-xl border-2 border-primary-300 bg-white"
+			class="inline-flex max-h-full max-w-2xl flex-col overflow-y-auto rounded-xl border-2 border-primary-300 bg-white"
 		>
-			<div
-				class="relative ms-auto inline-flex rounded-es rounded-se-[0.625rem] leading-none focus-within:bg-stone-200 hover:bg-stone-200"
-			>
-				{#if isEnableJS}
-					<button
-						type="button"
-						class="absolute left-0 top-0 h-full w-full opacity-0"
-						on:click|self={closeDialog}
-					/>
-				{/if}
-				<label for="common_dialog_open_{name}" class="inline-block">
-					<slot name="closer">
-						<IconClose
-							width="44"
-							height="44"
-							class="ml-auto p-1"
-							aria-label="Cancel and close dialog"
+			<div class="flex items-center justify-end {title ? 'pb-2' : ''}">
+				<slot name="title">
+					{#if title}
+						<p class="flex-1 px-4 text-lg md:pl-6">{title}</p>
+					{/if}
+				</slot>
+				<div
+					class="relative inline-block shrink-0 rounded-es rounded-se-[0.625rem] leading-none focus-within:bg-stone-200 hover:bg-stone-200"
+				>
+					{#if isEnableJS}
+						<button
+							type="button"
+							class="absolute left-0 top-0 h-full w-full opacity-0"
+							on:click|self={closeDialog}
 						/>
-					</slot>
-				</label>
+					{/if}
+					<label for="common_dialog_open_{name}" class="inline-block">
+						<slot name="closer">
+							<IconClose
+								width="44"
+								height="44"
+								class="ml-auto p-1"
+								aria-label="Cancel and close dialog"
+							/>
+						</slot>
+					</label>
+				</div>
 			</div>
 			<div class="overflow-x-auto px-4 py-1 text-lg sm:pr-6 md:pl-6 md:pr-8">
 				<slot />
@@ -83,7 +91,7 @@
 				<slot name="actions" />
 			</div>
 		</div>
-		<label for="common_dialog_open_{name}" class="min-h-[16px] flex-1" aria-hidden="true" />
+		<label for="common_dialog_open_{name}" class="min-h-4 flex-1" aria-hidden="true" />
 	</div>
-	<label for="common_dialog_open_{name}" class="min-w-[16px] flex-1" aria-hidden="true" />
+	<label for="common_dialog_open_{name}" class="min-w-4 flex-1" aria-hidden="true" />
 </div>
