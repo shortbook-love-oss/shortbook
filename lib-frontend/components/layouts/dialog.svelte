@@ -60,11 +60,11 @@
 			<div class="flex items-center justify-end {title ? 'pb-2' : ''}">
 				<slot name="title">
 					{#if title}
-						<p class="flex-1 px-4 text-lg md:pl-6">{title}</p>
+						<p class="flex-1 px-4 py-1 text-2xl md:pl-6">{title}</p>
 					{/if}
 				</slot>
 				<div
-					class="relative inline-block shrink-0 rounded-es rounded-se-[0.625rem] leading-none focus-within:bg-stone-200 hover:bg-stone-200"
+					class="relative mb-auto inline-block shrink-0 rounded-es rounded-se-[0.625rem] leading-none focus-within:bg-stone-200 hover:bg-stone-200"
 				>
 					{#if isEnableJS}
 						<button
@@ -73,7 +73,7 @@
 							on:click|self={closeDialog}
 						/>
 					{/if}
-					<label for="common_dialog_open_{name}" class="inline-block">
+					<label for="common_dialog_open_{name}" class="inline-block h-full">
 						<slot name="closer">
 							<IconClose
 								width="44"
