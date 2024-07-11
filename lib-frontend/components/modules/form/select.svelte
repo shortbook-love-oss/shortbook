@@ -11,11 +11,8 @@
 	export let errorMessages: string[] | undefined = undefined;
 
 	// When value changed by outside, reselect value-match item
-	interface DisplaySelectItem extends SelectItem<string | number> {
-		selected: boolean;
-	}
 	$: displayList = list.map((item) => {
-		const displayItem: DisplaySelectItem = {
+		const displayItem: SelectItem<string | number> = {
 			...item,
 			selected: item.value === value
 		};
@@ -46,7 +43,7 @@
 			aria-invalid={errorMessages?.length ? true : undefined}
 		>
 			{#each displayList as item}
-				<option value={item.value} selected={item.selected}>{item.text}</option>
+				<option value={item.value} selected={item.selected}>{item.label}</option>
 			{/each}
 		</select>
 	</div>

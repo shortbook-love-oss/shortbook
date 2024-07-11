@@ -41,18 +41,18 @@
 					<li class="col-span-2 mb-3 border-b border-stone-300 p-3 pb-5" aria-current="page">
 						<p>Current language</p>
 						<p class="text-2xl">
-							{languageSelect.find((lang) => lang.value === languageTag())?.text}
+							{languageSelect.find((lang) => lang.value === languageTag())?.label}
 						</p>
 					</li>
 					{#each languageSelect as lang}
 						{#if lang.value !== languageTag()}
-							<li class="p-3 {lang.text.length >= 12 ? 'col-span-2' : ''}">
+							<li class="p-3 {lang.label.length >= 12 ? 'col-span-2' : ''}">
 								<a
 									href={i18n.route($page.url.pathname)}
 									hreflang={lang.value}
 									class="hover:underline"
 									data-sveltekit-reload
-									tabindex="0">{lang.text}</a
+									tabindex="0">{lang.label}</a
 								>
 							</li>
 						{/if}
