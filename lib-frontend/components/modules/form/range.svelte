@@ -28,6 +28,7 @@
 			{id}
 			class="peer w-full accent-primary-700 {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
+			on:input
 		/>
 		<div
 			class="absolute bottom-8 end-0 hidden w-fit peer-hover:inline-block peer-focus:inline-block"

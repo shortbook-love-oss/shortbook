@@ -26,6 +26,7 @@
 			? 'border-2 border-red-700'
 			: 'border-stone-600'} {inputClass}"
 		aria-invalid={errorMessages?.length ? true : undefined}
+		on:input
 	/>
 	{#if errorMessages?.length}
 		<div class="mt-2 text-red-800">

@@ -28,6 +28,7 @@
 				? 'border-2 border-red-700'
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
+			on:input
 		/>
 		<div class="min-h-48 whitespace-pre-wrap rounded-md border px-4 py-2">{value + '\u200b'}</div>
 	</div>
