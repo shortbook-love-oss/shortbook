@@ -1,38 +1,52 @@
 <script lang="ts">
-	import type { MyBookItem } from '$lib/utilities/book';
+	import { bookTextAlignSelect } from '$lib/utilities/book';
+	import type { BookCover } from '$lib/utilities/book';
+	import { getSelectedText } from '$lib/utilities/select';
 
-	export let book: MyBookItem;
-	export let sizeClass = 'h-[8.4rem] w-24 p-2 lg:h-56 lg:w-40 lg:p-3 lg:text-lg';
+	export let book: BookCover;
+	export let penName: string;
+	export let width = 240;
 	export let className = '';
-
-	let colorStart = '';
-	let colorEnd = '';
-	const colorKey = parseInt(book.id.slice(-2, -1), 36);
-	if (colorKey < 6) {
-		colorStart = 'from-primary-800';
-		colorEnd = 'to-primary-500';
-	} else if (colorKey < 12) {
-		colorStart = 'from-slate-900';
-		colorEnd = 'to-slate-500';
-	} else if (colorKey < 18) {
-		colorStart = 'from-green-950';
-		colorEnd = 'to-green-600';
-	} else if (colorKey < 24) {
-		colorStart = 'from-cyan-900';
-		colorEnd = 'to-cyan-700';
-	} else if (colorKey < 30) {
-		colorStart = 'from-purple-950';
-		colorEnd = 'to-purple-700';
-	} else if (colorKey < 36) {
-		colorStart = 'from-yellow-900';
-		colorEnd = 'to-yellow-700';
-	}
 </script>
 
 <div
-	class="shrink-0 overflow-hidden rounded-md bg-gradient-to-br {colorStart} {colorEnd} {sizeClass} {className}"
+	class="shrink-0 overflow-hidden {className}"
+	style="border-radius: {width / 36}px; height: {width *
+		1.5}px; width: {width}px; background-image: linear-gradient({book.baseColorDirection}deg, {book.baseColorStart}, {book.baseColorEnd});"
 >
-	<p class="whitespace-pre-wrap break-words font-semibold text-white">
-		{book.title}
-	</p>
+	<!-- Original book cover ratio is 2:3 -->
+	<div
+		class="flex h-[1200px] w-[800px] origin-top-left flex-col gap-8 p-8 tracking-wide"
+		style="scale: {width / 800};"
+	>
+		<div style="text-align: {getSelectedText(bookTextAlignSelect, book.titleAlign)};">
+			<p
+				class="whitespace-pre-wrap break-words rounded-md p-6 font-semibold leading-snug"
+				style="color: {book.titleColor}; font-size: {book.titleFontSize}px; line-height: {book.titleFontSize +
+					16}px;"
+			>
+				{book.title}
+			</p>
+		</div>
+		<div
+			class="flex-1"
+			style="text-align: {getSelectedText(bookTextAlignSelect, book.subtitleAlign)};"
+		>
+			<p
+				class="whitespace-pre-wrap break-words rounded-md p-6 leading-snug"
+				style="color: {book.subtitleColor}; font-size: {book.subtitleFontSize}px; line-height: {book.subtitleFontSize +
+					16}px;"
+			>
+				{book.subtitle}
+			</p>
+		</div>
+		<div style="text-align: {getSelectedText(bookTextAlignSelect, book.writerAlign)};">
+			<p
+				class="whitespace-pre-wrap break-words rounded-md p-6 text-5xl leading-snug"
+				style="color: {book.writerColor};"
+			>
+				{penName}
+			</p>
+		</div>
+	</div>
 </div>

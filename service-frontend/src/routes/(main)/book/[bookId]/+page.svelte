@@ -24,8 +24,18 @@
 </svelte:head>
 
 <article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
-	<div class="hidden shrink-0 justify-end lg:flex">
-		<BookCover book={data.bookDetail} />
+	<div class="hidden w-full max-w-xl shrink-0 gap-8 lg:block lg:w-60">
+		<ProfileCardSmall
+			name={data.bookDetail.penName}
+			imageSrc={data.bookDetail.image}
+			imageSizeClass="h-12 w-12"
+		/>
+		<p class="mt-4">Published : {publishedAt}</p>
+		{#if data.bookDetail.userId === $page.data.session?.user?.id}
+			<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-1 mt-2 w-fit">
+				<IconWrite width="20" height="20" />
+			</NavLinkSmall>
+		{/if}
 	</div>
 	<div class="w-full max-w-xl overflow-x-hidden break-words">
 		<h1 class="whitespace-pre-wrap text-3xl font-semibold leading-tight sm:text-4xl">
@@ -38,7 +48,7 @@
 			<ProfileCard name={data.bookDetail.penName} imageSrc={data.bookDetail.image}>
 				<p class="mt-1">{publishedAt}</p>
 			</ProfileCard>
-			{#if data.bookDetail.user_id === $page.data.session?.user?.id}
+			{#if data.bookDetail.userId === $page.data.session?.user?.id}
 				<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-1 mt-2 w-fit">
 					<IconWrite width="20" height="20" />
 				</NavLinkSmall>
@@ -61,17 +71,7 @@
 			{/each}
 		</section>
 	</div>
-	<div class="hidden w-full max-w-xl shrink-0 gap-8 lg:block lg:w-60">
-		<ProfileCardSmall
-			name={data.bookDetail.penName}
-			imageSrc={data.bookDetail.image}
-			imageSizeClass="h-12 w-12"
-		/>
-		<p class="mt-4">Published : {publishedAt}</p>
-		{#if data.bookDetail.user_id === $page.data.session?.user?.id}
-			<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-1 mt-2 w-fit">
-				<IconWrite width="20" height="20" />
-			</NavLinkSmall>
-		{/if}
+	<div class="hidden shrink-0 lg:block lg:w-48 xl:w-60">
+		<BookCover book={data.bookDetail} penName={data.bookDetail.penName} width={160} />
 	</div>
 </article>

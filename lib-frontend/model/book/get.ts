@@ -15,6 +15,9 @@ export async function dbBookGet(req: DbBookGetRequest) {
 				deleted_at: null
 			},
 			include: {
+				cover: {
+					where: { deleted_at: null }
+				},
 				languages: {
 					where: { deleted_at: null }
 				},

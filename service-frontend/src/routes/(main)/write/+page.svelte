@@ -23,7 +23,7 @@
 	<ul class="flex flex-col">
 		{#each data.bookList as book (book.id)}
 			<li class="-mx-4">
-				<BookItem {book} requestLang={data.requestLang} />
+				<BookItem {book} penName={data.penName} requestLang={data.requestLang} />
 			</li>
 		{/each}
 	</ul>

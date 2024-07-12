@@ -4,6 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookCreateRequest } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getBookCover } from '$lib/utilities/book';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { getLangTagPathPart } from '$lib/utilities/url';
@@ -14,25 +15,28 @@ export const load = async ({ request, cookies }) => {
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
+	const requestLang = guessNativeLangFromRequest(request);
 
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
 
 	const { profile, dbError } = await dbUserProfileGet({ userId });
-	if (dbError) {
-		return error(500, { message: dbError.message });
+	if (!profile || dbError) {
+		return error(500, { message: dbError?.message ?? '' });
 	}
-	const requestLang = guessNativeLangFromRequest(request);
+	const penName = profile.languages[0]?.pen_name ?? '';
 
-	form.data.title = '';
-	form.data.subtitle = '';
-	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTags;
+	const bookCover = getBookCover({});
+	for (const coverProp in bookCover) {
+		const prop = coverProp as keyof typeof bookCover;
+		form.data[prop] = bookCover[prop] as never;
+	}
+	form.data.nativeLanguage = (profile.native_language || requestLang) as AvailableLanguageTags;
 	form.data.prologue = '';
 	form.data.content = '';
 	form.data.salesMessage = 'Read this! Will be helpful to you!';
-	const status = 0;
 
-	return { form, status, langTags };
+	return { form, penName, langTags };
 };
 
 export const actions = {

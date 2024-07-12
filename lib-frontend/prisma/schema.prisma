@@ -156,8 +156,30 @@ model books {
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
+  cover                   book_covers?
   languages               book_languages[]
   tags                    book_tags[]
+}
+
+model book_covers {
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  id                      String              @id @default(cuid())
+  book_id                 String              @unique
+  base_color_start        String              @db.VarChar(15) // Hex code with "#"
+  base_color_end          String              @db.VarChar(15)
+  base_color_direction    Int                 @db.SmallInt // 0: bottom→top 90: left→right
+  title_font_size         Int                 @db.SmallInt // Font size unit is "px"
+  title_align             Int                 @db.SmallInt // 0: left 1: center 2:right
+  title_color             String              @db.VarChar(15)
+  subtitle_font_size      Int                 @db.SmallInt
+  subtitle_align          Int                 @db.SmallInt
+  subtitle_color          String              @db.VarChar(15)
+  writer_align            Int                 @db.SmallInt
+  writer_color            String              @db.VarChar(15)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
 }
 
 model book_languages {

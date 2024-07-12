@@ -9,6 +9,17 @@ export interface DbBookCreateRequest {
 	prologue: string;
 	content: string;
 	salesMessage: string;
+	baseColorStart: string;
+	baseColorEnd: string;
+	baseColorDirection: number;
+	titleFontSize: number;
+	titleAlign: number;
+	titleColor: string;
+	subtitleFontSize: number;
+	subtitleAlign: number;
+	subtitleColor: string;
+	writerAlign: number;
+	writerColor: string;
 }
 
 export async function dbBookCreateRequest(req: DbBookCreateRequest) {
@@ -21,6 +32,21 @@ export async function dbBookCreateRequest(req: DbBookCreateRequest) {
 					user_id: req.userId,
 					status: req.status,
 					price: 0,
+					cover: {
+						create: {
+							base_color_start: req.baseColorStart,
+							base_color_end: req.baseColorEnd,
+							base_color_direction: req.baseColorDirection,
+							title_font_size: req.titleFontSize,
+							title_align: req.titleAlign,
+							title_color: req.titleColor,
+							subtitle_font_size: req.subtitleFontSize,
+							subtitle_align: req.subtitleAlign,
+							subtitle_color: req.subtitleColor,
+							writer_align: req.writerAlign,
+							writer_color: req.writerColor
+						}
+					},
 					languages: {
 						create: {
 							language_code: req.nativeLanguage,

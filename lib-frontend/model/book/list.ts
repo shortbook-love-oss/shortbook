@@ -17,6 +17,9 @@ export async function dbBookList(req: DbBookListRequest) {
 				updated_at: 'desc'
 			},
 			include: {
+				cover: {
+					where: { deleted_at: null }
+				},
 				languages: {
 					omit: {
 						prologue: true,

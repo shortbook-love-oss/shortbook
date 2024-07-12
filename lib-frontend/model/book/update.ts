@@ -48,6 +48,25 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 				throw dbError;
 			}
 
+			await tx.book_covers.update({
+				where: {
+					book_id: book.id
+				},
+				data: {
+					base_color_start: req.baseColorStart,
+					base_color_end: req.baseColorEnd,
+					base_color_direction: req.baseColorDirection,
+					title_font_size: req.titleFontSize,
+					title_align: req.titleAlign,
+					title_color: req.titleColor,
+					subtitle_font_size: req.subtitleFontSize,
+					subtitle_align: req.subtitleAlign,
+					subtitle_color: req.subtitleColor,
+					writer_align: req.writerAlign,
+					writer_color: req.writerColor
+				}
+			});
+
 			await tx.book_languages.deleteMany({
 				where: {
 					book_id: book.id

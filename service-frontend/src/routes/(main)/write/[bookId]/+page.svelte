@@ -14,6 +14,7 @@
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
+	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
 
 	export let data;
 
@@ -28,94 +29,118 @@
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = true;
 	function validateBackground() {
-		validateForm().then((result) => (hasVaild = result.valid));
+		validateForm().then((result) => {
+			hasVaild = result.valid;
+		});
 	}
-	const formObserver = form.subscribe(() => validateBackground());
+	const formObserver = form.subscribe(() => {
+		validateBackground();
+	});
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
 
-	const initTitle = data.initTitle;
+	function applyChildChange(event: CustomEvent<{ book: typeof $form }>) {
+		form.set({ ...event.detail.book });
+	}
 </script>
 
 <svelte:head>
 	<title>Edit book | ShortBook</title>
 </svelte:head>
 
-<h1 class="mb-8 whitespace-pre-wrap break-words text-2xl font-semibold">
-	Edit "{initTitle}"
-</h1>
 <Form
 	method="POST"
 	action={actionUpdateUrl}
 	{enhance}
+	hasInvalid={!hasVaild}
 	isLoading={$submitting}
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
 >
-	<TextField
-		bind:value={$form.title}
-		name="title"
-		required={true}
-		label="Title"
-		errorMessages={$errors.title}
-		className="mb-8"
-	/>
-	<TextField
-		bind:value={$form.subtitle}
-		name="subtitle"
-		label="Subtitle"
-		errorMessages={$errors.subtitle}
-		className="mb-8"
-	/>
-	<Select
-		bind:value={$form.nativeLanguage}
-		name="nativeLanguage"
-		list={data.langTags}
-		required={true}
-		label="Native language"
-		errorMessages={$errors.nativeLanguage}
-		className="mb-8 max-w-72"
-	/>
-	<TextArea
-		bind:value={$form.prologue}
-		name="prologue"
-		label="Prologue"
-		errorMessages={$errors.prologue}
-		className="mb-8"
-	/>
-	<TextArea
-		bind:value={$form.content}
-		name="content"
-		required={true}
-		label="Main content"
-		errorMessages={$errors.content}
-		className="mb-8"
-	/>
-	<!-- <TextArea
-		bind:value={$form.salesMessage}
-		name="salesMessage"
-		label="&quot;Read this!&quot; appeal"
-		errorMessages={$errors.salesMessage}
-		className="mb-8"
-	/> -->
-	<div slot="submit" class="flex flex-col items-center items-center gap-8 sm:flex-row">
-		<SubmitButton hasInvalid={!hasVaild} isLoading={$submitting}>
-			{data.status === 0 ? 'Publish book' : 'Republish book'}
-		</SubmitButton>
-		<Dialog name="delete" openerClass="rounded-lg">
-			<NavLinkSmall slot="opener" name="Delete" className="text-red-800">
-				<IconDelete width="24" height="24" />
-			</NavLinkSmall>
-			<p class="mb-2 mt-4 text-lg">Do you want to delete it?</p>
-			<SubmitText
-				slot="actions"
-				formaction={actionDeleteUrl}
-				hasInvalid={!hasVaild}
-				isLoading={$submitting}
-				className="mx-auto"
-			>
-				<span class="text-red-800">Delete</span>
-			</SubmitText>
-		</Dialog>
+	<div
+		class="mb-8 flex flex-col items-center justify-center gap-x-16 gap-y-8 lg:flex-row lg:items-stretch"
+	>
+		<div class="w-full max-w-xl shrink-0 gap-8 lg:w-60">
+			<h1 class="break-words text-2xl font-semibold">Editing "{data.initTitle}"</h1>
+		</div>
+		<div class="w-full max-w-xl overflow-x-hidden break-words">
+			<TextField
+				bind:value={$form.title}
+				name="title"
+				required={true}
+				label="Title"
+				errorMessages={$errors.title}
+				className="mb-8"
+			/>
+			<TextField
+				bind:value={$form.subtitle}
+				name="subtitle"
+				label="Subtitle"
+				errorMessages={$errors.subtitle}
+				className="mb-8"
+			/>
+			<Select
+				bind:value={$form.nativeLanguage}
+				name="nativeLanguage"
+				list={data.langTags}
+				required={true}
+				label="Native language"
+				errorMessages={$errors.nativeLanguage}
+				className="mb-8 max-w-72"
+			/>
+			<TextArea
+				bind:value={$form.prologue}
+				name="prologue"
+				label="Prologue"
+				errorMessages={$errors.prologue}
+				className="mb-8"
+			/>
+			<TextArea
+				bind:value={$form.content}
+				name="content"
+				required={true}
+				label="Main content"
+				errorMessages={$errors.content}
+				className="mb-8"
+			/>
+			<TextArea
+				bind:value={$form.salesMessage}
+				name="salesMessage"
+				label="&quot;Read this!&quot; appeal"
+				errorMessages={$errors.salesMessage}
+				className="hidden"
+			/>
+		</div>
+		<div class="-mt-4 shrink-0 lg:w-48 xl:w-60">
+			<BookCoverEdit
+				book={$form}
+				penName={data.penName}
+				errors={$errors}
+				on:input={applyChildChange}
+			/>
+		</div>
 	</div>
+	<div class="mx-auto max-w-xl">
+		<div class="flex w-full flex-col items-center gap-8 sm:flex-row">
+			<SubmitButton hasInvalid={!hasVaild} isLoading={$submitting}>
+				{data.status === 0 ? 'Publish book' : 'Republish book'}
+			</SubmitButton>
+			<Dialog name="delete" openerClass="rounded-lg">
+				<NavLinkSmall slot="opener" name="Delete" className="text-red-800">
+					<IconDelete width="24" height="24" />
+				</NavLinkSmall>
+				<p class="mb-2 mt-4 text-lg">Do you want to delete it?</p>
+				<SubmitText
+					slot="actions"
+					formaction={actionDeleteUrl}
+					hasInvalid={!hasVaild}
+					isLoading={$submitting}
+					className="mx-auto"
+				>
+					<span class="text-red-800">Delete</span>
+				</SubmitText>
+			</Dialog>
+		</div>
+	</div>
+	<div slot="submit"></div>
 </Form>

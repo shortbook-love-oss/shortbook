@@ -1,6 +1,8 @@
 export interface SelectItem<T = number> {
 	value: T;
-	text: string;
+	text?: string;
+	label: string;
+	selected?: boolean;
 }
 
 export function getSelectedText<T = number>(items: SelectItem<T>[], value: T) {

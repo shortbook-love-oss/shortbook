@@ -5,7 +5,9 @@ import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbBookDeleteRequest } from '$lib/model/book/delete';
 import { dbBookUpdateRequest } from '$lib/model/book/update';
 import { dbBookGet } from '$lib/model/book/get';
+import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getBookCover } from '$lib/utilities/book';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { getLangTagPathPart } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
@@ -23,13 +25,36 @@ export const load = async ({ cookies, params }) => {
 		bookId: params.bookId,
 		userId
 	});
-	if (dbError) {
-		return error(500, { message: dbError.message });
+	if (!book || !book.cover || dbError) {
+		return error(500, { message: dbError?.message ?? '' });
 	}
 	let bookLang = book?.languages[0];
 
-	form.data.title = bookLang?.title ?? '';
-	form.data.subtitle = bookLang?.subtitle ?? '';
+	const { profile, dbError: profileDbError } = await dbUserProfileGet({ userId });
+	if (!profile || profileDbError) {
+		return error(500, { message: profileDbError?.message ?? '' });
+	}
+	const penName = profile.languages[0]?.pen_name ?? '';
+
+	const bookCover = getBookCover({
+		title: bookLang?.title ?? '',
+		subtitle: bookLang?.subtitle ?? '',
+		baseColorStart: book.cover.base_color_start,
+		baseColorEnd: book.cover.base_color_end,
+		baseColorDirection: book.cover.base_color_direction,
+		titleFontSize: book.cover.title_font_size,
+		titleAlign: book.cover.title_align,
+		titleColor: book.cover.title_color,
+		subtitleFontSize: book.cover.subtitle_font_size,
+		subtitleAlign: book.cover.subtitle_align,
+		subtitleColor: book.cover.subtitle_color,
+		writerAlign: book.cover.writer_align,
+		writerColor: book.cover.writer_color
+	});
+	for (const coverProp in bookCover) {
+		const prop = coverProp as keyof typeof bookCover;
+		form.data[prop] = bookCover[prop] as never;
+	}
 	form.data.nativeLanguage = (bookLang?.language_code ?? '') as AvailableLanguageTag;
 	form.data.prologue = bookLang?.prologue ?? '';
 	form.data.content = bookLang?.content ?? '';
@@ -38,7 +63,7 @@ export const load = async ({ cookies, params }) => {
 	const initTitle = form.data.title;
 	const status = book?.status ?? 0;
 
-	return { form, langTags, status, initTitle };
+	return { form, penName, langTags, status, initTitle };
 };
 
 export const actions = {

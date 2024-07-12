@@ -37,6 +37,15 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 					deleted_at: deletedAt
 				}
 			});
+			await tx.book_covers.update({
+				where: {
+					book_id: req.bookId,
+					deleted_at: null
+				},
+				data: {
+					deleted_at: deletedAt
+				}
+			});
 			await tx.book_languages.updateMany({
 				where: {
 					book_id: req.bookId,

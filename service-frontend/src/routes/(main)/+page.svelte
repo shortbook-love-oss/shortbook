@@ -25,7 +25,7 @@
 	<ul class="-mx-4 grid grid-cols-1 sm:-mx-8 md:grid-cols-2 md:gap-y-4 2xl:grid-cols-3">
 		{#each data.bookList as book (book.id)}
 			<li>
-				<BookItem {book} requestLang={data.requestLang} className="h-full" />
+				<BookItem {book} penName={book.penName} requestLang={data.requestLang} className="h-full" />
 			</li>
 		{/each}
 	</ul>
