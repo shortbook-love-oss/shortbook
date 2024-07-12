@@ -34,7 +34,7 @@ export const load = async ({ request, cookies }) => {
 	form.data.nativeLanguage = (profile.native_language || requestLang) as AvailableLanguageTags;
 	form.data.prologue = '';
 	form.data.content = '';
-	form.data.salesMessage = 'Read this! Will be helpful to you!';
+	form.data.salesMessage = '';
 
 	return { form, penName, langTags };
 };
