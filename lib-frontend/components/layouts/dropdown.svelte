@@ -1,11 +1,16 @@
 <script lang="ts">
 	// Need for unique attribute value
 	export let name: string;
+	export let openerClass = '';
 	export let dropdownClass = '';
 </script>
 
 <div class="peer/common_dropdown_open">
-	<button type="button" class="inline-block hover:bg-stone-200 focus:bg-stone-200" tabindex="0">
+	<button
+		type="button"
+		class="inline-block hover:bg-stone-200 focus:bg-stone-200 {openerClass}"
+		tabindex="0"
+	>
 		<slot name="opener" />
 	</button>
 </div>
