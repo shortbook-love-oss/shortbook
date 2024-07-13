@@ -1,11 +1,11 @@
-FROM node:22.4.0-bookworm-slim as base
+FROM node:22.4.0-bookworm-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl
 
 WORKDIR /home/node/app
 
 # Develop ---------------------------------------------------
-FROM base as dev
+FROM base AS dev
 
 ENV NODE_ENV=development
 
@@ -15,19 +15,19 @@ RUN npm i
 COPY ./service-frontend .
 COPY ./lib-frontend ./lib
 
-# SvelteKit(Vite) use 5173 port
+# Vite use 5173 port
 EXPOSE 5173
 
 
 # Production ---------------------------------------------------
-FROM base as prd-process
+FROM base AS prd-process
 
 ENV NODE_ENV=production
 
 COPY ./service-frontend/package*.json .
 
 # prd-install and prd-build are run in parallel.
-FROM prd-process as prd-install
+FROM prd-process AS prd-install
 
 # Install prd-bundle in another directory
 RUN cd ../ \
@@ -41,7 +41,7 @@ COPY ./lib-frontend/prisma/schema.prisma ../install/lib/prisma/schema.prisma
 
 RUN cd ../install && npm run schema-generate
 
-FROM prd-process as prd-build
+FROM prd-process AS prd-build
 
 # Install the same patch version
 RUN npm ci --include=dev
@@ -52,7 +52,7 @@ COPY ./lib-frontend ./lib
 # Production-setting build
 RUN npm run build
 
-FROM node:22.4.0-bookworm-slim as prd
+FROM node:22.4.0-bookworm-slim AS prd
 
 RUN apt-get update -y && apt-get install -y openssl \
   && rm -rf /var/lib/apt/lists/*
