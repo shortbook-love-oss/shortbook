@@ -21,9 +21,6 @@ export const load = async ({ request, params }) => {
 		profileLang = profile.languages[0];
 	}
 
-	const bookPrologues = contentsToMarkdown(bookLang?.prologue ?? '');
-	const bookContent = contentsToMarkdown(bookLang?.content ?? '');
-
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
 		subtitle: bookLang?.subtitle ?? '',
@@ -51,8 +48,8 @@ export const load = async ({ request, params }) => {
 		keyName: profile?.key_name ?? '',
 		penName: profileLang?.pen_name ?? '',
 		image: book.user.image ?? '',
-		prologues: bookPrologues,
-		contents: bookContent,
+		prologue: await contentsToMarkdown(bookLang?.prologue ?? ''),
+		content: await contentsToMarkdown(bookLang?.content ?? ''),
 		sales_message: bookLang?.sales_message ?? ''
 	};
 

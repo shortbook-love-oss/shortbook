@@ -8,14 +8,6 @@
 
 	export let data;
 
-	const headingClasses: { [key: string]: string } = {
-		h2: 'font-semibold text-4xl',
-		h3: 'font-semibold text-3xl',
-		h4: 'font-semibold text-2xl',
-		h5: 'font-semibold text-xl',
-		h6: 'font-semibold text-lg'
-	};
-
 	const publishedAt = data.bookDetail.publishedAt.toLocaleDateString(data.requestLang);
 </script>
 
@@ -55,20 +47,10 @@
 			{/if}
 		</div>
 		<section class="mt-8 whitespace-pre-wrap border-t border-stone-300 pt-8 text-lg">
-			{#each data.bookDetail.prologues as paragraph}
-				<svelte:element
-					this={paragraph.tagName}
-					class="mb-6 {headingClasses[paragraph.tagName] ?? ''}">{paragraph.content}</svelte:element
-				>
-			{/each}
+			{@html data.bookDetail.prologue}
 		</section>
 		<section class="mt-8 whitespace-pre-wrap border-t border-stone-300 pt-8 text-lg">
-			{#each data.bookDetail.contents as paragraph}
-				<svelte:element
-					this={paragraph.tagName}
-					class="mb-6 {headingClasses[paragraph.tagName] ?? ''}">{paragraph.content}</svelte:element
-				>
-			{/each}
+			{@html data.bookDetail.content}
 		</section>
 	</div>
 	<div class="hidden shrink-0 lg:block lg:w-48 xl:w-60">

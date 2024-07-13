@@ -1,3 +1,5 @@
+import DOMPurify from 'isomorphic-dompurify';
+import { marked } from 'marked';
 import type { SelectItem } from './select';
 
 export interface BookCover {
@@ -32,14 +34,9 @@ export interface BookItem extends MyBookItem {
 }
 
 export interface BookDetail extends BookItem {
-	prologues: ContentParagraph[];
-	contents: ContentParagraph[];
-	sales_message: string;
-}
-
-export interface ContentParagraph {
-	tagName: string;
+	prologue: string;
 	content: string;
+	sales_message: string;
 }
 
 // font-size: ***;
@@ -78,25 +75,6 @@ export function getBookCover(editCover: Partial<BookCover>): BookCover {
 	return { ...defaultCover, ...editCover };
 }
 
-export function contentsToMarkdown(contents: string) {
-	return contents.split('\n').map((content) => {
-		const paragraph: ContentParagraph = {
-			tagName: 'p',
-			content
-		};
-		// Support markdown feature (only heading level 2-6)
-		if (content[0] === '#') {
-			const parsed = content.match(/^(#{2,6})?\s?(.*)/);
-			const maybeSharp = parsed?.[1];
-			const formattedContent = parsed?.[2];
-			if (maybeSharp && formattedContent) {
-				// ## FooBarBaz → <h2>FooBarBaz</h2>
-				// ######FooBarBaz → <h6>FooBarBaz</h6>
-				// # FooBarBaz → <p># FooBarBaz</p>
-				paragraph.tagName = 'h' + maybeSharp.length;
-				paragraph.content = formattedContent;
-			}
-		}
-		return paragraph;
-	});
+export async function contentsToMarkdown(content: string) {
+	return DOMPurify.sanitize(await marked.parse(content));
 }
