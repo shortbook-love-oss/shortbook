@@ -47,11 +47,11 @@
 			{/if}
 		</div>
 		{#if data.bookDetail.prologue}
-			<section class="mt-8 whitespace-pre-wrap border-t border-stone-300 pt-8 text-lg">
+			<section class="article_content mt-8 border-t border-stone-300 pt-8 text-lg">
 				{@html data.bookDetail.prologue}
 			</section>
 		{/if}
-		<section class="mt-8 whitespace-pre-wrap border-t border-stone-300 pt-8 text-lg">
+		<section class="article_content mt-8 border-t border-stone-300 pt-8 text-lg">
 			{@html data.bookDetail.content}
 		</section>
 	</div>
