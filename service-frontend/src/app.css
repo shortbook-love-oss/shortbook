@@ -15,6 +15,17 @@
 		text-decoration-line: underline;
 	}
 
+	ul,ol {
+		white-space: normal;
+		padding-left: 2em;
+	}
+	ul {
+		list-style: disc;
+	}
+	ol {
+		list-style: decimal;
+	}
+
 	h1,
 	h2,
 	h3,
