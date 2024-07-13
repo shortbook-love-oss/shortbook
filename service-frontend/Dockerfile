@@ -1,4 +1,4 @@
-FROM node:22.4.0-bookworm-slim AS base
+FROM node:22.4.1-bookworm-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl
 
