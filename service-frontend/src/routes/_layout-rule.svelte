@@ -8,7 +8,7 @@
 
 <div
 	data-sveltekit-reload={$updated}
-	class="flex h-dvh h-screen flex-col tracking-wide text-stone-950 underline-offset-[3px]"
+	class="flex h-dvh flex-col tracking-wide text-stone-950 underline-offset-[3px]"
 >
 	<slot name="alert" {isNarrow} />
 	<slot name="header" {isNarrow} />
@@ -33,7 +33,7 @@
 			<Footer />
 		</slot>
 	</div>
-	<div class="sm:hidden">
+	<div class="shrink-0 sm:hidden">
 		<slot name="footerNav">
 			<NavSp />
 		</slot>

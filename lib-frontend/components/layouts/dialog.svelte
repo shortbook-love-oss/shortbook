@@ -48,7 +48,7 @@
 <!-- Dialog -->
 <div
 	id="common_dialog_{name}"
-	class="fixed left-0 top-0 z-50 flex hidden h-dvh h-screen w-screen justify-center bg-stone-500/50 peer-has-[:checked]/common_dialog_open:flex"
+	class="fixed left-0 top-0 z-50 flex hidden h-dvh w-screen justify-center bg-stone-500/50 peer-has-[:checked]/common_dialog_open:flex"
 >
 	<label for="common_dialog_open_{name}" class="min-w-4 flex-1" aria-hidden="true" />
 	<div class="flex flex-col">

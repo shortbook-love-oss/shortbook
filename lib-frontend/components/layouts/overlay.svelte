@@ -39,7 +39,7 @@
 <!-- Overlay -->
 <div
 	id="common_overlay_{name}"
-	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen w-screen bg-stone-500/50 peer-has-[:checked]/common_overlay_open:flex"
+	class="fixed left-0 top-0 z-40 hidden h-dvh w-screen bg-stone-500/50 peer-has-[:checked]/common_overlay_open:flex"
 >
 	<div class="inline-flex h-full flex-col border-r border-primary-300 bg-white">
 		<div class="relative ms-auto inline-block flex focus-within:bg-stone-200 hover:bg-stone-200">
