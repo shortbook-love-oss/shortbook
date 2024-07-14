@@ -24,8 +24,8 @@
 		/>
 		<p class="mt-4">Published : {publishedAt}</p>
 		{#if data.bookDetail.userId === $page.data.session?.user?.id}
-			<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-1 mt-2 w-fit">
-				<IconWrite width="20" height="20" />
+			<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-3 mt-2 w-fit">
+				<IconWrite width="20" height="20" class="-me-1" />
 			</NavLinkSmall>
 		{/if}
 	</div>
@@ -36,12 +36,12 @@
 		{#if data.bookDetail.subtitle}
 			<p class="mt-4 whitespace-pre-wrap text-xl leading-normal">{data.bookDetail.subtitle}</p>
 		{/if}
-		<div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2 lg:hidden">
+		<div class="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
 			<ProfileCard name={data.bookDetail.penName} imageSrc={data.bookDetail.image}>
 				<p class="mt-1">{publishedAt}</p>
 			</ProfileCard>
 			{#if data.bookDetail.userId === $page.data.session?.user?.id}
-				<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-ms-1 mt-2 w-fit">
+				<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="-mr-1 mt-2 w-fit">
 					<IconWrite width="20" height="20" />
 				</NavLinkSmall>
 			{/if}

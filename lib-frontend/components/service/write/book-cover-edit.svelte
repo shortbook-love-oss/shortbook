@@ -39,8 +39,8 @@
 			<BookCover {book} {penName} width={160} />
 		</div>
 		<div class="mx-auto w-fit rounded-lg border-2 border-primary-700">
-			<NavLinkSmall name="Open cover editor">
-				<IconEdit width="24" height="24" />
+			<NavLinkSmall name="Edit cover">
+				<IconEdit width="24" height="24" class="-me-1" />
 			</NavLinkSmall>
 		</div>
 	</div>

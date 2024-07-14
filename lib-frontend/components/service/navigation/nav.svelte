@@ -15,12 +15,12 @@
 	{#if $page.data.session?.user}
 		<li>
 			<NavLinkSmall name={m.header_write()} href="/write">
-				<IconWrite width="20" height="20" />
+				<IconWrite width="20" height="20" class="-me-1" />
 			</NavLinkSmall>
 		</li>
 		<li>
 			<NavLinkSmall name={m.header_mypage()} href="/mypage">
-				<IconUser width="20" height="20" />
+				<IconUser width="20" height="20" class="-mx-1" />
 			</NavLinkSmall>
 		</li>
 		<li>
