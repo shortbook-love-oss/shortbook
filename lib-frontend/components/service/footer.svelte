@@ -28,7 +28,7 @@
 			</a>
 			<small class="mb-4 block text-base">© {yearPeriod} ShortBook LLC</small>
 			<!-- Language select -->
-			<Dropdown name="lang_select" dropdownClass="bottom-2 min-w-40" openerClass="hidden">
+			<Dropdown name="lang_select" dropdownClass="bottom-2 min-w-40">
 				<div slot="opener" class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
 					<p class="inline-block px-1">Change language</p>
 					<IconArrow
