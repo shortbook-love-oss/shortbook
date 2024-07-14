@@ -2,6 +2,7 @@
 	import IconArrow from '~icons/mdi/chevron-down';
 	import { page } from '$app/stores';
 	import { categories } from '$lib/components/service/menu';
+	import * as m from '$lib/i18n/paraglide/messages.js';
 	import { languageTag } from '$lib/i18n/paraglide/runtime';
 	import { i18n } from '$lib/i18n/i18n';
 	import { languageSelect } from '$lib/utilities/language';
@@ -23,10 +24,10 @@
 				<img
 					src="/assets/shortbook-logotype.svg"
 					class="aspect-logotype w-48"
-					alt="Short book logo"
+					alt={m.logotype_alt()}
 				/>
 			</a>
-			<small class="mb-4 block text-base">© {yearPeriod} ShortBook LLC</small>
+			<small class="mb-4 block text-base">© {yearPeriod} {m.company_name()}</small>
 			<!-- Language select -->
 			<Dropdown name="lang_select" dropdownClass="bottom-2 min-w-40">
 				<div slot="opener" class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
@@ -60,7 +61,7 @@
 				</ul>
 			</Dropdown>
 		</div>
-		{#each categories as category (category.name)}
+		{#each categories(languageTag()) as category (category.name)}
 			<div class="text-lg">
 				<h2 class="mb-3 font-bold">{category.name}</h2>
 				<ul>
