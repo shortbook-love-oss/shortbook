@@ -52,7 +52,7 @@ COPY ./lib-frontend ./lib
 # Production-setting build
 RUN npm run build
 
-FROM node:22.4.0-bookworm-slim AS prd
+FROM --platform=linux/arm64 node:22.4.1-bookworm-slim AS prd
 
 RUN apt-get update -y && apt-get install -y openssl \
   && rm -rf /var/lib/apt/lists/*
