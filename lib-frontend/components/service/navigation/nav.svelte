@@ -2,6 +2,7 @@
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconUser from '~icons/mdi/user-outline';
 	import { page } from '$app/stores';
+	import * as m from '$lib/i18n/paraglide/messages.js';
 	import { callbackParam } from '$lib/utilities/url';
 	import NavLinkSmall from './nav-link-small.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
@@ -13,12 +14,12 @@
 <ul class="flex items-center">
 	{#if $page.data.session?.user}
 		<li>
-			<NavLinkSmall name="Write" href="/write">
+			<NavLinkSmall name={m.header_write()} href="/write">
 				<IconWrite width="20" height="20" />
 			</NavLinkSmall>
 		</li>
 		<li>
-			<NavLinkSmall name="Mypage" href="/mypage">
+			<NavLinkSmall name={m.header_mypage()} href="/mypage">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>
@@ -27,12 +28,12 @@
 		</li>
 	{:else}
 		<li>
-			<NavLinkSmall name="Sign in" href="/signin?{callbackParam}={redirectUrl}">
+			<NavLinkSmall name={m.signin_label()} href="/signin?{callbackParam}={redirectUrl}">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>
 		<li>
-			<NavLinkSmall name="Sign up" href="/signup?{callbackParam}={redirectUrl}">
+			<NavLinkSmall name={m.signup_label()} href="/signup?{callbackParam}={redirectUrl}">
 				<IconUser width="20" height="20" />
 			</NavLinkSmall>
 		</li>

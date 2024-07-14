@@ -6,6 +6,7 @@
 	import IconSignin from '~icons/mdi/user-check-outline';
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
+	import * as m from '$lib/i18n/paraglide/messages.js';
 	import { callbackParam, removeLangTagFromPath } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
@@ -28,29 +29,29 @@
 	<nav>
 		<ul class="relative flex justify-center">
 			<li>
-				<NavLinkSp name="Home" href="/">
+				<NavLinkSp name={m.header_home()} href="/">
 					<IconHome width="32" height="32" />
 				</NavLinkSp>
 			</li>
 			{#if $page.data.session?.user}
 				<li>
-					<NavLinkSp name="Write" href="/write">
+					<NavLinkSp name={m.header_sp_write()} href="/write">
 						<IconWrite width="32" height="32" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name="Mypage" href="/mypage">
+					<NavLinkSp name={m.header_mypage()} href="/mypage">
 						<IconUser width="32" height="32" />
 					</NavLinkSp>
 				</li>
 			{:else}
 				<li>
-					<NavLinkSp name="Sign in" href="/signin?{callbackParam}={redirectPathname}">
+					<NavLinkSp name={m.signin_label()} href="/signin?{callbackParam}={redirectPathname}">
 						<IconSignin width="32" height="32" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name="Sign up" href="/signup?{callbackParam}={redirectPathname}">
+					<NavLinkSp name={m.signup_label()} href="/signup?{callbackParam}={redirectPathname}">
 						<IconSignup width="32" height="32" />
 					</NavLinkSp>
 				</li>
@@ -58,7 +59,7 @@
 			{#if $page.data.session?.user}
 				<li class="relative">
 					<Dropdown name="sp_submenu" dropdownClass="bottom-20 end-[10%] min-w-40">
-						<NavLinkSp slot="opener" name="More">
+						<NavLinkSp slot="opener" name={m.header_more()}>
 							<IconMore width="32" height="32" />
 						</NavLinkSp>
 						<ul>
