@@ -1,4 +1,17 @@
 {
     "$schema": "https://inlang.com/schema/inlang-message-format",
-    "company_name": "合同会社ShortBook"
+    "company_name_title": "会社名",
+    "company_name": "合同会社ShortBook",
+    "company_invoice_number_title": "適格請求書発行事業者の登録番号",
+    "company_invoice_number": "T8180303006124",
+    "company_address_title": "所在地",
+    "company_address": "〒444-0326 愛知県西尾市富山町於三28番地15",
+    "company_chief_name_title": "代表者",
+    "company_chief_name": "倉地 俊輔",
+    "company_found_date_title": "設立日",
+    "company_found_date": "2024年5月14日",
+    "company_capital_title": "資本金",
+    "company_capital": "50万円",
+    "company_business_content_title": "事業内容",
+    "company_business_content": "インターネット附随サービス業 - ShortBookの企画・開発・運営・顧客対応"
 }

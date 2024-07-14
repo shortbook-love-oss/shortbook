@@ -17,13 +17,13 @@
 		alt="index.about_sb.image_alt"
 	/>
 </div>
-<CompanyInfoItem heading="会社名" content={m.company_name()} />
-<CompanyInfoItem heading="適格請求書発行事業者の登録番号" content="T8180303006124" />
-<CompanyInfoItem heading="所在地" content="〒444-0326 愛知県西尾市富山町於三28番地15" />
-<CompanyInfoItem heading="代表者" content="倉地 俊輔" />
-<CompanyInfoItem heading="設立日" content="2024年5月中予定" />
-<CompanyInfoItem heading="資本金" content="50万円" />
+<CompanyInfoItem heading={m.company_name_title()} content={m.company_name()} />
+<CompanyInfoItem heading={m.company_invoice_number_title()} content={m.company_invoice_number()} />
+<CompanyInfoItem heading={m.company_address_title()} content={m.company_address()} />
+<CompanyInfoItem heading={m.company_chief_name_title()} content={m.company_invoice_number()} />
+<CompanyInfoItem heading={m.company_found_date_title()} content={m.company_found_date()} />
+<CompanyInfoItem heading={m.company_capital_title()} content={m.company_capital()} />
 <CompanyInfoItem
-	heading="事業内容"
-	content="インターネット附随サービス業 - ShortBookの企画・開発・運営・顧客対応"
+	heading={m.company_business_content_title()}
+	content={m.company_business_content()}
 />
