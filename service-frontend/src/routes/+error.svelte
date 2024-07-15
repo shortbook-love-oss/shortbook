@@ -11,11 +11,9 @@
 </svelte:head>
 
 <LayoutRule>
-	<div slot="contents" class="flex h-full min-h-80 flex-col items-center justify-center p-8">
-		<p class="text-4xl">{$page.status}</p>
-		<p class="mb-8 text-xl">{$page.error?.message}</p>
-		<NavLinkSmall name="Back to home" href="/">
-			<IconArrowLeft width="24" height="24" class="me-1" />
-		</NavLinkSmall>
-	</div>
+	<p class="mt-16 text-center text-4xl">{$page.status}</p>
+	<p class="mb-8 text-center text-xl">{$page.error?.message}</p>
+	<NavLinkSmall name="Back to home" href="/" className="mx-auto w-fit">
+		<IconArrowLeft width="24" height="24" class="me-1" />
+	</NavLinkSmall>
 </LayoutRule>

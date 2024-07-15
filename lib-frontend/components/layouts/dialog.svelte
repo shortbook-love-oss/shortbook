@@ -7,7 +7,7 @@
 	export let name: string;
 	export let title = '';
 	export let openerClass = '';
-	export let dialogSizeClass = 'max-w-2xl';
+	export let dialogSizeClass = 'max-w-xl';
 
 	let isEnableJS = false;
 	onMount(() => {
@@ -48,16 +48,16 @@
 <!-- Dialog -->
 <div
 	id="common_dialog_{name}"
-	class="fixed left-0 top-0 z-50 flex hidden h-dvh w-screen justify-center bg-stone-500/50 peer-has-[:checked]/common_dialog_open:flex"
+	class="fixed left-0 top-0 z-50 flex hidden h-dvh w-screen min-w-0 justify-center bg-stone-500/50 peer-has-[:checked]/common_dialog_open:flex"
 >
 	<label for="common_dialog_open_{name}" class="min-w-4 flex-1" aria-hidden="true" />
-	<div class="flex flex-col">
+	<div class="flex w-[calc(100%-2rem)] flex-col {dialogSizeClass}">
 		<label for="common_dialog_open_{name}" class="min-h-4 flex-1" aria-hidden="true" />
 		<div
 			role="dialog"
-			class="inline-flex max-h-full flex-col overflow-y-auto rounded-xl border-2 border-primary-300 bg-white {dialogSizeClass}"
+			class="flex max-h-[calc(100%-2rem)] flex-col rounded-xl border-2 border-primary-300 bg-white"
 		>
-			<div class="flex items-center justify-end {title ? 'pb-2' : ''}">
+			<div class="flex shrink-0 items-center justify-end overflow-x-hidden {title ? 'pb-1' : ''}">
 				<slot name="title">
 					{#if title}
 						<p class="flex-1 px-4 py-1 text-2xl md:pl-6">{title}</p>
@@ -85,7 +85,7 @@
 					</label>
 				</div>
 			</div>
-			<div class="overflow-x-auto px-4 py-1 text-lg sm:pr-6 md:pl-6 md:pr-8">
+			<div class="overflow-x-auto break-words px-4 py-1 text-lg sm:pr-6 md:pl-6 md:pr-8">
 				<slot />
 			</div>
 			<div class="px-4 pb-4 pt-1">

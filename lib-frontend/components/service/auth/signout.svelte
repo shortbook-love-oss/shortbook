@@ -11,7 +11,7 @@
 	}
 </script>
 
-<Dialog name={dialogName} openerClass="rounded-lg">
+<Dialog name={dialogName} openerClass="rounded-lg" dialogSizeClass="max-w-fit">
 	<p slot="opener" class="w-full px-3 py-2 text-lg text-red-800">{m.signout_label()}</p>
 	<p>{m.signout_confirm()}</p>
 	<SignOut
@@ -19,6 +19,8 @@
 		className="w-fit rounded-lg mx-auto hover:bg-stone-200 focus-within:bg-stone-200"
 		on:submit={onSignOut}
 	>
-		<p slot="submitButton" class="px-3 py-2 text-xl text-red-800">{m.signout_label()}</p>
+		<p slot="submitButton" class="px-3 py-2 text-xl text-red-800">
+			{m.signout_label()}
+		</p>
 	</SignOut>
 </Dialog>

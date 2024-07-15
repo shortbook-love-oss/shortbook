@@ -60,9 +60,11 @@
 	<div
 		class="mb-8 flex flex-col items-center justify-center gap-x-16 gap-y-8 lg:flex-row lg:items-stretch"
 	>
-		<div class="w-full max-w-xl shrink-0 gap-8 lg:w-60">
-			<h1 class="break-words text-2xl font-semibold">Editing "{data.initTitle}"</h1>
-		</div>
+		<h1
+			class="w-full max-w-xl whitespace-pre-wrap break-words text-2xl font-semibold lg:w-60 lg:shrink-0"
+		>
+			Editing "{data.initTitle}"
+		</h1>
 		<div class="w-full max-w-xl overflow-x-hidden break-words">
 			<TextField
 				bind:value={$form.title}

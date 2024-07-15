@@ -1,6 +1,6 @@
 <script>
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
-	import { page } from '$app/stores';
+	import { page, updated } from '$app/stores';
 	import { i18n } from '$lib/i18n/i18n';
 	import '../app.css';
 </script>
@@ -19,5 +19,7 @@
 </svelte:head>
 
 <ParaglideJS {i18n}>
-	<slot></slot>
+	<div class="contents" data-sveltekit-reload={$updated}>
+		<slot />
+	</div>
 </ParaglideJS>

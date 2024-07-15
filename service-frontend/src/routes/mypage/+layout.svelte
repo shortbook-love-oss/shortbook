@@ -10,10 +10,10 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<LayoutRule isNarrow={true}>
+<LayoutRule>
 	<svelte:fragment slot="header">
-		<div class="hidden sm:block">
-			<Header isNarrow={true} />
+		<div class="max-sm:hidden">
+			<Header />
 		</div>
 		<div class="flex items-center gap-1 border-b-2 border-primary-700 bg-white sm:hidden">
 			<Overlay name="mypage">
@@ -22,16 +22,18 @@
 			<p class="pe-4 text-xl">Mypage</p>
 		</div>
 	</svelte:fragment>
-	<header slot="side">
-		<a href="/" class="mb-6 flex items-center gap-1 gap-3 px-4">
-			<IconArrowLeft width="24" height="24" class="-mx-2" />
-			<p class="text-lg font-semibold">Back to home</p>
-		</a>
-		<nav>
-			<Nav />
-		</nav>
-	</header>
-	<main class="w-full flex-1">
-		<slot></slot>
-	</main>
+	<div class="justify-center gap-12 sm:flex">
+		<div class="max-sm:hidden">
+			<a href="/" class="mb-6 flex items-center gap-1 gap-3 px-4">
+				<IconArrowLeft width="24" height="24" class="-mx-2" />
+				<p class="text-lg font-semibold">Back to home</p>
+			</a>
+			<nav>
+				<Nav />
+			</nav>
+		</div>
+		<div class="max-w-xl flex-1">
+			<slot />
+		</div>
+	</div>
 </LayoutRule>

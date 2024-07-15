@@ -25,9 +25,11 @@
 	})();
 </script>
 
-<header class="border-t-2 border-primary-700 bg-white">
+<header
+	class="border-t-2 border-primary-700 bg-white pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]"
+>
 	<nav>
-		<ul class="relative flex justify-center">
+		<ul class="flex justify-center">
 			<li>
 				<NavLinkSp name={m.header_home()} href="/">
 					<IconHome width="32" height="32" />

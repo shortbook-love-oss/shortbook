@@ -12,7 +12,6 @@
 	export let warnMessage = '';
 	export let successMessage = '';
 	export let errorMessage = '';
-	export let className = '';
 
 	let isEnableJS = false;
 	onMount(() => {
@@ -53,7 +52,7 @@
 			</p>
 		</div>
 	{/if}
-	<fieldset class="w-full {className}" disabled={isLoading ? true : undefined}>
+	<fieldset class="w-full" disabled={isLoading ? true : undefined}>
 		<slot />
 	</fieldset>
 	<slot name="submit">

@@ -3,7 +3,7 @@
 </script>
 
 <LayoutRule>
-	<div slot="footer" />
+	<div slot="header" />
 	<div slot="contents" class="flex min-h-full bg-gradient-to-b from-primary-50/40 to-primary-50">
 		<main
 			class="flex flex-1 flex-col items-center justify-center gap-4 bg-primary-700 p-4 lg:px-16"
@@ -18,7 +18,7 @@
 						/>
 					</a>
 				</div>
-				<slot></slot>
+				<slot />
 			</div>
 		</main>
 		<div class="hidden flex-1 flex-col items-center justify-center gap-4 px-16 py-4 lg:flex">

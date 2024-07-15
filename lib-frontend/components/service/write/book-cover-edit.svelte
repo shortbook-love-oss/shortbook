@@ -30,7 +30,7 @@
 	}
 </script>
 
-<Dialog name="book-preview" title="Cover editor" dialogSizeClass="max-w-4xl">
+<Dialog name="book-preview" title="Cover editor" dialogSizeClass="max-w-3xl">
 	<div
 		slot="opener"
 		class="flex flex-col items-center gap-4 p-4 sm:flex-row lg:flex-col {className}"

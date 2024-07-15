@@ -12,8 +12,6 @@
 			/>
 		</a>
 	</div>
-	<main class="flex-1">
-		<slot></slot>
-	</main>
+	<slot />
 	<svelte:fragment slot="footerNav" />
 </LayoutRule>

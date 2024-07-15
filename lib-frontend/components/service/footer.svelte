@@ -8,6 +8,8 @@
 	import { languageSelect } from '$lib/utilities/language';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 
+	export let className = '';
+
 	let yearPeriod = '2024';
 	const currentYear = new Date().getFullYear();
 	if (currentYear > +yearPeriod) {
@@ -15,10 +17,10 @@
 	}
 </script>
 
-<footer class="flex flex-col justify-center border-t border-stone-300">
-	<nav
-		class="m-auto flex w-full flex-wrap gap-x-16 gap-y-8 px-4 pb-16 pt-12 sm:w-fit sm:px-6 md:px-8"
-	>
+<footer
+	class="flex flex-col justify-center border-t border-stone-300 bg-white pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] {className}"
+>
+	<nav class="flex w-full flex-wrap gap-x-16 gap-y-8 px-4 py-12 sm:mx-auto sm:w-fit sm:px-8">
 		<div class="relative w-full sm:w-auto sm:pt-1.5">
 			<a href="/" class="mb-2 inline-block">
 				<img
