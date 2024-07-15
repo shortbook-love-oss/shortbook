@@ -16,7 +16,7 @@
 >
 	<!-- Original book cover ratio is 2:3 -->
 	<div
-		class="flex h-[1200px] w-[800px] origin-top-left flex-col gap-8 p-8 tracking-wide"
+		class="flex h-[1200px] w-[800px] origin-top-left flex-col gap-8 p-8 tracking-wide rtl:origin-top-right"
 		style="scale: {width / 800};"
 	>
 		<div style="text-align: {getSelectedText(bookTextAlignSelect, book.titleAlign)};">
