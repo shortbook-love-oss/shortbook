@@ -4,6 +4,7 @@
 	import * as m from '$lib/i18n/paraglide/messages.js';
 
 	export let dialogName = 'signout';
+	export let openerClass = 'rounded-lg';
 
 	function onSignOut() {
 		// If auth-only page, redirect to sign-in page by +layout.server.ts
@@ -11,7 +12,7 @@
 	}
 </script>
 
-<Dialog name={dialogName} openerClass="rounded-lg" dialogSizeClass="max-w-fit">
+<Dialog name={dialogName} {openerClass} dialogSizeClass="max-w-fit">
 	<p slot="opener" class="w-full px-3 py-2 text-lg text-red-800">{m.signout_label()}</p>
 	<p>{m.signout_confirm()}</p>
 	<SignOut
