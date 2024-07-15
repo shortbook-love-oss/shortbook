@@ -32,37 +32,37 @@
 		<ul class="flex justify-center">
 			<li>
 				<NavLinkSp name={m.header_home()} href="/">
-					<IconHome width="32" height="32" />
+					<IconHome width="30" height="30" />
 				</NavLinkSp>
 			</li>
 			{#if $page.data.session?.user}
 				<li>
 					<NavLinkSp name={m.header_sp_write()} href="/write">
-						<IconWrite width="32" height="32" />
+						<IconWrite width="30" height="30" />
 					</NavLinkSp>
 				</li>
 				<li>
 					<NavLinkSp name={m.header_mypage()} href="/mypage">
-						<IconUser width="32" height="32" />
+						<IconUser width="30" height="30" />
 					</NavLinkSp>
 				</li>
 			{:else}
 				<li>
 					<NavLinkSp name={m.signin_label()} href="/signin?{callbackParam}={redirectPathname}">
-						<IconSignin width="32" height="32" />
+						<IconSignin width="30" height="30" />
 					</NavLinkSp>
 				</li>
 				<li>
 					<NavLinkSp name={m.signup_label()} href="/signup?{callbackParam}={redirectPathname}">
-						<IconSignup width="32" height="32" />
+						<IconSignup width="30" height="30" />
 					</NavLinkSp>
 				</li>
 			{/if}
 			{#if $page.data.session?.user}
 				<li class="relative">
-					<Dropdown name="sp_submenu" dropdownClass="bottom-20 end-[10%] min-w-40">
+					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-[10%] min-w-40">
 						<NavLinkSp slot="opener" name={m.header_more()}>
-							<IconMore width="32" height="32" />
+							<IconMore width="30" height="30" />
 						</NavLinkSp>
 						<ul>
 							<li>
