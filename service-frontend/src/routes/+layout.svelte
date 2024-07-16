@@ -14,6 +14,12 @@
 	<meta name="apple-mobile-web-app-title" content="ShortBook" />
 	<meta name="application-name" content="ShortBook" />
 	<meta name="theme-color" content="#ffffff" />
+	<!-- The Common Crawl dataset. Used by GPT-xxx and available for others. -->
+	<meta name="CCBot" content="nofollow" />
+	<!-- Used by DeviantArt, ArtStation, etc. based on opt-in or opt-out -->
+	<meta name="robots" content="noai, noimageai" />
+	<!-- TDM Metadata in HTML Content -->
+	<meta name="tdm-reservation" content="1" />
 </svelte:head>
 
 <ParaglideJS {i18n}>
