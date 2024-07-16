@@ -32,14 +32,14 @@
 
 <svelte:window on:keydown={onKeyDown} />
 
-<label class="peer/common_dialog_open relative cursor-pointer">
+<label class="peer/common_dialog_open relative">
 	<div class="focus-within:bg-stone-200 hover:bg-stone-200 {openerClass}">
 		<slot name="opener" />
 		<input
 			type="checkbox"
 			name="common_dialog_{name}"
 			id="common_dialog_open_{name}"
-			class="absolute left-0 top-0 h-full w-full opacity-0"
+			class="absolute left-0 top-0 h-full w-full cursor-pointer opacity-0"
 			tabindex="0"
 		/>
 	</div>
