@@ -32,7 +32,7 @@
 		type="checkbox"
 		name="common_overlay_{name}"
 		id="common_overlay_open_{name}"
-		class="absolute left-0 top-0 h-full w-full cursor-pointer opacity-0"
+		class="absolute left-0 top-0 h-full w-full cursor-pointer appearance-none"
 	/>
 </label>
 
@@ -46,7 +46,7 @@
 			{#if isEnableJS}
 				<button
 					type="button"
-					class="absolute left-0 top-0 h-full w-full opacity-0"
+					class="absolute left-0 top-0 h-full w-full appearance-none"
 					on:click|self={closeOverlay}
 				/>
 			{/if}

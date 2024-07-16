@@ -39,7 +39,7 @@
 			type="checkbox"
 			name="common_dialog_{name}"
 			id="common_dialog_open_{name}"
-			class="absolute left-0 top-0 h-full w-full cursor-pointer opacity-0"
+			class="absolute left-0 top-0 h-full w-full cursor-pointer appearance-none"
 			tabindex="0"
 		/>
 	</div>
@@ -57,7 +57,7 @@
 			role="dialog"
 			class="flex max-h-[calc(100%-2rem)] flex-col rounded-xl border-2 border-primary-300 bg-white"
 		>
-			<div class="flex shrink-0 items-center justify-end overflow-x-hidden {title ? 'pb-1' : ''}">
+			<div class="flex shrink-0 items-center justify-end overflow-x-auto {title ? 'pb-1' : ''}">
 				<slot name="title">
 					{#if title}
 						<p class="flex-1 px-4 py-1 text-2xl md:pl-6">{title}</p>
@@ -69,7 +69,7 @@
 					{#if isEnableJS}
 						<button
 							type="button"
-							class="absolute left-0 top-0 h-full w-full opacity-0"
+							class="absolute left-0 top-0 h-full w-full appearance-none"
 							on:click|self={closeDialog}
 						/>
 					{/if}
