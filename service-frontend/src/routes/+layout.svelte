@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	import { page, updated } from '$app/stores';
 	import { i18n } from '$lib/i18n/i18n';

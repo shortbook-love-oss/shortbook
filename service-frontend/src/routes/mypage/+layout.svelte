@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import Header from '$lib/components/service/header.svelte';
 	import Nav from '$lib/components/service/mypage/nav.svelte';

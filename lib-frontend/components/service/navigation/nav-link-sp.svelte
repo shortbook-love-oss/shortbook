@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	export let name = '';
 	export let href = '';
 	export let className = '';
@@ -10,7 +10,7 @@
 		class="flex flex-col items-center px-3 pb-2 pt-1 text-stone-950 hover:bg-stone-200 focus:bg-stone-200 {className}"
 	>
 		{#if $$slots.default}
-			<div class="shrink-0"><slot></slot></div>
+			<div class="shrink-0"><slot /></div>
 		{/if}
 		<p class="text-nowrap leading-none">{name}</p>
 	</a>
@@ -18,7 +18,7 @@
 	<!-- use inside focusable element -->
 	<div class="flex flex-col items-center px-3 pb-2 pt-1 {className}">
 		{#if $$slots.default}
-			<div class="shrink-0"><slot></slot></div>
+			<div class="shrink-0"><slot /></div>
 		{/if}
 		<p class="text-nowrap leading-none">{name}</p>
 	</div>

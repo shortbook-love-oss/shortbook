@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import { page } from '$app/stores';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import CompanyInfoItem from '$lib/components/service/about/company-info-item.svelte';
 	import * as m from '$lib/i18n/paraglide/messages.js';
 </script>
