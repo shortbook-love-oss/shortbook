@@ -1,9 +1,12 @@
 <script lang="ts">
+	import IconMore from '~icons/mdi/more-horiz';
 	import { page } from '$app/stores';
 	import * as m from '$lib/i18n/paraglide/messages';
 	import { callbackParam } from '$lib/utilities/url';
+	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 	import NavLink from '$lib/components/service/navigation/nav-link.svelte';
+	import NavLinkSp from '$lib/components/service/navigation/nav-link-sp.svelte';
 
 	export let className = '';
 
@@ -33,7 +36,14 @@
 					<NavLink name={m.header_mypage()} href="/mypage" />
 				</li>
 				<li>
-					<Signout dialogName="header_signout" openerClass="rounded-ee-md" />
+					<Dropdown name="header_submenu" dropdownClass="top-12 min-w-40">
+						<NavLink slot="opener" name={m.header_more()} className="rounded-ee-md" />
+						<ul>
+							<li>
+								<Signout dialogName="header_signout" />
+							</li>
+						</ul>
+					</Dropdown>
 				</li>
 			{:else}
 				<li>
