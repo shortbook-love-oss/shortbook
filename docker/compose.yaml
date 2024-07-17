@@ -9,7 +9,7 @@ services:
       - database
       - cache
     ports:
-      - "55021:443" # for build
+      - "55021:3000" # for build
       - "55022:5173" # for dev
     networks:
       - external

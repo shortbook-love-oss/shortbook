@@ -65,9 +65,7 @@ COPY --chown=node:node --from=prd-install /home/node/install/node_modules ./node
 COPY --chown=node:node --from=prd-build /home/node/app/package.json .
 COPY --chown=node:node --from=prd-build /home/node/app/build ./build
 
-# Change node port from 3000 to 443.
-ENV PORT=443
-
-EXPOSE 443
+# Node port for production
+EXPOSE 3000
 
 CMD ["node", "./build"]
