@@ -127,11 +127,11 @@
 			<SubmitButton hasInvalid={!hasVaild} isLoading={$submitting}>
 				{data.status === 0 ? 'Publish book' : 'Republish book'}
 			</SubmitButton>
-			<Dialog name="delete" openerClass="rounded-lg">
+			<Dialog name="delete" openerClass="rounded-lg" dialogSizeClass="max-w-fit">
 				<NavLinkSmall slot="opener" name="Delete" className="text-red-800">
 					<IconDelete width="24" height="24" />
 				</NavLinkSmall>
-				<p class="mb-2 mt-4 text-lg">Do you want to delete it?</p>
+				<p>Do you want to delete it?</p>
 				<SubmitText
 					slot="actions"
 					formaction={actionDeleteUrl}

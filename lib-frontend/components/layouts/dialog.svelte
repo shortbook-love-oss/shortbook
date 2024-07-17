@@ -88,7 +88,7 @@
 			<div class="overflow-x-auto break-words px-4 py-1 text-lg sm:pr-6 md:pl-6 md:pr-8">
 				<slot />
 			</div>
-			<div class="px-4 pb-4 pt-1">
+			<div class="px-4 pb-2 pt-1">
 				<slot name="actions" />
 			</div>
 		</div>
