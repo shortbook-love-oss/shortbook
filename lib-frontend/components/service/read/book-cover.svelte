@@ -10,7 +10,7 @@
 </script>
 
 <div
-	class="shrink-0 overflow-hidden {className}"
+	class="aspect-book-cover shrink-0 overflow-hidden {className}"
 	style="border-radius: {width / 36}px; height: {width *
 		1.5}px; width: {width}px; background-image: linear-gradient({book.baseColorDirection}deg, {book.baseColorStart}, {book.baseColorEnd});"
 >

@@ -8,25 +8,26 @@
 	export let penName: string;
 	export let requestLang: AvailableLanguageTags;
 	export let className = '';
+
+	let coverWidth = 256;
 </script>
 
-<article class={className}>
+<article class="xs:flex-col flex items-start gap-x-4 gap-y-2 {className}">
 	<a
 		href="/book/{book.id}"
-		class="flex h-full items-start gap-x-4 px-4 py-6 hover:bg-stone-200 focus:bg-stone-200 sm:gap-6 sm:px-8"
+		bind:clientWidth={coverWidth}
+		class="aspect-book-cover xs:w-full xs:w-full xs:mt-0 mx-auto mt-1.5 flex w-[16vw] shrink-0 justify-center overflow-hidden"
 	>
-		<BookCover {book} {penName} width={160} />
-		<div class="flex-1 overflow-x-hidden break-words">
-			<h2
-				class="-mt-1.5 line-clamp-3 whitespace-pre-wrap text-2xl font-semibold sm:line-clamp-2 md:line-clamp-3 xl:line-clamp-2 2xl:line-clamp-3"
-			>
-				{book.title}
-			</h2>
-			{#if book.subtitle}
-				<p class="mt-2 line-clamp-2 whitespace-pre-wrap lg:line-clamp-3">{book.subtitle}</p>
-			{/if}
-			<ProfileCardSmall name={book.penName} imageSrc={book.image} className="mt-2" />
-			<p class="mt-2">{book.publishedAt.toLocaleDateString(requestLang)}</p>
-		</div>
+		<BookCover {book} {penName} width={coverWidth} />
 	</a>
+	<div class="w-full flex-1 overflow-x-hidden">
+		<h2 class="line-clamp-4 whitespace-pre-wrap break-words text-xl font-semibold">
+			<a href="/book/{book.id}" class="hover:underline">{book.title}</a>
+		</h2>
+		{#if book.subtitle}
+			<p class="xs:hidden mt-2 line-clamp-3 whitespace-pre-wrap break-words">{book.subtitle}</p>
+		{/if}
+		<ProfileCardSmall name={book.penName} imageSrc={book.image} className="mt-2" />
+		<p class="mt-2">{book.publishedAt.toLocaleDateString(requestLang)}</p>
+	</div>
 </article>

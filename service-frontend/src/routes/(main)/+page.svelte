@@ -11,7 +11,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-[108rem]">
-	<div class="mb-8 flex flex-wrap items-center gap-4">
+	<div class="mb-12 flex flex-wrap items-center gap-4">
 		{#if data.bookList.length}
 			<h1 class="text-2xl font-semibold">{m.top_heading()}</h1>
 		{/if}
@@ -24,14 +24,16 @@
 		</a>
 	</div>
 	{#if data.bookList.length}
-		<ul class="-mx-4 grid grid-cols-1 sm:-mx-8 md:grid-cols-2 md:gap-y-4 2xl:grid-cols-3">
+		<ul
+			class="xs:grid-cols-2 grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+		>
 			{#each data.bookList as book (book.id)}
 				<li>
 					<BookItem
 						{book}
 						penName={book.penName}
 						requestLang={data.requestLang}
-						className="h-full"
+						className="w-full"
 					/>
 				</li>
 			{/each}

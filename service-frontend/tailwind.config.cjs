@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config}*/
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 const config = {
 	content: ['./src/**/*.{html,js,svelte,ts}', './lib/components/**/*.{html,js,svelte,ts}'],
@@ -8,6 +9,10 @@ const config = {
 	darkMode: 'selector',
 
 	theme: {
+		screens: {
+			xs: '480px',
+			...defaultTheme.screens
+		},
 		extend: {
 			colors: {
 				// ShortBook brand color (standard is #924240)
@@ -26,7 +31,8 @@ const config = {
 				}
 			},
 			aspectRatio: {
-				logotype: '3170 / 512'
+				logotype: '3170 / 512',
+				'book-cover': '2 / 3'
 			},
 			animation: {
 				'hide-delay': 'fadeout 0.5s 3s linear forwards'
