@@ -1,5 +1,7 @@
 services:
   service-frontend:
+    container_name: service-frontend
+    env_file: ../service-frontend/.env
     build:
       context: ../
       dockerfile: ./service-frontend/Dockerfile
@@ -9,8 +11,8 @@ services:
       - database
       - cache
     ports:
-      - "55021:3000" # for build
-      - "55022:5173" # for dev
+      - 55021:3000 # for build
+      - 55022:5173 # for dev
     networks:
       - external
       - internal
@@ -25,12 +27,13 @@ services:
         source: ../lib-frontend
         target: /home/node/lib
   database:
+    container_name: database
     env_file: ../database/.env
     build:
       context: ../
       dockerfile: ./database/Dockerfile
     ports:
-      - "55024:3306"
+      - 55024:3306
     networks:
       - external
       - internal
@@ -42,17 +45,18 @@ services:
         source: ../database/.data
         target: /var/lib/mysql
   cache:
-    image: "amazon/dynamodb-local:latest"
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    container_name: cache
+    image: amazon/dynamodb-local:latest
+    command: ['-jar', 'DynamoDBLocal.jar', '-sharedDb', '-dbPath', './data']
     ports:
-      - "55025:8000"
+      - 55025:8000
     networks:
       - external
       - internal
     working_dir: /home/dynamodblocal
     volumes:
       - type: bind
-        source: ../cache/dynamodb
+        source: ../cache/.data
         target: /home/dynamodblocal/data
   storage:
     container_name: storage
