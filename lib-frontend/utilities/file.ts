@@ -9,4 +9,14 @@ export interface SelectedFile {
 	key: number;
 }
 
-export const imageMIMEs = ['image/png', 'image/jpeg'];
+export const imageMIMEs = [
+	'image/png',
+	'image/jpeg',
+	'image/gif',
+	'image/bmp',
+	'image/apng',
+	'image/webp',
+	'image/avif', // Safari support from v16
+	'image/heif', // Only support Safari
+	'image/heic' // Only support Safari
+];
