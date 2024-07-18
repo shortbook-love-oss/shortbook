@@ -54,6 +54,37 @@ services:
       - type: bind
         source: ../cache/dynamodb
         target: /home/dynamodblocal/data
+  storage:
+    container_name: storage
+    env_file: ../service-frontend/.env
+    image: minio/minio:latest
+    command: ['server', '--console-address', ':9090', '/home/minio/data']
+    ports:
+      - 55026:9000 # for CLI
+      - 55027:9090 # for GUI console
+    networks:
+      - external
+      - internal
+    working_dir: /home/minio
+    volumes:
+      - type: bind
+        source: ../storage/.data
+        target: /home/minio/data
+  minio-client-setup:
+    container_name: minio-client-setup
+    env_file: ../service-frontend/.env
+    image: minio/mc:latest
+    depends_on:
+      - storage
+    networks:
+      - internal
+    entrypoint: >
+      /bin/sh -c "
+        /usr/bin/mc alias set shortbook ${AWS_ENDPOINT} ${AWS_ROOT_USER} ${AWS_ROOT_PASSWORD};
+        /usr/bin/mc mb shortbook/${AWS_BUCKET_PROFILE_IMAGE} --region=${AWS_REGION};
+        /usr/bin/mc anonymous set public shortbook/${AWS_BUCKET_PROFILE_IMAGE};
+        exit 0;
+      "
 networks:
   external:
     driver: bridge
@@ -65,3 +96,4 @@ volumes:
   service-frontend:
   database:
   cache:
+  storage:

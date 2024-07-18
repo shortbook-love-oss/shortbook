@@ -16,6 +16,7 @@ chmod 755 ./fix_dirname_error.sh
 mkdir ./database/.data
 mkdir ./cache/.data
 mkdir ./cache/dynamodb
+mkdir ./storage/.data
 ```
 
 ### Run Docker
