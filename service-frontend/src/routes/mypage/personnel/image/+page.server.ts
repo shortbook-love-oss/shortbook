@@ -1,3 +1,4 @@
+// import fs from 'fs';
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -5,7 +6,7 @@ import { env } from '$env/dynamic/private';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { getAuthUserId } from '$lib/utilities/server/crypto';
-import { getGcsSignedUrl, uploadGcsBySignedUrl } from '$lib/utilities/server/file';
+import { fileUpload } from '$lib/utilities/server/file';
 import { schema } from '$lib/validation/schema/profile-image-update';
 
 export const load = async ({ cookies }) => {
@@ -41,18 +42,12 @@ export const actions = {
 		}
 		const image = form.data.profileImage[0];
 
-		// Upload image to Google Cloud Storage
-		const uploadUrl = await getGcsSignedUrl(
-			env.GCP_STORAGE_BUCKET_NAME as string,
-			`profile-image/${userId}`,
-			image.type,
-			30
+		// Upload image to Amazon S3
+		const isSuccessUpload = await fileUpload(
+			env.AWS_BUCKET_PROFILE_IMAGE,
+			`${userId}/profile-image`,
+			image
 		);
-		const uploaded = await uploadGcsBySignedUrl(image, uploadUrl);
-		const isSuccessUpload = await uploaded
-			.text()
-			.then(() => true)
-			.catch(() => false);
 		if (!isSuccessUpload) {
 			return error(500, { message: "Can't upload profile image. Please contact us." });
 		}
@@ -60,15 +55,12 @@ export const actions = {
 		// Save image URL to DB
 		const { dbError } = await dbUserProfileImageUpdate({
 			userId: userId,
-			image: `https://storage.googleapis.com/${env.GCP_STORAGE_BUCKET_NAME}/profile-image/${userId}`
+			image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${userId}/profile-image`
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });
 		}
 
-		return message(
-			form,
-			'Profile image updated successfully. The change will take up to 20 seconds.'
-		);
+		return message(form, 'Profile image updated successfully.');
 	}
 };

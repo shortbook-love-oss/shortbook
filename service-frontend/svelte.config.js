@@ -32,7 +32,7 @@ const config = {
 					'self',
 					'data:',
 					'blob:',
-					`https://storage.googleapis.com/`
+					`https://*.amazonaws.com/`
 				],
 				'media-src': ['self', 'data:'],
 				'object-src': ['self'],

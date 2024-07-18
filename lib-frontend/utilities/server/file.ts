@@ -1,35 +1,29 @@
-import { Storage } from '@google-cloud/storage';
-import type { GetSignedUrlConfig } from '@google-cloud/storage';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { env } from '$env/dynamic/private';
 
-export async function getGcsSignedUrl(
-	bucketName: string,
-	fileName: string,
-	contentType: string,
-	expireSeconds: number
-) {
-	const storage = new Storage({
-		projectId: env.GCP_PROJECT_ID,
-		keyFilename: 'lib/private/service-account.json'
-	});
-
-	const options: GetSignedUrlConfig = {
-		version: 'v4',
-		action: 'write',
-		contentType,
-		expires: Date.now() + expireSeconds * 1000
-	};
-	const [url] = await storage.bucket(bucketName).file(fileName).getSignedUrl(options);
-
-	return url;
-}
-
-export async function uploadGcsBySignedUrl(file: Blob, signedUrl: string) {
-	return await fetch(signedUrl, {
-		method: 'PUT',
-		body: file,
-		headers: {
-			'Cache-Control': 'public, max-age=20'
+export async function fileUpload(bucketName: string, filePath: string, file: Blob) {
+	const s3 = new S3Client({
+		region: env.AWS_REGION,
+		forcePathStyle: true,
+		credentials: {
+			accessKeyId: env.AWS_ACCESS_KEY_ID,
+			secretAccessKey: env.AWS_SECRET_ACCESS_KEY
 		}
 	});
+
+	let isSuccessUpload = false;
+	try {
+		const command = new PutObjectCommand({
+			Bucket: bucketName,
+			Key: filePath,
+			Body: Buffer.from(await file.arrayBuffer()),
+			ContentType: file.type
+		});
+		const uploadResult = await s3.send(command);
+		isSuccessUpload = uploadResult.$metadata.httpStatusCode === 200;
+	} catch (error) {
+		throw error as Error;
+	}
+
+	return isSuccessUpload;
 }

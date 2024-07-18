@@ -8,7 +8,7 @@ import { dbUserProfileCreate } from '$lib/model/user/profile/create';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
-import { getGcsSignedUrl, uploadGcsBySignedUrl } from '$lib/utilities/server/file';
+import { fileUpload } from '$lib/utilities/server/file';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -50,24 +50,17 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					.catch(() => undefined);
 
 				if (blob) {
-					// 2. Upload image to Google Cloud Storage
-					const uploadUrl = await getGcsSignedUrl(
-						env.GCP_STORAGE_BUCKET_NAME as string,
-						`profile-image/${user.id}`,
-						blob.type,
-						30
+					// 2. Upload image to Amazon S3
+					const isSuccessUpload = await fileUpload(
+						env.AWS_BUCKET_PROFILE_IMAGE,
+						`${user.id}/profile-image`,
+						blob
 					);
-					const uploaded = await uploadGcsBySignedUrl(blob, uploadUrl);
-					const isSuccessUpload = await uploaded
-						.text()
-						.then(() => true)
-						.catch(() => false);
-
 					if (isSuccessUpload) {
 						// 3. Save image URL to DB
 						await dbUserProfileImageUpdate({
 							userId: user.id,
-							image: `https://storage.googleapis.com/${env.GCP_STORAGE_BUCKET_NAME}/profile-image/${user.id}`
+							image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${user.id}/profile-image`
 						});
 					}
 				}
