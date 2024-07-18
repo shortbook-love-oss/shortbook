@@ -53,14 +53,14 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					// 2. Upload image to Amazon S3
 					const isSuccessUpload = await fileUpload(
 						env.AWS_BUCKET_PROFILE_IMAGE,
-						`${user.id}/profile-image`,
+						`${user.id}/original`,
 						blob
 					);
 					if (isSuccessUpload) {
 						// 3. Save image URL to DB
 						await dbUserProfileImageUpdate({
 							userId: user.id,
-							image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${user.id}/profile-image`
+							image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${user.id}/original`
 						});
 					}
 				}

@@ -45,7 +45,7 @@ export const actions = {
 		// Upload image to Amazon S3
 		const isSuccessUpload = await fileUpload(
 			env.AWS_BUCKET_PROFILE_IMAGE,
-			`${userId}/profile-image`,
+			`${userId}/original`,
 			image
 		);
 		if (!isSuccessUpload) {
@@ -55,7 +55,7 @@ export const actions = {
 		// Save image URL to DB
 		const { dbError } = await dbUserProfileImageUpdate({
 			userId: userId,
-			image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${userId}/profile-image`
+			image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${userId}/original`
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });
