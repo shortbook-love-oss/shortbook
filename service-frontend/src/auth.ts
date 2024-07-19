@@ -8,6 +8,7 @@ import { dbUserProfileCreate } from '$lib/model/user/profile/create';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
+import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
@@ -63,6 +64,21 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 							image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${user.id}/original`
 						});
 					}
+				}
+			}
+
+			if (user.email) {
+				// 4. Send welcome email
+				try {
+					await sendEmail(
+						env.EMAIL_FROM,
+						[user.email],
+						'Welcome to ShortBook.',
+						'<p>Enjoy your writing journey!</p><p>Sincerely thank.</p><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>',
+						'Enjoy your writing journey!\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)'
+					);
+				} catch (e) {
+					console.log(e);
 				}
 			}
 		},
