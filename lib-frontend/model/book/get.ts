@@ -36,7 +36,8 @@ export async function dbBookGet(req: DbBookGetRequest) {
 								languages: {
 									select: {
 										language_code: true,
-										pen_name: true
+										pen_name: true,
+										headline: true,
 									},
 									where: {
 										deleted_at: null

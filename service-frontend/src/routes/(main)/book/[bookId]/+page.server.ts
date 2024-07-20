@@ -53,5 +53,5 @@ export const load = async ({ request, params }) => {
 		sales_message: bookLang?.sales_message ?? ''
 	};
 
-	return { bookDetail, requestLang };
+	return { bookDetail, requestLang, profileLang };
 };
