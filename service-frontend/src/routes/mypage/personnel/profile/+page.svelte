@@ -18,6 +18,7 @@
 		validators: zod(schema),
 		onUpdated: ({ form }) => {
 			if (form.valid) {
+				initKeyName = form.data.keyName;
 				initPenName = form.data.penName;
 			}
 		}
@@ -34,7 +35,8 @@
 
 	const user = $page.data.session?.user;
 	const actionUrl = removeLangTagFromPath($page.url.pathname);
-	let initPenName = data.initPenName;
+	let initKeyName = $form.keyName;
+	let initPenName = $form.penName;
 </script>
 
 <svelte:head>
@@ -42,7 +44,9 @@
 </svelte:head>
 
 <h1 class="mb-4 text-2xl font-semibold">Public profile</h1>
-<ProfileCard name={initPenName} imageSrc={user?.image ?? ''} className="mb-8" />
+<ProfileCard name={initPenName} imageSrc={user?.image ?? ''} className="mb-8">
+	<p class="mt-1">@{initKeyName}</p>
+</ProfileCard>
 <Form
 	method="POST"
 	action={actionUrl}
@@ -59,7 +63,7 @@
 		required={true}
 		label="User ID"
 		errorMessages={$errors.keyName}
-		className="mb-8 hidden"
+		className="mb-8"
 	/>
 	<Select
 		bind:value={$form.nativeLanguage}
