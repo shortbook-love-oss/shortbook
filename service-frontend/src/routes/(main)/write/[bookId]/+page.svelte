@@ -60,12 +60,15 @@
 	<div
 		class="mb-8 flex flex-col items-center justify-center gap-x-16 gap-y-8 lg:flex-row lg:items-stretch"
 	>
-		<h1
-			class="w-full max-w-xl whitespace-pre-wrap break-words text-2xl font-semibold lg:w-60 lg:shrink-0"
-		>
-			Editing "{data.initTitle}"
-		</h1>
-		<div class="w-full max-w-xl overflow-x-hidden break-words">
+		<div class="flex w-full max-w-xl text-lg lg:w-48 lg:justify-end">
+			<div class="max-w-full">
+				<p>Editing</p>
+				<h1 class="whitespace-pre-wrap break-words text-xl font-semibold">
+					{data.initTitle}
+				</h1>
+			</div>
+		</div>
+		<div class="w-full max-w-xl">
 			<TextField
 				bind:value={$form.title}
 				name="title"
@@ -113,11 +116,12 @@
 				className="hidden"
 			/>
 		</div>
-		<div class="-mt-4 shrink-0 lg:w-48 xl:w-60">
+		<div class="lg:w-48">
 			<BookCoverEdit
 				book={$form}
 				penName={data.penName}
 				errors={$errors}
+				className="lg:-m-4"
 				on:input={applyChildChange}
 			/>
 		</div>
