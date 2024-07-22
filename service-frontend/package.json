@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "npm run schema-generate-dev && vite dev",
-		"build": "npm run schema-generate-dev && vite build && ./fix_dirname_error.sh",
+		"build": "npm run schema-generate-dev && vite build",
 		"preview": "vite preview",
 		"schema-generate-dev": "prisma generate --schema=./lib/prisma/schema.prisma",
 		"schema-generate": "npx prisma generate --schema=./lib/prisma/schema.prisma",
