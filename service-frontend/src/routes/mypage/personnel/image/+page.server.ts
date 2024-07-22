@@ -42,12 +42,13 @@ export const actions = {
 			return fail(400, { form });
 		}
 		const image = form.data.profileImage[0];
+		const cacheRefresh = Date.now().toString(36);
 		const extension = imageMIMEextension[image.type as keyof typeof imageMIMEextension];
 
 		// Upload image to Amazon S3
 		const isSuccessUpload = await fileUpload(
 			env.AWS_BUCKET_PROFILE_IMAGE,
-			`${userId}/profile-image.${extension}`,
+			`${userId}/profile-image-${cacheRefresh}.${extension}`,
 			image
 		);
 		if (!isSuccessUpload) {
@@ -57,7 +58,7 @@ export const actions = {
 		// Save image URL to DB
 		const { dbError } = await dbUserProfileImageUpdate({
 			userId: userId,
-			image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${userId}/profile-image.${extension}`
+			image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${userId}/profile-image-${cacheRefresh}.${extension}`
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });

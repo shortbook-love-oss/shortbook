@@ -53,18 +53,19 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					.catch(() => undefined);
 
 				if (blob) {
+					const cacheRefresh = Date.now().toString(36);
 					const extension = imageMIMEextension[blob.type as keyof typeof imageMIMEextension];
 					// 2. Upload image to Amazon S3
 					const isSuccessUpload = await fileUpload(
 						env.AWS_BUCKET_PROFILE_IMAGE,
-						`${user.id}/profile-image.${extension}`,
+						`${user.id}/profile-image-${cacheRefresh}.${extension}`,
 						blob
 					);
 					if (isSuccessUpload) {
 						// 3. Save image URL to DB
 						await dbUserProfileImageUpdate({
 							userId: user.id,
-							image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${user.id}/profile-image.${extension}`
+							image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${user.id}/profile-image-${cacheRefresh}.${extension}`
 						});
 					}
 				}
