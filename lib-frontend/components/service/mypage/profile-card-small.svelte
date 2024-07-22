@@ -6,7 +6,11 @@
 </script>
 
 <div class="flex items-center gap-2 {className}">
-	<img src={imageSrc} alt="{name} profile icon" class="rounded bg-white {imageSizeClass}" />
+	<img
+		src="{imageSrc}?w=32&h=32&fit=cover"
+		alt="{name} profile icon"
+		class="rounded bg-white {imageSizeClass}"
+	/>
 	<p class="overflow-x-hidden whitespace-pre-wrap break-words text-lg leading-snug">
 		{name}
 	</p>

@@ -4,7 +4,7 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 	import Form from '$lib/components/modules/form/form.svelte';
-	import { imageMIMEs } from '$lib/utilities/file';
+	import { imageMIMEextension } from '$lib/utilities/file';
 	import { schema } from '$lib/validation/schema/profile-image-update';
 	import File from '$lib/components/modules/form/file.svelte';
 
@@ -44,7 +44,7 @@
 		filesProxy={fileProfileImage}
 		name="profileImage"
 		required={true}
-		acceptTypes={imageMIMEs}
+		acceptTypes={Object.keys(imageMIMEextension)}
 		label="Profile image select"
 		buttonSubLabel="Max size 2MB"
 		errorMessages={$errors.profileImage}

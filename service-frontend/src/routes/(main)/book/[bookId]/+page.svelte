@@ -20,7 +20,7 @@
 	>
 		<div class="max-w-full">
 			<img
-				src={data.bookDetail.image}
+				src="{data.bookDetail.image}?w=64&h=64&fit=cover"
 				alt="{data.bookDetail.penName} profile icon"
 				class="mb-4 h-16 w-16 rounded bg-white"
 			/>

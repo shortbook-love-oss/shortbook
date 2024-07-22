@@ -10,6 +10,7 @@ import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
+import { imageMIMEextension } from '$lib/utilities/file';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -51,17 +52,18 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					.catch(() => undefined);
 
 				if (blob) {
+					const extension = imageMIMEextension[blob.type as keyof typeof imageMIMEextension];
 					// 2. Upload image to Amazon S3
 					const isSuccessUpload = await fileUpload(
 						env.AWS_BUCKET_PROFILE_IMAGE,
-						`${user.id}/original`,
+						`${user.id}/profile-image.${extension}`,
 						blob
 					);
 					if (isSuccessUpload) {
 						// 3. Save image URL to DB
 						await dbUserProfileImageUpdate({
 							userId: user.id,
-							image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${user.id}/original`
+							image: `${env.PUBLIC_ORIGIN_PROFILE_IMAGE}/${user.id}/profile-image.${extension}`
 						});
 					}
 				}
