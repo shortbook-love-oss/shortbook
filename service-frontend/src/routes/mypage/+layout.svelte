@@ -1,12 +1,14 @@
 <script lang="ts">
 	import IconArrowLeft from '~icons/mdi/arrow-left';
+	import Overlay from '$lib/components/layouts/overlay.svelte';
 	import Header from '$lib/components/service/header.svelte';
+	import Meta from '$lib/components/service/meta.svelte';
 	import Nav from '$lib/components/service/mypage/nav.svelte';
 	import LayoutRule from '../_layout-rule.svelte';
-	import Overlay from '$lib/components/layouts/overlay.svelte';
 </script>
 
 <svelte:head>
+	<Meta />
 	<meta name="robots" content="noindex" />
 </svelte:head>
 

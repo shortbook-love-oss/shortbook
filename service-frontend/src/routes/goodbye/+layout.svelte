@@ -5,6 +5,7 @@
 
 <svelte:head>
 	<Meta />
+	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <LayoutRule>
