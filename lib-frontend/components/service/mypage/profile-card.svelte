@@ -4,7 +4,7 @@
 	export let className = '';
 </script>
 
-<div class="flex items-center gap-3 overflow-x-hidden rounded-lg {className}">
+<div class="flex w-full items-center gap-3 rounded-lg {className}">
 	{#if imageSrc}
 		<img
 			src="{imageSrc}?w=64&h=64&fit=cover"
