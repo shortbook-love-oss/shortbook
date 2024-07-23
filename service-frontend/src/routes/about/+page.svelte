@@ -20,7 +20,7 @@
 <CompanyInfoItem heading={m.company_name_title()} content={m.company_name()} />
 <CompanyInfoItem heading={m.company_invoice_number_title()} content={m.company_invoice_number()} />
 <CompanyInfoItem heading={m.company_address_title()} content={m.company_address()} />
-<CompanyInfoItem heading={m.company_chief_name_title()} content={m.company_invoice_number()} />
+<CompanyInfoItem heading={m.company_chief_name_title()} content={m.company_chief_name()} />
 <CompanyInfoItem heading={m.company_found_date_title()} content={m.company_found_date()} />
 <CompanyInfoItem heading={m.company_capital_title()} content={m.company_capital()} />
 <CompanyInfoItem
