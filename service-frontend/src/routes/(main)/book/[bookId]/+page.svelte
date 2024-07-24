@@ -15,9 +15,7 @@
 </svelte:head>
 
 <article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
-	<div
-		class="hidden w-full max-w-xl shrink-0 gap-8 break-words lg:flex lg:w-48 lg:justify-end"
-	>
+	<div class="hidden w-full max-w-xl shrink-0 gap-8 break-words lg:flex lg:w-48 lg:justify-end">
 		<div class="max-w-full">
 			<img
 				src="{data.bookDetail.image}?w=64&h=64&fit=cover"
@@ -40,7 +38,11 @@
 			<p class="mb-4 whitespace-pre-wrap text-xl leading-normal">{data.bookDetail.subtitle}</p>
 		{/if}
 		<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
-			<ProfileCard name={data.bookDetail.penName} imageSrc={data.bookDetail.image}>
+			<ProfileCard
+				name={data.bookDetail.penName}
+				keyName={data.bookDetail.keyName}
+				imageSrc={data.bookDetail.image}
+			>
 				{#if data.profileLang?.headline}
 					<p class="mt-1">{data.profileLang.headline}</p>
 				{/if}
