@@ -18,8 +18,7 @@
 		validators: zod(schema),
 		onUpdated: ({ form }) => {
 			if (form.valid) {
-				initKeyName = form.data.keyName;
-				initPenName = form.data.penName;
+				initForm = { ...form.data };
 			}
 		}
 	});
@@ -35,8 +34,7 @@
 
 	const user = $page.data.session?.user;
 	const actionUrl = removeLangTagFromPath($page.url.pathname);
-	let initKeyName = $form.keyName;
-	let initPenName = $form.penName;
+	let initForm = { ...$form };
 </script>
 
 <svelte:head>
@@ -44,8 +42,15 @@
 </svelte:head>
 
 <h1 class="mb-4 text-2xl font-semibold">Public profile</h1>
-<ProfileCard name={initPenName} keyName={initKeyName} imageSrc={user?.image ?? ''} className="mb-8">
-	<p class="mt-1">@{initKeyName}</p>
+<ProfileCard
+	name={initForm.penName}
+	keyName={initForm.keyName}
+	imageSrc={user?.image ?? ''}
+	className="mb-8"
+>
+	{#if initForm.headline}
+		<p class="mt-1 whitespace-pre-wrap">{initForm.headline}</p>
+	{/if}
 </ProfileCard>
 <Form
 	method="POST"
