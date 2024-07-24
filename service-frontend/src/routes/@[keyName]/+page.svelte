@@ -10,7 +10,9 @@
 	<title>Profile and books | {data.user.profiles?.key_name}</title>
 </svelte:head>
 
-<div class="mx-auto mb-16 flex max-w-5xl flex-col gap-8 max-sm:items-center sm:flex-row">
+<div
+	class="mx-auto mb-16 flex max-w-5xl flex-col gap-8 max-sm:items-center sm:flex-row sm:justify-center"
+>
 	<div class="w-80 max-w-full shrink-0 sm:max-md:w-72">
 		<section
 			class="flex min-h-[27rem] w-full flex-col items-center rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-4 pb-5 text-white md:min-h-[30rem]"
@@ -44,7 +46,7 @@
 		class="w-full flex-1 overflow-x-hidden rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-1 text-lg {data
 			.profileLang?.self_introduction
 			? ''
-			: 'max-sm:hidden'}"
+			: 'hidden'}"
 	>
 		<div class="h-full overflow-y-hidden whitespace-pre-wrap break-words rounded bg-white p-3">
 			{data.profileLang?.self_introduction}
