@@ -48,8 +48,10 @@
 			? ''
 			: 'hidden'}"
 	>
-		<div class="h-full overflow-y-hidden whitespace-pre-wrap break-words rounded bg-white p-3">
-			{data.profileLang?.self_introduction}
+		<div
+			class="article_content h-full overflow-y-hidden whitespace-pre-wrap break-words rounded bg-white p-3"
+		>
+			{@html data.userSelfIntro}
 		</div>
 	</div>
 </div>

@@ -1,23 +1,29 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
-import { getBookCover } from '$lib/utilities/book';
+import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
+import { contentsToMarkdown, getBookCover } from '$lib/utilities/book';
 import type { BookItem } from '$lib/utilities/book';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 export const load = async ({ request, params }) => {
-	const { books, dbError: bookDbError } = await dbBookList({ userKeyName: params.keyName });
+	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.keyName });
+	if (!user || !user.profiles || dbError) {
+		return error(500, { message: dbError?.message ?? '' });
+	}
+	const { books, dbError: bookDbError } = await dbBookList({ userId: user.id });
 	if (!books || bookDbError) {
 		return error(500, { message: bookDbError?.message ?? '' });
 	}
 	const requestLang = guessNativeLangFromRequest(request);
 
+	const profile = user.profiles;
+	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
+	if (!profileLang && profile?.languages.length) {
+		profileLang = profile.languages[0];
+	}
+
 	const bookList: BookItem[] = [];
 	for (const book of books) {
-		const profile = book.user?.profiles;
-		let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
-		if (!profileLang && profile?.languages.length) {
-			profileLang = profile.languages[0];
-		}
 		let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
 		if (!bookLang && book.languages.length) {
 			bookLang = book.languages[0];
@@ -55,5 +61,7 @@ export const load = async ({ request, params }) => {
 		});
 	}
 
-	return { bookList, requestLang };
+	const userSelfIntro = await contentsToMarkdown(profileLang?.self_introduction ?? '');
+
+	return { bookList, requestLang, userSelfIntro };
 };
