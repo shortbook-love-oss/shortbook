@@ -12,11 +12,11 @@
 	let coverWidth = 256;
 </script>
 
-<article class="flex items-start gap-x-4 gap-y-2 xs:flex-col {className}">
+<article class="flex items-start gap-x-4 gap-y-3 xs:flex-col {className}">
 	<a
 		href="/book/{book.id}"
 		bind:clientWidth={coverWidth}
-		class="peer mx-auto mt-1 flex aspect-book-cover w-[16vw] shrink-0 justify-center overflow-hidden xs:mt-0 xs:w-full"
+		class="peer mx-auto flex aspect-book-cover w-[16vw] shrink-0 justify-center overflow-hidden max-xs:mt-1 xs:mt-0 xs:w-full"
 	>
 		<BookCover {book} {penName} width={coverWidth} />
 	</a>
@@ -31,12 +31,14 @@
 				>{book.subtitle}</a
 			>
 		{/if}
-		<ProfileCardSmall
-			name={book.penName}
-			keyName={book.keyName}
-			imageSrc={book.image}
-			className="mt-2"
-		/>
+		<div>
+			<ProfileCardSmall
+				name={book.penName}
+				keyName={book.keyName}
+				imageSrc={book.image}
+				className="mt-2"
+			/>
+		</div>
 		<p class="mt-2">{book.publishedAt.toLocaleDateString(requestLang)}</p>
 	</div>
 </article>
