@@ -2,6 +2,7 @@ import prisma from '$lib/prisma/connect';
 
 export interface DbBookListRequest {
 	userId?: string;
+	userKeyName?: string;
 }
 
 export async function dbBookList(req: DbBookListRequest) {
@@ -11,7 +12,13 @@ export async function dbBookList(req: DbBookListRequest) {
 		.findMany({
 			where: {
 				user_id: req.userId,
-				deleted_at: null
+				deleted_at: null,
+				user: {
+					profiles: {
+						key_name: req.userKeyName,
+						deleted_at: null
+					}
+				}
 			},
 			orderBy: {
 				updated_at: 'desc'
