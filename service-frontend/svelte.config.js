@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import 'dotenv/config';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -28,12 +29,7 @@ const config = {
 				'worker-src': ['self'],
 				'connect-src': ['self', 'wss://localhost:*'],
 				'style-src': ['self', 'unsafe-inline'],
-				'img-src': [
-					'self',
-					'data:',
-					'blob:',
-					`https://*.amazonaws.com/`
-				],
+				'img-src': ['self', 'data:', 'blob:', process.env.PUBLIC_ORIGIN_PROFILE_IMAGE],
 				'media-src': ['self', 'data:'],
 				'object-src': ['self'],
 				'font-src': ['self', 'data:'],

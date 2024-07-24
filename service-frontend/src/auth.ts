@@ -4,12 +4,14 @@ import Google from '@auth/sveltekit/providers/google';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
 import { env } from '$env/dynamic/private';
+import { env as envPublic } from '$env/dynamic/public';
 import { dbUserProfileCreate } from '$lib/model/user/profile/create';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
+import { imageMIMEextension } from '$lib/utilities/file';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -51,17 +53,19 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					.catch(() => undefined);
 
 				if (blob) {
+					const cacheRefresh = Date.now().toString(36);
+					const extension = imageMIMEextension[blob.type as keyof typeof imageMIMEextension];
 					// 2. Upload image to Amazon S3
 					const isSuccessUpload = await fileUpload(
 						env.AWS_BUCKET_PROFILE_IMAGE,
-						`${user.id}/original`,
+						`${user.id}/profile-image-${cacheRefresh}.${extension}`,
 						blob
 					);
 					if (isSuccessUpload) {
 						// 3. Save image URL to DB
 						await dbUserProfileImageUpdate({
 							userId: user.id,
-							image: `https://${env.AWS_BUCKET_PROFILE_IMAGE}.s3.${env.AWS_REGION}.amazonaws.com/${user.id}/original`
+							image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${user.id}/profile-image-${cacheRefresh}.${extension}`
 						});
 					}
 				}

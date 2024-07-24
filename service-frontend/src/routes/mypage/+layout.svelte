@@ -1,12 +1,14 @@
 <script lang="ts">
 	import IconArrowLeft from '~icons/mdi/arrow-left';
+	import Overlay from '$lib/components/layouts/overlay.svelte';
 	import Header from '$lib/components/service/header.svelte';
+	import Meta from '$lib/components/service/meta.svelte';
 	import Nav from '$lib/components/service/mypage/nav.svelte';
 	import LayoutRule from '../_layout-rule.svelte';
-	import Overlay from '$lib/components/layouts/overlay.svelte';
 </script>
 
 <svelte:head>
+	<Meta />
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -23,16 +25,16 @@
 		</div>
 	</svelte:fragment>
 	<div class="justify-center gap-12 sm:flex">
-		<div class="max-sm:hidden">
-			<a href="/" class="mb-6 flex items-center gap-1 gap-3 px-4">
-				<IconArrowLeft width="24" height="24" class="-mx-2" />
+		<div class="shrink-0 max-sm:hidden">
+			<a href="/" class="mb-6 flex items-center gap-1 gap-3">
+				<IconArrowLeft width="24" height="24" class="-mx-1 shrink-0" />
 				<p class="text-lg font-semibold">Back to home</p>
 			</a>
-			<nav>
+			<nav class="-mx-4 px-4">
 				<Nav />
 			</nav>
 		</div>
-		<div class="max-w-xl flex-1">
+		<div class="mx-auto max-w-xl flex-1 sm:-mx-4 sm:overflow-x-hidden sm:px-4">
 			<slot />
 		</div>
 	</div>

@@ -9,14 +9,23 @@ export interface SelectedFile {
 	key: number;
 }
 
-export const imageMIMEs = [
-	'image/png',
-	'image/jpeg',
-	'image/gif',
-	'image/bmp',
-	'image/apng',
-	'image/webp',
-	'image/avif', // Safari support from v16
-	'image/heif', // Only support Safari
-	'image/heic' // Only support Safari
-];
+export const imageMIMEextension: Record<string, string> = {
+	'image/png': 'png',
+	'image/jpeg': 'jpg',
+	'image/gif': 'gif',
+	'image/apng': 'png',
+	'image/webp': 'webp',
+	'image/avif': 'avif' // Safari support from v16
+};
+
+// Guess MIME-type of profile image by path
+export function guessImageTypeByUrl(imageUrl: string) {
+	const extension = imageUrl.match(/\w+$/)?.[0];
+	if (extension != null) {
+		for (const allowType in imageMIMEextension) {
+			if (imageMIMEextension[allowType] === extension) {
+				return allowType;
+			}
+		}
+	}
+}
