@@ -15,6 +15,20 @@ export async function dbUserGetByKeyName(req: DbUserGetByKeyNameRequest) {
 					key_name: req.keyName,
 					deleted_at: null
 				}
+			},
+			include: {
+				profiles: {
+					where: {
+						deleted_at: null
+					},
+					include: {
+						languages: {
+							where: {
+								deleted_at: null
+							}
+						}
+					}
+				}
 			}
 		})
 		.catch(() => {
