@@ -17,17 +17,22 @@
 <article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
 	<div class="hidden w-full max-w-xl shrink-0 gap-8 break-words lg:flex lg:w-48 lg:justify-end">
 		<div class="max-w-full">
-			<img
-				src="{data.bookDetail.image}?w=64&h=64&fit=cover"
-				alt="{data.bookDetail.penName} profile icon"
-				class="mb-4 h-16 w-16 rounded bg-white"
-			/>
-			<p class="mb-4 whitespace-pre-wrap text-xl leading-snug">
+			<a href="/@{data.bookDetail.keyName}" class="peer mb-2 inline-block">
+				<img
+					src="{data.bookDetail.image}?w=64&h=64&fit=cover"
+					alt="{data.bookDetail.penName} profile icon"
+					class="h-16 w-16 rounded bg-white align-middle"
+				/>
+			</a>
+			<a
+				href="/@{data.bookDetail.keyName}"
+				class="mb-2 block whitespace-pre-wrap text-xl leading-snug hover:underline peer-hover:underline"
+			>
 				{data.bookDetail.penName}
-			</p>
-			<p class="whitespace-pre-wrap">
-				{data.profileLang?.headline}
-			</p>
+			</a>
+			{#if data.profileLang?.headline}
+				<p class="whitespace-pre-wrap">{data.profileLang.headline}</p>
+			{/if}
 		</div>
 	</div>
 	<div class="w-full max-w-xl overflow-x-hidden break-words">
