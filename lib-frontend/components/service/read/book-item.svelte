@@ -16,16 +16,18 @@
 	<a
 		href="/book/{book.id}"
 		bind:clientWidth={coverWidth}
-		class="peer mx-auto mt-1.5 flex aspect-book-cover w-[16vw] shrink-0 justify-center overflow-hidden xs:mt-0 xs:w-full"
+		class="peer mx-auto mt-1 flex aspect-book-cover w-[16vw] shrink-0 justify-center overflow-hidden xs:mt-0 xs:w-full"
 	>
 		<BookCover {book} {penName} width={coverWidth} />
 	</a>
-	<div class="w-full flex-1 overflow-x-hidden peer-hover:[&>h2>a]:underline">
-		<h2 class="line-clamp-4 whitespace-pre-wrap break-words text-xl font-semibold">
-			<a href="/book/{book.id}" class="hover:underline">{book.title}</a>
-		</h2>
+	<div class="w-full flex-1 overflow-x-hidden peer-hover:[&>a]:underline">
+		<a href="/book/{book.id}" class="block break-words text-xl font-semibold hover:underline">
+			<h2 class="line-clamp-4 whitespace-pre-wrap">{book.title}</h2>
+		</a>
 		{#if book.subtitle}
-			<a href="/book/{book.id}" class="mt-2 line-clamp-3 whitespace-pre-wrap break-words xs:hidden"
+			<a
+				href="/book/{book.id}"
+				class="mt-1 line-clamp-3 block whitespace-pre-wrap break-words hover:underline xs:hidden"
 				>{book.subtitle}</a
 			>
 		{/if}
