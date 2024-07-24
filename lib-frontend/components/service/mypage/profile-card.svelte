@@ -8,7 +8,7 @@
 <svelte:element
 	this={keyName ? 'a' : 'p'}
 	href={keyName ? `/@${keyName}` : undefined}
-	class="flex w-full items-center gap-3 rounded-lg {keyName ? 'hover:underline' : ''} {className}"
+	class="flex w-full items-center gap-3 {keyName ? 'hover:underline' : ''} {className}"
 >
 	{#if imageSrc}
 		<img
@@ -17,8 +17,8 @@
 			alt="Profile icon"
 		/>
 	{/if}
-	<div class="flex flex-col overflow-x-hidden">
-		<p class="whitespace-pre-wrap break-words text-xl leading-snug">{name}</p>
+	<div class="flex flex-col overflow-x-hidden break-words">
+		<p class="whitespace-pre-wrap text-xl leading-snug">{name}</p>
 		<slot />
 	</div>
 </svelte:element>
