@@ -3,7 +3,6 @@
 	export let keyName = '';
 	export let imageSrc = '';
 	export let className = '';
-	export let imageSizeClass = 'h-6 w-6';
 </script>
 
 <svelte:element
@@ -14,7 +13,7 @@
 	<img
 		src="{imageSrc}?w=32&h=32&fit=cover"
 		alt="{name} profile icon"
-		class="rounded bg-white {imageSizeClass}"
+		class="h-6 w-6 rounded bg-white"
 	/>
 	<p class="overflow-x-hidden whitespace-pre-wrap break-words text-lg leading-snug">
 		{name}
