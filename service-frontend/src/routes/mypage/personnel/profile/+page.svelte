@@ -44,7 +44,7 @@
 </svelte:head>
 
 <h1 class="mb-4 text-2xl font-semibold">Public profile</h1>
-<ProfileCard name={initPenName} imageSrc={user?.image ?? ''} className="mb-8">
+<ProfileCard name={initPenName} keyName={initKeyName} imageSrc={user?.image ?? ''} className="mb-8">
 	<p class="mt-1">@{initKeyName}</p>
 </ProfileCard>
 <Form
