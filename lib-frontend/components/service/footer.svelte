@@ -2,7 +2,7 @@
 	import IconArrow from '~icons/mdi/chevron-down';
 	import { page } from '$app/stores';
 	import { categories } from '$lib/components/service/menu';
-	import * as m from '$lib/i18n/paraglide/messages.js';
+	import * as m from '$lib/i18n/paraglide/messages';
 	import { languageTag } from '$lib/i18n/paraglide/runtime';
 	import { i18n } from '$lib/i18n/i18n';
 	import { languageSelect } from '$lib/utilities/language';

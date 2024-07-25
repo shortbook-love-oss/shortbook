@@ -1,6 +1,6 @@
 <script lang="ts">
 	import IconPlus from '~icons/mdi/plus';
-	import * as m from '$lib/i18n/paraglide/messages.js';
+	import * as m from '$lib/i18n/paraglide/messages';
 	import BookItem from '$lib/components/service/read/book-item.svelte';
 
 	export let data;

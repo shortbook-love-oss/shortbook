@@ -1,4 +1,4 @@
-import * as m from '$lib/i18n/paraglide/messages.js';
+import * as m from '$lib/i18n/paraglide/messages';
 
 type FooterItem = {
 	name: string;
