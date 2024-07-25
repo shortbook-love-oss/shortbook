@@ -35,10 +35,8 @@
 			{/if}
 		</div>
 	</div>
-	<div class="w-full max-w-xl break-words">
-		<div
-			class="-mx-4 mb-8 w-[calc(100%+2rem)] overflow-x-hidden border-b border-stone-300 px-4 pb-8"
-		>
+	<div class="w-full min-w-0 max-w-xl break-words">
+		<div class="-mx-4 w-[calc(100%+2rem)] overflow-x-hidden px-4">
 			<h1 class="mb-4 whitespace-pre-wrap text-3xl font-semibold leading-tight sm:text-4xl">
 				{data.bookDetail.title}
 			</h1>
@@ -67,10 +65,12 @@
 				{/if}
 			</div>
 		</div>
+		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.prologue}
-			<section class="article_content mb-8 border-b border-stone-300 pb-8 text-lg">
+			<section class="article_content text-lg">
 				{@html data.bookDetail.prologue}
 			</section>
+			<hr class="my-8 border-stone-300" />
 		{/if}
 		<section class="article_content text-lg">
 			{@html data.bookDetail.content}
