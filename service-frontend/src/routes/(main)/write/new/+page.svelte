@@ -112,12 +112,11 @@
 				className="hidden"
 			/>
 		</div>
-		<div class="lg:w-48">
+		<div class="lg:-mx-4 lg:-mt-4 lg:w-48">
 			<BookCoverEdit
 				book={$form}
 				penName={data.penName}
 				errors={$errors}
-				className="lg:-m-4"
 				on:input={applyChildChange}
 			/>
 		</div>

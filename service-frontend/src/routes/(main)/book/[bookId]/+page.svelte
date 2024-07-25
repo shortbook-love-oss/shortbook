@@ -35,31 +35,37 @@
 			{/if}
 		</div>
 	</div>
-	<div class="w-full max-w-xl overflow-x-hidden break-words">
-		<h1 class="mb-4 whitespace-pre-wrap text-3xl font-semibold leading-tight sm:text-4xl">
-			{data.bookDetail.title}
-		</h1>
-		{#if data.bookDetail.subtitle}
-			<p class="mb-4 whitespace-pre-wrap text-xl leading-normal">{data.bookDetail.subtitle}</p>
-		{/if}
-		<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
-			<ProfileCard
-				name={data.bookDetail.penName}
-				keyName={data.bookDetail.keyName}
-				imageSrc={data.bookDetail.image}
-			>
-				{#if data.profileLang?.headline}
-					<p class="mt-1">{data.profileLang.headline}</p>
-				{/if}
-			</ProfileCard>
-		</div>
-		<div class="mb-8 flex items-center gap-4 border-b border-stone-300 pb-8">
-			<time datetime={data.bookDetail.publishedAt.toISOString()}>{publishedAt}</time>
-			{#if data.bookDetail.userId === $page.data.session?.user?.id}
-				<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">
-					<IconWrite width="20" height="20" className="-me-1" />
-				</NavLinkSmall>
+	<div class="w-full max-w-xl break-words">
+		<div
+			class="-mx-4 mb-8 w-[calc(100%+2rem)] overflow-x-hidden border-b border-stone-300 px-4 pb-8"
+		>
+			<h1 class="mb-4 whitespace-pre-wrap text-3xl font-semibold leading-tight sm:text-4xl">
+				{data.bookDetail.title}
+			</h1>
+			{#if data.bookDetail.subtitle}
+				<p class="mb-4 whitespace-pre-wrap text-xl leading-normal">
+					{data.bookDetail.subtitle}
+				</p>
 			{/if}
+			<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
+				<ProfileCard
+					name={data.bookDetail.penName}
+					keyName={data.bookDetail.keyName}
+					imageSrc={data.bookDetail.image}
+				>
+					{#if data.profileLang?.headline}
+						<p class="mt-1">{data.profileLang.headline}</p>
+					{/if}
+				</ProfileCard>
+			</div>
+			<div class="flex items-center gap-4">
+				<time datetime={data.bookDetail.publishedAt.toISOString()}>{publishedAt}</time>
+				{#if data.bookDetail.userId === $page.data.session?.user?.id}
+					<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">
+						<IconWrite width="20" height="20" className="-me-1" />
+					</NavLinkSmall>
+				{/if}
+			</div>
 		</div>
 		{#if data.bookDetail.prologue}
 			<section class="article_content mb-8 border-b border-stone-300 pb-8 text-lg">
