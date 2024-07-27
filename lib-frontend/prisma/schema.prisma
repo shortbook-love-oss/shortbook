@@ -141,7 +141,7 @@ model user_fans {
 }
 
 // -----------------------------------------------------------------------
-// Books
+// Book
 // -----------------------------------------------------------------------
 
 model books {
@@ -211,4 +211,45 @@ model book_tags {
   deleted_at              DateTime?
 
   @@index([name])
+}
+
+// -----------------------------------------------------------------------
+// Contact
+// -----------------------------------------------------------------------
+
+model tickets {
+  id                      String              @id @default(cuid())
+  category_key_name       String              @db.VarChar(31)
+  email                   String              @db.VarChar(510)
+  description             String              @db.LongText
+  language_code           String              @db.VarChar(5)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  files                   ticket_files[]
+}
+
+model ticket_files {
+  ticket                  tickets             @relation(fields: [ticket_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  id                      String              @id @default(cuid())
+  ticket_id               String
+  file_url                String              @db.VarChar(510)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+// -----------------------------------------------------------------------
+// Limit rate control
+// -----------------------------------------------------------------------
+
+model log_actions {
+  id                      String              @id @default(cuid())
+  action_name             String              @db.VarChar(31)
+  ip_address_hash         String              @db.VarChar(127)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
 }
