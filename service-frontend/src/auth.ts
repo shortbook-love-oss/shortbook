@@ -73,17 +73,13 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 
 			if (user.email) {
 				// 4. Send welcome email
-				try {
-					await sendEmail(
-						env.EMAIL_FROM,
-						[user.email],
-						'Welcome to ShortBook.',
-						'<p>Enjoy your writing journey!</p><p>Sincerely thank.</p><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>',
-						'Enjoy your writing journey!\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)'
-					);
-				} catch (e) {
-					console.log(e);
-				}
+				await sendEmail(
+					env.EMAIL_FROM,
+					[user.email],
+					'Welcome to ShortBook.',
+					'<p>Enjoy your writing journey!</p><p>Sincerely thank.</p><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>',
+					'Enjoy your writing journey!\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)'
+				);
 			}
 		},
 		async signIn({ user, profile }) {
