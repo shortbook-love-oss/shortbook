@@ -42,14 +42,15 @@ export async function sendEmail(
 	});
 
 	let result;
+	let sendEmailError;
 	try {
 		result = await sesClient.send(sendEmailCommand);
 	} catch (caught) {
 		if (caught instanceof Error && caught.name === 'MessageRejected') {
-			throw caught;
+			sendEmailError = caught;
 		}
-		throw new Error('Uncaught error on send message.');
+		sendEmailError = new Error('Uncaught error on send message.');
 	}
 
-	return result;
+	return {result, sendEmailError};
 }

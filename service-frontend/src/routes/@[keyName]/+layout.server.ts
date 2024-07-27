@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 export const load = async ({ params, request, cookies }) => {

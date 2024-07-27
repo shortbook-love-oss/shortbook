@@ -3,7 +3,7 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserDelete } from '$lib/model/user/delete';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getLangTagPathPart } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user-delete';
 

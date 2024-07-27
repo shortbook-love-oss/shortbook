@@ -57,6 +57,7 @@
 	isLoading={$submitting}
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
+	className="contents"
 >
 	<div
 		class="mb-8 flex flex-col items-center justify-center gap-x-16 gap-y-8 lg:flex-row lg:items-stretch"
@@ -112,20 +113,23 @@
 				className="hidden"
 			/>
 		</div>
-		<div class="lg:w-48">
-			<BookCoverEdit
-				book={$form}
-				penName={data.penName}
-				errors={$errors}
-				className="lg:-m-4"
-				on:input={applyChildChange}
-			/>
+		<div class="shrink-0 lg:w-48">
+			<div class="w-fit lg:-mx-4 lg:-mt-4">
+				<BookCoverEdit
+					book={$form}
+					penName={data.penName}
+					errors={$errors}
+					on:input={applyChildChange}
+				/>
+			</div>
 		</div>
 	</div>
-	<div class="mx-auto max-w-xl">
-		<div class="w-full">
+	<div class="flex justify-center gap-x-16">
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="w-full max-w-xl">
 			<SubmitButton hasInvalid={!hasVaild && isEnableJS} {$submitting}>Publish book</SubmitButton>
 		</div>
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
 	</div>
-	<div slot="submit"></div>
+	<div slot="submit" />
 </Form>

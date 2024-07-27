@@ -19,7 +19,7 @@
 			/>
 		</svelte:element>
 	{/if}
-	<div class="flex flex-col overflow-x-hidden break-words peer-hover:[&>a]:underline">
+	<div class="-m-2 flex flex-col overflow-x-hidden break-words p-2 peer-hover:[&>a]:underline">
 		<svelte:element
 			this={keyName ? 'a' : 'p'}
 			href={keyName ? `/@${keyName}` : undefined}

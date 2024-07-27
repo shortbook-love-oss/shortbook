@@ -11,7 +11,7 @@
 	export let label = '';
 	export let buttonSubLabel = '';
 	export let required = false;
-	export let acceptTypes: string[]; // Array of MIME types
+	export let acceptTypes: string[] | undefined = undefined; // Array of MIME types
 	export let inputClass = '';
 	export let errorMessages: any = { 0: undefined };
 
@@ -21,9 +21,14 @@
 		.flat()
 		.filter(Boolean);
 	// If can only upload images, it's an image uploader
-	$: isImageUploader = acceptTypes.every((contentType) => {
-		return contentType.startsWith('image/');
-	});
+	$: isImageUploader = (() => {
+		if (!acceptTypes || !acceptTypes.length) {
+			return false;
+		}
+		return acceptTypes.every((contentType) => {
+			return contentType.startsWith('image/');
+		});
+	})();
 
 	function updateSelectedList() {
 		requestAnimationFrame(() => {
@@ -68,7 +73,7 @@
 			type="file"
 			{name}
 			{required}
-			accept={acceptTypes.join()}
+			accept={acceptTypes?.join()}
 			class="peer w-full rounded-lg file:min-h-20 file:w-full file:appearance-none file:rounded-lg file:border-solid file:bg-white file:text-transparent hover:file:bg-stone-200 focus:file:bg-stone-200 {errorMsgs.length
 				? 'file:border-2 file:border-red-700'
 				: 'file:border file:border-stone-600'}"
@@ -76,7 +81,7 @@
 			on:input={updateSelectedList}
 		/>
 		<div
-			class="pointer-events-none absolute left-0 top-0 flex h-full w-full items-center justify-start gap-2 rounded-lg p-3 {inputClass}"
+			class="absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-start gap-2 rounded-lg p-3 {inputClass}"
 		>
 			{#if isImageUploader}
 				<IconImage width="48" height="48" class="text-stone-600" />
@@ -111,10 +116,12 @@
 				{/each}
 			</ul>
 		{/if}
-		<noscript class="mt-2 flex gap-2 text-emerald-800">
-			<IconCheck width="24" height="24" />
-			<p>File selected</p>
-		</noscript>
+		{#if required}
+			<noscript class="mt-2 flex gap-2 text-emerald-800">
+				<IconCheck width="24" height="24" />
+				<p>File selected</p>
+			</noscript>
+		{/if}
 	</div>
 	{#if errorMsgs.length}
 		<div class="mt-2 text-red-800">

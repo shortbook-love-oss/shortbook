@@ -56,17 +56,16 @@
 	isLoading={$submitting}
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
+	className="contents"
 >
 	<div
 		class="mb-8 flex flex-col items-center justify-center gap-x-16 gap-y-8 lg:flex-row lg:items-stretch"
 	>
-		<div class="flex w-full max-w-xl text-lg lg:w-48 lg:justify-end">
-			<div class="max-w-full">
-				<p>Editing</p>
-				<h1 class="whitespace-pre-wrap break-words text-xl font-semibold">
-					{data.initTitle}
-				</h1>
-			</div>
+		<div class="w-full max-w-xl shrink-0 text-lg lg:w-48 lg:justify-end">
+			<p>Editing</p>
+			<h1 class="whitespace-pre-wrap break-words text-xl font-semibold">
+				{data.initTitle}
+			</h1>
 		</div>
 		<div class="w-full max-w-xl">
 			<TextField
@@ -116,18 +115,20 @@
 				className="hidden"
 			/>
 		</div>
-		<div class="lg:w-48">
-			<BookCoverEdit
-				book={$form}
-				penName={data.penName}
-				errors={$errors}
-				className="lg:-m-4"
-				on:input={applyChildChange}
-			/>
+		<div class="shrink-0 lg:w-48">
+			<div class="w-fit lg:-mx-4 lg:-mt-4">
+				<BookCoverEdit
+					book={$form}
+					penName={data.penName}
+					errors={$errors}
+					on:input={applyChildChange}
+				/>
+			</div>
 		</div>
 	</div>
-	<div class="mx-auto max-w-xl">
-		<div class="flex w-full flex-col items-center gap-8 sm:flex-row">
+	<div class="flex justify-center gap-x-16">
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="flex w-full max-w-xl items-center gap-8 max-sm:flex-col">
 			<SubmitButton hasInvalid={!hasVaild} isLoading={$submitting}>
 				{data.status === 0 ? 'Publish book' : 'Republish book'}
 			</SubmitButton>
@@ -147,6 +148,7 @@
 				</SubmitText>
 			</Dialog>
 		</div>
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
 	</div>
-	<div slot="submit"></div>
+	<div slot="submit" />
 </Form>

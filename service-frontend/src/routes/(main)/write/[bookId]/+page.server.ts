@@ -6,7 +6,7 @@ import { dbBookDeleteRequest } from '$lib/model/book/delete';
 import { dbBookUpdateRequest } from '$lib/model/book/update';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getBookCover } from '$lib/utilities/book';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { getLangTagPathPart } from '$lib/utilities/url';

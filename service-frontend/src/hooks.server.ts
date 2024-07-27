@@ -1,7 +1,7 @@
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { i18n } from '$lib/i18n/i18n';
-import { setAuthUserId, getAuthUserId } from '$lib/utilities/server/crypto';
+import { setAuthUserId, getAuthUserId } from '$lib/utilities/server/cookie';
 import { getSessionToken } from '$lib/utilities/cookie';
 import { handle as handleAuth } from './auth';
 

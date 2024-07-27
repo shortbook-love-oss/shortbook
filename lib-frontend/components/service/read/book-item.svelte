@@ -20,7 +20,9 @@
 	>
 		<BookCover {book} {penName} width={coverWidth} />
 	</a>
-	<div class="w-full flex-1 overflow-x-hidden peer-hover:[&>a]:underline">
+	<div
+		class="w-full flex-1 max-sm:-m-2 max-sm:overflow-x-hidden max-sm:p-2 peer-hover:[&>a]:underline"
+	>
 		<a href="/book/{book.id}" class="block break-words text-xl font-semibold hover:underline">
 			<h2 class="line-clamp-4 whitespace-pre-wrap">{book.title}</h2>
 		</a>
