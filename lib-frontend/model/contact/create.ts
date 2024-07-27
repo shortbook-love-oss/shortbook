@@ -13,7 +13,6 @@ export interface DbTicketCreateRequest {
 export async function dbTicketCreate(req: DbTicketCreateRequest) {
 	let dbError: Error | undefined;
 
-	//@todo create with action_log by transaction
 	const ticket = await prisma
 		.$transaction(async (tx) => {
 			const ticket = await tx.tickets.create({
