@@ -16,10 +16,7 @@ export function categories(languageTag: string): FooterItem[] {
 			name: m.footer_about_company_heading({ languageTag }),
 			childs: [
 				{ name: m.footer_about_company_about({ languageTag }), href: '/about' },
-				{
-					name: m.footer_about_company_contact({ languageTag }),
-					href: 'https://www.linkedin.com/in/kurachiweb/'
-				}
+				{ name: m.footer_about_company_contact({ languageTag }), href: '/contact' }
 			]
 		},
 		{
