@@ -30,3 +30,7 @@ export function decrypt(encryptedData: string, iv: string, password: string, sal
 
 	return decryptedData.toString('utf8');
 }
+
+export function toHash(originalData: string) {
+	return crypto.createHash('sha256').update(originalData).digest('base64');
+}
