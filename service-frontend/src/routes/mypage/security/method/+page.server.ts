@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { dbUserSessionGet } from '$lib/model/user/session/get';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getSessionToken } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 

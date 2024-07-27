@@ -5,7 +5,7 @@ import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/profile-update';
 

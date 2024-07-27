@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getBookCover } from '$lib/utilities/book';
 import type { MyBookItem } from '$lib/utilities/book';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';

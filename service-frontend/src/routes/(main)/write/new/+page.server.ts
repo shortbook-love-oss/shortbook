@@ -3,7 +3,7 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookCreateRequest } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
+import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getBookCover } from '$lib/utilities/book';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
