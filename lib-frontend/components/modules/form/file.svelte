@@ -116,10 +116,12 @@
 				{/each}
 			</ul>
 		{/if}
-		<noscript class="mt-2 flex gap-2 text-emerald-800">
-			<IconCheck width="24" height="24" />
-			<p>File selected</p>
-		</noscript>
+		{#if required}
+			<noscript class="mt-2 flex gap-2 text-emerald-800">
+				<IconCheck width="24" height="24" />
+				<p>File selected</p>
+			</noscript>
+		{/if}
 	</div>
 	{#if errorMsgs.length}
 		<div class="mt-2 text-red-800">
