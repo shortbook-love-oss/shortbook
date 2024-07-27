@@ -1,4 +1,5 @@
 import { fail, error } from '@sveltejs/kit';
+import DOMPurify from 'isomorphic-dompurify';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
@@ -6,6 +7,7 @@ import { dbTicketCreate } from '$lib/model/contact/create';
 import { dbLogActionList } from '$lib/model/log/action-list';
 import { schema } from '$lib/validation/schema/contact-create';
 import { encrypt, toHash } from '$lib/utilities/server/crypto';
+import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { sendRateLimitPerHour, logActionName, contactCategorySelect } from '$lib/utilities/contact';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
@@ -94,6 +96,15 @@ export const actions = {
 		if (dbError) {
 			return error(500, { message: dbError.message });
 		}
+
+		const sentDescription = DOMPurify.sanitize(form.data.description);
+		await sendEmail(
+			env.EMAIL_FROM,
+			[form.data.email],
+			'Your inquiry has been sent.',
+			`<p>We will check your email and reply within 24 hours.</p><p>Here is your sent contents.</p><blockquote style="margin: 0 0 1em; padding: 16px; background-color: #eee; white-space: pre-wrap; overflow-wrap: break-word; color: #222;">${sentDescription}</blockquote><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>`,
+			`We will check your email and reply within 24 hours.\n\nHere is your sent contents.\n\n${sentDescription}\n\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
+		);
 
 		return message(form, 'Profile updated successfully.');
 	}
