@@ -36,7 +36,10 @@
 	<title>Contact | ShortBook</title>
 </svelte:head>
 
-<h1 class="mb-8 text-4xl font-semibold">Contact</h1>
+<section class="mx-auto mb-8 max-w-xl text-lg">
+	<h1 class="mb-8 text-4xl font-semibold">Contact</h1>
+	<p>We will check your email and reply within 24 hours.</p>
+</section>
 <Form
 	method="POST"
 	action={actionUrl}
@@ -47,6 +50,7 @@
 	submitLabel="Send message"
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
+	class="mx-auto max-w-xl"
 >
 	<Select
 		bind:value={$form.categoryKeyName}
@@ -55,13 +59,14 @@
 		required={true}
 		label="Category"
 		errorMessages={$errors.categoryKeyName}
-		className="mb-8 max-w-72"
+		className="mb-8 max-w-96"
 	/>
 	<TextField
 		bind:value={$form.email}
 		name="email"
 		required={true}
 		label="Email"
+		placeholder="your-address@email.example"
 		errorMessages={$errors.email}
 		className="mb-8"
 	/>
@@ -77,7 +82,7 @@
 		filesProxy={filesAttach}
 		name="files"
 		multiple="true"
-		label="Profile image select"
+		label="Attachment files"
 		buttonSubLabel="Max size 20MB"
 		errorMessages={$errors.files}
 		className="mb-8 w-full max-w-96"

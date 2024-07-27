@@ -106,6 +106,6 @@ export const actions = {
 			`We will check your email and reply within 24 hours.\n\nHere is your sent contents.\n\n${sentDescription}\n\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
 		);
 
-		return message(form, 'Profile updated successfully.');
+		return message(form, 'Inquiry sent successfully.');
 	}
 };
