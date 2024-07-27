@@ -14,7 +14,7 @@
 	<div class="flex flex-1 flex-col {$$slots.footerNav ? '' : 'max-sm:pb-[3.75rem]'}">
 		<slot name="contents">
 			<div class="flex-1 pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]">
-				<main class="min-h-80 w-full flex-1 px-4 py-12 sm:px-8 sm:pt-24">
+				<main class="min-h-80 w-full flex-1 px-4 pb-24 pt-12 sm:px-8 sm:pt-24">
 					<slot />
 				</main>
 			</div>
