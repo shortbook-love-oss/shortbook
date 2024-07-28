@@ -60,7 +60,7 @@
 			{/if}
 			{#if $page.data.session?.user}
 				<li class="relative">
-					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-[10%] min-w-40">
+					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-0 min-w-40">
 						<NavLinkSp slot="opener" name={m.header_more()}>
 							<IconMore width="30" height="30" />
 						</NavLinkSp>

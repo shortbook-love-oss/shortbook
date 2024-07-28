@@ -33,7 +33,7 @@
 				<li>
 					<NavLink name={m.header_mypage()} href="/mypage" />
 				</li>
-				<li>
+				<li class="relative">
 					<Dropdown name="header_submenu" dropdownClass="top-12 min-w-40">
 						<NavLink slot="opener" name={m.header_more()} className="rounded-ee-md" />
 						<ul>

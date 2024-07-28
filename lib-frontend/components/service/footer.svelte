@@ -31,37 +31,39 @@
 			</a>
 			<small class="mb-4 block text-base">© {yearPeriod} {m.company_name()}</small>
 			<!-- Language select -->
-			<Dropdown name="lang_select" dropdownClass="bottom-2 min-w-40">
-				<div slot="opener" class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
-					<p class="inline-block px-1">Change language</p>
-					<IconArrow
-						width="28"
-						height="28"
-						class="peer-checked/common_footer_lang_open:rotate-180"
-					/>
-				</div>
-				<ul class="grid grid-cols-2">
-					<li class="col-span-2 mb-3 border-b border-stone-300 p-3 pb-5" aria-current="page">
-						<p>Current language</p>
-						<p class="text-2xl">
-							{languageSelect.find((lang) => lang.value === languageTag())?.label}
-						</p>
-					</li>
-					{#each languageSelect as lang}
-						{#if lang.value !== languageTag()}
-							<li class="p-3 {lang.label.length >= 12 ? 'col-span-2' : ''}">
-								<a
-									href={i18n.route($page.url.pathname)}
-									hreflang={lang.value}
-									class="hover:underline"
-									data-sveltekit-reload
-									tabindex="0">{lang.label}</a
-								>
-							</li>
-						{/if}
-					{/each}
-				</ul>
-			</Dropdown>
+			<div class="relative">
+				<Dropdown name="lang_select" dropdownClass="bottom-10 min-w-72">
+					<div slot="opener" class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
+						<p class="inline-block px-1">Change language</p>
+						<IconArrow
+							width="28"
+							height="28"
+							class="peer-checked/common_footer_lang_open:rotate-180"
+						/>
+					</div>
+					<ul class="grid grid-cols-2">
+						<li class="col-span-2 mb-3 border-b border-stone-300 p-3 pb-5" aria-current="page">
+							<p>Current language</p>
+							<p class="text-2xl">
+								{languageSelect.find((lang) => lang.value === languageTag())?.label}
+							</p>
+						</li>
+						{#each languageSelect as lang}
+							{#if lang.value !== languageTag()}
+								<li class="p-3 {lang.label.length >= 12 ? 'col-span-2' : ''}">
+									<a
+										href={i18n.route($page.url.pathname)}
+										hreflang={lang.value}
+										class="hover:underline"
+										data-sveltekit-reload
+										tabindex="0">{lang.label}</a
+									>
+								</li>
+							{/if}
+						{/each}
+					</ul>
+				</Dropdown>
+			</div>
 		</div>
 		{#each categories(languageTag()) as category (category.name)}
 			<div class="text-lg">
