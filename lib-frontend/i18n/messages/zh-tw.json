@@ -13,6 +13,7 @@
     "footer_about_company_heading": "About company",
     "footer_about_company_about": "About",
     "footer_about_company_contact": "Contact",
+    "footer_about_company_sct": "日本特定商業交易相關法律",
     "footer_about_shortbook_heading": "ShortBook",
     "footer_about_shortbook_term": "Term of use",
     "footer_about_shortbook_privacy": "Privacy policy",
@@ -31,5 +32,6 @@
     "company_capital_title": "Capital",
     "company_capital": "500,000 YEN",
     "company_business_content_title": "Business content",
-    "company_business_content": "Developing and management ShortBook"
+    "company_business_content": "Developing and management ShortBook",
+    "about_sct_title": "日本特定商業交易相關法律"
 }

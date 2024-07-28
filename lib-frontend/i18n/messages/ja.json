@@ -13,6 +13,7 @@
     "footer_about_company_heading": "会社について",
     "footer_about_company_about": "会社情報",
     "footer_about_company_contact": "お問い合わせ",
+    "footer_about_company_sct": "特定商取引法に基づく表記",
     "footer_about_shortbook_heading": "ShortBookについて",
     "footer_about_shortbook_term": "利用規約",
     "footer_about_shortbook_privacy": "プライバシーポリシー",
@@ -31,5 +32,6 @@
     "company_capital_title": "資本金",
     "company_capital": "50万円",
     "company_business_content_title": "事業内容",
-    "company_business_content": "インターネット附随サービス業 - ShortBookの企画・開発・運営・顧客対応"
+    "company_business_content": "インターネット附随サービス業 - ShortBookの企画・開発・運営・顧客対応",
+    "about_sct_title": "特定商取引法に基づく表記"
 }

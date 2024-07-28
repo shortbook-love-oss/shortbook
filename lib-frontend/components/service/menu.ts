@@ -16,7 +16,11 @@ export function categories(languageTag: string): FooterItem[] {
 			name: m.footer_about_company_heading({ languageTag }),
 			childs: [
 				{ name: m.footer_about_company_about({ languageTag }), href: '/about' },
-				{ name: m.footer_about_company_contact({ languageTag }), href: '/contact' }
+				{ name: m.footer_about_company_contact({ languageTag }), href: '/contact' },
+				{
+					name: m.footer_about_company_sct({ languageTag }),
+					href: '/about/japan-act-of-sct'
+				}
 			]
 		},
 		{
