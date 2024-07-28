@@ -4,7 +4,9 @@
 	import Header from '$lib/components/service/header.svelte';
 </script>
 
-<div class="flex h-dvh w-dvw flex-col tracking-wide text-stone-950 underline-offset-[3px]">
+<div
+	class="flex h-dvh w-dvw flex-col overflow-x-hidden tracking-wide text-stone-950 underline-offset-[3px]"
+>
 	<slot name="alert" />
 	<slot name="header">
 		<div class="hidden w-full sm:block">
