@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/i18n/paraglide/messages';
 	import { SignIn } from '@auth/sveltekit/components';
 
 	export let isSignUp = false;
@@ -17,8 +18,12 @@
 		<img
 			src="/assets/brands/{providerName.toLowerCase()}-logo.png"
 			class="w-8"
-			alt="{providerName} logo"
+			alt={providerName}
 		/>
-		<span>Sign {isSignUp ? 'up' : 'in'} with {providerName}</span>
+		{#if isSignUp}
+			<span>{m.signup_with_label({ providerName })}</span>
+		{:else}
+			<span>{m.signin_with_label({ providerName })}</span>
+		{/if}
 	</div>
 </SignIn>

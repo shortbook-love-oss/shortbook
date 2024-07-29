@@ -1,14 +1,14 @@
 <script lang="ts">
-	import * as m from '$lib/i18n/paraglide/messages';
 	import { env as envPublic } from '$env/dynamic/public';
+	import * as m from '$lib/i18n/paraglide/messages';
 </script>
 
 <svelte:head>
-	<title>{m.footer_about_shortbook_privacy()} | ShortBook</title>
+	<title>{m.policy_privacy_title()} | ShortBook</title>
 </svelte:head>
 
 <section class="mx-auto flex max-w-2xl flex-col gap-4">
-	<h1 class="text-4xl font-semibold">{m.footer_about_shortbook_privacy()}</h1>
+	<h1 class="text-4xl font-semibold">{m.policy_privacy_title()}</h1>
 	<p>
 		合同会社ShortBook（以下、「当社」といいます。）は、有料記事投稿サービスのShortBook（以下,「本サービス」といいます。）における、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下、「本ポリシー」といいます。）を定めます。
 	</p>

@@ -1,14 +1,14 @@
 <script lang="ts">
-	import * as m from '$lib/i18n/paraglide/messages';
 	import { env as envPublic } from '$env/dynamic/public';
+	import * as m from '$lib/i18n/paraglide/messages';
 </script>
 
 <svelte:head>
-	<title>{m.footer_about_shortbook_term()} | ShortBook</title>
+	<title>{m.policy_term_title()} | ShortBook</title>
 </svelte:head>
 
 <section class="mx-auto flex max-w-2xl flex-col gap-4">
-	<h1 class="text-4xl font-semibold">{m.footer_about_shortbook_term()}</h1>
+	<h1 class="text-4xl font-semibold">{m.policy_term_title()}</h1>
 	<p>
 		この利用規約（以下、「本規約」といいます。）は、合同会社ShortBook（以下、「当社」といいます。）がこのウェブサイト上で提供するサービス（以下、「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下、「ユーザー」といいます。）には、本規約に従って、本サービスをご利用いただきます。
 	</p>
