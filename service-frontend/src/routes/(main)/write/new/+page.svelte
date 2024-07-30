@@ -110,7 +110,7 @@
 				name="salesMessage"
 				label="&quot;Read this!&quot; appeal"
 				errorMessages={$errors.salesMessage}
-				className="hidden"
+				className="mb-8"
 			/>
 		</div>
 		<div class="shrink-0 lg:w-48">
