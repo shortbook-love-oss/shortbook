@@ -2,6 +2,8 @@ import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import type { AvailableLanguageTags } from './language';
 
 export const callbackParam = 'callbackUrl';
+export const paymentBookInfoParam = 'bookInfo';
+export const paymentSessionIdParam = 'sessionId';
 
 // "/de/mypage/personnel" → "/mypage/personnel"
 // "/mypage/personnel" → "/mypage/personnel"

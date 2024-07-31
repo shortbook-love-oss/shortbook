@@ -1,16 +1,19 @@
 import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
+import { dbBookBuyGet } from '$lib/model/book_buy/get';
+import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import type { BookDetail } from '$lib/utilities/book';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
-export const load = async ({ request, params }) => {
+export const load = async ({ request, cookies, params }) => {
+	const userId = getAuthUserId(cookies);
+	const requestLang = guessNativeLangFromRequest(request);
+
 	const { book, dbError } = await dbBookGet({ bookId: params.bookId });
 	if (!book || !book.cover || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const requestLang = guessNativeLangFromRequest(request);
-
 	let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
 	if (!bookLang && book.languages.length) {
 		bookLang = book.languages[0];
@@ -20,6 +23,8 @@ export const load = async ({ request, params }) => {
 	if (!profileLang && profile?.languages.length) {
 		profileLang = profile.languages[0];
 	}
+
+	const isOwn = userId === book.user_id;
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
@@ -49,9 +54,29 @@ export const load = async ({ request, params }) => {
 		penName: profileLang?.pen_name ?? '',
 		image: book.user.image ?? '',
 		prologue: await contentsToMarkdown(bookLang?.prologue ?? ''),
-		content: await contentsToMarkdown(bookLang?.content ?? ''),
-		sales_message: bookLang?.sales_message ?? ''
+		content: '',
+		sales_message: ''
 	};
 
-	return { bookDetail, requestLang, profileLang };
+	// Check buy book if it's paid and written by another
+	const buyPoint = book.buy_point;
+	let isBoughtBook = false;
+	if (userId && !isBoughtBook && buyPoint > 0 && !isOwn) {
+		const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({
+			userId,
+			bookId: book.id
+		});
+		if (dbBookBuyError) {
+			return error(500, { message: dbBookBuyError?.message ?? '' });
+		}
+		isBoughtBook = !!bookBuy;
+	}
+
+	if (isBoughtBook || isOwn) {
+		bookDetail.content = await contentsToMarkdown(bookLang?.content ?? '');
+	} else {
+		bookDetail.sales_message = await contentsToMarkdown(bookLang?.sales_message ?? '');
+	}
+
+	return { bookDetail, requestLang, profileLang, isOwn, isBoughtBook, buyPoint };
 };

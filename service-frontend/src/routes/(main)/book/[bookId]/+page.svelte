@@ -1,9 +1,9 @@
 <script lang="ts">
+	import IconCheck from '~icons/mdi/check';
 	import IconWrite from '~icons/mdi/pencil-plus';
-	import { page } from '$app/stores';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
-	import BookCover from '$lib/components/service/read/book-cover.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
+	import BookCover from '$lib/components/service/read/book-cover.svelte';
 
 	export let data;
 
@@ -58,9 +58,14 @@
 			</div>
 			<div class="flex items-center gap-4">
 				<time datetime={data.bookDetail.publishedAt.toISOString()}>{publishedAt}</time>
-				{#if data.bookDetail.userId === $page.data.session?.user?.id}
+				{#if data.isOwn}
 					<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">
 						<IconWrite width="20" height="20" className="-me-1" />
+					</NavLinkSmall>
+				{/if}
+				{#if data.isBoughtBook}
+					<NavLinkSmall name="Bought" colorClass="bg-green-200" className="w-fit">
+						<IconCheck width="20" height="20" class="-mx-1" />
 					</NavLinkSmall>
 				{/if}
 			</div>
@@ -72,9 +77,13 @@
 			</section>
 			<hr class="my-8 border-stone-300" />
 		{/if}
-		<section class="article_content text-lg">
-			{@html data.bookDetail.content}
-		</section>
+		{#if data.isBoughtBook || data.buyPoint === 0 || data.isOwn}
+			<section class="article_content text-lg">
+				{@html data.bookDetail.content}
+			</section>
+		{:else}
+			<NavLinkSmall name="Charge points and buy this book." href="/book/{data.bookDetail.id}/buy" />
+		{/if}
 	</div>
 	<div class="hidden shrink-0 lg:block lg:w-48">
 		<BookCover

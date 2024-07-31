@@ -19,9 +19,10 @@ const config = {
 			mode: 'hash',
 			directives: {
 				'base-uri': ['self'],
-				'form-action': ['self'],
+				'form-action': ['self', 'https://checkout.stripe.com'],
+				'frame-src': ['self', 'https://js.stripe.com'],
 				'frame-ancestors': ['none'], // For click-jacking protection
-				'script-src': ['self'],
+				'script-src': ['self', 'https://js.stripe.com'],
 				'worker-src': ['self'],
 				'connect-src': ['self', 'wss://localhost:*'],
 				'style-src': ['self', 'unsafe-inline'],
