@@ -82,7 +82,20 @@
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
-			<NavLinkSmall name="Charge points and buy this book." href="/book/{data.bookDetail.id}/buy" />
+			<div class="rounded-lg bg-gradient-to-br from-red-100 to-primary-200 px-6 pb-8 pt-6">
+				<h2 class="mb-8 text-2xl font-semibold">Buy with {data.buyPoint} points</h2>
+				{#if data.bookDetail.sales_message}
+					<section class="article_content mb-8 text-lg">
+						{@html data.bookDetail.sales_message}
+					</section>
+				{/if}
+				<NavLinkSmall
+					name="Charge points and buy this book."
+					href="/book/{data.bookDetail.id}/buy"
+					colorClass="bg-primary-200 hover:bg-primary-300 focus:bg-primary-300"
+					className="w-fit"
+				/>
+			</div>
 		{/if}
 	</div>
 	<div class="hidden shrink-0 lg:block lg:w-48">
