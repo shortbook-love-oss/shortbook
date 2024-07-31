@@ -112,6 +112,14 @@
 				errorMessages={$errors.salesMessage}
 				className="mb-8"
 			/>
+			<TextField
+				bind:value={$form.buyPoint}
+				type="number"
+				name="buyPoint"
+				label="Selling point"
+				errorMessages={$errors.buyPoint}
+				className="max-w-40"
+			/>
 		</div>
 		<div class="shrink-0 lg:w-48">
 			<div class="w-fit lg:-mx-4 lg:-mt-4">

@@ -150,7 +150,7 @@ model books {
   id                      String              @id @default(cuid())
   user_id                 String
   status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
-  price                   Float               @db.Double
+  buy_point               Int
   published_at            DateTime            @default(now())
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt

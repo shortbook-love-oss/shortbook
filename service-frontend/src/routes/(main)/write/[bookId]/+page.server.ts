@@ -59,6 +59,7 @@ export const load = async ({ cookies, params }) => {
 	form.data.prologue = bookLang?.prologue ?? '';
 	form.data.content = bookLang?.content ?? '';
 	form.data.salesMessage = bookLang?.sales_message ?? '';
+	form.data.buyPoint = book.buy_point;
 
 	const initTitle = form.data.title;
 	const status = book?.status ?? 0;

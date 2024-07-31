@@ -9,6 +9,7 @@ export interface DbBookCreateRequest {
 	prologue: string;
 	content: string;
 	salesMessage: string;
+	buyPoint: number;
 	baseColorStart: string;
 	baseColorEnd: string;
 	baseColorDirection: number;
@@ -31,7 +32,7 @@ export async function dbBookCreateRequest(req: DbBookCreateRequest) {
 				data: {
 					user_id: req.userId,
 					status: req.status,
-					price: 0,
+					buy_point: req.buyPoint,
 					cover: {
 						create: {
 							base_color_start: req.baseColorStart,

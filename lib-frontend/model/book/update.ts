@@ -40,6 +40,7 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 				},
 				data: {
 					status: req.status,
+					buy_point: req.buyPoint,
 					published_at: publishedAt
 				}
 			});
