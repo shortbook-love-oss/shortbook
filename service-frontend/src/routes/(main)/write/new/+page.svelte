@@ -110,7 +110,15 @@
 				name="salesMessage"
 				label="&quot;Read this!&quot; appeal"
 				errorMessages={$errors.salesMessage}
-				className="hidden"
+				className="mb-8"
+			/>
+			<TextField
+				bind:value={$form.buyPoint}
+				type="number"
+				name="buyPoint"
+				label="Selling point"
+				errorMessages={$errors.buyPoint}
+				className="max-w-40"
 			/>
 		</div>
 		<div class="shrink-0 lg:w-48">

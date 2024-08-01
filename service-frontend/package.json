@@ -1,6 +1,6 @@
 {
 	"name": "shortbook-service-frontend",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -26,7 +26,8 @@
 		"@inlang/paraglide-js": "1.11.2",
 		"@inlang/paraglide-sveltekit": "0.11.0",
 		"@prisma/client": "^5.17.0",
-		"isomorphic-dompurify": "^2.13.0"
+		"isomorphic-dompurify": "^2.13.0",
+		"stripe": "^16.5.0"
 	},
 	"devDependencies": {
 		"@aws-sdk/client-s3": "^3.614.0",

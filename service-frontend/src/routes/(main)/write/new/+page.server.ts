@@ -35,6 +35,7 @@ export const load = async ({ request, cookies }) => {
 	form.data.prologue = '';
 	form.data.content = '';
 	form.data.salesMessage = '';
+	form.data.buyPoint = 200;
 
 	return { form, penName, langTags };
 };

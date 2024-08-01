@@ -26,8 +26,10 @@ model User {
   authenticator           Authenticator[]
   sessions                Session[]
   profiles                user_profiles?
+  points                  user_points[]
   fans                    user_fans[]
   books                   books[]
+  book_buys               book_buys[]
 
   @@map("users")
 }
@@ -129,6 +131,19 @@ model user_profile_languages {
   @@unique([profile_id, language_code])
 }
 
+model user_points {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  amount                  Int
+  payment_session_id      String
+  book_id                 String              // If set and plus amount, it's refund
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
 model user_fans {
   target_user             User                @relation(fields: [target_user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
@@ -150,7 +165,7 @@ model books {
   id                      String              @id @default(cuid())
   user_id                 String
   status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
-  price                   Float               @db.Double
+  buy_point               Int
   published_at            DateTime            @default(now())
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
@@ -159,6 +174,7 @@ model books {
   cover                   book_covers?
   languages               book_languages[]
   tags                    book_tags[]
+  buys                    book_buys[]
 }
 
 model book_covers {
@@ -211,6 +227,21 @@ model book_tags {
   deleted_at              DateTime?
 
   @@index([name])
+}
+
+model book_buys {
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  id                      String              @id @default(cuid())
+  book_id                 String
+  user_id                 String
+  point_spend             Int                 // It won't change if writer change the price later
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([book_id, user_id])
 }
 
 // -----------------------------------------------------------------------
