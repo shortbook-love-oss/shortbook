@@ -62,7 +62,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const emailEncrypt = encrypt(form.data.email, env.ENCRYPT_PASSWORD_USER_ID, env.ENCRYPT_SALT);
+		const emailEncrypt = encrypt(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT);
 
 		// Upload files to Amazon S3
 		const savedFileUrls = [];
