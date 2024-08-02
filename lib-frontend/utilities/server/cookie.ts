@@ -7,7 +7,7 @@ import type { Encrypted } from '$lib/utilities/crypto';
 /** Don't call from client-side code */
 
 export function setAuthUserId(cookie: Cookies, value: string) {
-	const encryptedValue = encrypt(value, env.ENCRYPT_PASSWORD_USER_ID, env.ENCRYPT_SALT);
+	const encryptedValue = encrypt(value, env.ENCRYPT_USER_ID, env.ENCRYPT_SALT);
 	cookie.set(keyAuthUserId, JSON.stringify(encryptedValue), setOption);
 }
 
@@ -20,7 +20,7 @@ export function getAuthUserId(cookie: Cookies) {
 	return decrypt(
 		encrypted.encryptedData,
 		encrypted.iv,
-		env.ENCRYPT_PASSWORD_USER_ID,
+		env.ENCRYPT_USER_ID,
 		env.ENCRYPT_SALT
 	);
 }

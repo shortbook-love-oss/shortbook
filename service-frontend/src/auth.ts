@@ -9,6 +9,7 @@ import { dbUserProfileCreate } from '$lib/model/user/profile/create';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
+import { encrypt } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
@@ -37,6 +38,15 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	},
 	events: {
 		async createUser({ user }) {
+			if (user.id && user.email) {
+				// By default, AuthJS save plain email
+				// But we think it should be encrypt
+				await dbUserProvideDataUpdate({
+					userId: user.id,
+					email: JSON.stringify(encrypt(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT))
+				});
+			}
+
 			// Create initialized user profile
 			await dbUserProfileCreate({
 				userId: user.id as string,
@@ -87,7 +97,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 				// Sync with email address registered in external service
 				await dbUserProvideDataUpdate({
 					userId: user.id,
-					email: profile.email
+					email: JSON.stringify(encrypt(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT))
 				});
 			}
 		}
