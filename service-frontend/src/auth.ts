@@ -1,5 +1,11 @@
-import { SvelteKitAuth } from '@auth/sveltekit';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import {
+	SvelteKitAuth,
+	type Account,
+	type Profile,
+	type Session,
+	type User
+} from '@auth/sveltekit';
 import Google from '@auth/sveltekit/providers/google';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
@@ -13,6 +19,7 @@ import { encrypt } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
+import { brandNames } from '$lib/utilities/signin';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -37,76 +44,19 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		newUser: '/signup'
 	},
 	events: {
-		async createUser({ user }) {
-			if (user.id && user.email) {
-				// By default, AuthJS save plain email
-				// But we think it should be encrypt
-				await dbUserProvideDataUpdate({
-					userId: user.id,
-					email: JSON.stringify(encrypt(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT))
-				});
-			}
-
-			// Create initialized user profile
-			await dbUserProfileCreate({
-				userId: user.id as string,
-				keyName: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
-				penName: user.name as string
-			});
-
-			// Upload profile image using in external service CDN
-			if (user.id && user.image?.startsWith('https://')) {
-				// 1. Fetch from external service CDN
-				const blob = await fetch(user.image, { mode: 'no-cors' })
-					.then((res) => res.blob())
-					.then((blob) => blob)
-					.catch(() => undefined);
-
-				if (blob) {
-					const cacheRefresh = Date.now().toString(36);
-					const extension = imageMIMEextension[blob.type as keyof typeof imageMIMEextension];
-					// 2. Upload image to Amazon S3
-					const isSuccessUpload = await fileUpload(
-						env.AWS_BUCKET_PROFILE_IMAGE,
-						`${user.id}/profile-image-${cacheRefresh}.${extension}`,
-						blob
-					);
-					if (isSuccessUpload) {
-						// 3. Save image URL to DB
-						await dbUserProfileImageUpdate({
-							userId: user.id,
-							image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${user.id}/profile-image-${cacheRefresh}.${extension}`
-						});
-					}
-				}
-			}
-
-			if (user.email) {
-				// 4. Send welcome email
-				await sendEmail(
-					env.EMAIL_FROM,
-					[user.email],
-					'Welcome to ShortBook.',
-					'<p>Enjoy your writing journey!</p><p>Sincerely thank.</p><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>',
-					'Enjoy your writing journey!\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)'
-				);
-			}
-		},
-		async signIn({ user, profile }) {
-			if (user.id && profile?.email) {
-				// Sync with email address registered in external service
-				await dbUserProvideDataUpdate({
-					userId: user.id,
-					email: JSON.stringify(encrypt(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT))
-				});
+		async signIn({ user, profile, account, isNewUser }) {
+			if (isNewUser) {
+				await onSignedUp(user, profile, account);
+			} else {
+				await onSignedIn(user, profile, account);
 			}
 		}
 	},
 	callbacks: {
-		async session({ session, user }: any) {
+		async session({ session, user }) {
 			// Send properties to the client, like an access_token and user id from a provider.
 			// Filter only using properties.
-			session = {
+			const customSession: Session = {
 				expires: session.expires,
 				user: {
 					id: user.id,
@@ -114,7 +64,99 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					image: user.image
 				}
 			};
-			return Promise.resolve(session);
+			return Promise.resolve(customSession);
 		}
 	}
 });
+
+async function onSignedUp(user: User, profile: Profile | undefined, account: Account | null) {
+	const providerName = account?.provider.toLowerCase() ?? '';
+	let penName = user.name ?? '';
+	let selfIntroduction = '';
+	let emailVerified = false;
+	if (Object.keys(brandNames).includes(providerName)) {
+		if (profile?.name) {
+			penName = profile.name;
+		}
+		emailVerified = !!profile?.email_verified;
+	}
+	if (providerName === 'providerName') {
+		if (typeof profile?.bio === 'string') {
+			selfIntroduction = profile.bio;
+		}
+		// @todo save "twitter_username" and "twitter_username" to user_urls table
+	}
+
+	if (user.id && user.email) {
+		// By default, AuthJS save plain email
+		// But we think it should be encrypt
+		await dbUserProvideDataUpdate({
+			userId: user.id,
+			email: JSON.stringify(encrypt(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)),
+			emailVerified
+		});
+	}
+
+	// Create initialized user profile
+	await dbUserProfileCreate({
+		userId: user.id as string,
+		keyName: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
+		penName,
+		selfIntroduction
+	});
+
+	// Upload profile image using in external service CDN
+	if (user.id && user.image?.startsWith('https://')) {
+		// 1. Fetch from external service CDN
+		const blob = await fetch(user.image, { mode: 'no-cors' })
+			.then((res) => res.blob())
+			.then((blob) => blob)
+			.catch(() => undefined);
+
+		if (blob) {
+			const cacheRefresh = Date.now().toString(36);
+			const extension = imageMIMEextension[blob.type as keyof typeof imageMIMEextension];
+			// 2. Upload image to Amazon S3
+			const isSuccessUpload = await fileUpload(
+				env.AWS_BUCKET_PROFILE_IMAGE,
+				`${user.id}/profile-image-${cacheRefresh}.${extension}`,
+				blob
+			);
+			if (isSuccessUpload) {
+				// 3. Save image URL to DB
+				await dbUserProfileImageUpdate({
+					userId: user.id,
+					image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${user.id}/profile-image-${cacheRefresh}.${extension}`
+				});
+			}
+		}
+	}
+
+	if (user.email) {
+		// 4. Send welcome email
+		await sendEmail(
+			env.EMAIL_FROM,
+			[user.email],
+			'Welcome to ShortBook.',
+			'<p>Enjoy your writing journey!</p><p>Sincerely thank.</p><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>',
+			'Enjoy your writing journey!\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)'
+		);
+	}
+}
+
+async function onSignedIn(user: User, profile: Profile | undefined, account: Account | null) {
+	const providerName = account?.provider.toLowerCase() ?? '';
+	let emailVerified = false;
+	if (Object.keys(brandNames).includes(providerName)) {
+		emailVerified = !!profile?.email_verified;
+	}
+
+	if (user.id && profile?.email) {
+		// Sync with email address registered in external service
+		await dbUserProvideDataUpdate({
+			userId: user.id,
+			email: JSON.stringify(encrypt(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)),
+			emailVerified
+		});
+	}
+}

@@ -4,6 +4,7 @@ export interface DbUserCreateRequest {
 	userId: string;
 	keyName: string;
 	penName: string;
+	selfIntroduction: string;
 }
 
 export async function dbUserProfileCreate(req: DbUserCreateRequest) {
@@ -21,7 +22,7 @@ export async function dbUserProfileCreate(req: DbUserCreateRequest) {
 						language_code: '',
 						pen_name: req.penName,
 						headline: '',
-						self_introduction: ''
+						self_introduction: req.selfIntroduction
 					}
 				}
 			}

@@ -1,12 +1,19 @@
+import type { User } from '@prisma/client';
 import prisma from '$lib/prisma/connect';
 
 export interface DbUserProvideDataRequest {
 	userId: string;
 	email: string;
+	emailVerified: boolean;
 }
 
 export async function dbUserProvideDataUpdate(req: DbUserProvideDataRequest) {
 	let dbError: Error | undefined;
+
+	const saveByCond: Partial<User> = {};
+	if (req.emailVerified) {
+		saveByCond.emailVerified = new Date();
+	}
 
 	const user = await prisma.user
 		.update({
@@ -15,7 +22,8 @@ export async function dbUserProvideDataUpdate(req: DbUserProvideDataRequest) {
 				deleted_at: null
 			},
 			data: {
-				email: req.email
+				email: req.email,
+				...saveByCond
 			}
 		})
 		.then((user) => {

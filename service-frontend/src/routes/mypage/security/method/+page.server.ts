@@ -3,12 +3,7 @@ import { dbUserSessionGet } from '$lib/model/user/session/get';
 import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getSessionToken } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
-
-const brandNames = {
-	google: 'Google',
-	linkedin: 'LinkedIn',
-	github: 'GitHub'
-};
+import { brandNames } from '$lib/utilities/signin';
 
 export const load = async ({ request, cookies }) => {
 	const userId = getAuthUserId(cookies);
