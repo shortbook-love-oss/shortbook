@@ -12,6 +12,7 @@ import GitHub from '@auth/sveltekit/providers/github';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
 import { dbUserProfileCreate } from '$lib/model/user/profile/create';
+import { dbUserRestore } from '$lib/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
@@ -153,10 +154,16 @@ async function onSignedIn(user: User, profile: Profile | undefined, account: Acc
 
 	if (user.id && profile?.email) {
 		// Sync with email address registered in external service
-		await dbUserProvideDataUpdate({
+		const { user: savedUser } = await dbUserProvideDataUpdate({
 			userId: user.id,
 			email: JSON.stringify(encrypt(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)),
-			emailVerified
+			emailVerified,
+			isIncludeDelete: true
 		});
+
+		// Restore user if soft deleted
+		if (savedUser?.deleted_at) {
+			dbUserRestore({ userId: user.id });
+		}
 	}
 }
