@@ -5,6 +5,7 @@ export const setOption: CookieSerializeOptions & { path: string } = {
 	httpOnly: true,
 	secure: true,
 	path: '/',
+	maxAge: 86400 * 365,
 	sameSite: 'lax'
 };
 
