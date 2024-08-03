@@ -32,5 +32,5 @@ export function decrypt(encryptedData: string, iv: string, password: string, sal
 }
 
 export function toHash(originalData: string) {
-	return crypto.createHash('sha256').update(originalData).digest('base64');
+	return crypto.createHash('sha512').update(originalData).digest('base64');
 }
