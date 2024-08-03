@@ -12,10 +12,10 @@
 
 <div class="block {className}">
 	{#if label}
-		<div class="mb-2 flex items-end gap-4">
-			<label for={id} class="block text-lg">{label}</label>
+		<div class="mb-1 flex items-end gap-4">
+			<label for={id} class="block pb-px text-lg">{label}</label>
 			{#if required}
-				<div class="pb-0.5 text-red-800">Required</div>
+				<div class="pb-1 text-base text-red-800">Required</div>
 			{/if}
 		</div>
 	{/if}
@@ -31,9 +31,9 @@
 			on:input
 		/>
 		<div
-			class="absolute bottom-8 end-0 hidden w-fit peer-hover:inline-block peer-focus:inline-block"
+			class="absolute bottom-7 end-0 hidden w-fit peer-hover:inline-block peer-focus:inline-block"
 		>
-			<p class="rounded-md border border-stone-400 bg-white px-2 py-1">{value}</p>
+			<p class="rounded-md border border-stone-400 bg-white px-2 py-0.5">{value}</p>
 		</div>
 	</div>
 	{#if errorMessages?.length}

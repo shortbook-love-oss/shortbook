@@ -59,10 +59,10 @@
 
 <label class="block {className}">
 	{#if label}
-		<div class="mb-2 flex items-end gap-4">
-			<p class="text-lg">{label}</p>
+		<div class="mb-1 flex items-end gap-4">
+			<p class="pb-px text-lg">{label}</p>
 			{#if required}
-				<div class="pb-0.5 text-red-800">Required</div>
+				<div class="pb-1 text-base text-red-800">Required</div>
 			{/if}
 		</div>
 	{/if}
