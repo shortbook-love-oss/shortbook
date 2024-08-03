@@ -15,7 +15,8 @@ datasource db {
 model User {
   id                      String              @id @default(cuid())
   name                    String?
-  email                   String?             @unique @db.VarChar(510)
+  email                   String?             @unique @db.VarChar(510) // Encrypted
+  email_hash              String?             @unique @db.VarChar(127)
   emailVerified           DateTime?           @map("email_verified")
   image                   String?             @db.VarChar(510)
   created_at              DateTime            @default(now())

@@ -17,10 +17,10 @@ import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
 import { encrypt } from '$lib/utilities/server/crypto';
-import { sendEmail } from '$lib/utilities/server/email';
+import { sendEmail, toHashUserEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
-import { isSigninProviderKey } from '$lib/utilities/signin';
+import { matchSigninProvider } from '$lib/utilities/signin';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -75,13 +75,13 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	let penName = user.name ?? '';
 	let selfIntroduction = '';
 	let emailVerified = false;
-	if (isSigninProviderKey(providerName)) {
+	if (matchSigninProvider(providerName)) {
 		if (profile?.name) {
 			penName = profile.name;
 		}
 		emailVerified = !!profile?.email_verified;
 	}
-	if (providerName === 'providerName') {
+	if (providerName === 'github') {
 		if (typeof profile?.bio === 'string') {
 			selfIntroduction = profile.bio;
 		}
@@ -89,11 +89,16 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	}
 
 	if (user.id && user.email) {
+		const emailEncrypt = JSON.stringify(
+			encrypt(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)
+		);
+		const emailHash = toHashUserEmail(user.email, providerName);
 		// By default, AuthJS save plain email
 		// But we think it should be encrypt
 		await dbUserProvideDataUpdate({
 			userId: user.id,
-			email: JSON.stringify(encrypt(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)),
+			emailEncrypt,
+			emailHash,
 			emailVerified
 		});
 	}
@@ -148,15 +153,20 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 async function onSignedIn(user: User, profile: Profile | undefined, account: Account | null) {
 	const providerName = account?.provider.toLowerCase() ?? '';
 	let emailVerified = false;
-	if (isSigninProviderKey(providerName)) {
+	if (matchSigninProvider(providerName)) {
 		emailVerified = !!profile?.email_verified;
 	}
 
 	if (user.id && profile?.email) {
 		// Sync with email address registered in external service
+		const emailEncrypt = JSON.stringify(
+			encrypt(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)
+		);
+		const emailHash = toHashUserEmail(profile.email, providerName);
 		const { user: savedUser } = await dbUserProvideDataUpdate({
 			userId: user.id,
-			email: JSON.stringify(encrypt(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)),
+			emailEncrypt,
+			emailHash,
 			emailVerified,
 			isIncludeDelete: true
 		});

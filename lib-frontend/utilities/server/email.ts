@@ -1,5 +1,6 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { env } from '$env/dynamic/private';
+import { toHash } from '$lib/utilities/server/crypto';
 
 export async function sendEmail(
 	from: string,
@@ -52,5 +53,10 @@ export async function sendEmail(
 		sendEmailError = new Error('Uncaught error on send message.');
 	}
 
-	return {result, sendEmailError};
+	return { result, sendEmailError };
+}
+
+// Unique email-hash make by email + providerName(e.g.linkedin) + random suffix
+export function toHashUserEmail(email: string, providerName: string) {
+	return toHash(email, providerName.toLowerCase() + env.HASH_EMAIL_USER);
 }

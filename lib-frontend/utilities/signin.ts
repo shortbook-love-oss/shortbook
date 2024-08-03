@@ -4,8 +4,8 @@ export const signInProviders = [
 	{ key: 'github', label: 'GitHub' }
 ];
 
-export function isSigninProviderKey(key: string) {
+export function matchSigninProvider(key: string) {
 	return signInProviders.find((provider) => {
-		return provider.key === key;
+		return provider.key === key.toLowerCase();
 	});
 }

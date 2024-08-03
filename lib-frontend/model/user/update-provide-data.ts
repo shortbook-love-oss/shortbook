@@ -1,9 +1,10 @@
-import type { Prisma, User } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import prisma from '$lib/prisma/connect';
 
 export interface DbUserProvideDataRequest {
 	userId: string;
-	email: string;
+	emailEncrypt: string;
+	emailHash: string;
 	emailVerified: boolean;
 	isIncludeDelete?: boolean;
 }
@@ -11,25 +12,24 @@ export interface DbUserProvideDataRequest {
 export async function dbUserProvideDataUpdate(req: DbUserProvideDataRequest) {
 	let dbError: Error | undefined;
 
-	const whereByCond: Partial<Prisma.UserWhereUniqueInput> = {};
+	const whereByCond: Prisma.UserWhereUniqueInput = {
+		id: req.userId
+	};
 	if (!req.isIncludeDelete) {
 		whereByCond.deleted_at = null;
 	}
-	const saveByCond: Partial<User> = {};
+	const saveByCond: Prisma.UserUpdateInput = {
+		email: req.emailEncrypt,
+		email_hash: req.emailHash
+	};
 	if (req.emailVerified) {
 		saveByCond.emailVerified = new Date();
 	}
 
 	const user = await prisma.user
 		.update({
-			where: {
-				id: req.userId,
-				...whereByCond
-			},
-			data: {
-				email: req.email,
-				...saveByCond
-			}
+			where: whereByCond,
+			data: saveByCond
 		})
 		.then((user) => {
 			if (!user) {
