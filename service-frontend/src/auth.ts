@@ -20,7 +20,7 @@ import { encrypt } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
-import { brandNames } from '$lib/utilities/signin';
+import { isSigninProviderKey } from '$lib/utilities/signin';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -75,7 +75,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	let penName = user.name ?? '';
 	let selfIntroduction = '';
 	let emailVerified = false;
-	if (Object.keys(brandNames).includes(providerName)) {
+	if (isSigninProviderKey(providerName)) {
 		if (profile?.name) {
 			penName = profile.name;
 		}
@@ -148,7 +148,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 async function onSignedIn(user: User, profile: Profile | undefined, account: Account | null) {
 	const providerName = account?.provider.toLowerCase() ?? '';
 	let emailVerified = false;
-	if (Object.keys(brandNames).includes(providerName)) {
+	if (isSigninProviderKey(providerName)) {
 		emailVerified = !!profile?.email_verified;
 	}
 
