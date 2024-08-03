@@ -13,7 +13,7 @@ import { sendRateLimitPerHour, logActionName, contactCategorySelect } from '$lib
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 export const load = async ({ getClientAddress }) => {
-	const ipAddressHash = toHash(await getClientAddress());
+	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
 	const form = await superValidate(zod(schema));
 
 	// Disable submit button if rate limit exceeded
@@ -38,7 +38,7 @@ export const load = async ({ getClientAddress }) => {
 
 export const actions = {
 	default: async ({ request, getClientAddress }) => {
-		const ipAddressHash = toHash(await getClientAddress());
+		const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
 			// Block if rate limit exceeded
