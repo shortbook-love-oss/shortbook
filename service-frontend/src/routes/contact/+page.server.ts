@@ -10,6 +10,7 @@ import { encrypt, toHash } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { sendRateLimitPerHour, logActionName, contactCategorySelect } from '$lib/utilities/contact';
+import { getRandom } from '$lib/utilities/crypto';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 export const load = async ({ getClientAddress }) => {
@@ -66,10 +67,7 @@ export const actions = {
 
 		// Upload files to Amazon S3
 		const savedFileUrls = [];
-		// e.g. "zjmt1a15ezf975xyc091ykird5"
-		const filesKey = [...crypto.getRandomValues(new Uint32Array(4))]
-			.map((v) => v.toString(36))
-			.join('');
+		const filesKey = getRandom(32);
 		for (const file of form.data.files ?? []) {
 			const saveFilePath = `${filesKey}/${file.name.replace('/', '')}`;
 			const isSuccessUpload = await fileUpload(
