@@ -9,3 +9,10 @@ export function matchSigninProvider(key: string) {
 		return provider.key === key.toLowerCase();
 	});
 }
+
+export const signUpTokenName = 'signUp';
+export const signInTokenName = 'signIn';
+
+// for sign-in and sign-up
+export const sendRateLimitCount = 10;
+export const logActionName = 'SignInUpRequest';

@@ -8,7 +8,7 @@
 
 <SignIn
 	provider={providerName.toLowerCase()}
-	signInPage="signin"
+	signInPage="signin-external"
 	options={{ redirectTo: callbackUrl }}
 	className="flex w-fit rounded-md bg-white text-xl hover:bg-stone-200 focus:bg-stone-200 {className}"
 >
