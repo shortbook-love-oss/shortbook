@@ -13,7 +13,7 @@
 
 <section class="flex flex-col gap-8 text-lg">
 	<h1 class="text-center text-4xl font-semibold">{m.signin_label()}</h1>
-	<SigninByEmail formData={data.form} submitLabel="Sign in" />
+	<SigninByEmail formData={data.form} submitLabel={m.signin_label()} />
 	<div>
 		<p class="mb-2 text-center">{m.signin_with_label()}</p>
 		<div class="flex flex-wrap items-center justify-center gap-2">

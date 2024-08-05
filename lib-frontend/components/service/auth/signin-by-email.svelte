@@ -3,6 +3,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
+	import * as m from '$lib/i18n/paraglide/messages';
 	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/signin-by-email';
 	import Form from '$lib/components/modules/form/form.svelte';
@@ -42,7 +43,7 @@
 	<TextField
 		bind:value={$form.email}
 		name="email"
-		label="Email"
+		label={m.sign_form_email_label()}
 		required={true}
 		placeholder="your-address@email.example"
 		errorMessages={$errors.email}

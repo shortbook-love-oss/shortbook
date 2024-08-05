@@ -24,7 +24,7 @@
 			>
 		</div>
 	</div>
-	<SigninByEmail formData={data.form} submitLabel="Sign up" />
+	<SigninByEmail formData={data.form} submitLabel={m.signup_label()} />
 	<div>
 		<p class="mb-2 text-center">{m.signup_with_label()}</p>
 		<div class="flex flex-wrap items-center justify-center gap-2">
