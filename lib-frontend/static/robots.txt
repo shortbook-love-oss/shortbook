@@ -99,6 +99,12 @@ Disallow: /
 User-agent: GPTBot
 Disallow: /
 
+# Japan UCRI Crawler
+# https://ucri.nict.go.jp/icccrawler/
+
+User-agent: ICC-Crawler
+Disallow: /
+
 # AI Data Scraper
 # https://darkvisitors.com/agents/omgili
 
