@@ -9,6 +9,7 @@
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 
 	export let formData;
+	export let submitLabel = 'Sign in';
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(formData, {
 		resetForm: false,
@@ -33,7 +34,7 @@
 	{enhance}
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}
-	submitLabel="Sign in"
+	{submitLabel}
 	submitClass="w-full"
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}

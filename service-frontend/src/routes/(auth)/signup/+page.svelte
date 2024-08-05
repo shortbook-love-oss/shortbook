@@ -13,7 +13,7 @@
 
 <section class="flex flex-col gap-8 text-lg">
 	<div>
-		<h1 class="text-center mb-2 text-4xl font-semibold">{m.signup_label()}</h1>
+		<h1 class="mb-2 text-center text-4xl font-semibold">{m.signup_label()}</h1>
 		<p class="mb-1">{m.signup_need_agree()}</p>
 		<div class="flex flex-wrap items-center gap-x-6 gap-y-4">
 			<a href="/policies/term" target="_blank" class="underline"
@@ -24,7 +24,7 @@
 			>
 		</div>
 	</div>
-	<SigninByEmail formData={data.form} />
+	<SigninByEmail formData={data.form} submitLabel="Sign up" />
 	<div>
 		<p class="mb-2 text-center">{m.signup_with_label()}</p>
 		<div class="flex flex-wrap items-center justify-center gap-2">
