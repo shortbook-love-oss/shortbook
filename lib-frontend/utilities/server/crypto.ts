@@ -22,7 +22,7 @@ export function encrypt(originalData: string, password: string, salt: string) {
 // "originalData" → "iviviviviviv_encryptedFlatHUYOo0unVR=="
 export function encryptAndFlat(originalData: string, password: string, salt: string) {
 	const encrypted = encrypt(originalData, password, salt);
-	return `${encrypted.iv}_${encrypted.encryptedData};`;
+	return `${encrypted.iv}_${encrypted.encryptedData}`;
 }
 
 export function decrypt(encryptedData: string, iv: string, password: string, salt: string) {
@@ -39,8 +39,13 @@ export function decrypt(encryptedData: string, iv: string, password: string, sal
 
 // "iviviviviviv_encryptedFlatHUYOo0unVR==" → "originalData"
 export function decryptFromFlat(encryptedFlat: string, password: string, salt: string) {
-	const [iv, encryptedData] = encryptedFlat.split('_');
-	return decrypt(encryptedData, iv, password, salt);
+	try {
+		const [iv, encryptedData] = encryptedFlat.split('_');
+		const decrypted = decrypt(encryptedData, iv, password, salt);
+		return decrypted;
+	} catch {
+		return '';
+	}
 }
 
 export function toHash(originalData: string, suffix: string) {
