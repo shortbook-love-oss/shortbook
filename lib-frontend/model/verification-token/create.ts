@@ -1,20 +1,24 @@
 import prisma from '$lib/prisma/connect';
 
-export interface DbVerificationTokenRequest {
+export interface DbVerificationTokenCreateRequest {
 	identifier: string;
 	token: string;
 	expires: Date;
 }
 
-export async function dbVerificationTokenCreate(req: DbVerificationTokenRequest) {
+export async function dbVerificationTokenCreate(req: DbVerificationTokenCreateRequest) {
 	let dbError: Error | undefined;
 
 	const user = await prisma.verificationToken
 		.create({
-			data: req
+			data: {
+				identifier: req.identifier,
+				token: req.token,
+				expires: req.expires
+			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to create token. Type=${req.identifier}`);
 			return undefined;
 		});
 

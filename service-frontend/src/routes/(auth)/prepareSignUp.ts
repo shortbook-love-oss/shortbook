@@ -24,7 +24,7 @@ export async function prepareSignUp(
 
 	// 5. Send magic link by email
 	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
-	const signUpConfirmUrl = `${requestUrl.origin}${getLangTagPathPart(requestUrl.pathname)}/signup/confirm?${signConfirmTokenParam}=${encodeURIComponent(signUpConfirmToken)}&${callbackParam}=${afterCallbackUrl}`;
+	const signUpConfirmUrl = `${requestUrl.origin}${getLangTagPathPart(requestUrl.pathname)}/signup/done?${signConfirmTokenParam}=${encodeURIComponent(signUpConfirmToken)}&${callbackParam}=${afterCallbackUrl}`;
 	const { sendEmailError } = await sendEmail(
 		env.EMAIL_FROM,
 		[emailTo],

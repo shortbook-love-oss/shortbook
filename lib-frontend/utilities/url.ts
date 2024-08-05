@@ -4,7 +4,7 @@ import type { AvailableLanguageTags } from './language';
 export const callbackParam = 'callbackUrl';
 export const paymentBookInfoParam = 'bookInfo';
 export const paymentSessionIdParam = 'sessionId';
-export const signConfirmTokenParam = 'enjoy-shortbook';
+export const signConfirmTokenParam = 'enjoyYourShortBookLife';
 
 // "/de/mypage/personnel" → "/mypage/personnel"
 // "/mypage/personnel" → "/mypage/personnel"
