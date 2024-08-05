@@ -93,7 +93,7 @@ model Session {
 
 model VerificationToken {
   identifier              String
-  token                   String
+  token                   String              @db.VarChar(510)
   expires                 DateTime
 
   @@unique([identifier, token])

@@ -1,8 +1,9 @@
 import { error, redirect } from '@sveltejs/kit';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { env } from '$env/dynamic/private';
 import { schema } from '$lib/validation/schema/signin-by-email';
-import { getRandom } from '$lib/utilities/crypto';
+import { encryptAndFlat } from '$lib/utilities/server/crypto';
 import { callbackParam, getSafetyUrl } from '$lib/utilities/url';
 import { beforeSign, type SignResult } from '../actionInit';
 import { prepareSignIn } from '../prepareSignIn';
@@ -33,7 +34,6 @@ export async function load({ locals, url }) {
 export const actions = {
 	default: async ({ request, url, getClientAddress }) => {
 		const form = await superValidate(request, zod(schema));
-		const signConfirmToken = getRandom(32);
 
 		const initResult = await beforeSign(form, getClientAddress());
 		if (initResult.error instanceof Error) {
@@ -42,6 +42,13 @@ export const actions = {
 			message(form, initResult.fail);
 			return fail(400, { form });
 		}
+
+		// Generate token include email
+		const signConfirmToken = encryptAndFlat(
+			form.data.email,
+			env.ENCRYPT_EMAIL_USER,
+			env.ENCRYPT_SALT
+		);
 
 		let prepareResult: SignResult;
 		if (initResult.user) {
