@@ -15,7 +15,7 @@
 		<main
 			class="flex flex-1 flex-col items-center justify-center gap-6 bg-primary-700 p-4 lg:px-16"
 		>
-			<div class="inline-block max-w-md rounded-xl bg-white p-6 pb-10 sm:px-8">
+			<div class="inline-block w-full max-w-md rounded-xl bg-white p-6 pb-10 sm:px-8">
 				<div class="mb-6 text-center">
 					<a
 						href="/"

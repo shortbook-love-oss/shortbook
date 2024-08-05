@@ -34,6 +34,7 @@
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}
 	submitLabel="Sign in"
+	submitClass="w-full"
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
 >
