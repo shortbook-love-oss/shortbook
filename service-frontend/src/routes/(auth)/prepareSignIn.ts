@@ -4,7 +4,12 @@ import type { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
 import { signInTokenName } from '$lib/utilities/signin';
-import { callbackParam, getLangTag, getLangTagPathPart } from '$lib/utilities/url';
+import {
+	callbackParam,
+	getLangTag,
+	getLangTagPathPart,
+	signConfirmTokenParam
+} from '$lib/utilities/url';
 import type { SignResult } from './actionInit';
 
 export async function prepareSignIn(
@@ -34,7 +39,7 @@ export async function prepareSignIn(
 
 	// 5. Send magic link by email
 	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
-	const signInConfirmUrl = `${requestUrl.origin}${getLangTagPathPart(requestUrl.pathname)}/signin/confirm?token=${encodeURIComponent(signInConfirmToken)}&${callbackParam}=${afterCallbackUrl}`;
+	const signInConfirmUrl = `${requestUrl.origin}${getLangTagPathPart(requestUrl.pathname)}/signin/confirm?${signConfirmTokenParam}=${encodeURIComponent(signInConfirmToken)}&${callbackParam}=${afterCallbackUrl}`;
 	const { sendEmailError } = await sendEmail(
 		env.EMAIL_FROM,
 		[emailTo],
