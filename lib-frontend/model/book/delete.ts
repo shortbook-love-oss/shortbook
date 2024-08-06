@@ -5,7 +5,7 @@ export interface DbBookDeleteRequest {
 	userId: string;
 }
 
-export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
+export async function dbBookDelete(req: DbBookDeleteRequest) {
 	let dbError: Error | undefined;
 
 	const bookBeforeDelete = await prisma.books.findUnique({

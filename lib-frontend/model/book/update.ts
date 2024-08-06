@@ -5,7 +5,7 @@ export interface DbBookUpdateRequest extends DbBookCreateRequest {
 	bookId: string;
 }
 
-export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
+export async function dbBookUpdate(req: DbBookUpdateRequest) {
 	let dbError: Error | undefined;
 
 	const bookBeforeEdit = await prisma.books.findUnique({

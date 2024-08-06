@@ -1,7 +1,7 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { dbBookCreateRequest } from '$lib/model/book/create';
+import { dbBookCreate } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getBookCover } from '$lib/utilities/book';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
@@ -52,7 +52,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { book, dbError } = await dbBookCreateRequest({
+		const { book, dbError } = await dbBookCreate({
 			userId,
 			status: 1,
 			...form.data

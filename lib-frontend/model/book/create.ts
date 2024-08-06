@@ -23,7 +23,7 @@ export interface DbBookCreateRequest {
 	writerColor: string;
 }
 
-export async function dbBookCreateRequest(req: DbBookCreateRequest) {
+export async function dbBookCreate(req: DbBookCreateRequest) {
 	let dbError: Error | undefined;
 
 	const book = await prisma

@@ -2,8 +2,8 @@ import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
-import { dbBookDeleteRequest } from '$lib/model/book/delete';
-import { dbBookUpdateRequest } from '$lib/model/book/update';
+import { dbBookDelete } from '$lib/model/book/delete';
+import { dbBookUpdate } from '$lib/model/book/update';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getBookCover } from '$lib/utilities/book';
@@ -79,7 +79,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { book, dbError } = await dbBookUpdateRequest({
+		const { book, dbError } = await dbBookUpdate({
 			bookId: params.bookId,
 			userId,
 			status: 1,
@@ -98,7 +98,7 @@ export const actions = {
 			return error(401, { message: 'Unauthorized' });
 		}
 
-		const { dbError } = await dbBookDeleteRequest({
+		const { dbError } = await dbBookDelete({
 			bookId: params.bookId,
 			userId
 		});
