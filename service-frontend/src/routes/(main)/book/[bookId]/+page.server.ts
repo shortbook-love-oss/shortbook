@@ -71,7 +71,7 @@ export const load = async ({ request, locals, params }) => {
 		isBoughtBook = !!bookBuy;
 	}
 
-	if (isBoughtBook || isOwn) {
+	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		bookDetail.content = await contentsToMarkdown(bookLang?.content ?? '');
 	} else {
 		bookDetail.sales_message = await contentsToMarkdown(bookLang?.sales_message ?? '');
