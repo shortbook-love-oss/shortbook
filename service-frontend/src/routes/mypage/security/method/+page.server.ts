@@ -20,9 +20,10 @@ export const load = async ({ request, cookies, locals }) => {
 		return error(500, { message: dbError.message });
 	}
 
+	const isSignedByEmail = !user?.accounts[0];
 	let providerName = '';
 	for (const provider of signInProviders) {
-		if (provider.key === user?.accounts[0].provider) {
+		if (user?.accounts[0]?.provider === provider.key) {
 			providerName = provider.label;
 			break;
 		}
@@ -30,5 +31,5 @@ export const load = async ({ request, cookies, locals }) => {
 	const userCreatedAt = user?.created_at?.toLocaleString(langTag) ?? '';
 	const lastSignedAt = session?.created_at?.toLocaleString(langTag) ?? '';
 
-	return { providerName, userCreatedAt, lastSignedAt };
+	return { isSignedByEmail, providerName, userCreatedAt, lastSignedAt };
 };
