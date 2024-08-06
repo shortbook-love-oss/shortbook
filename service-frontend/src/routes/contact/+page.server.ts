@@ -6,14 +6,15 @@ import { env } from '$env/dynamic/private';
 import { dbTicketCreate } from '$lib/model/contact/create';
 import { dbLogActionList } from '$lib/model/log/action-list';
 import { schema } from '$lib/validation/schema/contact-create';
-import { encrypt, toHash } from '$lib/utilities/server/crypto';
+import { encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { sendRateLimitPerHour, logActionName, contactCategorySelect } from '$lib/utilities/contact';
+import { getRandom } from '$lib/utilities/crypto';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
 export const load = async ({ getClientAddress }) => {
-	const ipAddressHash = toHash(await getClientAddress());
+	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
 	const form = await superValidate(zod(schema));
 
 	// Disable submit button if rate limit exceeded
@@ -38,7 +39,7 @@ export const load = async ({ getClientAddress }) => {
 
 export const actions = {
 	default: async ({ request, getClientAddress }) => {
-		const ipAddressHash = toHash(await getClientAddress());
+		const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
 			// Block if rate limit exceeded
@@ -62,14 +63,9 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const emailEncrypt = encrypt(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT);
-
 		// Upload files to Amazon S3
 		const savedFileUrls = [];
-		// e.g. "zjmt1a15ezf975xyc091ykird5"
-		const filesKey = [...crypto.getRandomValues(new Uint32Array(4))]
-			.map((v) => v.toString(36))
-			.join('');
+		const filesKey = getRandom(32);
 		for (const file of form.data.files ?? []) {
 			const saveFilePath = `${filesKey}/${file.name.replace('/', '')}`;
 			const isSuccessUpload = await fileUpload(
@@ -87,7 +83,7 @@ export const actions = {
 
 		const { dbError } = await dbTicketCreate({
 			categoryKeyName: form.data.categoryKeyName,
-			emailEncrypt: JSON.stringify(emailEncrypt),
+			emailEncrypt: encryptAndFlat(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT),
 			description: form.data.description,
 			languageCode: guessNativeLangFromRequest(request),
 			fileUrls: savedFileUrls,

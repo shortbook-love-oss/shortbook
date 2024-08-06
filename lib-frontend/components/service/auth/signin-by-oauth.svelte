@@ -1,29 +1,22 @@
 <script lang="ts">
-	import * as m from '$lib/i18n/paraglide/messages';
 	import { SignIn } from '@auth/sveltekit/components';
 
-	export let isSignUp = false;
-	export let providerName: 'Google' | 'LinkedIn' | 'GitHub';
+	export let providerName: string;
 	export let callbackUrl: string;
 	export let className = '';
 </script>
 
 <SignIn
 	provider={providerName.toLowerCase()}
-	signInPage="signin"
+	signInPage="signin-external"
 	options={{ redirectTo: callbackUrl }}
-	className="flex w-full rounded-lg border border-stone-400 bg-white text-xl hover:bg-stone-200 focus:bg-stone-200 {className}"
+	className="flex w-fit rounded-md bg-white text-xl hover:bg-stone-200 focus:bg-stone-200 {className}"
 >
-	<div slot="submitButton" class="flex items-center gap-3 p-4 text-start sm:px-6">
+	<div slot="submitButton" class="flex h-16 w-16 items-center justify-center p-3">
 		<img
 			src="/assets/brands/{providerName.toLowerCase()}-logo.png"
-			class="w-8"
+			class="max-h-full max-w-full"
 			alt={providerName}
 		/>
-		{#if isSignUp}
-			<span>{m.signup_with_label({ providerName })}</span>
-		{:else}
-			<span>{m.signin_with_label({ providerName })}</span>
-		{/if}
 	</div>
 </SignIn>

@@ -37,7 +37,7 @@ export async function createPaymentSession(
 	});
 }
 
-export async function afterPayment(paymentSessionId: string) {
+export async function checkPaymentStatus(paymentSessionId: string) {
 	const checkoutSession = await stripe.checkout.sessions.retrieve(paymentSessionId, {
 		// Retrieve the Checkout Session from the API with line_items expanded
 		expand: ['line_items']

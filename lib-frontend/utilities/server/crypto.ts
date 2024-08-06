@@ -19,6 +19,12 @@ export function encrypt(originalData: string, password: string, salt: string) {
 	return encrypted;
 }
 
+// "originalData" → "iviviviviviv_encryptedFlatHUYOo0unVR=="
+export function encryptAndFlat(originalData: string, password: string, salt: string) {
+	const encrypted = encrypt(originalData, password, salt);
+	return `${encrypted.iv}_${encrypted.encryptedData}`;
+}
+
 export function decrypt(encryptedData: string, iv: string, password: string, salt: string) {
 	const encryptedBuffer = Buffer.from(encryptedData, 'base64');
 	const ivBuffer = Buffer.from(iv, 'base64');
@@ -31,6 +37,20 @@ export function decrypt(encryptedData: string, iv: string, password: string, sal
 	return decryptedData.toString('utf8');
 }
 
-export function toHash(originalData: string) {
-	return crypto.createHash('sha256').update(originalData).digest('base64');
+// "iviviviviviv_encryptedFlatHUYOo0unVR==" → "originalData"
+export function decryptFromFlat(encryptedFlat: string, password: string, salt: string) {
+	try {
+		const [iv, encryptedData] = encryptedFlat.split('_');
+		const decrypted = decrypt(encryptedData, iv, password, salt);
+		return decrypted;
+	} catch {
+		return '';
+	}
+}
+
+export function toHash(originalData: string, suffix: string) {
+	return crypto
+		.createHash('sha512')
+		.update(originalData + suffix)
+		.digest('base64');
 }

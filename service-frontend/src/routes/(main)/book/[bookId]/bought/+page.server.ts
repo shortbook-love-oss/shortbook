@@ -1,9 +1,8 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
-import { decrypt } from '$lib/utilities/server/crypto';
-import { afterPayment } from '$lib/utilities/server/payment';
-import type { Encrypted } from '$lib/utilities/crypto';
+import { decryptFromFlat } from '$lib/utilities/server/crypto';
+import { checkPaymentStatus } from '$lib/utilities/server/payment';
 import { paymentBookInfoParam, paymentSessionIdParam } from '$lib/utilities/url';
 
 export const load = async ({ url, params }) => {
@@ -17,7 +16,7 @@ export const load = async ({ url, params }) => {
 
 	// /book/[bookId]/bought?sessionId=xxxxxxxxxx&bookInfo=xxxxxxxxxx
 	// @todo Block paymentSessionId that have already been used to eliminate potential vulnerabilities
-	const { paymentSessionId, isAvailable } = await afterPayment(paymentSessionIdRaw);
+	const { paymentSessionId, isAvailable } = await checkPaymentStatus(paymentSessionIdRaw);
 	if (!isAvailable) {
 		return error(402, {
 			message: "Can't complete payment process, because your payment funds aren't yet available."
@@ -27,10 +26,8 @@ export const load = async ({ url, params }) => {
 	// After charging points, create book bought history
 	let bookPaymentInfo: DbBookBuyCreateRequest;
 	try {
-		const encryptBookInfo: Encrypted = JSON.parse(bookPaymentInfoRaw);
-		const decryptedBookInfo = decrypt(
-			encryptBookInfo.encryptedData,
-			encryptBookInfo.iv,
+		const decryptedBookInfo = decryptFromFlat(
+			bookPaymentInfoRaw,
 			env.ENCRYPT_PAYMENT_BOOK_INFO,
 			env.ENCRYPT_SALT
 		);

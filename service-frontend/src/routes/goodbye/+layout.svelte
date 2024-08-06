@@ -8,6 +8,8 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<LayoutRule>
-	<slot />
-</LayoutRule>
+<div class="contents" data-sveltekit-reload>
+	<LayoutRule>
+		<slot />
+	</LayoutRule>
+</div>

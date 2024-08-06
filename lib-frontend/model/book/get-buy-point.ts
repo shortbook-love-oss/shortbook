@@ -15,6 +15,7 @@ export async function dbBookBuyPointGet(req: DbBookBuyPointGetRequest) {
 			},
 			select: {
 				id: true,
+				user_id: true,
 				buy_point: true
 			}
 		})

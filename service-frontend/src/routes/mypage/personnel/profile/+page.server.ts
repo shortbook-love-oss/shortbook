@@ -5,15 +5,14 @@ import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
-import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/profile-update';
 
-export const load = async ({ request, cookies }) => {
+export const load = async ({ request, locals }) => {
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
 
-	const userId = getAuthUserId(cookies);
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
@@ -36,8 +35,8 @@ export const load = async ({ request, cookies }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
-		const userId = getAuthUserId(cookies);
+	default: async ({ request, locals }) => {
+		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}

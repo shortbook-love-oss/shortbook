@@ -1,13 +1,12 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getBookCover } from '$lib/utilities/book';
 import type { MyBookItem } from '$lib/utilities/book';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 
-export const load = async ({ request, cookies }) => {
-	const userId = getAuthUserId(cookies);
+export const load = async ({ request, locals }) => {
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
