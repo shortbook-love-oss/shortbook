@@ -35,8 +35,9 @@ export const load = async ({ url, params, locals }) => {
 
 	// If users can pay with the points they have, use it
 	const dbBookBuyCreateReq: DbBookBuyCreateRequest = {
-		userId,
 		bookId,
+		writeUserId: book.user_id,
+		userId,
 		pointSpend: book.buy_point,
 		beforePointChargeAmount: 0,
 		paymentSessionId: ''

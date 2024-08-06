@@ -2,7 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
 import { decryptFromFlat } from '$lib/utilities/server/crypto';
-import { afterPayment } from '$lib/utilities/server/payment';
+import { checkPaymentStatus } from '$lib/utilities/server/payment';
 import { paymentBookInfoParam, paymentSessionIdParam } from '$lib/utilities/url';
 
 export const load = async ({ url, params }) => {
@@ -16,7 +16,7 @@ export const load = async ({ url, params }) => {
 
 	// /book/[bookId]/bought?sessionId=xxxxxxxxxx&bookInfo=xxxxxxxxxx
 	// @todo Block paymentSessionId that have already been used to eliminate potential vulnerabilities
-	const { paymentSessionId, isAvailable } = await afterPayment(paymentSessionIdRaw);
+	const { paymentSessionId, isAvailable } = await checkPaymentStatus(paymentSessionIdRaw);
 	if (!isAvailable) {
 		return error(402, {
 			message: "Can't complete payment process, because your payment funds aren't yet available."
