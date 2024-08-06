@@ -8,8 +8,14 @@ import { dbVerificationTokenDelete } from '$lib/model/verification-token/delete'
 import { dbVerificationTokenGet } from '$lib/model/verification-token/get';
 import { getRandom } from '$lib/utilities/crypto';
 import { decryptFromFlat, encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
+import { toHashUserEmail } from '$lib/utilities/server/email';
 import { setSessionToken } from '$lib/utilities/cookie';
-import { logActionName, signInTokenName, signUpTokenName } from '$lib/utilities/signin';
+import {
+	logActionName,
+	signInEmailLinkMethod,
+	signInTokenName,
+	signUpTokenName
+} from '$lib/utilities/signin';
 import { signConfirmTokenParam } from '$lib/utilities/url';
 import type { SignResult } from './actionInit';
 
@@ -61,7 +67,7 @@ export async function finalizeSign(
 		// If email exist, fail to user create
 		const { user, dbError: dbUserGetError } = await dbUserCreate({
 			emailEncrypt: encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT),
-			emailHash: toHash(userEmail, env.HASH_EMAIL_USER),
+			emailHash: toHashUserEmail(userEmail, signInEmailLinkMethod),
 			emailVerified: new Date(),
 			keyName: getRandom(16),
 			penName: `User ${getRandom(6).toUpperCase()}`,
@@ -74,7 +80,7 @@ export async function finalizeSign(
 	} else {
 		// Get user
 		const { user, dbError: dbUserGetError } = await dbUserGetByEmailHash({
-			emailHash: toHash(userEmail, env.HASH_EMAIL_USER)
+			emailHash: toHashUserEmail(userEmail, signInEmailLinkMethod)
 		});
 		if (!user || dbUserGetError) {
 			return { error: new Error(dbUserGetError?.message ?? '') };
