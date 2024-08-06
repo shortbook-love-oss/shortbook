@@ -7,7 +7,7 @@ import { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbVerificationTokenDelete } from '$lib/model/verification-token/delete';
 import { dbVerificationTokenGet } from '$lib/model/verification-token/get';
 import { getRandom } from '$lib/utilities/crypto';
-import { decryptFromFlat, encrypt, toHash } from '$lib/utilities/server/crypto';
+import { decryptFromFlat, encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { setSessionToken } from '$lib/utilities/cookie';
 import { logActionName, signInTokenName, signUpTokenName } from '$lib/utilities/signin';
 import { signConfirmTokenParam } from '$lib/utilities/url';
@@ -60,7 +60,7 @@ export async function finalizeSign(
 		// Create user with random profile
 		// If email exist, fail to user create
 		const { user, dbError: dbUserGetError } = await dbUserCreate({
-			emailEncrypt: JSON.stringify(encrypt(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)),
+			emailEncrypt: encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT),
 			emailHash: toHash(userEmail, env.HASH_EMAIL_USER),
 			emailVerified: new Date(),
 			keyName: getRandom(16),

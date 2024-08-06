@@ -16,7 +16,7 @@ import { dbUserRestore } from '$lib/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
-import { encrypt } from '$lib/utilities/server/crypto';
+import { encryptAndFlat } from '$lib/utilities/server/crypto';
 import { sendEmail, toHashUserEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
@@ -89,9 +89,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	}
 
 	if (user.id && user.email) {
-		const emailEncrypt = JSON.stringify(
-			encrypt(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)
-		);
+		const emailEncrypt = encryptAndFlat(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
 		const emailHash = toHashUserEmail(user.email, providerName);
 		// By default, AuthJS save plain email
 		// But we think it should be encrypt
@@ -159,9 +157,7 @@ async function onSignedIn(user: User, profile: Profile | undefined, account: Acc
 
 	if (user.id && profile?.email) {
 		// Sync with email address registered in external service
-		const emailEncrypt = JSON.stringify(
-			encrypt(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT)
-		);
+		const emailEncrypt = encryptAndFlat(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
 		const emailHash = toHashUserEmail(profile.email, providerName);
 		const { user: savedUser } = await dbUserProvideDataUpdate({
 			userId: user.id,

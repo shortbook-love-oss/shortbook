@@ -5,7 +5,7 @@ import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_bu
 import { dbBookBuyGet } from '$lib/model/book_buy/get';
 import { dbUserPointList } from '$lib/model/user/list-point';
 import { getAuthUserId } from '$lib/utilities/server/cookie';
-import { encrypt } from '$lib/utilities/server/crypto';
+import { encryptAndFlat } from '$lib/utilities/server/crypto';
 import { createPaymentSession } from '$lib/utilities/server/payment';
 import { getLangTagPathPart, paymentBookInfoParam } from '$lib/utilities/url';
 import { redirectToSignInPage } from '$lib/utilities/server/url';
@@ -66,12 +66,12 @@ export const load = async ({ cookies, url, params, locals }) => {
 	const afterPaymentUrl = new URL(
 		`${url.origin}${getLangTagPathPart(url.pathname)}/book/${params.bookId}/bought`
 	);
-	const bookPaymentInfo = encrypt(
+	const bookPaymentInfo = encryptAndFlat(
 		JSON.stringify(dbBookBuyCreateReq),
 		env.ENCRYPT_PAYMENT_BOOK_INFO,
 		env.ENCRYPT_SALT
 	);
-	afterPaymentUrl.searchParams.set(paymentBookInfoParam, JSON.stringify(bookPaymentInfo));
+	afterPaymentUrl.searchParams.set(paymentBookInfoParam, bookPaymentInfo);
 	const paymentSession = await createPaymentSession(
 		env.STRIPE_PRICE_ID_POINT_CHARGE,
 		dbBookBuyCreateReq.beforePointChargeAmount / 100,

@@ -1,26 +1,19 @@
 import type { Cookies } from '@sveltejs/kit';
 import { setOption, keyAuthUserId } from '$lib/utilities/cookie';
 import { env } from '$env/dynamic/private';
-import { encrypt, decrypt } from '$lib/utilities/server/crypto';
-import type { Encrypted } from '$lib/utilities/crypto';
+import { encryptAndFlat, decryptFromFlat } from '$lib/utilities/server/crypto';
 
 /** Don't call from client-side code */
 
 export function setAuthUserId(cookie: Cookies, value: string) {
-	const encryptedValue = encrypt(value, env.ENCRYPT_USER_ID, env.ENCRYPT_SALT);
-	cookie.set(keyAuthUserId, JSON.stringify(encryptedValue), setOption);
+	const encryptedValue = encryptAndFlat(value, env.ENCRYPT_USER_ID, env.ENCRYPT_SALT);
+	cookie.set(keyAuthUserId, encryptedValue, setOption);
 }
 
 export function getAuthUserId(cookie: Cookies) {
-	const value = cookie.get(keyAuthUserId);
-	if (!value) {
+	const encryptedValue = cookie.get(keyAuthUserId);
+	if (!encryptedValue) {
 		return '';
 	}
-	const encrypted: Encrypted = JSON.parse(value);
-	return decrypt(
-		encrypted.encryptedData,
-		encrypted.iv,
-		env.ENCRYPT_USER_ID,
-		env.ENCRYPT_SALT
-	);
+	return decryptFromFlat(encryptedValue, env.ENCRYPT_USER_ID, env.ENCRYPT_SALT);
 }

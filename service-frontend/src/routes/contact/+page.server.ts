@@ -6,7 +6,7 @@ import { env } from '$env/dynamic/private';
 import { dbTicketCreate } from '$lib/model/contact/create';
 import { dbLogActionList } from '$lib/model/log/action-list';
 import { schema } from '$lib/validation/schema/contact-create';
-import { encrypt, toHash } from '$lib/utilities/server/crypto';
+import { encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { sendRateLimitPerHour, logActionName, contactCategorySelect } from '$lib/utilities/contact';
@@ -63,8 +63,6 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const emailEncrypt = encrypt(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT);
-
 		// Upload files to Amazon S3
 		const savedFileUrls = [];
 		const filesKey = getRandom(32);
@@ -85,7 +83,7 @@ export const actions = {
 
 		const { dbError } = await dbTicketCreate({
 			categoryKeyName: form.data.categoryKeyName,
-			emailEncrypt: JSON.stringify(emailEncrypt),
+			emailEncrypt: encryptAndFlat(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT),
 			description: form.data.description,
 			languageCode: guessNativeLangFromRequest(request),
 			fileUrls: savedFileUrls,
