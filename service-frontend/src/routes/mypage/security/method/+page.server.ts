@@ -1,12 +1,11 @@
 import { error } from '@sveltejs/kit';
 import { dbUserSessionGet } from '$lib/model/user/session/get';
-import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getSessionToken } from '$lib/utilities/cookie';
 import { guessNativeLangFromRequest } from '$lib/utilities/language';
 import { signInProviders } from '$lib/utilities/signin';
 
-export const load = async ({ request, cookies }) => {
-	const userId = getAuthUserId(cookies);
+export const load = async ({ request, cookies, locals }) => {
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}

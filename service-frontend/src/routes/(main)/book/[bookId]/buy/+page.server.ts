@@ -4,23 +4,18 @@ import { dbBookBuyPointGet } from '$lib/model/book/get-buy-point';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
 import { dbBookBuyGet } from '$lib/model/book_buy/get';
 import { dbUserPointList } from '$lib/model/user/list-point';
-import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { encryptAndFlat } from '$lib/utilities/server/crypto';
 import { createPaymentSession } from '$lib/utilities/server/payment';
 import { getLangTagPathPart, paymentBookInfoParam } from '$lib/utilities/url';
 import { redirectToSignInPage } from '$lib/utilities/server/url';
 
-export const load = async ({ cookies, url, params, locals }) => {
-	if (!locals.session?.user) {
-		redirectToSignInPage(url, cookies);
-	}
-
-	const userId = getAuthUserId(cookies);
+export const load = async ({ url, params, locals }) => {
+	const userId = locals.session?.user?.id;
 	if (!userId) {
-		return error(401, { message: 'Unauthorized' });
+		return redirectToSignInPage(url);
 	}
-	const bookId = params.bookId;
 
+	const bookId = params.bookId;
 	const callbackUrl = `${url.origin}/book/${bookId}${url.search}`;
 
 	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });

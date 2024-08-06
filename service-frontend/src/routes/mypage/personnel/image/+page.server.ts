@@ -5,15 +5,14 @@ import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
-import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { fileUpload } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { schema } from '$lib/validation/schema/profile-image-update';
 
-export const load = async ({ cookies }) => {
+export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
 
-	const userId = getAuthUserId(cookies);
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
@@ -30,8 +29,8 @@ export const load = async ({ cookies }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
-		const userId = getAuthUserId(cookies);
+	default: async ({ request, locals }) => {
+		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}

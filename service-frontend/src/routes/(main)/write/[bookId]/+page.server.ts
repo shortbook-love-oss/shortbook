@@ -6,14 +6,13 @@ import { dbBookDeleteRequest } from '$lib/model/book/delete';
 import { dbBookUpdateRequest } from '$lib/model/book/update';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getBookCover } from '$lib/utilities/book';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { getLangTagPathPart } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
 
-export const load = async ({ cookies, params }) => {
-	const userId = getAuthUserId(cookies);
+export const load = async ({ locals, params }) => {
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
@@ -68,8 +67,8 @@ export const load = async ({ cookies, params }) => {
 };
 
 export const actions = {
-	update: async ({ request, cookies, url, params }) => {
-		const userId = getAuthUserId(cookies);
+	update: async ({ request, url, locals, params }) => {
+		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}
@@ -93,8 +92,8 @@ export const actions = {
 		redirect(303, `${getLangTagPathPart(url.pathname)}/book/${book.id}`);
 	},
 
-	delete: async ({ cookies, url, params }) => {
-		const userId = getAuthUserId(cookies);
+	delete: async ({ url, locals, params }) => {
+		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}

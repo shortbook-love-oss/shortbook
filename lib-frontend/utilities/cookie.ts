@@ -9,8 +9,6 @@ export const setOption: CookieSerializeOptions & { path: string } = {
 	sameSite: 'lax'
 };
 
-export const keyAuthUserId = '__Secure-auth-user-id';
-
 export const keySessionToken = '__Secure-authjs.session-token';
 export function getSessionToken(cookie: Cookies) {
 	return cookie.get(keySessionToken) ?? '';

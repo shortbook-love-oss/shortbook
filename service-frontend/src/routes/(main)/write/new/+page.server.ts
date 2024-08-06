@@ -3,15 +3,14 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookCreateRequest } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/cookie';
 import { getBookCover } from '$lib/utilities/book';
 import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { getLangTagPathPart } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
 
-export const load = async ({ request, cookies }) => {
-	const userId = getAuthUserId(cookies);
+export const load = async ({ request, locals }) => {
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
@@ -41,8 +40,8 @@ export const load = async ({ request, cookies }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies, url }) => {
-		const userId = getAuthUserId(cookies);
+	default: async ({ request, url, locals }) => {
+		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}
