@@ -13,7 +13,6 @@
 	export let successMessage = '';
 	export let errorMessage = '';
 	export let className = '';
-	export let submitClass = '';
 
 	let isEnableJS = false;
 	onMount(() => {
@@ -59,11 +58,7 @@
 	</fieldset>
 	<slot name="submit">
 		<div class="flex flex-col items-center gap-4 sm:flex-row">
-			<SubmitButton
-				hasInvalid={hasInvalid && isEnableJS}
-				{isLoading}
-				className="shrink-0 {submitClass}"
-			>
+			<SubmitButton hasInvalid={hasInvalid && isEnableJS} {isLoading} className="shrink-0">
 				{submitLabel}
 			</SubmitButton>
 			{#if successMessage}
