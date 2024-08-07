@@ -1,13 +1,12 @@
 import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyGet } from '$lib/model/book_buy/get';
-import { getBookCover, contentsToMarkdown } from '$lib/utilities/book';
-import type { BookDetail } from '$lib/utilities/book';
-import { guessNativeLangFromRequest } from '$lib/utilities/language';
+import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-export const load = async ({ request, locals, params }) => {
+export const load = async ({ url, locals, params }) => {
 	const userId = locals.session?.user?.id;
-	const requestLang = guessNativeLangFromRequest(request);
+	const requestLang = getLanguageTagFromUrl(url);
 
 	const { book, dbError } = await dbBookGet({ bookId: params.bookId });
 	if (!book || !book.cover || dbError) {

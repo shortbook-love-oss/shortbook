@@ -4,17 +4,16 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookCreate } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getBookCover } from '$lib/utilities/book';
-import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
-import type { AvailableLanguageTags } from '$lib/utilities/language';
-import { getLangTagPathPart } from '$lib/utilities/url';
+import { type AvailableLanguageTags, languageAndNotSelect } from '$lib/utilities/language';
+import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
 
-export const load = async ({ request, locals }) => {
+export const load = async ({ url, locals }) => {
 	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
-	const requestLang = guessNativeLangFromRequest(request);
+	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
@@ -61,6 +60,6 @@ export const actions = {
 			return error(500, { message: dbError?.message ?? '' });
 		}
 
-		redirect(303, `${getLangTagPathPart(url.pathname)}/book/${book.id}`);
+		redirect(303, setLanguageTagToPath(`/book/${book.id}`, url));
 	}
 };

@@ -1,13 +1,12 @@
 import { env } from '$env/dynamic/private';
-import { sourceLanguageTag } from '$lib/i18n/paraglide/runtime';
 import type { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
 import { signInTokenName } from '$lib/utilities/signin';
 import {
 	callbackParam,
-	getLangTag,
-	getLangTagPathPart,
+	getLanguageTagFromUrl,
+	setLanguageTagToPath,
 	signConfirmTokenParam
 } from '$lib/utilities/url';
 import type { SignResult } from './actionInit';
@@ -30,7 +29,7 @@ export async function prepareSignIn(
 		return { error: dbVerifyError };
 	}
 
-	const requestLang = getLangTag(requestUrl.pathname) || sourceLanguageTag;
+	const requestLang = getLanguageTagFromUrl(requestUrl);
 	const profile = user?.profiles;
 	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
 	if (!profileLang && profile?.languages.length) {
@@ -39,7 +38,12 @@ export async function prepareSignIn(
 
 	// 5. Send magic link by email
 	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
-	const signInConfirmUrl = `${requestUrl.origin}${getLangTagPathPart(requestUrl.pathname)}/signin/done?${signConfirmTokenParam}=${encodeURIComponent(signInConfirmToken)}&${callbackParam}=${afterCallbackUrl}`;
+	const signInConfirmUrl =
+		requestUrl.origin +
+		setLanguageTagToPath(
+			`/signin/done?${signConfirmTokenParam}=${encodeURIComponent(signInConfirmToken)}&${callbackParam}=${afterCallbackUrl}`,
+			requestLang
+		);
 	const { sendEmailError } = await sendEmail(
 		env.EMAIL_FROM,
 		[emailTo],

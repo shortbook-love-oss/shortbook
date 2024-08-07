@@ -1,11 +1,10 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
-import { contentsToMarkdown, getBookCover } from '$lib/utilities/book';
-import type { BookItem } from '$lib/utilities/book';
-import { guessNativeLangFromRequest } from '$lib/utilities/language';
+import { type BookItem, contentsToMarkdown, getBookCover } from '$lib/utilities/book';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-export const load = async ({ request, params }) => {
+export const load = async ({ url, params }) => {
 	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.keyName });
 	if (!user || !user.profiles || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
@@ -14,7 +13,7 @@ export const load = async ({ request, params }) => {
 	if (!books || bookDbError) {
 		return error(500, { message: bookDbError?.message ?? '' });
 	}
-	const requestLang = guessNativeLangFromRequest(request);
+	const requestLang = getLanguageTagFromUrl(url);
 
 	const profile = user.profiles;
 	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);

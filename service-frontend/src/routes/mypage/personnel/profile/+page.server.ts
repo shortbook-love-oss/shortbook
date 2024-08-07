@@ -5,12 +5,13 @@ import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
-import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
+import { languageAndNotSelect } from '$lib/utilities/language';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/profile-update';
 
-export const load = async ({ request, locals }) => {
+export const load = async ({ url, locals }) => {
+	const requestLang = getLanguageTagFromUrl(url);
 	const form = await superValidate(zod(schema));
-	const langTags = languageAndNotSelect;
 
 	const userId = locals.session?.user?.id;
 	if (!userId) {
@@ -22,7 +23,8 @@ export const load = async ({ request, locals }) => {
 		return error(500, { message: dbError.message });
 	}
 	const profileLangs = profile?.languages[0];
-	const requestLang = guessNativeLangFromRequest(request);
+
+	const langTags = languageAndNotSelect;
 
 	form.data.keyName = profile?.key_name ?? '';
 	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTag;

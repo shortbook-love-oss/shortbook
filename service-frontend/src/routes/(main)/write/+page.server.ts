@@ -1,11 +1,10 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getBookCover } from '$lib/utilities/book';
-import type { MyBookItem } from '$lib/utilities/book';
-import { guessNativeLangFromRequest } from '$lib/utilities/language';
+import { getBookCover, type MyBookItem } from '$lib/utilities/book';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-export const load = async ({ request, locals }) => {
+export const load = async ({ url, locals }) => {
 	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
@@ -15,7 +14,7 @@ export const load = async ({ request, locals }) => {
 	if (dbError) {
 		return error(500, { message: dbError.message });
 	}
-	const requestLang = guessNativeLangFromRequest(request);
+	const requestLang = getLanguageTagFromUrl(url);
 
 	const { profile, dbError: profileDbError } = await dbUserProfileGet({ userId });
 	if (!profile || profileDbError) {

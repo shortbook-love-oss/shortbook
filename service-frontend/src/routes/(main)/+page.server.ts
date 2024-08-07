@@ -1,15 +1,14 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
-import { getBookCover } from '$lib/utilities/book';
-import type { BookItem } from '$lib/utilities/book';
-import { guessNativeLangFromRequest } from '$lib/utilities/language';
+import { type BookItem, getBookCover } from '$lib/utilities/book';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-export const load = async ({ request }) => {
+export const load = async ({ url }) => {
 	const { books, dbError } = await dbBookList({});
 	if (dbError) {
 		return error(500, { message: dbError.message });
 	}
-	const requestLang = guessNativeLangFromRequest(request);
+	const requestLang = getLanguageTagFromUrl(url);
 
 	const bookList: BookItem[] = [];
 	if (books) {

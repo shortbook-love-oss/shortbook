@@ -2,7 +2,12 @@ import { env } from '$env/dynamic/private';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
 import { signUpTokenName } from '$lib/utilities/signin';
-import { callbackParam, getLangTagPathPart, signConfirmTokenParam } from '$lib/utilities/url';
+import {
+	callbackParam,
+	getLanguageTagFromUrl,
+	setLanguageTagToPath,
+	signConfirmTokenParam
+} from '$lib/utilities/url';
 import type { SignResult } from './actionInit';
 
 export async function prepareSignUp(
@@ -22,9 +27,16 @@ export async function prepareSignUp(
 		return { error: dbVerifyError };
 	}
 
+	const requestLang = getLanguageTagFromUrl(requestUrl);
+
 	// 5. Send magic link by email
 	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
-	const signUpConfirmUrl = `${requestUrl.origin}${getLangTagPathPart(requestUrl.pathname)}/signup/done?${signConfirmTokenParam}=${encodeURIComponent(signUpConfirmToken)}&${callbackParam}=${afterCallbackUrl}`;
+	const signUpConfirmUrl =
+		requestUrl.origin +
+		setLanguageTagToPath(
+			`/signup/done?${signConfirmTokenParam}=${encodeURIComponent(signUpConfirmToken)}&${callbackParam}=${afterCallbackUrl}`,
+			requestLang
+		);
 	const { sendEmailError } = await sendEmail(
 		env.EMAIL_FROM,
 		[emailTo],

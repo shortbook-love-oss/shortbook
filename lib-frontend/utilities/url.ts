@@ -1,10 +1,28 @@
+import { i18n } from '$lib/i18n/i18n';
 import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
-import type { AvailableLanguageTags } from './language';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 export const callbackParam = 'callbackUrl';
 export const paymentBookInfoParam = 'bookInfo';
 export const paymentSessionIdParam = 'sessionId';
 export const signConfirmTokenParam = 'enjoyYourShortBookLife';
+
+// "/de/mypage/personnel" → "de"
+// "/mypage/personnel" → "en"
+// "/de" → "de"
+export function getLanguageTagFromUrl(url: URL): AvailableLanguageTags {
+	return i18n.getLanguageFromUrl(url);
+}
+
+// de: "/mypage" → "/de/mypage"
+// en: "/mypage" → "/mypage"
+export function setLanguageTagToPath(pathname: string, languageTag: AvailableLanguageTags | URL) {
+	if (languageTag instanceof URL) {
+		return i18n.resolveRoute(pathname, getLanguageTagFromUrl(languageTag));
+	} else {
+		return i18n.resolveRoute(pathname, languageTag);
+	}
+}
 
 // "/de/mypage/personnel" → "/mypage/personnel"
 // "/mypage/personnel" → "/mypage/personnel"
@@ -15,30 +33,6 @@ export function removeLangTagFromPath(pathname: string) {
 		return pathname.slice(firstDirName.length + 1) || '/';
 	} else {
 		return pathname;
-	}
-}
-
-// "/de/mypage/personnel" → "de"
-// "/mypage/personnel" → ""
-// "/de" → "de"
-export function getLangTag(pathname: string): AvailableLanguageTags | '' {
-	const firstDirName = pathname.split('/')[1] ?? '';
-	if (isAvailableLanguageTag(firstDirName)) {
-		return firstDirName;
-	} else {
-		return '';
-	}
-}
-
-// "/de/mypage/personnel" → "/de"
-// "/mypage/personnel" → ""
-// "/de" → "/de"
-export function getLangTagPathPart(pathname: string) {
-	const langTag = getLangTag(pathname);
-	if (langTag) {
-		return '/' + langTag;
-	} else {
-		return '';
 	}
 }
 

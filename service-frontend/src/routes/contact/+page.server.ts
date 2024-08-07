@@ -11,7 +11,7 @@ import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { sendRateLimitPerHour, logActionName, contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
-import { guessNativeLangFromRequest } from '$lib/utilities/language';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ getClientAddress }) => {
 	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
@@ -38,7 +38,8 @@ export const load = async ({ getClientAddress }) => {
 };
 
 export const actions = {
-	default: async ({ request, getClientAddress }) => {
+	default: async ({ request, url, getClientAddress }) => {
+		const requestLang = getLanguageTagFromUrl(url);
 		const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
@@ -85,7 +86,7 @@ export const actions = {
 			categoryKeyName: form.data.categoryKeyName,
 			emailEncrypt: encryptAndFlat(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT),
 			description: form.data.description,
-			languageCode: guessNativeLangFromRequest(request),
+			languageCode: requestLang,
 			fileUrls: savedFileUrls,
 			ipAddressHash
 		});

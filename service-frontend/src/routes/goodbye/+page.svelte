@@ -1,13 +1,13 @@
 <script lang="ts">
 	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import { page } from '$app/stores';
-	import { getLangTag } from '$lib/utilities/url';
+	import { setLanguageTagToPath } from '$lib/utilities/url';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 </script>
 
 <svelte:head>
 	<title>Thank you for using | ShortBook</title>
-	<meta http-equiv="refresh" content="5; url=/{getLangTag($page.url.pathname)}" />
+	<meta http-equiv="refresh" content="5; url={setLanguageTagToPath('/', $page.url)}" />
 </svelte:head>
 
 <p class="mb-2 mt-16 text-center text-2xl">Thank you for using.</p>

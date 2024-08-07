@@ -3,12 +3,12 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbBookDelete } from '$lib/model/book/delete';
-import { dbBookUpdate } from '$lib/model/book/update';
 import { dbBookGet } from '$lib/model/book/get';
+import { dbBookUpdate } from '$lib/model/book/update';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getBookCover } from '$lib/utilities/book';
 import { languageAndNotSelect } from '$lib/utilities/language';
-import { getLangTagPathPart } from '$lib/utilities/url';
+import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
 
 export const load = async ({ locals, params }) => {
@@ -89,7 +89,7 @@ export const actions = {
 			return error(500, { message: dbError?.message ?? '' });
 		}
 
-		redirect(303, `${getLangTagPathPart(url.pathname)}/book/${book.id}`);
+		redirect(303, setLanguageTagToPath(`/book/${book.id}`, url));
 	},
 
 	delete: async ({ url, locals, params }) => {
@@ -106,6 +106,6 @@ export const actions = {
 			return error(500, { message: dbError.message });
 		}
 
-		redirect(303, getLangTagPathPart(url.pathname) + '/write');
+		redirect(303, setLanguageTagToPath('/write', url));
 	}
 };

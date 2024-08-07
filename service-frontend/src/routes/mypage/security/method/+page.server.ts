@@ -1,16 +1,16 @@
 import { error } from '@sveltejs/kit';
 import { dbUserSessionGet } from '$lib/model/user/session/get';
 import { getSessionToken } from '$lib/utilities/cookie';
-import { guessNativeLangFromRequest } from '$lib/utilities/language';
 import { signInProviders } from '$lib/utilities/signin';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-export const load = async ({ request, cookies, locals }) => {
+export const load = async ({ url, cookies, locals }) => {
 	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
 	const sessionToken = getSessionToken(cookies);
-	const langTag = guessNativeLangFromRequest(request);
+	const langTag = getLanguageTagFromUrl(url);
 
 	const { user, session, dbError } = await dbUserSessionGet({
 		userId,

@@ -6,17 +6,23 @@ import { dbBookBuyGet } from '$lib/model/book_buy/get';
 import { dbUserPointList } from '$lib/model/user/list-point';
 import { encryptAndFlat } from '$lib/utilities/server/crypto';
 import { createPaymentSession } from '$lib/utilities/server/payment';
-import { getLangTagPathPart, paymentBookInfoParam } from '$lib/utilities/url';
 import { redirectToSignInPage } from '$lib/utilities/server/url';
+import {
+	getLanguageTagFromUrl,
+	paymentBookInfoParam,
+	setLanguageTagToPath
+} from '$lib/utilities/url';
 
 export const load = async ({ url, params, locals }) => {
 	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return redirectToSignInPage(url);
 	}
-
+	const requestLang = getLanguageTagFromUrl(url);
 	const bookId = params.bookId;
-	const callbackUrl = `${url.origin}/book/${bookId}${url.search}`;
+
+	const callbackUrl =
+		url.origin + setLanguageTagToPath(`/book/${bookId}${url.search}`, requestLang);
 
 	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
 	if (dbBookBuyError) {
@@ -60,7 +66,7 @@ export const load = async ({ url, params, locals }) => {
 	// 1 order → 100 points
 	// (dbBookBuyCreateReq.beforePointChargeAmount / 100) order → dbBookBuyCreateReq.beforePointChargeAmount points
 	const afterPaymentUrl = new URL(
-		`${url.origin}${getLangTagPathPart(url.pathname)}/book/${params.bookId}/bought`
+		url.origin + setLanguageTagToPath(`/book/${params.bookId}/bought`, requestLang)
 	);
 	const bookPaymentInfo = encryptAndFlat(
 		JSON.stringify(dbBookBuyCreateReq),

@@ -3,7 +3,11 @@ import { env } from '$env/dynamic/private';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
 import { decryptFromFlat } from '$lib/utilities/server/crypto';
 import { checkPaymentStatus } from '$lib/utilities/server/payment';
-import { paymentBookInfoParam, paymentSessionIdParam } from '$lib/utilities/url';
+import {
+	paymentBookInfoParam,
+	paymentSessionIdParam,
+	setLanguageTagToPath
+} from '$lib/utilities/url';
 
 export const load = async ({ url, params }) => {
 	// Allow payment data to be processed even if the ShortBook session expires during payment
@@ -43,5 +47,5 @@ export const load = async ({ url, params }) => {
 		return error(500, { message: dbBookBuyError?.message ?? '' });
 	}
 
-	redirect(303, `${url.origin}/book/${params.bookId}`);
+	redirect(303, url.origin + setLanguageTagToPath(`/book/${params.bookId}`, url));
 };
