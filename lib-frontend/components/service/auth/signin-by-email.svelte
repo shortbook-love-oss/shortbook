@@ -5,7 +5,6 @@
 	import IconCheck from '~icons/mdi/check';
 	import { page } from '$app/stores';
 	import * as m from '$lib/i18n/paraglide/messages';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/signin-by-email';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
@@ -29,13 +28,11 @@
 	const formObserver = form.subscribe(() => validateBackground());
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
-
-	const actionUrl = removeLangTagFromPath($page.url.pathname) + $page.url.search;
 </script>
 
 <Form
 	method="POST"
-	action={actionUrl}
+	action={$page.url.pathname + $page.url.search}
 	{enhance}
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}

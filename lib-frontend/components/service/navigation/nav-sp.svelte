@@ -7,14 +7,14 @@
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
 	import * as m from '$lib/i18n/paraglide/messages';
-	import { callbackParam, removeLangTagFromPath } from '$lib/utilities/url';
+	import { callbackParam, removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 	import NavLinkSp from './nav-link-sp.svelte';
 
 	// After sign-in/up redirect to
 	$: redirectPathname = (() => {
-		if (['/signin', '/signup'].includes(removeLangTagFromPath($page.url.pathname))) {
+		if (['/signin', '/signup'].includes(removeLanguageTagFromPath($page.url.pathname))) {
 			// On sign-in/up → sign-in/up page move, keep callback url;
 			const callbackUrl = $page.url.searchParams.get(callbackParam) ?? '';
 			return encodeURIComponent(callbackUrl);

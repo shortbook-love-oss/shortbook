@@ -8,7 +8,6 @@
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/profile-update';
 
 	export let data;
@@ -22,6 +21,7 @@
 			}
 		}
 	});
+	let initForm = { ...$form };
 
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = true;
@@ -33,8 +33,6 @@
 	onDestroy(() => formObserver());
 
 	const user = $page.data.session?.user;
-	const actionUrl = removeLangTagFromPath($page.url.pathname);
-	let initForm = { ...$form };
 </script>
 
 <svelte:head>
@@ -54,7 +52,7 @@
 </ProfileCard>
 <Form
 	method="POST"
-	action={actionUrl}
+	action={$page.url.pathname}
 	{enhance}
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}

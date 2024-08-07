@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import ProfileImageUpload from '$lib/components/service/mypage/profile-image-upload.svelte';
 
 	export let data;
@@ -30,8 +29,4 @@
 		alt="Profile icon"
 	/>
 </div>
-<ProfileImageUpload
-	formData={data.form}
-	actionUrl={removeLangTagFromPath($page.url.pathname)}
-	className="mb-8"
-/>
+<ProfileImageUpload formData={data.form} actionUrl={$page.url.pathname} className="mb-8" />

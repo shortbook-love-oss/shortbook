@@ -3,7 +3,6 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/book-update';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
@@ -22,7 +21,6 @@
 			validationMethod: 'onblur'
 		}
 	);
-	const actionUrl = removeLangTagFromPath($page.url.pathname);
 	export const snapshot = { capture, restore };
 	let isEnableJS = false;
 	onMount(() => (isEnableJS = true));
@@ -51,7 +49,7 @@
 
 <Form
 	method="POST"
-	action={actionUrl}
+	action={$page.url.pathname}
 	{enhance}
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}

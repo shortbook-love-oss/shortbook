@@ -4,8 +4,8 @@
 	import { categories } from '$lib/components/service/menu';
 	import * as m from '$lib/i18n/paraglide/messages';
 	import { languageTag } from '$lib/i18n/paraglide/runtime';
-	import { i18n } from '$lib/i18n/i18n';
 	import { languageSelect } from '$lib/utilities/language';
+	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 
 	export let className = '';
@@ -52,7 +52,7 @@
 							{#if lang.value !== languageTag()}
 								<li class="p-3 {lang.label.length >= 12 ? 'col-span-2' : ''}">
 									<a
-										href={i18n.route($page.url.pathname)}
+										href={removeLanguageTagFromPath($page.url.pathname + $page.url.search)}
 										hreflang={lang.value}
 										class="hover:underline"
 										data-sveltekit-reload

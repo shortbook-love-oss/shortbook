@@ -27,7 +27,7 @@ export function setLanguageTagToPath(pathname: string, languageTag: AvailableLan
 // "/de/mypage/personnel" → "/mypage/personnel"
 // "/mypage/personnel" → "/mypage/personnel"
 // "/de" → "/"
-export function removeLangTagFromPath(pathname: string) {
+export function removeLanguageTagFromPath(pathname: string) {
 	return i18n.route(pathname);
 }
 

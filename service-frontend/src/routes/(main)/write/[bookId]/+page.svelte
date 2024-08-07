@@ -4,7 +4,6 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import IconDelete from '~icons/mdi/trash-can-outline';
 	import { page } from '$app/stores';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/book-update';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
@@ -23,8 +22,6 @@
 		validators: zod(schema),
 		validationMethod: 'onblur'
 	});
-	const actionUpdateUrl = removeLangTagFromPath($page.url.pathname) + '?/update';
-	const actionDeleteUrl = removeLangTagFromPath($page.url.pathname) + '?/delete';
 
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = true;
@@ -50,7 +47,7 @@
 
 <Form
 	method="POST"
-	action={actionUpdateUrl}
+	action="{$page.url.pathname}?/update"
 	{enhance}
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}
@@ -147,7 +144,7 @@
 				<p>Do you want to delete it?</p>
 				<SubmitText
 					slot="actions"
-					formaction={actionDeleteUrl}
+					formaction="{$page.url.pathname}?/delete"
 					hasInvalid={!hasVaild}
 					isLoading={$submitting}
 					className="mx-auto"

@@ -3,7 +3,6 @@
 	import { superForm, filesProxy } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/contact-create';
 	import File from '$lib/components/modules/form/file.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
@@ -28,8 +27,6 @@
 	const formObserver = form.subscribe(() => validateBackground());
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
-
-	const actionUrl = removeLangTagFromPath($page.url.pathname);
 </script>
 
 <svelte:head>
@@ -42,7 +39,7 @@
 </section>
 <Form
 	method="POST"
-	action={actionUrl}
+	action={$page.url.pathname + $page.url.search}
 	enctype="multipart/form-data"
 	{enhance}
 	hasInvalid={!hasVaild}
