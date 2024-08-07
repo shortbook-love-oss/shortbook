@@ -28,12 +28,7 @@ export function setLanguageTagToPath(pathname: string, languageTag: AvailableLan
 // "/mypage/personnel" → "/mypage/personnel"
 // "/de" → "/"
 export function removeLangTagFromPath(pathname: string) {
-	const firstDirName = pathname.split('/')[1] ?? '';
-	if (isAvailableLanguageTag(firstDirName)) {
-		return pathname.slice(firstDirName.length + 1) || '/';
-	} else {
-		return pathname;
-	}
+	return i18n.route(pathname);
 }
 
 // Preventing access to unexpected origin.
