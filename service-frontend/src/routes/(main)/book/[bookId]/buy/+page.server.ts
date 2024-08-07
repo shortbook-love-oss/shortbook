@@ -3,7 +3,7 @@ import { env } from '$env/dynamic/private';
 import { dbBookBuyPointGet } from '$lib/model/book/get-buy-point';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
 import { dbBookBuyGet } from '$lib/model/book_buy/get';
-import { dbUserPointList } from '$lib/model/user/list-point';
+import { dbUserPointList } from '$lib/model/user/point/list';
 import { encryptAndFlat } from '$lib/utilities/server/crypto';
 import { createPaymentSession } from '$lib/utilities/server/payment';
 import { redirectToSignInPage } from '$lib/utilities/server/url';
