@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
-import { dbBookBuyGet } from '$lib/model/book_buy/get';
+import { dbBookBuyGet } from '$lib/model/book-buy/get';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 

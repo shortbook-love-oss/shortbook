@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
+import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
 import { dbUserPaymentContractCreate } from '$lib/model/user/payment-contract/create';
 import { decryptFromFlat } from '$lib/utilities/server/crypto';
 import { checkPaymentStatus } from '$lib/utilities/server/payment';

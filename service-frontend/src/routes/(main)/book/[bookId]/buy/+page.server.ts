@@ -1,8 +1,8 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { dbBookBuyPointGet } from '$lib/model/book/get-buy-point';
-import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
-import { dbBookBuyGet } from '$lib/model/book_buy/get';
+import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
+import { dbBookBuyGet } from '$lib/model/book-buy/get';
 import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
 import { dbUserPointList } from '$lib/model/user/point/list';
 import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
