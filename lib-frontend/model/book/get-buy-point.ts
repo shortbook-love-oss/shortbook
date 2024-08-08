@@ -7,7 +7,7 @@ export interface DbBookBuyPointGetRequest {
 export async function dbBookBuyPointGet(req: DbBookBuyPointGetRequest) {
 	let dbError: Error | undefined;
 
-	const book = await prisma.books
+	const bookBuyPoint = await prisma.books
 		.findUnique({
 			where: {
 				id: req.bookId,
@@ -24,5 +24,5 @@ export async function dbBookBuyPointGet(req: DbBookBuyPointGetRequest) {
 			return undefined;
 		});
 
-	return { book, dbError };
+	return { bookBuyPoint, dbError };
 }

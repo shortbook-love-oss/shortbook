@@ -14,9 +14,9 @@ datasource db {
 
 model User {
   id                      String              @id @default(cuid())
-  name                    String?
+  name                    String?             // Only using on signed-up process, but required for Auth.js
   email                   String?             @unique @db.VarChar(510) // Encrypted
-  email_hash              String?             @unique @db.VarChar(127)
+  email_hash              String?             @unique @db.VarChar(127) // Email + provider name
   emailVerified           DateTime?           @map("email_verified")
   image                   String?             @db.VarChar(510)
   created_at              DateTime            @default(now())
@@ -29,6 +29,7 @@ model User {
   profiles                user_profiles?
   points                  user_points[]
   fans                    user_fans[]
+  payment_contracts       user_payment_contracts[]
   books                   books[]
   book_buys               book_buys[]
 
@@ -154,6 +155,20 @@ model user_fans {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
+}
+
+model user_payment_contracts {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  provider_key            String              @db.VarChar(15)
+  provider_customer_id    String
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([user_id, provider_key])
 }
 
 // -----------------------------------------------------------------------

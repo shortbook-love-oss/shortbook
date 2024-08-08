@@ -3,8 +3,9 @@ import { env } from '$env/dynamic/private';
 import { dbBookBuyPointGet } from '$lib/model/book/get-buy-point';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
 import { dbBookBuyGet } from '$lib/model/book_buy/get';
+import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
 import { dbUserPointList } from '$lib/model/user/point/list';
-import { encryptAndFlat } from '$lib/utilities/server/crypto';
+import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
 import { createPaymentSession } from '$lib/utilities/server/payment';
 import { redirectToSignInPage } from '$lib/utilities/server/url';
 import {
@@ -21,6 +22,11 @@ export const load = async ({ url, params, locals }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 	const bookId = params.bookId;
 
+	const userEmail = decryptFromFlat(
+		locals.session?.user?.email ?? '',
+		env.ENCRYPT_EMAIL_USER,
+		env.ENCRYPT_SALT
+	);
 	const callbackUrl =
 		url.origin + setLanguageTagToPath(`/book/${bookId}${url.search}`, requestLang);
 
@@ -34,21 +40,29 @@ export const load = async ({ url, params, locals }) => {
 	if (dbUserPointError) {
 		return error(500, { message: dbUserPointError?.message ?? '' });
 	}
-	const { book, dbError: dbBookPointError } = await dbBookBuyPointGet({ bookId });
-	if (!book || dbBookPointError) {
+	const { bookBuyPoint, dbError: dbBookPointError } = await dbBookBuyPointGet({ bookId });
+	if (!bookBuyPoint || dbBookPointError) {
 		return error(500, { message: dbBookPointError?.message ?? '' });
 	}
+	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
+		userId,
+		providerKey: 'stripe'
+	});
+	if (dbContractGetError) {
+		return error(500, { message: dbContractGetError?.message ?? '' });
+	}
+	const paymentCustomerId = paymentContract?.provider_customer_id ?? '';
 
 	// If users can pay with the points they have, use it
 	const dbBookBuyCreateReq: DbBookBuyCreateRequest = {
 		bookId,
-		writeUserId: book.user_id,
+		writeUserId: bookBuyPoint.user_id,
 		userId,
-		pointSpend: book.buy_point,
+		pointSpend: bookBuyPoint.buy_point,
 		beforePointChargeAmount: 0,
-		paymentSessionId: ''
+		paymentSessionId: '' // Because only use points
 	};
-	if (currentPoint >= book.buy_point) {
+	if (currentPoint >= bookBuyPoint.buy_point) {
 		const { dbError: dbBookBuyError } = await dbBookBuyCreate(dbBookBuyCreateReq);
 		if (dbBookBuyError) {
 			return error(500, { message: dbBookBuyError?.message ?? '' });
@@ -60,7 +74,7 @@ export const load = async ({ url, params, locals }) => {
 	// Need 456 points → charge 500 points
 	// Need 8000 points → charge 8000 points
 	dbBookBuyCreateReq.beforePointChargeAmount =
-		Math.ceil((book.buy_point - currentPoint) / 100) * 100;
+		Math.ceil((bookBuyPoint.buy_point - currentPoint) / 100) * 100;
 
 	// If do not have enough points, use Stripe Checkout.
 	// 1 order → 100 points
@@ -77,6 +91,8 @@ export const load = async ({ url, params, locals }) => {
 	const paymentSession = await createPaymentSession(
 		env.STRIPE_PRICE_ID_POINT_CHARGE,
 		dbBookBuyCreateReq.beforePointChargeAmount / 100,
+		paymentCustomerId,
+		userEmail,
 		afterPaymentUrl.href,
 		callbackUrl
 	);

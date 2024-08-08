@@ -9,16 +9,19 @@ export const stripe = new Stripe(env.STRIPE_STANDARD_KEY_SECRET, { apiVersion: '
 export async function createPaymentSession(
 	priceId: string,
 	quantity: number,
+	customerId: string,
+	customerEmail: string,
 	successUrl: string,
 	cancelUrl: string
 ) {
 	let successUrlWithSession = successUrl;
+	// See about {CHECKOUT_SESSION_ID} https://docs.stripe.com/payments/checkout/custom-success-page
 	if (new URL(successUrl).searchParams.size > 0) {
 		successUrlWithSession += `&${paymentSessionIdParam}={CHECKOUT_SESSION_ID}`;
 	} else {
 		successUrlWithSession += `?${paymentSessionIdParam}={CHECKOUT_SESSION_ID}`;
 	}
-	return await stripe.checkout.sessions.create({
+	const checkoutCreateParam: Stripe.Checkout.SessionCreateParams = {
 		line_items: [
 			{
 				// Provide the exact Price ID (for example, pr_1234) of the product you want to sell
@@ -26,15 +29,22 @@ export async function createPaymentSession(
 				quantity
 			}
 		],
-		// // @todo Save customer id into user_** table and put it here
-		// customer: 'cus_XxXxXxXxXxX'
-		// Create customer account in Stripe, not guest
-		customer_creation: 'always',
 		mode: 'payment',
 		success_url: successUrlWithSession,
 		cancel_url: cancelUrl,
 		automatic_tax: { enabled: true }
-	});
+	};
+	if (customerId) {
+		checkoutCreateParam.customer = customerId;
+	} else {
+		// Create customer account in Stripe, not guest
+		checkoutCreateParam.customer_creation = 'always';
+		if (customerEmail) {
+			// On user's first payment, auto-complete email
+			checkoutCreateParam.customer_email = customerEmail;
+		}
+	}
+	return await stripe.checkout.sessions.create(checkoutCreateParam);
 }
 
 export async function checkPaymentStatus(paymentSessionId: string) {
@@ -49,8 +59,17 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 	// The payment funds are available in your account.
 	// checkoutSession.payment_status === 'unpaid'
 	// The payment funds are not yet available in your account.
+	let customerId = '';
+	if (typeof checkoutSession.customer === 'string') {
+		customerId = checkoutSession.customer;
+	} else {
+		customerId = checkoutSession.customer?.id ?? '';
+	}
+
 	return {
-		paymentSessionId,
+		paymentSessionId: checkoutSession.id,
+		customerId,
+		isCreateCustomer: checkoutSession.customer_creation != null,
 		isAvailable: checkoutSession.payment_status !== 'unpaid'
 	};
 }
