@@ -5,6 +5,7 @@
 	import IconDelete from '~icons/mdi/trash-can-outline';
 	import { page } from '$app/stores';
 	import { schema } from '$lib/validation/schema/book-update';
+	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
@@ -144,7 +145,7 @@
 				<p>Do you want to delete it?</p>
 				<SubmitText
 					slot="actions"
-					formaction="{$page.url.pathname}?/delete"
+					formaction="{removeLanguageTagFromPath($page.url.pathname)}?/delete"
 					hasInvalid={!hasVaild}
 					isLoading={$submitting}
 					className="mx-auto"
