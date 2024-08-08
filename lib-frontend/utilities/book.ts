@@ -36,7 +36,8 @@ export interface BookItem extends MyBookItem {
 export interface BookDetail extends BookItem {
 	prologue: string;
 	content: string;
-	sales_message: string;
+	salesMessage: string;
+	isBookDeleted: boolean;
 }
 
 // font-size: ***;

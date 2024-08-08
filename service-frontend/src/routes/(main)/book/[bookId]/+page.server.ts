@@ -8,7 +8,10 @@ export const load = async ({ url, locals, params }) => {
 	const userId = locals.session?.user?.id;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { book, dbError } = await dbBookGet({ bookId: params.bookId });
+	const { book, dbError } = await dbBookGet({
+		bookId: params.bookId,
+		isIncludeDelete: true
+	});
 	if (!book || !book.cover || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
@@ -22,7 +25,24 @@ export const load = async ({ url, locals, params }) => {
 		profileLang = profile.languages[0];
 	}
 
+	// Check buy book if it's paid and written by another
+	const buyPoint = book.buy_point;
 	const isOwn = userId === book.user_id;
+	let isBoughtBook = false;
+	if (userId && !isBoughtBook && buyPoint > 0 && !isOwn) {
+		const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({
+			userId,
+			bookId: book.id
+		});
+		if (dbBookBuyError) {
+			return error(500, { message: dbBookBuyError?.message ?? '' });
+		}
+		isBoughtBook = !!bookBuy;
+	}
+
+	if (book.deleted_at != null && !isBoughtBook) {
+		return error(404, { message: 'Not found' });
+	}
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
@@ -53,27 +73,14 @@ export const load = async ({ url, locals, params }) => {
 		image: book.user.image ?? '',
 		prologue: await contentsToMarkdown(bookLang?.prologue ?? ''),
 		content: '',
-		sales_message: ''
+		salesMessage: '',
+		isBookDeleted: book.deleted_at != null
 	};
-
-	// Check buy book if it's paid and written by another
-	const buyPoint = book.buy_point;
-	let isBoughtBook = false;
-	if (userId && !isBoughtBook && buyPoint > 0 && !isOwn) {
-		const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({
-			userId,
-			bookId: book.id
-		});
-		if (dbBookBuyError) {
-			return error(500, { message: dbBookBuyError?.message ?? '' });
-		}
-		isBoughtBook = !!bookBuy;
-	}
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		bookDetail.content = await contentsToMarkdown(bookLang?.content ?? '');
 	} else {
-		bookDetail.sales_message = await contentsToMarkdown(bookLang?.sales_message ?? '');
+		bookDetail.salesMessage = await contentsToMarkdown(bookLang?.sales_message ?? '');
 	}
 
 	return { bookDetail, requestLang, profileLang, isOwn, isBoughtBook, buyPoint };

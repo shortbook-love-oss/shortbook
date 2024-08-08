@@ -1,6 +1,7 @@
 <script lang="ts">
 	import IconCheck from '~icons/mdi/check';
 	import IconWrite from '~icons/mdi/pencil-plus';
+	import IconWarning from '~icons/mdi/warning';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
@@ -70,6 +71,17 @@
 				{/if}
 			</div>
 		</div>
+		{#if data.bookDetail.isBookDeleted}
+			<div
+				class="mt-8 flex items-center gap-3 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
+			>
+				<IconWarning width="24" height="24" class="shrink-0" />
+				<div class="text-lg leading-snug">
+					<p>This book has been deleted.</p>
+					<p>You bought it so you can read it.</p>
+				</div>
+			</div>
+		{/if}
 		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.prologue}
 			<section class="article_content text-lg">
@@ -84,9 +96,9 @@
 		{:else}
 			<div class="rounded-lg bg-gradient-to-br from-red-100 to-primary-200 px-6 pb-8 pt-6">
 				<h2 class="mb-8 text-2xl font-semibold">Buy with {data.buyPoint} points</h2>
-				{#if data.bookDetail.sales_message}
+				{#if data.bookDetail.salesMessage}
 					<section class="article_content mb-8 text-lg">
-						{@html data.bookDetail.sales_message}
+						{@html data.bookDetail.salesMessage}
 					</section>
 				{/if}
 				<NavLinkSmall
