@@ -4,7 +4,11 @@ import { paymentSessionIdParam } from '$lib/utilities/url';
 
 /** Don't call from client-side code */
 
-export const stripe = new Stripe(env.STRIPE_STANDARD_KEY_SECRET, { apiVersion: '2024-06-20' });
+export const stripe = new Stripe(env.STRIPE_STANDARD_KEY_SECRET, {
+	apiVersion: '2024-06-20',
+	maxNetworkRetries: 2, // Challenge → Retry 1 → Retry 2 → Failed
+	telemetry: false
+});
 
 export async function createPaymentSession(
 	priceId: string,
