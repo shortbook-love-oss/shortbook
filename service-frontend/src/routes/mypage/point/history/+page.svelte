@@ -1,8 +1,10 @@
 <script lang="ts">
+	import IconCash from '~icons/mdi/attach-money';
 	import { page } from '$app/stores';
 	import { getPaymentProvider } from '$lib/utilities/payment';
 	import type { PointListItem } from '$lib/utilities/point';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
+	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
 	export let data;
 
@@ -23,8 +25,22 @@
 </svelte:head>
 
 <h1 class="mb-8 text-2xl font-semibold">Charge / spend history</h1>
-<p class="text-xl">Current points</p>
-<p class="mb-8 text-6xl">{data.currentPoint}</p>
+<div class="mb-12 flex flex-wrap gap-x-8 gap-y-2">
+	<div class="text-nowrap">
+		<p class="text-xl">Current points</p>
+		<p class="text-6xl">{data.currentPoint}</p>
+	</div>
+	<div class="border-stone-500">
+		<NavLinkSmall
+			name="Redeem points for cash"
+			colorClass="border-stone-600 bg-stone-200"
+			className="border cursor-not-allowed mb-1"
+		>
+			<IconCash width="24" height="24" class="-mx-1" />
+		</NavLinkSmall>
+		<p>Available in January 2025.</p>
+	</div>
+</div>
 {#if data.pointList.length}
 	<ul>
 		{#each data.pointList as point}
@@ -35,7 +51,7 @@
 				</div>
 				<div class="min-w-0">
 					{#if point.paymentProvider}
-						<p class="truncate text-lg">{getStatus(point).text}</p>
+						<p class="text-lg">{getStatus(point).text}</p>
 					{:else if point.bookTitle}
 						<p class="truncate text-lg">
 							{getStatus(point).text}
