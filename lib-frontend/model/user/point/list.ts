@@ -7,7 +7,7 @@ export interface DbUserPointListRequest {
 export async function dbUserPointList(req: DbUserPointListRequest) {
 	let dbError: Error | undefined;
 
-	const userPointHistory = await prisma.user_points
+	const userPointHistories = await prisma.user_points
 		.findMany({
 			where: {
 				user_id: req.userId,
@@ -23,9 +23,9 @@ export async function dbUserPointList(req: DbUserPointListRequest) {
 		});
 
 	let currentPoint = 0;
-	for (const item of userPointHistory ?? []) {
+	for (const item of userPointHistories ?? []) {
 		currentPoint += item.amount;
 	}
 
-	return { userPointHistory, currentPoint, dbError };
+	return { userPointHistories, currentPoint, dbError };
 }
