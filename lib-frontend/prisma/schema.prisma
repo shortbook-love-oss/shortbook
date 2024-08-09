@@ -139,8 +139,12 @@ model user_points {
   id                      String              @id @default(cuid())
   user_id                 String
   amount                  Int
-  payment_session_id      String
-  book_id                 String              // If set and plus amount, it's refund
+  payment_provider        String              @db.VarChar(15) // For charge
+  payment_session_id      String              // For charge
+  book_id                 String              // For buy book
+  is_refund               Int                 @db.SmallInt // Use when refunding bought book
+  is_sell                 Int                 @db.SmallInt // Use when writer sold book
+  is_income               Int                 @db.SmallInt // Use when user's point → money received
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

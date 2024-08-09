@@ -60,6 +60,7 @@ export const load = async ({ url, params, locals }) => {
 		userId,
 		pointSpend: bookBuyPoint.buy_point,
 		beforePointChargeAmount: 0,
+		paymentProvider: 'stripe',
 		paymentSessionId: '' // Because only use points
 	};
 	if (currentPoint >= bookBuyPoint.buy_point) {

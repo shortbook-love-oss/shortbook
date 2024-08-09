@@ -3,5 +3,7 @@ export interface PointListItem {
 	createdAt: Date;
 	bookId: string;
 	bookTitle: string;
+	paymentProvider: string;
 	paymentSessionId: string;
+	isSell: boolean;
 }

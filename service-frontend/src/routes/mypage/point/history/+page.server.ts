@@ -54,7 +54,9 @@ export const load = async ({ url, locals }) => {
 			createdAt: point.created_at,
 			bookId: point.book_id,
 			bookTitle,
-			paymentSessionId: point.payment_session_id
+			paymentProvider: point.payment_provider,
+			paymentSessionId: point.payment_session_id,
+			isSell: point.is_sell > 0
 		};
 	});
 

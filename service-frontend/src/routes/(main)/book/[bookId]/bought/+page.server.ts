@@ -50,7 +50,7 @@ export const load = async ({ url, params }) => {
 	}
 
 	if (isCreateCustomer) {
-		const { paymentContract, dbError: dbContractError } = await dbUserPaymentContractCreate({
+		const { dbError: dbContractError } = await dbUserPaymentContractCreate({
 			userId: bookPaymentInfo.userId,
 			providerKey: 'stripe',
 			customerId

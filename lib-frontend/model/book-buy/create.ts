@@ -1,4 +1,5 @@
 import prisma from '$lib/prisma/connect';
+import type { paymentProviders } from '$lib/utilities/payment';
 
 export interface DbBookBuyCreateRequest {
 	bookId: string;
@@ -7,6 +8,7 @@ export interface DbBookBuyCreateRequest {
 	pointSpend: number;
 	// For point charge
 	beforePointChargeAmount: number;
+	paymentProvider: (typeof paymentProviders)[number]['key'];
 	paymentSessionId: string;
 }
 
@@ -24,32 +26,43 @@ export async function dbBookBuyCreate(req: DbBookBuyCreateRequest) {
 						user_id: req.userId,
 						amount: req.beforePointChargeAmount,
 						book_id: '',
+						payment_provider: req.paymentProvider,
 						payment_session_id: req.paymentSessionId,
+						is_refund: 0,
+						is_sell: 0,
+						is_income: 0,
 						created_at: createdAt,
 						updated_at: createdAt
 					}
 				});
 				createdAt.setMilliseconds(createdAt.getMilliseconds() + 1);
 			}
-			// Writer's point charge
-			await tx.user_points.create({
-				data: {
-					user_id: req.writeUserId,
-					amount: req.pointSpend,
-					book_id: req.bookId,
-					payment_session_id: '',
-					created_at: createdAt,
-					updated_at: createdAt
-				}
-			});
-			createdAt.setMilliseconds(createdAt.getMilliseconds() + 1);
 			// Reader's point spend
 			await tx.user_points.create({
 				data: {
 					user_id: req.userId,
 					amount: -req.pointSpend,
 					book_id: req.bookId,
+					payment_provider: '',
 					payment_session_id: '',
+					is_refund: 0,
+					is_sell: 0,
+					is_income: 0,
+					created_at: createdAt,
+					updated_at: createdAt
+				}
+			});
+			// Writer's point charge
+			await tx.user_points.create({
+				data: {
+					user_id: req.writeUserId,
+					amount: req.pointSpend,
+					book_id: req.bookId,
+					payment_provider: '',
+					payment_session_id: '',
+					is_refund: 0,
+					is_sell: 1,
+					is_income: 0,
 					created_at: createdAt,
 					updated_at: createdAt
 				}
