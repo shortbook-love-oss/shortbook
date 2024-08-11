@@ -50,23 +50,23 @@
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
 >
-	<Select
-		bind:value={$form.currencyKey}
-		name="currencyKey"
-		list={data.currencyList}
-		label="Payment currency"
-		errorMessages={$errors.currencyKey}
-		className="mb-8 max-w-72"
-	/>
-	{#if isEnableJS && currencyData}
-		<p class="mb-2">Suggest your currency by URL ...</p>
-		<!-- <SubmitButton type="button" className="mb-8">Set currency to {data.suggestCurrency}</SubmitButton> -->
-		<button
-			type="button"
-			class="mb-10 rounded-lg border border-primary-500 bg-primary-50 px-3 py-2 text-lg hover:bg-primary-100 focus:bg-primary-100"
-			on:click={() => setCurrency(currencyData.key)}
-		>
-			Set currency to {currencyData.label}
-		</button>
-	{/if}
+	<div class="mb-8 flex flex-wrap items-end gap-3">
+		<Select
+			bind:value={$form.currencyKey}
+			name="currencyKey"
+			list={data.currencyList}
+			label="Payment currency"
+			errorMessages={$errors.currencyKey}
+			className="max-w-64"
+		/>
+		{#if isEnableJS && currencyData}
+			<button
+				type="button"
+				class="rounded border border-primary-600 bg-primary-50 px-3 py-1.5 text-lg hover:bg-primary-100 focus:bg-primary-100"
+				on:click={() => setCurrency(currencyData.key)}
+			>
+				Set to {currencyData.label}
+			</button>
+		{/if}
+	</div>
 </Form>

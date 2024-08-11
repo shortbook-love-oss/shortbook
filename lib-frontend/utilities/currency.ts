@@ -32,7 +32,7 @@ export const currencySelect: SelectItem<string>[] = currencySupports.map((curren
 }));
 
 export const currencyAndNoSelect: SelectItem<string>[] = [
-	{ value: '', label: 'Auto ... select at each payment' },
+	{ value: '', label: 'Select at each payment' },
 	...currencySelect
 ];
 
