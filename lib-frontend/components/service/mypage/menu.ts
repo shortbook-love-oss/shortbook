@@ -22,6 +22,11 @@ export const categories: MypageItem[] = [
 		]
 	},
 	{
+		name: 'Payment',
+		href: 'payment',
+		childs: [{ name: 'Currency', href: 'currency' }]
+	},
+	{
 		name: 'Point',
 		href: 'point',
 		childs: [{ name: 'Point history', href: 'history' }]

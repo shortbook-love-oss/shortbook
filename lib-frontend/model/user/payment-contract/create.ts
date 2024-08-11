@@ -18,12 +18,6 @@ export async function dbUserPaymentContractCreate(req: DbUserPaymentContractCrea
 				provider_customer_id: req.customerId
 			}
 		})
-		.then((paymentContract) => {
-			if (!paymentContract) {
-				throw new Error();
-			}
-			return paymentContract;
-		})
 		.catch(() => {
 			dbError ??= new Error(`Failed to create user payment reference. User ID=${req.userId}`);
 			return undefined;

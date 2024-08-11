@@ -29,6 +29,7 @@ model User {
   profiles                user_profiles?
   points                  user_points[]
   fans                    user_fans[]
+  payment_setting         user_payment_settings?
   payment_contracts       user_payment_contracts[]
   books                   books[]
   book_buys               book_buys[]
@@ -156,6 +157,17 @@ model user_fans {
   id                      String              @id @default(cuid())
   target_user_id          String
   support_user_id         String
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model user_payment_settings {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String              @unique
+  currency                String              @db.VarChar(3)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

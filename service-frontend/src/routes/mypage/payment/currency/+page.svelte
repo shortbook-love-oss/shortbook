@@ -1,0 +1,72 @@
+<script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+	import { superForm } from 'sveltekit-superforms';
+	import { zod } from 'sveltekit-superforms/adapters';
+	import { page } from '$app/stores';
+	import { schema } from '$lib/validation/schema/user/currency-update';
+	import Form from '$lib/components/modules/form/form.svelte';
+	import Select from '$lib/components/modules/form/select.svelte';
+	import TextArea from '$lib/components/modules/form/text-area.svelte';
+	import TextField from '$lib/components/modules/form/text-field.svelte';
+	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
+	import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
+
+	export let data;
+
+	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
+		resetForm: false, // Prevents reverting to initial value after submission
+		validators: zod(schema)
+	});
+	// Validate and set enable/disable submit button when the input value changes
+	let hasVaild = true;
+	function validateBackground() {
+		validateForm().then((result) => (hasVaild = result.valid));
+	}
+	const formObserver = form.subscribe(() => validateBackground());
+	onMount(() => validateBackground());
+	onDestroy(() => formObserver());
+
+	let isEnableJS = false;
+	onMount(() => (isEnableJS = true));
+
+	const currencyData = getCurrencyData(data.suggestCurrency);
+	function setCurrency(currencyKey: CurrencySupportKeys) {
+		$form.currencyKey = currencyKey;
+	}
+</script>
+
+<svelte:head>
+	<title>Change currency | ShortBook</title>
+</svelte:head>
+
+<h1 class="mb-4 text-2xl font-semibold">Change currency</h1>
+<Form
+	method="POST"
+	action={$page.url.pathname}
+	{enhance}
+	hasInvalid={!hasVaild}
+	isLoading={$submitting}
+	submitLabel="Save currency"
+	successMessage={$page.status === 200 ? $message : ''}
+	errorMessage={$page.status === 400 ? $message : ''}
+>
+	<Select
+		bind:value={$form.currencyKey}
+		name="currencyKey"
+		list={data.currencyList}
+		label="Payment currency"
+		errorMessages={$errors.currencyKey}
+		className="mb-8 max-w-72"
+	/>
+	{#if isEnableJS && currencyData}
+		<p class="mb-2">Suggest your currency by URL ...</p>
+		<!-- <SubmitButton type="button" className="mb-8">Set currency to {data.suggestCurrency}</SubmitButton> -->
+		<button
+			type="button"
+			class="mb-10 rounded-lg border border-primary-500 bg-primary-50 px-3 py-2 text-lg hover:bg-primary-100 focus:bg-primary-100"
+			on:click={() => setCurrency(currencyData.key)}
+		>
+			Set currency to {currencyData.label}
+		</button>
+	{/if}
+</Form>
