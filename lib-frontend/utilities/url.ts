@@ -1,11 +1,11 @@
 import { i18n } from '$lib/i18n/i18n';
-import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 export const callbackParam = 'callbackUrl';
 export const paymentBookInfoParam = 'bookInfo';
 export const paymentSessionIdParam = 'sessionId';
 export const signConfirmTokenParam = 'enjoyYourShortBookLife';
+export const paymentCurrencyParam = 'currency';
 
 // "/de/mypage/personnel" → "de"
 // "/mypage/personnel" → "en"

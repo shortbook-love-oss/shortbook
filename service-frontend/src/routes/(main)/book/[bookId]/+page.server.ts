@@ -2,6 +2,13 @@ import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyGet } from '$lib/model/book-buy/get';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
+import { getConvertedCurrencies } from '$lib/utilities/server/currency';
+import {
+	currencySupports,
+	defaultCurrency,
+	type CurrencySupportKeys
+} from '$lib/utilities/currency';
+import { shortbookChargeFee } from '$lib/utilities/payment';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, locals, params }) => {
@@ -44,6 +51,36 @@ export const load = async ({ url, locals, params }) => {
 		return error(404, { message: 'Not found' });
 	}
 
+	// [
+	// 	 { key: 'usd', label: 'USD 1.09' },
+	// 	 { key: 'eur', label: 'EUR 1.00' },
+	//   ...
+	// ]
+	const currencyPreviews: { key: CurrencySupportKeys; label: string }[] = [];
+	if (!isBoughtBook && buyPoint > 0 && !isOwn) {
+		const currencySupportKeys = currencySupports.map((c) => c.key);
+		const converted = await getConvertedCurrencies(
+			buyPoint,
+			defaultCurrency.key,
+			currencySupportKeys
+		);
+		for (const currencyData of currencySupports) {
+			const keyConverted = converted[currencyData.key];
+			if (keyConverted) {
+				// Same as actual payment amount
+				let paymentAmount =
+					Math.floor(100 * (100 / (100 - shortbookChargeFee)) * keyConverted) / 100;
+				if (!currencyData.allowDecimal || currencyData.rule00) {
+					paymentAmount = Math.floor(paymentAmount);
+				}
+				currencyPreviews.push({
+					key: currencyData.key,
+					label: `${currencyData.label} ${paymentAmount}`
+				});
+			}
+		}
+	}
+
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
 		subtitle: bookLang?.subtitle ?? '',
@@ -83,5 +120,5 @@ export const load = async ({ url, locals, params }) => {
 		bookDetail.salesMessage = await contentsToMarkdown(bookLang?.sales_message ?? '');
 	}
 
-	return { bookDetail, requestLang, profileLang, isOwn, isBoughtBook, buyPoint };
+	return { bookDetail, requestLang, profileLang, isOwn, isBoughtBook, buyPoint, currencyPreviews };
 };
