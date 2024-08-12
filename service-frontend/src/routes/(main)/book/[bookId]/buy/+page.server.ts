@@ -34,7 +34,7 @@ export const load = async ({ url, params, locals }) => {
 		env.ENCRYPT_SALT
 	);
 	const callbackUrl =
-		url.origin + setLanguageTagToPath(`/book/${bookId}${url.search}`, requestLang);
+		url.origin + setLanguageTagToPath(`/book/${bookId}`, requestLang);
 
 	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
 	if (dbBookBuyError) {
