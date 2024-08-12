@@ -11,11 +11,12 @@ import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
 import { sendRateLimitPerHour, logActionName, contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
+import { getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
 
-export const load = async ({ getClientAddress }) => {
+export const load = async ({ url, getClientAddress }) => {
 	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
 	const form = await superValidate(zod(schema));
+	const categoryAutoSelect = url.searchParams.get(inquiryCategoryParam);
 
 	// Disable submit button if rate limit exceeded
 	const before1Hour = new Date();
@@ -30,7 +31,17 @@ export const load = async ({ getClientAddress }) => {
 	}
 	const isHitLimitRate = logActions.length > sendRateLimitPerHour;
 
-	form.data.categoryKeyName = contactCategorySelect[0].value;
+	let initCategoryKey = contactCategorySelect[0].value;
+	if (categoryAutoSelect) {
+		for (const item of contactCategorySelect) {
+			if (item.value === categoryAutoSelect) {
+				initCategoryKey = item.value;
+				break;
+			}
+		}
+	}
+
+	form.data.categoryKeyName = initCategoryKey;
 	form.data.email = '';
 	form.data.description = '';
 

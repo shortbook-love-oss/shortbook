@@ -6,6 +6,7 @@ export const paymentBookInfoParam = 'bookInfo';
 export const paymentSessionIdParam = 'sessionId';
 export const signConfirmTokenParam = 'enjoyYourShortBookLife';
 export const paymentCurrencyParam = 'currency';
+export const inquiryCategoryParam = 'category';
 
 // "/de/mypage/personnel" → "de"
 // "/mypage/personnel" → "en"
