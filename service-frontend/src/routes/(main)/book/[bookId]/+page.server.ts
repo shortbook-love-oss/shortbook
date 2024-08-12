@@ -1,9 +1,14 @@
 import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyGet } from '$lib/model/book-buy/get';
+import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import { getConvertedCurrencies } from '$lib/utilities/server/currency';
-import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
+import {
+	defaultCurrency,
+	guessCurrencyByLang,
+	type CurrencySupportKeys
+} from '$lib/utilities/currency';
 import { calcPriceByPoint } from '$lib/utilities/payment';
 import type { SelectItem } from '$lib/utilities/select';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
@@ -12,12 +17,12 @@ export const load = async ({ url, locals, params }) => {
 	const userId = locals.session?.user?.id;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { book, dbError } = await dbBookGet({
+	const { book, dbError: dbBookGetError } = await dbBookGet({
 		bookId: params.bookId,
 		isIncludeDelete: true
 	});
-	if (!book || !book.cover || dbError) {
-		return error(500, { message: dbError?.message ?? '' });
+	if (!book || !book.cover || dbBookGetError) {
+		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 	let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
 	if (!bookLang && book.languages.length) {
@@ -27,6 +32,21 @@ export const load = async ({ url, locals, params }) => {
 	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
 	if (!profileLang && profile?.languages.length) {
 		profileLang = profile.languages[0];
+	}
+
+	let primaryCurrency: CurrencySupportKeys = defaultCurrency.key;
+	if (userId) {
+		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
+		if (dbPayGetError) {
+			return error(500, { message: dbPayGetError.message });
+		}
+		if (paymentSetting?.currency) {
+			primaryCurrency = paymentSetting.currency as CurrencySupportKeys;
+		} else {
+			primaryCurrency = guessCurrencyByLang(requestLang);
+		}
+	} else {
+		primaryCurrency = guessCurrencyByLang(requestLang);
 	}
 
 	// Check buy book if it's paid and written by another
@@ -94,5 +114,14 @@ export const load = async ({ url, locals, params }) => {
 		bookDetail.salesMessage = await contentsToMarkdown(bookLang?.sales_message ?? '');
 	}
 
-	return { bookDetail, requestLang, profileLang, isOwn, isBoughtBook, buyPoint, currencyPreviews };
+	return {
+		bookDetail,
+		requestLang,
+		profileLang,
+		isOwn,
+		isBoughtBook,
+		buyPoint,
+		currencyPreviews,
+		primaryCurrency
+	};
 };

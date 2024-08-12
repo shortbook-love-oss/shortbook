@@ -2,11 +2,10 @@
 	import IconCheck from '~icons/mdi/check';
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconWarning from '~icons/mdi/warning';
-	import { page } from '$app/stores';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
-	import { paymentCurrencyParam, removeLanguageTagFromPath } from '$lib/utilities/url';
+	import BuyDialog from '$lib/components/service/read/buy-dialog.svelte';
 
 	export let data;
 
@@ -96,22 +95,18 @@
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
-			<div class="rounded-lg bg-gradient-to-br from-red-100 to-primary-200 px-6 pb-8 pt-6">
+			<div class="rounded-lg bg-primary-100 px-6 pb-8 pt-6">
 				<h2 class="mb-8 text-2xl font-semibold">Buy this book</h2>
 				{#if data.bookDetail.salesMessage}
 					<section class="article_content mb-8 text-lg">
 						{@html data.bookDetail.salesMessage}
 					</section>
 				{/if}
-				<div class="flex flex-wrap items-center gap-4">
-					{#each data.currencyPreviews as currency}
-						<a
-							href="/book/{data.bookDetail.id}/buy?{paymentCurrencyParam}={currency.value}"
-							class="inline-block rounded-lg bg-primary-200 px-3 py-2 text-lg hover:bg-primary-300 focus:bg-primary-300"
-							data-sveltekit-reload>{currency.label}</a
-						>
-					{/each}
-				</div>
+				<BuyDialog
+					bookId={data.bookDetail.id}
+					currencyList={data.currencyPreviews}
+					primaryCurrency={data.primaryCurrency}
+				/>
 			</div>
 		{/if}
 	</div>
