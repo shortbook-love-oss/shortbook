@@ -24,14 +24,18 @@ export const currencySupports = [
 
 export const defaultCurrency = currencySupports[0];
 
+export const currencySupportKeys = currencySupports.map((currency) => currency.key);
+
 export type CurrencySupportKeys = (typeof currencySupports)[number]['key'];
 
-export const currencySelect: SelectItem<string>[] = currencySupports.map((currency) => ({
-	value: currency.key,
-	label: currency.label
-}));
+export const currencySelect: SelectItem<CurrencySupportKeys>[] = currencySupports.map(
+	(currency) => ({
+		value: currency.key,
+		label: currency.label
+	})
+);
 
-export const currencyAndNoSelect: SelectItem<string>[] = [
+export const currencyAndNoSelect: SelectItem<CurrencySupportKeys | ''>[] = [
 	{ value: '', label: 'Select at each payment' },
 	...currencySelect
 ];
@@ -81,4 +85,15 @@ export function guessCurrencyByLang(langTag: AvailableLanguageTags) {
 	}
 
 	return suggestCurrency;
+}
+
+// USD 1.49 → 1.49 (ok)
+// USD 1.493 → 1.49 (should be to two decimal places)
+// JPY 78.9 → 78 (not allow decimal)
+export function getLocalizedPrice(originPrice: number, isAllowDecimal: boolean) {
+	if (isAllowDecimal) {
+		return Math.floor(originPrice * 100) / 100;
+	} else {
+		return Math.floor(originPrice);
+	}
 }

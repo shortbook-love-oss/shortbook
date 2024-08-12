@@ -106,7 +106,7 @@
 				<div class="flex flex-wrap items-center gap-4">
 					{#each data.currencyPreviews as currency}
 						<a
-							href="/book/{data.bookDetail.id}/buy?{paymentCurrencyParam}={currency.key}"
+							href="/book/{data.bookDetail.id}/buy?{paymentCurrencyParam}={currency.value}"
 							class="inline-block rounded-lg bg-primary-200 px-3 py-2 text-lg hover:bg-primary-300 focus:bg-primary-300"
 							data-sveltekit-reload>{currency.label}</a
 						>

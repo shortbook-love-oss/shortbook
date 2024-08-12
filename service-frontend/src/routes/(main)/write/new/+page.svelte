@@ -10,6 +10,7 @@
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
+	import PricePreview from '$lib/components/service/write/price-preview.svelte';
 
 	export let data;
 
@@ -111,12 +112,19 @@
 				className="mb-8"
 			/>
 			<TextField
-				bind:value={$form.buyPoint}
+				min="50"
+				max="1000000"
 				type="number"
+				bind:value={$form.buyPoint}
 				name="buyPoint"
 				label="Selling point"
 				errorMessages={$errors.buyPoint}
-				className="max-w-40"
+				className="mb-8 max-w-40"
+			/>
+			<PricePreview
+				point={$form.buyPoint}
+				selectedCurrencyKey={data.selectedCurrencyKey}
+				currencyRates={data.currencyRates}
 			/>
 		</div>
 		<div class="shrink-0 lg:w-48">

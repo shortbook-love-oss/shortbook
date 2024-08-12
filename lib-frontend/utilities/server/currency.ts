@@ -1,9 +1,8 @@
-import type { CurrencySupportKeys } from '$lib/utilities/currency';
+import { currencySupportKeys, type CurrencySupportKeys } from '$lib/utilities/currency';
 
 export async function getConvertedCurrencies(
-	baseAmount: number,
-	fromCurrency: CurrencySupportKeys,
-	wantCurrencies: CurrencySupportKeys[]
+	pointAmount: number,
+	fromCurrency: CurrencySupportKeys
 ) {
 	// Convert to other currencies by https://github.com/fawazahmed0/exchange-api
 	// Currency rates updated daily at 12:00 UTC
@@ -26,13 +25,16 @@ export async function getConvertedCurrencies(
 			.then((res) => res.json())
 			.catch(() => null);
 	}
+	if (!result?.usd) {
+		return {};
+	}
 
 	const matchCurrencies: Partial<Record<CurrencySupportKeys, number>> = {};
 	if (result?.usd) {
 		const resultFrom: Record<string, number> = result.usd;
-		for (const wantCurrency of wantCurrencies) {
+		for (const wantCurrency of currencySupportKeys) {
 			if (Object.hasOwn(resultFrom, wantCurrency)) {
-				matchCurrencies[wantCurrency] = (baseAmount / 100) * resultFrom[wantCurrency];
+				matchCurrencies[wantCurrency] = (pointAmount / 100) * resultFrom[wantCurrency];
 			}
 		}
 	}

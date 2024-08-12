@@ -1,12 +1,8 @@
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
 import { getConvertedCurrencies } from '$lib/utilities/server/currency';
-import {
-	defaultCurrency,
-	getCurrencyData,
-	type CurrencySupportKeys
-} from '$lib/utilities/currency';
-import { shortbookChargeFee } from '$lib/utilities/payment';
+import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
+import { decidePaymentAmount, shortbookChargeFee } from '$lib/utilities/payment';
 import { paymentSessionIdParam } from '$lib/utilities/url';
 
 /** Don't call from client-side code */
@@ -36,7 +32,11 @@ export async function createPaymentSession(
 		successUrlWithSession += `?${paymentSessionIdParam}={CHECKOUT_SESSION_ID}`;
 	}
 
-	const paymentAmount = (await decidePaymentAmount(pointAmount, [currency]))[currency];
+	// Need 1/0.91≒1.0989... USD to buy 100 point
+	// Need {pointAmount/100}/0.91 USD to buy {pointAmount} point
+	const paymentAmountBase = pointAmount / (100 - shortbookChargeFee);
+	const currencyConverted = await getConvertedCurrencies(paymentAmountBase, defaultCurrency.key);
+	const paymentAmount = (await decidePaymentAmount(currencyConverted))[currency];
 	if (!paymentAmount) {
 		// Doesn't support currency, just reload the page
 		return { url: null };
@@ -105,56 +105,4 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 		isCreateCustomer: checkoutSession.customer_creation != null,
 		isAvailable: checkoutSession.payment_status !== 'unpaid'
 	};
-}
-
-// Payment request ... $100 * (100 / (100 - shortbookChargeFee)) → 10,000 points
-// Any fractional amounts invoiced will be rounded down
-export async function decidePaymentAmount(
-	pointAmount: number,
-	wantCurrencies: CurrencySupportKeys[]
-) {
-	// Need 1/0.91≒1.0989... USD to buy 100 point
-	// Need {pointAmount/100}/0.91 USD to buy {pointAmount} point
-	const paymentAmountBase = pointAmount / (100 - shortbookChargeFee);
-	const currencyConverted = await getConvertedCurrencies(
-		paymentAmountBase,
-		defaultCurrency.key,
-		wantCurrencies
-	);
-
-	const amountByCurrencies: Partial<Record<CurrencySupportKeys, string>> = {};
-	for (const wantCurrency of wantCurrencies) {
-		const currencyData = getCurrencyData(wantCurrency);
-		if (!currencyData) {
-			continue;
-		}
-		let paymentAmount = '';
-		if (currencyData.allowDecimal) {
-			if (currencyData.rule00) {
-				// "45600" Only used by ISK (Island)
-				paymentAmount = String(
-					Math.floor((currencyConverted[currencyData.key] as number) * 100) * 100
-				);
-			} else {
-				// "45678"
-				paymentAmount = String(
-					Math.floor((currencyConverted[currencyData.key] as number) * 100 * 100)
-				);
-			}
-		} else {
-			if (currencyData.rule00) {
-				// "45600" Only used by UGX (Uganda)
-				// The currency rate is high, so it is not divided by 100
-				paymentAmount = String(
-					Math.floor((currencyConverted[currencyData.key] as number) * 100) * 100
-				);
-			} else {
-				// "456"
-				paymentAmount = String(Math.floor((currencyConverted[currencyData.key] as number) * 100));
-			}
-		}
-		amountByCurrencies[currencyData.key] = paymentAmount;
-	}
-
-	return amountByCurrencies;
 }

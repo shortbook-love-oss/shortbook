@@ -2,8 +2,11 @@ import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbBookCreate } from '$lib/model/book/create';
+import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
+import { getConvertedCurrencies } from '$lib/utilities/server/currency';
 import { getBookCover } from '$lib/utilities/book';
+import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
 import { type AvailableLanguageTags, languageAndNotSelect } from '$lib/utilities/language';
 import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
@@ -18,11 +21,21 @@ export const load = async ({ url, locals }) => {
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
 
-	const { profile, dbError } = await dbUserProfileGet({ userId });
-	if (!profile || dbError) {
-		return error(500, { message: dbError?.message ?? '' });
+	const { profile, dbError: dbProfileGetError } = await dbUserProfileGet({ userId });
+	if (!profile || dbProfileGetError) {
+		return error(500, { message: dbProfileGetError?.message ?? '' });
 	}
 	const penName = profile.languages[0]?.pen_name ?? '';
+
+	const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
+	if (dbPayGetError) {
+		return error(500, { message: dbPayGetError.message });
+	}
+	const selectedCurrencyKey =
+		(paymentSetting?.currency as CurrencySupportKeys) ?? defaultCurrency.key;
+
+	// Show book price by all supported currencies
+	const currencyRates = await getConvertedCurrencies(1, defaultCurrency.key);
 
 	const bookCover = getBookCover({});
 	for (const coverProp in bookCover) {
@@ -35,7 +48,7 @@ export const load = async ({ url, locals }) => {
 	form.data.salesMessage = '';
 	form.data.buyPoint = 200;
 
-	return { form, penName, langTags };
+	return { form, penName, langTags, selectedCurrencyKey, currencyRates };
 };
 
 export const actions = {

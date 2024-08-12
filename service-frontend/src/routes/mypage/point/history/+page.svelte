@@ -1,7 +1,6 @@
 <script lang="ts">
 	import IconCash from '~icons/mdi/attach-money';
 	import { page } from '$app/stores';
-	import { getPaymentProvider } from '$lib/utilities/payment';
 	import type { PointListItem } from '$lib/utilities/point';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -12,8 +11,7 @@
 		if (point.isSell) {
 			return { amountSuffix: 'Sold', text: 'Sold', bgColor: 'bg-emerald-100' };
 		} else if (point.amount > 0) {
-			const providerName = getPaymentProvider(point.paymentProvider)?.label;
-			const text = providerName ? `Charged (${providerName})` : 'Charged';
+			const text = `Charged ($${Math.round(point.amount * 1.09) / 100})`;
 			return { amountSuffix: 'Charged', text, bgColor: 'bg-orange-100' };
 		}
 		return { amountSuffix: 'Spent', text: 'Bought', bgColor: 'bg-stone-200' };

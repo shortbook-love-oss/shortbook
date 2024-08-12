@@ -5,8 +5,11 @@ import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbBookDelete } from '$lib/model/book/delete';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbBookUpdate } from '$lib/model/book/update';
+import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
+import { getConvertedCurrencies } from '$lib/utilities/server/currency';
 import { getBookCover } from '$lib/utilities/book';
+import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
@@ -34,6 +37,16 @@ export const load = async ({ locals, params }) => {
 		return error(500, { message: profileDbError?.message ?? '' });
 	}
 	const penName = profile.languages[0]?.pen_name ?? '';
+
+	const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
+	if (dbPayGetError) {
+		return error(500, { message: dbPayGetError.message });
+	}
+	const selectedCurrencyKey =
+		(paymentSetting?.currency as CurrencySupportKeys) ?? defaultCurrency.key;
+
+	// Show book price by all supported currencies
+	const currencyRates = await getConvertedCurrencies(1, defaultCurrency.key);
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
@@ -63,7 +76,7 @@ export const load = async ({ locals, params }) => {
 	const initTitle = form.data.title;
 	const status = book?.status ?? 0;
 
-	return { form, penName, langTags, status, initTitle };
+	return { form, penName, langTags, status, initTitle, selectedCurrencyKey, currencyRates };
 };
 
 export const actions = {
