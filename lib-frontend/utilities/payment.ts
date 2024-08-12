@@ -7,8 +7,8 @@ import {
 } from '$lib/utilities/currency';
 import type { SelectItem } from '$lib/utilities/select';
 
-// Service fee is 9%
-export const shortbookChargeFee = 9;
+// Service fee is 8%
+export const shortbookChargeFee = 8;
 
 export const paymentProviders = [{ key: 'stripe', label: 'Stripe' }] as const;
 

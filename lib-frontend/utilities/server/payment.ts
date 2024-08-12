@@ -32,8 +32,7 @@ export async function createPaymentSession(
 		successUrlWithSession += `?${paymentSessionIdParam}={CHECKOUT_SESSION_ID}`;
 	}
 
-	// Need 1/0.91≒1.0989... USD to buy 100 point
-	// Need {pointAmount/100}/0.91 USD to buy {pointAmount} point
+	// Need 100 USD and service fee to buy 100 point
 	const paymentAmountBase = pointAmount / (100 - shortbookChargeFee);
 	const currencyConverted = await getConvertedCurrencies(paymentAmountBase, defaultCurrency.key);
 	const paymentAmount = (await decidePaymentAmount(currencyConverted))[currency];
