@@ -5,7 +5,8 @@
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
-	import BuyDialog from '$lib/components/service/read/buy-dialog.svelte';
+	import PaymentAction from '$lib/components/service/read/payment-action.svelte';
+	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
 
 	export let data;
 
@@ -95,19 +96,15 @@
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
-			<div class="rounded-lg bg-primary-100 px-6 pb-8 pt-6">
-				<h2 class="mb-8 text-2xl font-semibold">Buy this book</h2>
-				{#if data.bookDetail.salesMessage}
-					<section class="article_content mb-8 text-lg">
-						{@html data.bookDetail.salesMessage}
-					</section>
-				{/if}
-				<BuyDialog
-					bookId={data.bookDetail.id}
-					currencyList={data.currencyPreviews}
-					primaryCurrency={data.primaryCurrency}
-				/>
-			</div>
+			<SalesMessage image={data.bookDetail.image} message={data.bookDetail.salesMessage}>
+				<svelte:fragment slot="action">
+					<PaymentAction
+						bookId={data.bookDetail.id}
+						currencyList={data.currencyPreviews}
+						primaryCurrency={data.primaryCurrency}
+					/>
+				</svelte:fragment>
+			</SalesMessage>
 		{/if}
 	</div>
 	<div class="hidden shrink-0 lg:block lg:w-48">
