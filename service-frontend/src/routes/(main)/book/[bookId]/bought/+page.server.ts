@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
 import { dbUserPaymentContractCreate } from '$lib/model/user/payment-contract/create';
+import { dbUserPaymentSettingUpsert } from '$lib/model/user/payment-setting/upsert';
 import { decryptFromFlat } from '$lib/utilities/server/crypto';
 import { checkPaymentStatus } from '$lib/utilities/server/payment';
 import {
@@ -21,7 +22,7 @@ export const load = async ({ url, params }) => {
 
 	// /book/[bookId]/bought?sessionId=xxxxxxxxxx&bookInfo=xxxxxxxxxx
 	// @todo Block paymentSessionId that have already been used to eliminate potential vulnerabilities
-	const { paymentSessionId, customerId, isCreateCustomer, isAvailable } =
+	const { paymentSessionId, currency, customerId, isCreateCustomer, isAvailable } =
 		await checkPaymentStatus(paymentSessionIdRaw);
 	if (!isAvailable) {
 		return error(402, {
@@ -47,6 +48,16 @@ export const load = async ({ url, params }) => {
 	});
 	if (dbBookBuyError) {
 		return error(500, { message: dbBookBuyError?.message ?? '' });
+	}
+
+	if (currency) {
+		const { dbError } = await dbUserPaymentSettingUpsert({
+			userId: bookPaymentInfo.userId,
+			currencyKey: currency
+		});
+		if (dbError) {
+			return error(500, { message: dbError.message });
+		}
 	}
 
 	if (isCreateCustomer) {

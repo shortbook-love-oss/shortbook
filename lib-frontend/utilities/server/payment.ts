@@ -85,12 +85,8 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 		expand: ['line_items']
 	});
 
-	// checkoutSession.payment_status === 'no_payment_required'
-	// The payment is delayed to a future date, or the Checkout Session is in setup mode and doesn’t require a payment at this time.
-	// checkoutSession.payment_status === 'paid'
-	// The payment funds are available in your account.
-	// checkoutSession.payment_status === 'unpaid'
-	// The payment funds are not yet available in your account.
+	const currency = checkoutSession.currency?.toLowerCase() as CurrencySupportKeys | undefined;
+
 	let customerId = '';
 	if (typeof checkoutSession.customer === 'string') {
 		customerId = checkoutSession.customer;
@@ -98,8 +94,15 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 		customerId = checkoutSession.customer?.id ?? '';
 	}
 
+	// checkoutSession.payment_status === 'no_payment_required'
+	// The payment is delayed to a future date, or the Checkout Session is in setup mode and doesn’t require a payment at this time.
+	// checkoutSession.payment_status === 'paid'
+	// The payment funds are available in your account.
+	// checkoutSession.payment_status === 'unpaid'
+	// The payment funds are not yet available in your account.
 	return {
 		paymentSessionId: checkoutSession.id,
+		currency,
 		customerId,
 		isCreateCustomer: checkoutSession.customer_creation != null,
 		isAvailable: checkoutSession.payment_status !== 'unpaid'
