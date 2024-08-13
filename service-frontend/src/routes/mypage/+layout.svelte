@@ -19,7 +19,7 @@
 		</div>
 		<div class="flex items-center gap-1 border-b-2 border-primary-700 bg-white sm:hidden">
 			<Overlay name="mypage">
-				<Nav />
+				<Nav className="px-4" />
 			</Overlay>
 			<p class="pe-4 text-xl">Mypage</p>
 		</div>
