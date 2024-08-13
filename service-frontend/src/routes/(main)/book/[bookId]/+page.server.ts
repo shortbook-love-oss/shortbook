@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyGet } from '$lib/model/book-buy/get';
 import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
+import { dbUserPointList } from '$lib/model/user/point/list';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import { getConvertedCurrencies } from '$lib/utilities/server/currency';
 import {
@@ -53,6 +54,9 @@ export const load = async ({ url, locals, params }) => {
 	const buyPoint = book.buy_point;
 	const isOwn = userId === book.user_id;
 	let isBoughtBook = false;
+	// Can user buy books using only the points have
+	let hasEnoughPoint = false;
+	let userPoint = 0;
 	if (userId && !isBoughtBook && buyPoint > 0 && !isOwn) {
 		const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({
 			userId,
@@ -62,6 +66,12 @@ export const load = async ({ url, locals, params }) => {
 			return error(500, { message: dbBookBuyError?.message ?? '' });
 		}
 		isBoughtBook = !!bookBuy;
+		const { currentPoint, dbError: dbPointListError } = await dbUserPointList({ userId });
+		if (dbPointListError) {
+			return error(500, { message: dbPointListError?.message ?? '' });
+		}
+		hasEnoughPoint = currentPoint >= buyPoint;
+		userPoint = currentPoint;
 	}
 
 	if (book.deleted_at != null && !isBoughtBook) {
@@ -69,8 +79,9 @@ export const load = async ({ url, locals, params }) => {
 	}
 
 	let currencyPreviews: SelectItem<CurrencySupportKeys>[] = [];
-	if (!isBoughtBook && buyPoint > 0 && !isOwn) {
+	if (!isBoughtBook && buyPoint > 0 && !isOwn && !hasEnoughPoint) {
 		// Show book price by all supported currencies
+		// Skip check if buy with points only
 		const converted = await getConvertedCurrencies(buyPoint, defaultCurrency.key);
 		currencyPreviews = calcPriceByPoint(converted, requestLang);
 	}
@@ -95,6 +106,7 @@ export const load = async ({ url, locals, params }) => {
 		id: book.id,
 		userId: book.user_id,
 		status: book.status,
+		buyPoint,
 		title: bookLang?.title ?? '',
 		subtitle: bookLang?.subtitle ?? '',
 		publishedAt: book.published_at,
@@ -120,7 +132,8 @@ export const load = async ({ url, locals, params }) => {
 		profileLang,
 		isOwn,
 		isBoughtBook,
-		buyPoint,
+		hasEnoughPoint,
+		userPoint,
 		currencyPreviews,
 		primaryCurrency
 	};

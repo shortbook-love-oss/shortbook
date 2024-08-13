@@ -91,18 +91,27 @@
 			</section>
 			<hr class="my-8 border-stone-300" />
 		{/if}
-		{#if data.isBoughtBook || data.buyPoint === 0 || data.isOwn}
+		{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
 			<section class="article_content text-lg">
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
 			<SalesMessage image={data.bookDetail.image} message={data.bookDetail.salesMessage}>
 				<svelte:fragment slot="action">
-					<PaymentAction
-						bookId={data.bookDetail.id}
-						currencyList={data.currencyPreviews}
-						primaryCurrency={data.primaryCurrency}
-					/>
+					{#if data.hasEnoughPoint}
+						<a
+							href="/book/{data.bookDetail.id}/buy"
+							class="mb-2 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
+							data-sveltekit-reload>Buy for {data.bookDetail.buyPoint} point</a
+						>
+						<p>You have {data.userPoint} point.</p>
+					{:else}
+						<PaymentAction
+							bookId={data.bookDetail.id}
+							currencyList={data.currencyPreviews}
+							primaryCurrency={data.primaryCurrency}
+						/>
+					{/if}
 				</svelte:fragment>
 			</SalesMessage>
 		{/if}

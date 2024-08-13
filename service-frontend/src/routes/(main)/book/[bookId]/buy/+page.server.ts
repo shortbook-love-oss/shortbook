@@ -21,10 +21,6 @@ export const load = async ({ url, params, locals }) => {
 	if (!userId) {
 		return redirectToSignInPage(url);
 	}
-	const requestCurrency = url.searchParams.get(paymentCurrencyParam);
-	if (!requestCurrency || !getCurrencyData(requestCurrency)) {
-		return error(400, { message: 'Currency must be specified.' });
-	}
 	const requestLang = getLanguageTagFromUrl(url);
 	const bookId = params.bookId;
 
@@ -75,20 +71,26 @@ export const load = async ({ url, params, locals }) => {
 		}
 		redirect(303, callbackUrl);
 	}
+
+	const requestCurrency = url.searchParams.get(paymentCurrencyParam);
+	if (!requestCurrency || !getCurrencyData(requestCurrency)) {
+		return error(400, { message: 'Currency must be specified.' });
+	}
+
 	// Need 456 points → charge 456 points
 	// Need 8000 points → charge 8000 points
 	dbBookBuyCreateReq.beforePointChargeAmount = book.buy_point;
-
-	// If do not have enough points, use Stripe Checkout.
-	const afterPaymentUrl = new URL(
-		url.origin + setLanguageTagToPath(`/book/${params.bookId}/bought`, requestLang)
-	);
 	const bookPaymentInfo = encryptAndFlat(
 		JSON.stringify(dbBookBuyCreateReq),
 		env.ENCRYPT_PAYMENT_BOOK_INFO,
 		env.ENCRYPT_SALT
 	);
+	// If do not have enough points, use Stripe Checkout.
+	const afterPaymentUrl = new URL(
+		url.origin + setLanguageTagToPath(`/book/${params.bookId}/bought`, requestLang)
+	);
 	afterPaymentUrl.searchParams.set(paymentBookInfoParam, bookPaymentInfo);
+
 	const paymentSession = await createPaymentSession(
 		'ShortBook point charge',
 		`Charge ${dbBookBuyCreateReq.beforePointChargeAmount} points for ShortBook`,

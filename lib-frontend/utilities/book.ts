@@ -34,6 +34,7 @@ export interface BookItem extends MyBookItem {
 }
 
 export interface BookDetail extends BookItem {
+	buyPoint: number;
 	prologue: string;
 	content: string;
 	salesMessage: string;
