@@ -2,7 +2,11 @@ import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
 import { getConvertedCurrencies } from '$lib/utilities/server/currency';
 import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
-import { decidePaymentAmount, shortbookChargeFee } from '$lib/utilities/payment';
+import {
+	decidePaymentAmountForStripe,
+	reversePaymentAmountOfStripe,
+	shortbookChargeFee
+} from '$lib/utilities/payment';
 import { paymentSessionIdParam } from '$lib/utilities/url';
 
 /** Don't call from client-side code */
@@ -35,7 +39,7 @@ export async function createPaymentSession(
 	// Need 100 USD and service fee to buy 100 point
 	const paymentAmountBase = pointAmount / (100 - shortbookChargeFee);
 	const currencyConverted = await getConvertedCurrencies(paymentAmountBase, defaultCurrency.key);
-	const paymentAmount = (await decidePaymentAmount(currencyConverted))[currency];
+	const paymentAmount = (await decidePaymentAmountForStripe(currencyConverted))[currency];
 	if (!paymentAmount) {
 		// Doesn't support currency, just reload the page
 		return { url: null };
@@ -85,7 +89,14 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 		expand: ['line_items']
 	});
 
-	const currency = checkoutSession.currency?.toLowerCase() as CurrencySupportKeys | undefined;
+	let actuallyAmount = 0;
+	if (checkoutSession.currency) {
+		actuallyAmount =
+			reversePaymentAmountOfStripe(
+				checkoutSession.currency as CurrencySupportKeys,
+				checkoutSession.amount_total ?? 0
+			) ?? actuallyAmount;
+	}
 
 	let customerId = '';
 	if (typeof checkoutSession.customer === 'string') {
@@ -102,7 +113,8 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 	// The payment funds are not yet available in your account.
 	return {
 		paymentSessionId: checkoutSession.id,
-		currency,
+		currency: (checkoutSession.currency ?? '') as CurrencySupportKeys | '',
+		amount: actuallyAmount,
 		customerId,
 		isCreateCustomer: checkoutSession.customer_creation != null,
 		isAvailable: checkoutSession.payment_status !== 'unpaid'

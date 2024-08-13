@@ -8,8 +8,12 @@ export interface DbBookBuyCreateRequest {
 	pointSpend: number;
 	// For point charge
 	beforePointChargeAmount: number;
-	paymentProvider: (typeof paymentProviders)[number]['key'];
-	paymentSessionId: string;
+	payment?: {
+		provider: (typeof paymentProviders)[number]['key'];
+		sessionId: string;
+		currency: string;
+		amount: number;
+	};
 }
 
 export async function dbBookBuyCreate(req: DbBookBuyCreateRequest) {
@@ -19,15 +23,26 @@ export async function dbBookBuyCreate(req: DbBookBuyCreateRequest) {
 
 	await prisma
 		.$transaction(async (tx) => {
-			if (req.beforePointChargeAmount) {
+			if (req.payment) {
 				// Reader's point charge
+				const checkout = await tx.user_payment_checkouts.create({
+					data: {
+						user_id: req.userId,
+						provider_key: req.payment.provider,
+						session_id: req.payment.sessionId,
+						currency: req.payment.currency,
+						amount: req.payment.amount,
+						is_refund: 0,
+						created_at: createdAt,
+						updated_at: createdAt
+					}
+				});
 				await tx.user_points.create({
 					data: {
 						user_id: req.userId,
+						payment_checkout_id: checkout.id,
 						amount: req.beforePointChargeAmount,
 						book_id: '',
-						payment_provider: req.paymentProvider,
-						payment_session_id: req.paymentSessionId,
 						is_refund: 0,
 						is_sell: 0,
 						is_income: 0,
@@ -41,10 +56,9 @@ export async function dbBookBuyCreate(req: DbBookBuyCreateRequest) {
 			await tx.user_points.create({
 				data: {
 					user_id: req.userId,
+					payment_checkout_id: '',
 					amount: -req.pointSpend,
 					book_id: req.bookId,
-					payment_provider: '',
-					payment_session_id: '',
 					is_refund: 0,
 					is_sell: 0,
 					is_income: 0,
@@ -56,10 +70,9 @@ export async function dbBookBuyCreate(req: DbBookBuyCreateRequest) {
 			await tx.user_points.create({
 				data: {
 					user_id: req.writeUserId,
+					payment_checkout_id: '',
 					amount: req.pointSpend,
 					book_id: req.bookId,
-					payment_provider: '',
-					payment_session_id: '',
 					is_refund: 0,
 					is_sell: 1,
 					is_income: 0,

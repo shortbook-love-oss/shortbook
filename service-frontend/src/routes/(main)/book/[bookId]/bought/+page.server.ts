@@ -22,7 +22,7 @@ export const load = async ({ url, params }) => {
 
 	// /book/[bookId]/bought?sessionId=xxxxxxxxxx&bookInfo=xxxxxxxxxx
 	// @todo Block paymentSessionId that have already been used to eliminate potential vulnerabilities
-	const { paymentSessionId, currency, customerId, isCreateCustomer, isAvailable } =
+	const { paymentSessionId, currency, amount, customerId, isCreateCustomer, isAvailable } =
 		await checkPaymentStatus(paymentSessionIdRaw);
 	if (!isAvailable) {
 		return error(402, {
@@ -44,7 +44,12 @@ export const load = async ({ url, params }) => {
 	}
 	const { dbError: dbBookBuyError } = await dbBookBuyCreate({
 		...bookPaymentInfo,
-		paymentSessionId
+		payment: {
+			provider: 'stripe',
+			sessionId: paymentSessionId,
+			currency,
+			amount
+		}
 	});
 	if (dbBookBuyError) {
 		return error(500, { message: dbBookBuyError?.message ?? '' });

@@ -54,7 +54,7 @@ export function calcPriceByPoint(
 
 // Payment request ... $100 * (100 / (100 - shortbookChargeFee)) → 10,000 points
 // Any fractional amounts invoiced will be rounded down
-export async function decidePaymentAmount(
+export async function decidePaymentAmountForStripe(
 	currencyConverted: Partial<Record<CurrencySupportKeys, number>>
 ) {
 	const amountByCurrencies: Partial<Record<CurrencySupportKeys, string>> = {};
@@ -63,31 +63,56 @@ export async function decidePaymentAmount(
 		if (!currencyData) {
 			continue;
 		}
-		let paymentAmount = '';
-		if (currencyData.rule00) {
-			if (currencyData.allowDecimal) {
-				// "45600" Only used by ISK (Island)
-				paymentAmount = String(
-					Math.floor((currencyConverted[currencyData.key] as number) * 100) * 100
-				);
-			} else {
-				// "45600" Only used by UGX (Uganda)
-				// The currency rate is high, so it is not divided by 100
-				paymentAmount = String(
-					Math.floor((currencyConverted[currencyData.key] as number) * 100) * 100
-				);
-			}
-		} else {
-			if (currencyData.allowDecimal) {
-				// "45678"
-				paymentAmount = String(Math.floor((currencyConverted[currencyData.key] as number) * 10000));
-			} else {
-				// "456"
-				paymentAmount = String(Math.floor((currencyConverted[currencyData.key] as number) * 100));
-			}
-		}
-		amountByCurrencies[currencyData.key] = paymentAmount;
+		amountByCurrencies[currencyData.key] = toPaymentAmountOfStripe(
+			currencyData,
+			currencyConverted[currencyData.key] as number
+		);
 	}
 
 	return amountByCurrencies;
+}
+
+function toPaymentAmountOfStripe(
+	currencyData: (typeof currencySupports)[number],
+	originAmount: number
+) {
+	if (currencyData.rule00) {
+		if (currencyData.allowDecimal) {
+			// "45600" Only used by ISK (Island)
+			return String(Math.floor(originAmount * 100) * 100);
+		} else {
+			// "45600" Only used by UGX (Uganda)
+			// The currency rate is high, so it is not divided by 100
+			return String(Math.floor(originAmount * 100) * 100);
+		}
+	} else {
+		if (currencyData.allowDecimal) {
+			// "45678"
+			return String(Math.floor(originAmount * 10000));
+		} else {
+			// "456"
+			return String(Math.floor(originAmount * 100));
+		}
+	}
+}
+
+// Stripe's return amount value to actually amount
+export function reversePaymentAmountOfStripe(currency: CurrencySupportKeys, savedAmount: number) {
+	const currencyData = getCurrencyData(currency);
+	if (!currencyData || Number.isNaN(Number(savedAmount))) {
+		return undefined;
+	}
+	if (currencyData.rule00) {
+		if (currencyData.allowDecimal) {
+			return savedAmount / 100;
+		} else {
+			return savedAmount / 100;
+		}
+	} else {
+		if (currencyData.allowDecimal) {
+			return savedAmount / 100;
+		} else {
+			return savedAmount;
+		}
+	}
 }

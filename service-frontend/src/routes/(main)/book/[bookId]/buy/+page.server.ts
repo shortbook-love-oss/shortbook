@@ -33,8 +33,7 @@ export const load = async ({ url, params, locals }) => {
 		env.ENCRYPT_EMAIL_USER,
 		env.ENCRYPT_SALT
 	);
-	const callbackUrl =
-		url.origin + setLanguageTagToPath(`/book/${bookId}`, requestLang);
+	const callbackUrl = url.origin + setLanguageTagToPath(`/book/${bookId}`, requestLang);
 
 	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
 	if (dbBookBuyError) {
@@ -65,9 +64,7 @@ export const load = async ({ url, params, locals }) => {
 		writeUserId: bookBuyPoint.user_id,
 		userId,
 		pointSpend: bookBuyPoint.buy_point,
-		beforePointChargeAmount: 0,
-		paymentProvider: 'stripe',
-		paymentSessionId: '' // Because only use points
+		beforePointChargeAmount: 0
 	};
 	if (currentPoint >= bookBuyPoint.buy_point) {
 		const { dbError: dbBookBuyError } = await dbBookBuyCreate(dbBookBuyCreateReq);
