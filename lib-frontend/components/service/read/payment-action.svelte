@@ -17,30 +17,32 @@
 	});
 </script>
 
-<div class="relative flex flex-wrap items-center gap-4">
+<div>
 	{#each primaryCurrencies as currency}
 		<a
 			href="/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-			class="inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
-			data-sveltekit-reload>Pay {currency.label}</a
+			class="mb-2 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
+			data-sveltekit-reload>Buy for {currency.label}</a
 		>
 	{/each}
-	<Dropdown
-		name="lang_select"
-		openerColorClass=""
-		dropdownClass="-left-[1.0625rem] bottom-12 min-w-72 max-w-[28rem]"
-	>
-		<div slot="opener">
-			<p class="inline-block px-1 text-lg underline">Use other currency</p>
-		</div>
-		<div class="flex flex-wrap items-center gap-3 p-2">
-			{#each secondaryCurrencies as currency}
-				<a
-					href="/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-					class="inline-block rounded bg-primary-100 px-3 py-2 text-lg hover:bg-primary-200 focus:bg-primary-200"
-					data-sveltekit-reload>{currency.label}</a
-				>
-			{/each}
-		</div>
-	</Dropdown>
+	<div class="relative">
+		<Dropdown
+			name="lang_select"
+			openerColorClass=""
+			dropdownClass="-left-[1.0625rem] top-8 min-w-72 max-md:max-w-[28rem] md:w-[30rem]"
+		>
+			<div slot="opener">
+				<p class="inline-block px-1 text-lg underline">Use other currency</p>
+			</div>
+			<div class="flex flex-wrap items-center gap-3 p-2">
+				{#each secondaryCurrencies as currency}
+					<a
+						href="/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
+						class="inline-block rounded bg-primary-100 px-3 py-2 text-lg hover:bg-primary-200 focus:bg-primary-200"
+						data-sveltekit-reload>{currency.label}</a
+					>
+				{/each}
+			</div>
+		</Dropdown>
+	</div>
 </div>
