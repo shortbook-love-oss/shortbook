@@ -1,40 +1,86 @@
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
+import { getConvertedCurrencies } from '$lib/utilities/server/currency';
+import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
+import {
+	decidePaymentAmountForStripe,
+	reversePaymentAmountOfStripe,
+	shortbookChargeFee
+} from '$lib/utilities/payment';
 import { paymentSessionIdParam } from '$lib/utilities/url';
 
 /** Don't call from client-side code */
 
-export const stripe = new Stripe(env.STRIPE_STANDARD_KEY_SECRET, { apiVersion: '2024-06-20' });
+export const stripe = new Stripe(env.STRIPE_STANDARD_KEY_SECRET, {
+	apiVersion: '2024-06-20',
+	maxNetworkRetries: 2, // Challenge → Retry 1 → Retry 2 → Failed
+	telemetry: false
+});
 
 export async function createPaymentSession(
-	priceId: string,
-	quantity: number,
+	paymentName: string,
+	paymentDescription: string,
+	paymentTaxCode: string,
+	currency: CurrencySupportKeys,
+	pointAmount: number,
+	customerId: string,
+	customerEmail: string,
 	successUrl: string,
 	cancelUrl: string
 ) {
 	let successUrlWithSession = successUrl;
+	// See about {CHECKOUT_SESSION_ID} https://docs.stripe.com/payments/checkout/custom-success-page
 	if (new URL(successUrl).searchParams.size > 0) {
 		successUrlWithSession += `&${paymentSessionIdParam}={CHECKOUT_SESSION_ID}`;
 	} else {
 		successUrlWithSession += `?${paymentSessionIdParam}={CHECKOUT_SESSION_ID}`;
 	}
-	return await stripe.checkout.sessions.create({
+
+	// Need 100 USD and service fee to buy 100 point
+	const paymentAmountBase = pointAmount / (100 - shortbookChargeFee);
+	const currencyConverted = await getConvertedCurrencies(paymentAmountBase, defaultCurrency.key);
+	const paymentAmount = (await decidePaymentAmountForStripe(currencyConverted))[currency];
+	if (!paymentAmount) {
+		// Doesn't support currency, just reload the page
+		return { url: null };
+	}
+
+	const checkoutCreateParam: Stripe.Checkout.SessionCreateParams = {
 		line_items: [
 			{
-				// Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-				price: priceId,
-				quantity
+				price_data: {
+					currency,
+					product_data: {
+						name: paymentName,
+						description: paymentDescription,
+						images: [
+							'https://profile-image.shortbook.life/shortbook/shortbook-logo-bg-white-wh512-margin64.png'
+						],
+						tax_code: paymentTaxCode
+					},
+					unit_amount_decimal: paymentAmount,
+					tax_behavior: 'inclusive'
+				},
+				quantity: 1
 			}
 		],
-		// // @todo Save customer id into user_** table and put it here
-		// customer: 'cus_XxXxXxXxXxX'
-		// Create customer account in Stripe, not guest
-		customer_creation: 'always',
 		mode: 'payment',
+		automatic_tax: { enabled: true },
 		success_url: successUrlWithSession,
-		cancel_url: cancelUrl,
-		automatic_tax: { enabled: true }
-	});
+		cancel_url: cancelUrl
+	};
+	if (customerId) {
+		checkoutCreateParam.customer = customerId;
+	} else {
+		// Create customer account in Stripe, not guest
+		checkoutCreateParam.customer_creation = 'always';
+		if (customerEmail) {
+			// On user's first payment, auto-complete email
+			checkoutCreateParam.customer_email = customerEmail;
+		}
+	}
+
+	return await stripe.checkout.sessions.create(checkoutCreateParam);
 }
 
 export async function checkPaymentStatus(paymentSessionId: string) {
@@ -43,6 +89,22 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 		expand: ['line_items']
 	});
 
+	let actuallyAmount = 0;
+	if (checkoutSession.currency) {
+		actuallyAmount =
+			reversePaymentAmountOfStripe(
+				checkoutSession.currency as CurrencySupportKeys,
+				checkoutSession.amount_total ?? 0
+			) ?? actuallyAmount;
+	}
+
+	let customerId = '';
+	if (typeof checkoutSession.customer === 'string') {
+		customerId = checkoutSession.customer;
+	} else {
+		customerId = checkoutSession.customer?.id ?? '';
+	}
+
 	// checkoutSession.payment_status === 'no_payment_required'
 	// The payment is delayed to a future date, or the Checkout Session is in setup mode and doesn’t require a payment at this time.
 	// checkoutSession.payment_status === 'paid'
@@ -50,7 +112,11 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 	// checkoutSession.payment_status === 'unpaid'
 	// The payment funds are not yet available in your account.
 	return {
-		paymentSessionId,
+		paymentSessionId: checkoutSession.id,
+		currency: (checkoutSession.currency ?? '') as CurrencySupportKeys | '',
+		amount: actuallyAmount,
+		customerId,
+		isCreateCustomer: checkoutSession.customer_creation != null,
 		isAvailable: checkoutSession.payment_status !== 'unpaid'
 	};
 }

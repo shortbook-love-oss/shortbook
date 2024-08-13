@@ -1,8 +1,8 @@
 type MypageItem = {
-  name: string;
-  href: string;
-  childs: Omit<MypageItem, 'childs'>[];
-}
+	name: string;
+	href: string;
+	childs: Omit<MypageItem, 'childs'>[];
+};
 
 export const categories: MypageItem[] = [
 	{
@@ -20,5 +20,15 @@ export const categories: MypageItem[] = [
 			{ name: 'Sign in method', href: 'method' },
 			{ name: 'Danger action', href: 'danger' }
 		]
+	},
+	{
+		name: 'Payment',
+		href: 'payment',
+		childs: [{ name: 'Currency', href: 'currency' }]
+	},
+	{
+		name: 'Point',
+		href: 'point',
+		childs: [{ name: 'Point history', href: 'history' }]
 	}
 ];

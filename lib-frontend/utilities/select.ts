@@ -1,7 +1,7 @@
 export interface SelectItem<T = number> {
 	value: T;
-	text?: string;
 	label: string;
+	text?: string;
 	selected?: boolean;
 }
 

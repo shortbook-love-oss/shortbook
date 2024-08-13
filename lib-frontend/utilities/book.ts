@@ -34,9 +34,11 @@ export interface BookItem extends MyBookItem {
 }
 
 export interface BookDetail extends BookItem {
+	buyPoint: number;
 	prologue: string;
 	content: string;
-	sales_message: string;
+	salesMessage: string;
+	isBookDeleted: boolean;
 }
 
 // font-size: ***;
@@ -54,6 +56,14 @@ export const bookTextAlignSelect: SelectItem[] = [
 	{ value: 0, text: 'start', label: 'Left' },
 	{ value: 1, text: 'center', label: 'Center' },
 	{ value: 2, text: 'end', label: 'Right' }
+];
+
+export const bookPointSelect: SelectItem[] = [
+	{ value: 200, label: '200' },
+	{ value: 300, label: '300' },
+	{ value: 500, label: '500' },
+	{ value: 1000, label: '1000' },
+	{ value: 2000, label: '2000' }
 ];
 
 export function getBookCover(editCover: Partial<BookCover>): BookCover {

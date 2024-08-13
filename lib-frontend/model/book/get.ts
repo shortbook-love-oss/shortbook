@@ -3,26 +3,32 @@ import prisma from '$lib/prisma/connect';
 export interface DbBookGetRequest {
 	bookId: string;
 	userId?: string;
+	isIncludeDelete?: boolean;
 }
 
 export async function dbBookGet(req: DbBookGetRequest) {
 	let dbError: Error | undefined;
 
+	const whereCondDelete: { deleted_at?: null } = {};
+	if (!req.isIncludeDelete) {
+		whereCondDelete.deleted_at = null;
+	}
+
 	const book = await prisma.books
 		.findUnique({
 			where: {
 				id: req.bookId,
-				deleted_at: null
+				...whereCondDelete
 			},
 			include: {
 				cover: {
-					where: { deleted_at: null }
+					where: { ...whereCondDelete }
 				},
 				languages: {
-					where: { deleted_at: null }
+					where: { ...whereCondDelete }
 				},
 				tags: {
-					where: { deleted_at: null },
+					where: { ...whereCondDelete },
 					orderBy: {
 						sort: 'asc'
 					}
@@ -34,13 +40,11 @@ export async function dbBookGet(req: DbBookGetRequest) {
 							select: {
 								key_name: true,
 								languages: {
+									where: { ...whereCondDelete },
 									select: {
 										language_code: true,
 										pen_name: true,
-										headline: true,
-									},
-									where: {
-										deleted_at: null
+										headline: true
 									}
 								}
 							}

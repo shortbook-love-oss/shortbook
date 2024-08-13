@@ -10,8 +10,7 @@ export async function sendEmail(
 	bodyText: string
 ) {
 	const sesClient = new SESClient({
-		region: 'us-west-2', // @todo env.AWS_REGION
-		// region: env.AWS_REGION,
+		region: env.AWS_REGION,
 		credentials: {
 			accessKeyId: env.AWS_SES_ACCESS_KEY_ID,
 			secretAccessKey: env.AWS_SES_SECRET_ACCESS_KEY

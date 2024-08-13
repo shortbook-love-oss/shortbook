@@ -8,6 +8,7 @@ export const logActionName = 'ContactFormSubmit';
 
 export const contactCategorySelect: ContactCategorySelect[] = [
 	{ value: 'shortbookNeedHelp', label: 'How to use "ShortBook"' },
+	{ value: 'shortbookReportIllegal', label: 'Report illegal book or user' },
 	{ value: 'shortbookBug', label: 'Issues report' },
 	{ value: 'shortbookFeature', label: 'Features request' },
 	{ value: 'shortbookI18n', label: 'Translation corrections request' },

@@ -1,15 +1,18 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookBuyPointGet } from '$lib/model/book/get-buy-point';
-import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book_buy/create';
-import { dbBookBuyGet } from '$lib/model/book_buy/get';
+import { dbBookGetMinimum } from '$lib/model/book/get-minimum';
+import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
+import { dbBookBuyGet } from '$lib/model/book-buy/get';
+import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
 import { dbUserPointList } from '$lib/model/user/point/list';
-import { encryptAndFlat } from '$lib/utilities/server/crypto';
+import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
 import { createPaymentSession } from '$lib/utilities/server/payment';
 import { redirectToSignInPage } from '$lib/utilities/server/url';
+import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
 import {
 	getLanguageTagFromUrl,
 	paymentBookInfoParam,
+	paymentCurrencyParam,
 	setLanguageTagToPath
 } from '$lib/utilities/url';
 
@@ -21,8 +24,12 @@ export const load = async ({ url, params, locals }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 	const bookId = params.bookId;
 
-	const callbackUrl =
-		url.origin + setLanguageTagToPath(`/book/${bookId}${url.search}`, requestLang);
+	const userEmail = decryptFromFlat(
+		locals.session?.user?.email ?? '',
+		env.ENCRYPT_EMAIL_USER,
+		env.ENCRYPT_SALT
+	);
+	const callbackUrl = url.origin + setLanguageTagToPath(`/book/${bookId}`, requestLang);
 
 	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
 	if (dbBookBuyError) {
@@ -34,10 +41,20 @@ export const load = async ({ url, params, locals }) => {
 	if (dbUserPointError) {
 		return error(500, { message: dbUserPointError?.message ?? '' });
 	}
-	const { book, dbError: dbBookPointError } = await dbBookBuyPointGet({ bookId });
+	const { book, dbError: dbBookPointError } = await dbBookGetMinimum({ bookId });
 	if (!book || dbBookPointError) {
 		return error(500, { message: dbBookPointError?.message ?? '' });
+	} else if (book.user_id === userId) {
+		return error(404, { message: 'Not found' });
 	}
+	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
+		userId,
+		providerKey: 'stripe'
+	});
+	if (dbContractGetError) {
+		return error(500, { message: dbContractGetError?.message ?? '' });
+	}
+	const paymentCustomerId = paymentContract?.provider_customer_id ?? '';
 
 	// If users can pay with the points they have, use it
 	const dbBookBuyCreateReq: DbBookBuyCreateRequest = {
@@ -45,8 +62,7 @@ export const load = async ({ url, params, locals }) => {
 		writeUserId: book.user_id,
 		userId,
 		pointSpend: book.buy_point,
-		beforePointChargeAmount: 0,
-		paymentSessionId: ''
+		beforePointChargeAmount: 0
 	};
 	if (currentPoint >= book.buy_point) {
 		const { dbError: dbBookBuyError } = await dbBookBuyCreate(dbBookBuyCreateReq);
@@ -56,30 +72,36 @@ export const load = async ({ url, params, locals }) => {
 		redirect(303, callbackUrl);
 	}
 
-	// Multiple of 100, and amount that can be buy
-	// Need 456 points → charge 500 points
-	// Need 8000 points → charge 8000 points
-	dbBookBuyCreateReq.beforePointChargeAmount =
-		Math.ceil((book.buy_point - currentPoint) / 100) * 100;
+	const requestCurrency = url.searchParams.get(paymentCurrencyParam);
+	if (!requestCurrency || !getCurrencyData(requestCurrency)) {
+		return error(400, { message: 'Currency must be specified.' });
+	}
 
-	// If do not have enough points, use Stripe Checkout.
-	// 1 order → 100 points
-	// (dbBookBuyCreateReq.beforePointChargeAmount / 100) order → dbBookBuyCreateReq.beforePointChargeAmount points
-	const afterPaymentUrl = new URL(
-		url.origin + setLanguageTagToPath(`/book/${params.bookId}/bought`, requestLang)
-	);
+	// Need 456 points → charge 456 points
+	// Need 8000 points → charge 8000 points
+	dbBookBuyCreateReq.beforePointChargeAmount = book.buy_point;
 	const bookPaymentInfo = encryptAndFlat(
 		JSON.stringify(dbBookBuyCreateReq),
 		env.ENCRYPT_PAYMENT_BOOK_INFO,
 		env.ENCRYPT_SALT
 	);
+	// If do not have enough points, use Stripe Checkout.
+	const afterPaymentUrl = new URL(
+		url.origin + setLanguageTagToPath(`/book/${params.bookId}/bought`, requestLang)
+	);
 	afterPaymentUrl.searchParams.set(paymentBookInfoParam, bookPaymentInfo);
+
 	const paymentSession = await createPaymentSession(
-		env.STRIPE_PRICE_ID_POINT_CHARGE,
-		dbBookBuyCreateReq.beforePointChargeAmount / 100,
+		'ShortBook point charge',
+		`Charge ${dbBookBuyCreateReq.beforePointChargeAmount} points for ShortBook`,
+		'txcd_10103000', // SaaS for personnel (If business, use txcd_10103001)
+		requestCurrency as CurrencySupportKeys,
+		dbBookBuyCreateReq.beforePointChargeAmount,
+		paymentCustomerId,
+		userEmail,
 		afterPaymentUrl.href,
 		callbackUrl
 	);
 
-	redirect(303, paymentSession.url ?? '');
+	redirect(303, paymentSession.url ?? callbackUrl);
 };

@@ -35,7 +35,7 @@
 
 <section class="mx-auto mb-8 max-w-xl text-lg">
 	<h1 class="mb-8 text-4xl font-semibold">Contact</h1>
-	<p>We will check your email and reply within 24 hours.</p>
+	<p>We will check your email and reply within 18 hours.</p>
 </section>
 <Form
 	method="POST"

@@ -10,8 +10,13 @@
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
+	import InputPoint from '$lib/components/service/write/input-point.svelte';
+	import PricePreview from '$lib/components/service/write/price-preview.svelte';
 
 	export let data;
+
+	let isEnableJS = false;
+	onMount(() => (isEnableJS = true));
 
 	const { form, enhance, capture, restore, validateForm, submitting, message, errors } = superForm(
 		data.form,
@@ -22,8 +27,6 @@
 		}
 	);
 	export const snapshot = { capture, restore };
-	let isEnableJS = false;
-	onMount(() => (isEnableJS = true));
 
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = true;
@@ -110,13 +113,11 @@
 				errorMessages={$errors.salesMessage}
 				className="mb-8"
 			/>
-			<TextField
-				bind:value={$form.buyPoint}
-				type="number"
-				name="buyPoint"
-				label="Selling point"
-				errorMessages={$errors.buyPoint}
-				className="max-w-40"
+			<InputPoint bind:point={$form.buyPoint} errorMessages={$errors.buyPoint} className="mb-8" />
+			<PricePreview
+				point={$form.buyPoint}
+				selectedCurrencyKey={data.selectedCurrencyKey}
+				currencyRates={data.currencyRates}
 			/>
 		</div>
 		<div class="shrink-0 lg:w-48">

@@ -1,16 +1,29 @@
 import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
-import { dbBookBuyGet } from '$lib/model/book_buy/get';
+import { dbBookBuyGet } from '$lib/model/book-buy/get';
+import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
+import { dbUserPointList } from '$lib/model/user/point/list';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
+import { getConvertedCurrencies } from '$lib/utilities/server/currency';
+import {
+	defaultCurrency,
+	guessCurrencyByLang,
+	type CurrencySupportKeys
+} from '$lib/utilities/currency';
+import { calcPriceByPoint } from '$lib/utilities/payment';
+import type { SelectItem } from '$lib/utilities/select';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, locals, params }) => {
 	const userId = locals.session?.user?.id;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { book, dbError } = await dbBookGet({ bookId: params.bookId });
-	if (!book || !book.cover || dbError) {
-		return error(500, { message: dbError?.message ?? '' });
+	const { book, dbError: dbBookGetError } = await dbBookGet({
+		bookId: params.bookId,
+		isIncludeDelete: true
+	});
+	if (!book || !book.cover || dbBookGetError) {
+		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 	let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
 	if (!bookLang && book.languages.length) {
@@ -22,7 +35,56 @@ export const load = async ({ url, locals, params }) => {
 		profileLang = profile.languages[0];
 	}
 
+	let primaryCurrency: CurrencySupportKeys = defaultCurrency.key;
+	if (userId) {
+		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
+		if (dbPayGetError) {
+			return error(500, { message: dbPayGetError.message });
+		}
+		if (paymentSetting?.currency) {
+			primaryCurrency = paymentSetting.currency as CurrencySupportKeys;
+		} else {
+			primaryCurrency = guessCurrencyByLang(requestLang);
+		}
+	} else {
+		primaryCurrency = guessCurrencyByLang(requestLang);
+	}
+
+	// Check buy book if it's paid and written by another
+	const buyPoint = book.buy_point;
 	const isOwn = userId === book.user_id;
+	let isBoughtBook = false;
+	// Can user buy books using only the points have
+	let hasEnoughPoint = false;
+	let userPoint = 0;
+	if (userId && !isBoughtBook && buyPoint > 0 && !isOwn) {
+		const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({
+			userId,
+			bookId: book.id
+		});
+		if (dbBookBuyError) {
+			return error(500, { message: dbBookBuyError?.message ?? '' });
+		}
+		isBoughtBook = !!bookBuy;
+		const { currentPoint, dbError: dbPointListError } = await dbUserPointList({ userId });
+		if (dbPointListError) {
+			return error(500, { message: dbPointListError?.message ?? '' });
+		}
+		hasEnoughPoint = currentPoint >= buyPoint;
+		userPoint = currentPoint;
+	}
+
+	if (book.deleted_at != null && !isBoughtBook) {
+		return error(404, { message: 'Not found' });
+	}
+
+	let currencyPreviews: SelectItem<CurrencySupportKeys>[] = [];
+	if (!isBoughtBook && buyPoint > 0 && !isOwn && !hasEnoughPoint) {
+		// Show book price by all supported currencies
+		// Skip check if buy with points only
+		const converted = await getConvertedCurrencies(buyPoint, defaultCurrency.key);
+		currencyPreviews = calcPriceByPoint(converted, requestLang);
+	}
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
@@ -44,6 +106,7 @@ export const load = async ({ url, locals, params }) => {
 		id: book.id,
 		userId: book.user_id,
 		status: book.status,
+		buyPoint,
 		title: bookLang?.title ?? '',
 		subtitle: bookLang?.subtitle ?? '',
 		publishedAt: book.published_at,
@@ -53,28 +116,25 @@ export const load = async ({ url, locals, params }) => {
 		image: book.user.image ?? '',
 		prologue: await contentsToMarkdown(bookLang?.prologue ?? ''),
 		content: '',
-		sales_message: ''
+		salesMessage: '',
+		isBookDeleted: book.deleted_at != null
 	};
-
-	// Check buy book if it's paid and written by another
-	const buyPoint = book.buy_point;
-	let isBoughtBook = false;
-	if (userId && !isBoughtBook && buyPoint > 0 && !isOwn) {
-		const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({
-			userId,
-			bookId: book.id
-		});
-		if (dbBookBuyError) {
-			return error(500, { message: dbBookBuyError?.message ?? '' });
-		}
-		isBoughtBook = !!bookBuy;
-	}
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		bookDetail.content = await contentsToMarkdown(bookLang?.content ?? '');
 	} else {
-		bookDetail.sales_message = await contentsToMarkdown(bookLang?.sales_message ?? '');
+		bookDetail.salesMessage = await contentsToMarkdown(bookLang?.sales_message ?? '');
 	}
 
-	return { bookDetail, requestLang, profileLang, isOwn, isBoughtBook, buyPoint };
+	return {
+		bookDetail,
+		requestLang,
+		profileLang,
+		isOwn,
+		isBoughtBook,
+		hasEnoughPoint,
+		userPoint,
+		currencyPreviews,
+		primaryCurrency
+	};
 };

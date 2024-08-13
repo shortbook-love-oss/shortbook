@@ -5,6 +5,7 @@
 	import IconDelete from '~icons/mdi/trash-can-outline';
 	import { page } from '$app/stores';
 	import { schema } from '$lib/validation/schema/book-update';
+	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
@@ -14,6 +15,8 @@
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
+	import InputPoint from '$lib/components/service/write/input-point.svelte';
+	import PricePreview from '$lib/components/service/write/price-preview.svelte';
 
 	export let data;
 
@@ -111,13 +114,11 @@
 				errorMessages={$errors.salesMessage}
 				className="mb-8"
 			/>
-			<TextField
-				bind:value={$form.buyPoint}
-				type="number"
-				name="buyPoint"
-				label="Selling point"
-				errorMessages={$errors.buyPoint}
-				className="max-w-40"
+			<InputPoint bind:point={$form.buyPoint} errorMessages={$errors.buyPoint} className="mb-8" />
+			<PricePreview
+				point={$form.buyPoint}
+				selectedCurrencyKey={data.selectedCurrencyKey}
+				currencyRates={data.currencyRates}
 			/>
 		</div>
 		<div class="shrink-0 lg:w-48">
@@ -144,7 +145,7 @@
 				<p>Do you want to delete it?</p>
 				<SubmitText
 					slot="actions"
-					formaction="{$page.url.pathname}?/delete"
+					formaction="{removeLanguageTagFromPath($page.url.pathname)}?/delete"
 					hasInvalid={!hasVaild}
 					isLoading={$submitting}
 					className="mx-auto"
