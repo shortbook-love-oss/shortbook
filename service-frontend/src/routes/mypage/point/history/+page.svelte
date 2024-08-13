@@ -7,12 +7,17 @@
 
 	export let data;
 
+	const requestLang = getLanguageTagFromUrl($page.url);
+
 	function getStatus(point: PointListItem) {
 		if (point.isSell) {
 			return { amountSuffix: 'Sold', text: 'Sold', bgColor: 'bg-emerald-100' };
-		} else if (point.amount > 0) {
-			const text = `Charged ($${Math.round(point.amount * 1.09) / 100})`;
-			return { amountSuffix: 'Charged', text, bgColor: 'bg-orange-100' };
+		} else if (point.payment) {
+			const l10nAmount = new Intl.NumberFormat(requestLang, {
+				style: 'currency',
+				currency: point.payment.currency
+			}).format(point.payment.amount);
+			return { amountSuffix: 'Charged', text: `Charged ${l10nAmount}`, bgColor: 'bg-orange-100' };
 		}
 		return { amountSuffix: 'Spent', text: 'Bought', bgColor: 'bg-stone-200' };
 	}
@@ -48,7 +53,7 @@
 					<p class="text-lg">{getStatus(point).amountSuffix}</p>
 				</div>
 				<div class="min-w-0">
-					{#if point.paymentProvider}
+					{#if point.payment}
 						<p class="text-lg">{getStatus(point).text}</p>
 					{:else if point.bookTitle}
 						<p class="truncate text-lg">

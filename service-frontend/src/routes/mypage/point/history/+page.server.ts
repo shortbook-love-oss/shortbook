@@ -1,5 +1,7 @@
+import type { user_payment_checkouts, Prisma } from '@prisma/client';
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
+import { dbUserPaymentCheckoutList } from '$lib/model/user/payment-checkout/list';
 import { dbUserPointList } from '$lib/model/user/point/list';
 import type { PointListItem } from '$lib/utilities/point';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
@@ -11,9 +13,30 @@ export const load = async ({ url, locals }) => {
 	}
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { userPointHistories, dbError: dbPointListError } = await dbUserPointList({ userId });
+	const {
+		userPointHistories,
+		currentPoint,
+		dbError: dbPointListError
+	} = await dbUserPointList({ userId });
 	if (!userPointHistories || dbPointListError) {
 		return error(500, { message: dbPointListError?.message ?? '' });
+	}
+
+	const checkoutIds = userPointHistories
+		.map((history) => history.payment_checkout_id)
+		.filter(Boolean);
+	let paymentCheckoutMap: Record<string, user_payment_checkouts> = {};
+	if (checkoutIds.length) {
+		const { paymentCheckouts, dbError } = await dbUserPaymentCheckoutList({
+			userId,
+			checkoutIds: checkoutIds
+		});
+		if (!paymentCheckouts || dbError) {
+			return error(500, { message: dbError?.message ?? '' });
+		}
+		for (const checkout of paymentCheckouts) {
+			paymentCheckoutMap[checkout.id] = checkout;
+		}
 	}
 
 	// Include bought books
@@ -35,8 +58,6 @@ export const load = async ({ url, locals }) => {
 		});
 	}
 
-	// Calc current point by all transaction
-	let currentPoint = 0;
 	// Brend point and book data
 	const pointList: PointListItem[] = userPointHistories.map((point) => {
 		let bookTitle = '';
@@ -48,16 +69,23 @@ export const load = async ({ url, locals }) => {
 			}
 			bookTitle = bookLang?.title ?? '';
 		}
-		currentPoint += point.amount;
-		return {
+		const checkout = paymentCheckoutMap[point.payment_checkout_id];
+		const pointItem: PointListItem = {
 			amount: point.amount,
 			createdAt: point.created_at,
 			bookId: point.book_id,
 			bookTitle,
-			paymentProvider: point.payment_provider,
-			paymentSessionId: point.payment_session_id,
 			isSell: point.is_sell > 0
 		};
+		if (checkout) {
+			pointItem.payment = {
+				provider: checkout.provider_key,
+				currency: checkout.currency,
+				amount: checkout.amount.toNumber()
+			};
+		}
+
+		return pointItem;
 	});
 
 	return { pointList, currentPoint, userPointHistories };

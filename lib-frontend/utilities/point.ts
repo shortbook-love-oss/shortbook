@@ -3,7 +3,10 @@ export interface PointListItem {
 	createdAt: Date;
 	bookId: string;
 	bookTitle: string;
-	paymentProvider: string;
-	paymentSessionId: string;
 	isSell: boolean;
+	payment?: {
+		provider: string;
+		currency: string;
+		amount: number;
+	};
 }
