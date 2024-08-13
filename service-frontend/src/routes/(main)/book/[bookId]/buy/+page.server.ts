@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookBuyPointGet } from '$lib/model/book/get-buy-point';
+import { dbBookGetMinimum } from '$lib/model/book/get-minimum';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
 import { dbBookBuyGet } from '$lib/model/book-buy/get';
 import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
@@ -45,9 +45,11 @@ export const load = async ({ url, params, locals }) => {
 	if (dbUserPointError) {
 		return error(500, { message: dbUserPointError?.message ?? '' });
 	}
-	const { bookBuyPoint, dbError: dbBookPointError } = await dbBookBuyPointGet({ bookId });
-	if (!bookBuyPoint || dbBookPointError) {
+	const { book, dbError: dbBookPointError } = await dbBookGetMinimum({ bookId });
+	if (!book || dbBookPointError) {
 		return error(500, { message: dbBookPointError?.message ?? '' });
+	} else if (book.user_id === userId) {
+		return error(404, { message: 'Not found' });
 	}
 	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
 		userId,
@@ -61,12 +63,12 @@ export const load = async ({ url, params, locals }) => {
 	// If users can pay with the points they have, use it
 	const dbBookBuyCreateReq: DbBookBuyCreateRequest = {
 		bookId,
-		writeUserId: bookBuyPoint.user_id,
+		writeUserId: book.user_id,
 		userId,
-		pointSpend: bookBuyPoint.buy_point,
+		pointSpend: book.buy_point,
 		beforePointChargeAmount: 0
 	};
-	if (currentPoint >= bookBuyPoint.buy_point) {
+	if (currentPoint >= book.buy_point) {
 		const { dbError: dbBookBuyError } = await dbBookBuyCreate(dbBookBuyCreateReq);
 		if (dbBookBuyError) {
 			return error(500, { message: dbBookBuyError?.message ?? '' });
@@ -75,7 +77,7 @@ export const load = async ({ url, params, locals }) => {
 	}
 	// Need 456 points → charge 456 points
 	// Need 8000 points → charge 8000 points
-	dbBookBuyCreateReq.beforePointChargeAmount = bookBuyPoint.buy_point - currentPoint;
+	dbBookBuyCreateReq.beforePointChargeAmount = book.buy_point - currentPoint;
 
 	// If do not have enough points, use Stripe Checkout.
 	const afterPaymentUrl = new URL(
