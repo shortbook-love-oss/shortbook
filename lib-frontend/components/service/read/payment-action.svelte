@@ -28,7 +28,7 @@
 	<Dropdown
 		name="lang_select"
 		openerColorClass=""
-		dropdownClass="-left-6 bottom-12 min-w-72 max-w-[28rem]"
+		dropdownClass="-left-[1.0625rem] bottom-12 min-w-72 max-w-[28rem]"
 	>
 		<div slot="opener">
 			<p class="inline-block px-1 text-lg underline">Use other currency</p>
