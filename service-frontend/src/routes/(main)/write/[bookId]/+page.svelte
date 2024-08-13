@@ -15,6 +15,7 @@
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
+	import InputPoint from '$lib/components/service/write/input-point.svelte';
 	import PricePreview from '$lib/components/service/write/price-preview.svelte';
 
 	export let data;
@@ -113,16 +114,7 @@
 				errorMessages={$errors.salesMessage}
 				className="mb-8"
 			/>
-			<TextField
-				min="50"
-				max="1000000"
-				type="number"
-				bind:value={$form.buyPoint}
-				name="buyPoint"
-				label="Selling point"
-				errorMessages={$errors.buyPoint}
-				className="mb-8 max-w-40"
-			/>
+			<InputPoint bind:point={$form.buyPoint} errorMessages={$errors.buyPoint} className="mb-8" />
 			<PricePreview
 				point={$form.buyPoint}
 				selectedCurrencyKey={data.selectedCurrencyKey}
