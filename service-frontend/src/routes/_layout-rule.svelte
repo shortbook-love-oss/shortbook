@@ -26,7 +26,7 @@
 		</slot>
 	</div>
 	<slot name="footerNav">
-		<div class="fixed bottom-0 left-0 w-full sm:hidden">
+		<div class="fixed bottom-0 start-0 w-full sm:hidden">
 			<NavSp />
 		</div>
 	</slot>

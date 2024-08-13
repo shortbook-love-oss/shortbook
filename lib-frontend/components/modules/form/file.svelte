@@ -81,7 +81,7 @@
 			on:input={updateSelectedList}
 		/>
 		<div
-			class="absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-start gap-2 rounded-lg p-3 {inputClass}"
+			class="absolute start-0 top-0 flex h-full w-full cursor-pointer items-center justify-start gap-2 rounded-lg p-3 {inputClass}"
 		>
 			{#if isImageUploader}
 				<IconImage width="48" height="48" class="text-stone-600" />
