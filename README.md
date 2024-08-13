@@ -26,6 +26,26 @@ docker compose -f docker/compose.yaml up -d --build
 
 ## On release
 
+### Check IAM policy to send email
+
+Here is IAM policy for SES.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SESSendEmail",
+      "Effect": "Allow",
+      "Action": ["ses:SendEmail", "ses:SendRawEmail"],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### Push repository
+
 TODO: Use GitHub Action in the future.
 
 ```bash
