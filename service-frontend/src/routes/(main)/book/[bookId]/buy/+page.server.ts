@@ -77,7 +77,7 @@ export const load = async ({ url, params, locals }) => {
 	}
 	// Need 456 points → charge 456 points
 	// Need 8000 points → charge 8000 points
-	dbBookBuyCreateReq.beforePointChargeAmount = book.buy_point - currentPoint;
+	dbBookBuyCreateReq.beforePointChargeAmount = book.buy_point;
 
 	// If do not have enough points, use Stripe Checkout.
 	const afterPaymentUrl = new URL(
