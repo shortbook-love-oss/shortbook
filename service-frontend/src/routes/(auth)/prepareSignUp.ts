@@ -1,7 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
-import { signUpTokenName } from '$lib/utilities/signin';
+import { signUpTokenName } from '$lib/utilities/server/verification-token';
 import {
 	callbackParam,
 	getLanguageTagFromUrl,

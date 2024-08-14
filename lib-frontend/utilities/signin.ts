@@ -11,9 +11,6 @@ export function matchSigninProvider(key: string) {
 	});
 }
 
-export const signUpTokenName = 'signUp';
-export const signInTokenName = 'signIn';
-
 // for sign-in and sign-up
 export const sendRateLimitCount = 10;
 export const logActionName = 'SignInUpRequest';

@@ -2,7 +2,7 @@ import { env } from '$env/dynamic/private';
 import type { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
-import { signInTokenName } from '$lib/utilities/signin';
+import { signInTokenName } from '$lib/utilities/server/verification-token';
 import {
 	callbackParam,
 	getLanguageTagFromUrl,

@@ -9,13 +9,9 @@ import { dbVerificationTokenGet } from '$lib/model/verification-token/get';
 import { getRandom } from '$lib/utilities/crypto';
 import { decryptFromFlat, encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { toHashUserEmail } from '$lib/utilities/server/email';
+import { signInTokenName, signUpTokenName } from '$lib/utilities/server/verification-token';
 import { setSessionToken } from '$lib/utilities/cookie';
-import {
-	logActionName,
-	signInEmailLinkMethod,
-	signInTokenName,
-	signUpTokenName
-} from '$lib/utilities/signin';
+import { logActionName, signInEmailLinkMethod } from '$lib/utilities/signin';
 import { signConfirmTokenParam } from '$lib/utilities/url';
 import type { SignResult } from './actionInit';
 
