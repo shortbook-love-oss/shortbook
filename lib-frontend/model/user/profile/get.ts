@@ -7,29 +7,42 @@ export interface DbUserProfileGetRequest {
 export async function dbUserProfileGet(req: DbUserProfileGetRequest) {
 	let dbError: Error | undefined;
 
-	const profile = await prisma.user_profiles
-		.findFirst({
+	const user = await prisma.user
+		.findUnique({
 			where: {
-				user_id: req.userId,
+				id: req.userId,
 				deleted_at: null
 			},
 			include: {
-				languages: {
-					where: { deleted_at: null }
+				accounts: {
+					where: { deleted_at: null },
+					select: {
+						provider: true
+					}
+				},
+				profiles: {
+					include: {
+						languages: {
+							where: { deleted_at: null }
+						}
+					}
 				}
 			}
 		})
-		.then((profile) => {
-			if (!profile) {
+		.then((user) => {
+			if (!user?.profiles) {
 				dbError ??= new Error(`Can't find user profile. User ID=${req.userId}`);
 				return undefined;
 			}
-			return profile;
+			return user;
 		})
 		.catch(() => {
 			dbError ??= new Error(`Failed to get user. User ID=${req.userId}`);
 			return undefined;
 		});
 
-	return { profile, dbError };
+	const account = user?.accounts[0];
+	const profile = user?.profiles;
+
+	return { user, account, profile, dbError };
 }
