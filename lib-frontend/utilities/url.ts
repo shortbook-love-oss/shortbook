@@ -5,6 +5,7 @@ export const callbackParam = 'callbackUrl';
 export const paymentBookInfoParam = 'bookInfo';
 export const paymentSessionIdParam = 'sessionId';
 export const signConfirmTokenParam = 'enjoyYourShortBookLife';
+export const emailChangeTokenParam = 'token';
 export const paymentCurrencyParam = 'currency';
 export const inquiryCategoryParam = 'category';
 

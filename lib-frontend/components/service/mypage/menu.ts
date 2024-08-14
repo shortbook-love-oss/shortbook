@@ -18,6 +18,7 @@ export const categories: MypageItem[] = [
 		href: 'security',
 		childs: [
 			{ name: 'Sign in method', href: 'method' },
+			{ name: 'Email', href: 'email' },
 			{ name: 'Danger action', href: 'danger' }
 		]
 	},
