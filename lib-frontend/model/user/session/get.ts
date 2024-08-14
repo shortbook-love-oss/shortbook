@@ -40,7 +40,8 @@ export async function dbUserSessionGet(req: DbUserSessionGetRequest) {
 			return undefined;
 		});
 
+	const account = user?.accounts[0];
 	const session = user?.sessions[0];
 
-	return { user, session, dbError };
+	return { user, account, session, dbError };
 }

@@ -3,7 +3,7 @@ export const signInProviders = [
 	{ key: 'google', label: 'Google' },
 	{ key: 'linkedin', label: 'LinkedIn' },
 	{ key: 'github', label: 'GitHub' }
-];
+] as const;
 
 export function matchSigninProvider(key: string) {
 	return signInProviders.find((provider) => {

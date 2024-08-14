@@ -18,7 +18,7 @@
 		<p class="mb-2 text-center">{m.signin_with_label()}</p>
 		<div class="flex flex-wrap items-center justify-center gap-2">
 			{#each signInProviders as provider}
-				<SignInByOAuth callbackUrl={data.callbackUrl} providerName={provider.label} />
+				<SignInByOAuth callbackUrl={data.callbackUrl} {provider} />
 			{/each}
 		</div>
 	</div>

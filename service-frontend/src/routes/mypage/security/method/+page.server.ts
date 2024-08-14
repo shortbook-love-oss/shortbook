@@ -12,7 +12,7 @@ export const load = async ({ url, cookies, locals }) => {
 	const sessionToken = getSessionToken(cookies);
 	const langTag = getLanguageTagFromUrl(url);
 
-	const { user, session, dbError } = await dbUserSessionGet({
+	const { user, account, session, dbError } = await dbUserSessionGet({
 		userId,
 		sessionToken
 	});
@@ -20,16 +20,16 @@ export const load = async ({ url, cookies, locals }) => {
 		return error(500, { message: dbError.message });
 	}
 
-	const isSignedByEmail = !user?.accounts[0];
-	let providerName = '';
+	const isSignedByEmail = !account;
+	let signInProvider = null;
 	for (const provider of signInProviders) {
-		if (user?.accounts[0]?.provider === provider.key) {
-			providerName = provider.label;
+		if (account?.provider === provider.key) {
+			signInProvider = provider;
 			break;
 		}
 	}
 	const userCreatedAt = user?.created_at?.toLocaleString(langTag) ?? '';
 	const lastSignedAt = session?.created_at?.toLocaleString(langTag) ?? '';
 
-	return { isSignedByEmail, providerName, userCreatedAt, lastSignedAt };
+	return { isSignedByEmail, signInProvider, userCreatedAt, lastSignedAt };
 };

@@ -14,14 +14,14 @@
 		<IconEmail width="48" height="48" />
 		<p class="text-xl">Signed in by email</p>
 	</div>
-{:else}
+{:else if data.signInProvider}
 	<div class="mb-8 flex items-center gap-3">
 		<img
-			src="/assets/brands/{data.providerName.toLowerCase()}-logo.png"
+			src="/assets/brands/{data.signInProvider.key}-logo.png"
 			class="w-12"
-			alt="{data.providerName} logo"
+			alt="{data.signInProvider.label} logo"
 		/>
-		<p class="text-xl">Signed in by {data.providerName}</p>
+		<p class="text-xl">Signed in by {data.signInProvider.label}</p>
 	</div>
 {/if}
 <p class="mb-1 font-semibold">Signed up at:</p>
