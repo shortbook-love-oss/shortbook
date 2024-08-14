@@ -3,7 +3,6 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { fileUpload } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
@@ -17,15 +16,7 @@ export const load = async ({ locals }) => {
 		return error(401, { message: 'Unauthorized' });
 	}
 
-	const { profile, dbError } = await dbUserProfileGet({ userId });
-	if (dbError) {
-		return error(500, { message: dbError.message });
-	}
-
-	const profileLangs = profile?.languages[0];
-	const penName = profileLangs?.pen_name ?? '';
-
-	return { form, penName };
+	return { form };
 };
 
 export const actions = {
