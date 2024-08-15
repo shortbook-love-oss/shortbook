@@ -15,7 +15,8 @@ export async function dbUserPaymentContractGet(req: DbUserPaymentContractGetRequ
 				user_id_provider_key: {
 					user_id: req.userId,
 					provider_key: req.providerKey
-				}
+				},
+				deleted_at: null
 			}
 		})
 		.catch(() => {

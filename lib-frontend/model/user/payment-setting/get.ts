@@ -10,7 +10,8 @@ export async function dbUserPaymentSettingGet(req: DbUserPaymentSettingGetReques
 	const paymentSetting = await prisma.user_payment_settings
 		.findUnique({
 			where: {
-				user_id: req.userId
+				user_id: req.userId,
+				deleted_at: null
 			}
 		})
 		.catch(() => {

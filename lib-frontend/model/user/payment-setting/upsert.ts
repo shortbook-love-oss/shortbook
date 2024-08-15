@@ -12,7 +12,8 @@ export async function dbUserPaymentSettingUpsert(req: DbUserPaymentSettingUpsert
 	const paymentSetting = await prisma.user_payment_settings
 		.upsert({
 			where: {
-				user_id: req.userId
+				user_id: req.userId,
+				deleted_at: null
 			},
 			create: {
 				user_id: req.userId,

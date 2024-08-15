@@ -9,12 +9,12 @@ export async function dbBookDelete(req: DbBookDeleteRequest) {
 	let dbError: Error | undefined;
 
 	const bookBeforeDelete = await prisma.books.findUnique({
-		select: {
-			user_id: true
-		},
 		where: {
 			id: req.bookId,
 			deleted_at: null
+		},
+		select: {
+			user_id: true
 		}
 	});
 	if (!bookBeforeDelete) {
