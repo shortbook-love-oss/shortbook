@@ -21,6 +21,7 @@ export async function prepareSignUp(
 	const { dbError: dbVerifyError } = await dbVerificationTokenCreate({
 		identifier: signUpTokenName,
 		token: signUpConfirmToken,
+		userId: null,
 		expires: after1Day
 	});
 	if (dbVerifyError) {

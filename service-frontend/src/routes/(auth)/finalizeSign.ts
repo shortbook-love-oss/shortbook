@@ -26,10 +26,11 @@ export async function finalizeSign(
 	const token = requestUrl.searchParams.get(signConfirmTokenParam);
 	const { verificationToken, dbError: dbVerifyGetError } = await dbVerificationTokenGet({
 		identifier: isSignUp ? signUpTokenName : signInTokenName,
-		token: token ?? ''
+		token: token ?? '',
+		userId: null
 	});
 	if (!verificationToken || dbVerifyGetError) {
-		return { error: new Error(dbVerifyGetError?.message ?? '') };
+		return { error: new Error('Not found') };
 	}
 	const userEmail = decryptFromFlat(
 		verificationToken.token,

@@ -3,6 +3,8 @@ import prisma from '$lib/prisma/connect';
 export interface DbVerificationTokenGetRequest {
 	identifier: string;
 	token: string;
+	// Don't use empty string for Auth.js default process, use user-id or null
+	userId: string | null;
 }
 
 export async function dbVerificationTokenGet(req: DbVerificationTokenGetRequest) {
@@ -16,6 +18,7 @@ export async function dbVerificationTokenGet(req: DbVerificationTokenGetRequest)
 					identifier: req.identifier,
 					token: req.token
 				},
+				user_id: req.userId,
 				expires: {
 					gte: now
 				}
