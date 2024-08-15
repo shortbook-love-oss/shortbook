@@ -9,7 +9,8 @@ import { schema } from '$lib/validation/schema/contact-create';
 import { encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
-import { sendRateLimitPerHour, logActionName, contactCategorySelect } from '$lib/utilities/contact';
+import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib/utilities/server/log-action';
+import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
 import { getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
 
@@ -22,14 +23,14 @@ export const load = async ({ url, getClientAddress }) => {
 	const before1Hour = new Date();
 	before1Hour.setHours(before1Hour.getHours() - 1);
 	const { logActions, dbError } = await dbLogActionList({
-		actionName: logActionName,
+		actionName: sendInquiryLogActionName,
 		ipAddressHash,
 		dateFrom: before1Hour
 	});
 	if (!logActions || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const isHitLimitRate = logActions.length > sendRateLimitPerHour;
+	const isHitLimitRate = logActions.length > sendInquiryRateLimit;
 
 	let initCategoryKey = contactCategorySelect[0].value;
 	if (categoryAutoSelect) {
@@ -58,14 +59,14 @@ export const actions = {
 			const before1Hour = new Date();
 			before1Hour.setHours(before1Hour.getHours() - 1);
 			const { logActions, dbError } = await dbLogActionList({
-				actionName: logActionName,
+				actionName: sendInquiryLogActionName,
 				ipAddressHash,
 				dateFrom: before1Hour
 			});
 			if (!logActions || dbError) {
 				return error(500, { message: dbError?.message ?? '' });
 			}
-			if (logActions.length > sendRateLimitPerHour) {
+			if (logActions.length > sendInquiryRateLimit) {
 				message(form, 'Too many submissions. Please try again in an hour.');
 				return fail(400, { form });
 			}

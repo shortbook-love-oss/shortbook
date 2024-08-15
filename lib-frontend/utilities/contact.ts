@@ -3,9 +3,6 @@ export interface ContactCategorySelect {
 	label: string;
 }
 
-export const sendRateLimitPerHour = 5;
-export const logActionName = 'ContactFormSubmit';
-
 export const contactCategorySelect: ContactCategorySelect[] = [
 	{ value: 'shortbookNeedHelp', label: 'How to use "ShortBook"' },
 	{ value: 'shortbookReportIllegal', label: 'Report illegal book or user' },

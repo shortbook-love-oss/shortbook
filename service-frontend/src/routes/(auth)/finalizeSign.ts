@@ -9,9 +9,10 @@ import { dbVerificationTokenGet } from '$lib/model/verification-token/get';
 import { getRandom } from '$lib/utilities/crypto';
 import { decryptFromFlat, encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { toHashUserEmail } from '$lib/utilities/server/email';
+import { signMagicLogActionName } from '$lib/utilities/server/log-action';
 import { signInTokenName, signUpTokenName } from '$lib/utilities/server/verification-token';
 import { setSessionToken } from '$lib/utilities/cookie';
-import { logActionName, signInEmailLinkMethod } from '$lib/utilities/signin';
+import { signInEmailLinkMethod } from '$lib/utilities/signin';
 import { signConfirmTokenParam } from '$lib/utilities/url';
 import type { SignResult } from './actionInit';
 
@@ -41,7 +42,7 @@ export async function finalizeSign(
 
 	// Delete sign-in/up action log by same ip-address
 	const { dbError: dbLogDeleteError } = await dbLogActionDelete({
-		actionName: logActionName,
+		actionName: signMagicLogActionName,
 		ipAddressHash: toHash(ipAddress, env.HASH_IP_ADDRESS)
 	});
 	if (dbLogDeleteError) {

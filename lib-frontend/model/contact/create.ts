@@ -1,5 +1,5 @@
 import prisma from '$lib/prisma/connect';
-import { logActionName } from '$lib/utilities/contact';
+import { sendInquiryLogActionName } from '$lib/utilities/server/log-action';
 
 export interface DbTicketCreateRequest {
 	categoryKeyName: string;
@@ -25,7 +25,7 @@ export async function dbTicketCreate(req: DbTicketCreateRequest) {
 			});
 			await tx.log_actions.create({
 				data: {
-					action_name: logActionName,
+					action_name: sendInquiryLogActionName,
 					ip_address_hash: req.ipAddressHash
 				}
 			});

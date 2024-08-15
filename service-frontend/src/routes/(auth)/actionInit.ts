@@ -5,7 +5,8 @@ import { dbLogActionCreate } from '$lib/model/log/action-create';
 import { dbLogActionList } from '$lib/model/log/action-list';
 import { toHash } from '$lib/utilities/server/crypto';
 import { toHashUserEmail } from '$lib/utilities/server/email';
-import { logActionName, sendRateLimitCount, signInEmailLinkMethod } from '$lib/utilities/signin';
+import { signMagicLogActionName, signMagicRateLimit } from '$lib/utilities/server/log-action';
+import { signInEmailLinkMethod } from '$lib/utilities/signin';
 
 export interface SignResult {
 	user?: Awaited<ReturnType<typeof dbUserGetByEmailHash>>['user'] | null;
@@ -26,14 +27,14 @@ export async function beforeSign(
 	const before1Hour = new Date();
 	before1Hour.setHours(before1Hour.getHours() - 1);
 	const { logActions, dbError: dbLogError } = await dbLogActionList({
-		actionName: logActionName,
+		actionName: signMagicLogActionName,
 		ipAddressHash: toHash(ipAddress, env.HASH_IP_ADDRESS),
 		dateFrom: before1Hour
 	});
 	if (dbLogError) {
 		return { error: dbLogError };
 	}
-	if (logActions && logActions.length >= sendRateLimitCount) {
+	if (logActions && logActions.length >= signMagicRateLimit) {
 		return { error: null, fail: 'Too many submissions. Please try again in an hour.' };
 	}
 
@@ -45,7 +46,7 @@ export async function beforeSign(
 
 	// 3. Save log for rate limit
 	const { dbError: dbLogCreateError } = await dbLogActionCreate({
-		actionName: logActionName,
+		actionName: signMagicLogActionName,
 		ipAddressHash: toHash(ipAddress, env.HASH_IP_ADDRESS)
 	});
 	if (dbLogCreateError) {
