@@ -16,3 +16,6 @@ export function getSessionToken(cookie: Cookies) {
 export function setSessionToken(cookie: Cookies, value: string) {
 	cookie.set(keySessionToken, value, setOption);
 }
+export function deleteSessionToken(cookie: Cookies) {
+	cookie.delete(keySessionToken, setOption);
+}

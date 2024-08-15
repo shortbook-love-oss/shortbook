@@ -3,6 +3,7 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserDelete } from '$lib/model/user/delete';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
+import { deleteSessionToken } from '$lib/utilities/cookie';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user-delete';
 
@@ -26,7 +27,7 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, url, locals }) => {
+	default: async ({ request, url, cookies, locals }) => {
 		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
@@ -42,6 +43,8 @@ export const actions = {
 		if (dbError) {
 			return error(500, { message: dbError.message });
 		}
+
+		deleteSessionToken(cookies);
 
 		redirect(303, setLanguageTagToPath('/goodbye', url));
 	}
