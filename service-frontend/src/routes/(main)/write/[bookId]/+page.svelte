@@ -114,6 +114,15 @@
 				errorMessages={$errors.salesMessage}
 				className="mb-8"
 			/>
+			<TextField
+				bind:value={$form.keyName}
+				name="keyName"
+				required={true}
+				label="URL string"
+				errorMessages={$errors.keyName}
+				className="mb-1"
+			/>
+			<p class="mb-8 break-words">{$page.url.origin}/@{data.userKeyName}/book/{$form.keyName}</p>
 			<InputPoint bind:point={$form.buyPoint} errorMessages={$errors.buyPoint} className="mb-8" />
 			<PricePreview
 				point={$form.buyPoint}

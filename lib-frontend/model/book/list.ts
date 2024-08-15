@@ -25,7 +25,7 @@ export async function dbBookList(req: DbBookListRequest) {
 	const books = await prisma.books
 		.findMany({
 			where: {
-				user_id: req.userId,
+				...whereByCond,
 				...whereCondDelete
 			},
 			orderBy: { updated_at: 'desc' },

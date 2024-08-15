@@ -25,6 +25,7 @@ export const load = async ({ url, locals }) => {
 	if (!profile || dbProfileGetError) {
 		return error(500, { message: dbProfileGetError?.message ?? '' });
 	}
+	const userKeyName = profile.key_name;
 	const penName = profile.languages[0]?.pen_name ?? '';
 
 	const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
@@ -46,9 +47,10 @@ export const load = async ({ url, locals }) => {
 	form.data.prologue = '';
 	form.data.content = '';
 	form.data.salesMessage = '';
+	form.data.keyName = '';
 	form.data.buyPoint = 200;
 
-	return { form, penName, langTags, selectedCurrencyKey, currencyRates };
+	return { form, userKeyName, penName, langTags, selectedCurrencyKey, currencyRates };
 };
 
 export const actions = {

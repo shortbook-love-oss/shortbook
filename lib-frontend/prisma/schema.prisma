@@ -212,6 +212,7 @@ model books {
 
   id                      String              @id @default(cuid())
   user_id                 String
+  key_name                String              @db.VarChar(100) // Length 1 - 100
   status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
   buy_point               Int
   published_at            DateTime            @default(now())
@@ -223,6 +224,8 @@ model books {
   languages               book_languages[]
   tags                    book_tags[]
   buys                    book_buys[]
+
+  @@unique([user_id, key_name])
 }
 
 model book_covers {
