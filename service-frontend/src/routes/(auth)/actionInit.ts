@@ -39,7 +39,10 @@ export async function beforeSign(
 	}
 
 	// 2. Check exist user by email
-	const { user, dbError } = await dbUserGetByEmailHash({ emailHash });
+	const { user, dbError } = await dbUserGetByEmailHash({
+		emailHash,
+		isIncludeDelete: true
+	});
 	if (dbError) {
 		return { error: dbError };
 	}

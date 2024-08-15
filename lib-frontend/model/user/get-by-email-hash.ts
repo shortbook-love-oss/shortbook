@@ -2,27 +2,29 @@ import prisma from '$lib/prisma/connect';
 
 export interface DbUserGetByEmailHashRequest {
 	emailHash: string;
+	isIncludeDelete?: boolean;
 }
 
 export async function dbUserGetByEmailHash(req: DbUserGetByEmailHashRequest) {
 	let dbError: Error | undefined;
 
+	const whereCondDelete: { deleted_at?: null } = {};
+	if (!req.isIncludeDelete) {
+		whereCondDelete.deleted_at = null;
+	}
+
 	const user = await prisma.user
 		.findFirst({
 			where: {
 				email_hash: req.emailHash,
-				deleted_at: null
+				...whereCondDelete
 			},
 			include: {
 				profiles: {
-					where: {
-						deleted_at: null
-					},
+					where: { ...whereCondDelete },
 					include: {
 						languages: {
-							where: {
-								deleted_at: null
-							}
+							where: { ...whereCondDelete }
 						}
 					}
 				}

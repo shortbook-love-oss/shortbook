@@ -15,6 +15,7 @@ import { setSessionToken } from '$lib/utilities/cookie';
 import { signInEmailLinkMethod } from '$lib/utilities/signin';
 import { signConfirmTokenParam } from '$lib/utilities/url';
 import type { SignResult } from './actionInit';
+import { dbUserRestore } from '$lib/model/user/restore';
 
 export async function finalizeSign(
 	requestUrl: URL,
@@ -78,10 +79,16 @@ export async function finalizeSign(
 	} else {
 		// Get user
 		const { user, dbError: dbUserGetError } = await dbUserGetByEmailHash({
-			emailHash: toHashUserEmail(userEmail, signInEmailLinkMethod)
+			emailHash: toHashUserEmail(userEmail, signInEmailLinkMethod),
+			isIncludeDelete: true
 		});
 		if (!user || dbUserGetError) {
 			return { error: new Error(dbUserGetError?.message ?? '') };
+		}
+		// Restore user if soft-deleted
+		const { dbError: dbRestoreError } = await dbUserRestore({ userId: user.id });
+		if (dbRestoreError) {
+			return { error: new Error(dbRestoreError.message) };
 		}
 		userId = user.id;
 	}

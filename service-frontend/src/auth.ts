@@ -170,7 +170,7 @@ async function onSignedIn(user: User, profile: Profile | undefined, account: Acc
 
 		// Restore user if soft deleted
 		if (savedUser?.deleted_at) {
-			dbUserRestore({ userId: user.id });
+			await dbUserRestore({ userId: user.id });
 		}
 	}
 }
