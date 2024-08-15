@@ -2,15 +2,17 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
+import { dbLogActionCreate } from '$lib/model/log/action-create';
+import { dbLogActionList } from '$lib/model/log/action-list';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
-import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
+import { decryptFromFlat, encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { sendEmail, toHashUserEmail } from '$lib/utilities/server/email';
+import { changeEmailLogActionName, changeEmailRateLimit } from '$lib/utilities/server/log-action';
 import { emailChangeTokenName } from '$lib/utilities/server/verification-token';
 import { matchSigninProvider, signInEmailLinkMethod } from '$lib/utilities/signin';
 import {
-	callbackParam,
 	emailChangeTokenParam,
 	getLanguageTagFromUrl,
 	setLanguageTagToPath
@@ -44,14 +46,33 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, url, locals }) => {
+	default: async ({ request, url, locals, getClientAddress }) => {
 		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}
 		const requestLang = getLanguageTagFromUrl(url);
+		const ipAddressHash = toHash(getClientAddress(), env.HASH_IP_ADDRESS);
 
 		const form = await superValidate(request, zod(schema));
+		if (form.valid) {
+			// Block if rate limit exceeded
+			const before1Hour = new Date();
+			before1Hour.setHours(before1Hour.getHours() - 1);
+			const { logActions, dbError: dbLogError } = await dbLogActionList({
+				actionName: changeEmailLogActionName,
+				ipAddressHash,
+				dateFrom: before1Hour
+			});
+			if (dbLogError) {
+				return error(500, { message: dbLogError.message });
+			}
+			if (logActions && logActions.length >= changeEmailRateLimit) {
+				form.valid = false;
+				form.errors.email = form.errors.email ?? [];
+				form.errors.email.push('Too many submissions. Please try again in an hour.');
+			}
+		}
 		if (form.valid) {
 			// If already use email by another user, show error message near the input
 			const emailHash = toHashUserEmail(form.data.email, signInEmailLinkMethod);
@@ -93,12 +114,14 @@ export const actions = {
 		const { dbError: dbVerifyError } = await dbVerificationTokenCreate({
 			identifier: emailChangeTokenName,
 			token: emailChangeToken,
+			userId,
 			expires: after1Hour
 		});
 		if (dbVerifyError) {
 			return error(500, { message: dbVerifyError.message });
 		}
 
+		// Send email with magic link
 		const { sendEmailError } = await sendEmail(
 			env.EMAIL_FROM,
 			[form.data.email],
@@ -111,6 +134,15 @@ export const actions = {
 		);
 		if (sendEmailError) {
 			return error(500, { message: "Can't sent email." });
+		}
+
+		// Save log for rate limit
+		const { dbError: dbLogCreateError } = await dbLogActionCreate({
+			actionName: changeEmailLogActionName,
+			ipAddressHash
+		});
+		if (dbLogCreateError) {
+			return error(500, { message: dbLogCreateError.message });
 		}
 
 		return message(form, 'Sent confirm email successfully.');

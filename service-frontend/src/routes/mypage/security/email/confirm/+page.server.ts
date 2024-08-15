@@ -1,5 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import { dbVerificationTokenDelete } from '$lib/model/verification-token/delete';
 import { dbVerificationTokenGet } from '$lib/model/verification-token/get';
@@ -19,7 +20,8 @@ export const load = async ({ url, locals }) => {
 	const token = url.searchParams.get(emailChangeTokenParam);
 	const { verificationToken, dbError: dbVerifyGetError } = await dbVerificationTokenGet({
 		identifier: emailChangeTokenName,
-		token: token ?? ''
+		token: token ?? '',
+		userId
 	});
 	if (!verificationToken || dbVerifyGetError) {
 		return error(404, { message: 'Not found' });
@@ -33,15 +35,30 @@ export const load = async ({ url, locals }) => {
 		return error(401, { message: 'Unauthorized' });
 	}
 
-	// Change user email
+	// If already use email by another user, cancel process
 	const emailEncrypt = encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
 	const emailHash = toHashUserEmail(userEmail, signInEmailLinkMethod);
-	await dbUserProvideDataUpdate({
+	const { user, dbError: dbUserGetError } = await dbUserGetByEmailHash({ emailHash });
+	if (dbUserGetError) {
+		return error(500, { message: dbUserGetError.message });
+	} else if (user) {
+		if (user.id === userId) {
+			return error(400, { message: 'You are using this email address' });
+		} else {
+			return error(400, { message: 'This email is in use by another user' });
+		}
+	}
+
+	// Change user email
+	const { dbError: dbUserUpdateError } = await dbUserProvideDataUpdate({
 		userId,
 		emailEncrypt,
 		emailHash,
 		emailVerified: true
 	});
+	if (dbUserUpdateError) {
+		return error(500, { message: dbUserUpdateError.message });
+	}
 
 	// Delete dangling verification token
 	const { dbError: dbVerifyDeleteError } = await dbVerificationTokenDelete({
