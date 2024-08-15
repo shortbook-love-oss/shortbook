@@ -8,7 +8,7 @@ export interface DbLogActionsCreateRequest {
 export async function dbLogActionCreate(req: DbLogActionsCreateRequest) {
 	let dbError: Error | undefined;
 
-	const logActions = await prisma.log_actions
+	const logAction = await prisma.log_actions
 		.create({
 			data: {
 				action_name: req.actionName,
@@ -20,5 +20,5 @@ export async function dbLogActionCreate(req: DbLogActionsCreateRequest) {
 			return undefined;
 		});
 
-	return { logActions, dbError };
+	return { logAction, dbError };
 }

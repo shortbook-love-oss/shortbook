@@ -13,6 +13,7 @@ import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib/utilities/s
 import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
 import { getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
+import { dbLogActionCreate } from '$lib/model/log/action-create.js';
 
 export const load = async ({ url, getClientAddress }) => {
 	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
@@ -30,7 +31,7 @@ export const load = async ({ url, getClientAddress }) => {
 	if (!logActions || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const isHitLimitRate = logActions.length > sendInquiryRateLimit;
+	const isHitLimitRate = logActions.length >= sendInquiryRateLimit;
 
 	let initCategoryKey = contactCategorySelect[0].value;
 	if (categoryAutoSelect) {
@@ -52,7 +53,7 @@ export const load = async ({ url, getClientAddress }) => {
 export const actions = {
 	default: async ({ request, url, getClientAddress }) => {
 		const requestLang = getLanguageTagFromUrl(url);
-		const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
+		const ipAddressHash = toHash(getClientAddress(), env.HASH_IP_ADDRESS);
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
 			// Block if rate limit exceeded
@@ -94,16 +95,25 @@ export const actions = {
 			savedFileUrls.push(fullPath);
 		}
 
-		const { dbError } = await dbTicketCreate({
+		// Save log for rate limit
+		const { dbError: dbLogCreateError } = await dbLogActionCreate({
+			actionName: sendInquiryLogActionName,
+			ipAddressHash
+		});
+		if (dbLogCreateError) {
+			return error(500, { message: dbLogCreateError.message });
+		}
+
+		// Create support ticket
+		const { dbError: dbTicketCreateError } = await dbTicketCreate({
 			categoryKeyName: form.data.categoryKeyName,
 			emailEncrypt: encryptAndFlat(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT),
 			description: form.data.description,
 			languageCode: requestLang,
-			fileUrls: savedFileUrls,
-			ipAddressHash
+			fileUrls: savedFileUrls
 		});
-		if (dbError) {
-			return error(500, { message: dbError.message });
+		if (dbTicketCreateError) {
+			return error(500, { message: dbTicketCreateError.message });
 		}
 
 		const sentDescription = DOMPurify.sanitize(form.data.description);

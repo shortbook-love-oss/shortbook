@@ -84,4 +84,10 @@
 		errorMessages={$errors.files}
 		className="mb-8 w-full max-w-96"
 	/>
+	{#if data.isHitLimitRate}
+		<p class="mb-8">
+			For security reasons, there is a limit to the number of times you can send your message.
+			Please try again in an hour.
+		</p>
+	{/if}
 </Form>
