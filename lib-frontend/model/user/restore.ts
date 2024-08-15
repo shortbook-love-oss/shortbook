@@ -48,6 +48,24 @@ export async function dbUserRestore(req: DbUserRestoreRequest) {
 				},
 				data: { deleted_at: null }
 			});
+			await tx.user_payment_checkouts.updateMany({
+				where: {
+					user_id: req.userId
+				},
+				data: { deleted_at: null }
+			});
+			await tx.user_payment_contracts.updateMany({
+				where: {
+					user_id: req.userId
+				},
+				data: { deleted_at: null }
+			});
+			await tx.user_payment_settings.updateMany({
+				where: {
+					user_id: req.userId
+				},
+				data: { deleted_at: null }
+			});
 			await tx.user_points.updateMany({
 				where: {
 					user_id: req.userId

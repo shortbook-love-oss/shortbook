@@ -54,6 +54,27 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				},
 				data: { deleted_at: deletedAt }
 			});
+			await tx.user_payment_checkouts.updateMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
+			await tx.user_payment_contracts.updateMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
+			await tx.user_payment_settings.updateMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
 			await tx.user_points.updateMany({
 				where: {
 					user_id: req.userId,
@@ -73,6 +94,9 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 			});
 			await tx.session.deleteMany({
 				where: { userId: req.userId }
+			});
+			await tx.verificationToken.deleteMany({
+				where: { user_id: req.userId }
 			});
 
 			const deleteBooks = await tx.books.findMany({
