@@ -8,16 +8,15 @@ export interface DbBookBuyGetRequest {
 export async function dbBookBuyGet(req: DbBookBuyGetRequest) {
 	let dbError: Error | undefined;
 
-	const bookBuy = await prisma
-		.$transaction(async (tx) => {
-			const bookBuy = await tx.book_buys.findFirst({
-				where: {
+	const bookBuy = await prisma.book_buys
+		.findUnique({
+			where: {
+				book_id_user_id: {
 					book_id: req.bookId,
-					user_id: req.userId,
-					deleted_at: null
-				}
-			});
-			return bookBuy;
+					user_id: req.userId
+				},
+				deleted_at: null
+			}
 		})
 		.catch(() => {
 			dbError ??= new Error(
