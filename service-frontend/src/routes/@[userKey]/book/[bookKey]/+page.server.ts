@@ -84,10 +84,10 @@ export const load = async ({ url, locals, params }) => {
 		userPoint = currentPoint;
 	}
 
-	if (book.status === 0 && book.user_id !== userId) {
+	if (book.status === 0 && !isOwn) {
 		return error(404, { message: 'Not found' });
 	}
-	if (book.deleted_at != null && !isBoughtBook) {
+	if (book.deleted_at != null && !isBoughtBook && !isOwn) {
 		return error(404, { message: 'Not found' });
 	}
 

@@ -2,6 +2,8 @@
 	import IconCheck from '~icons/mdi/check';
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconWarning from '~icons/mdi/warning';
+	import { page } from '$app/stores';
+	import { inquiryCategoryParam } from '$lib/utilities/url';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
@@ -61,7 +63,7 @@
 			</div>
 			<div class="flex items-center gap-4">
 				<time datetime={data.bookDetail.publishedAt.toISOString()}>{publishedAt}</time>
-				{#if data.isOwn}
+				{#if data.isOwn && !data.bookDetail.isBookDeleted}
 					<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">
 						<IconWrite width="20" height="20" className="-me-1" />
 					</NavLinkSmall>
@@ -80,7 +82,17 @@
 				<IconWarning width="24" height="24" class="shrink-0" />
 				<div class="text-lg leading-snug">
 					<p>This book has been deleted.</p>
-					<p>You bought it so you can read it.</p>
+					{#if data.isOwn}
+						<p>Bought users can still read this book.</p>
+						<p>
+							If you accidentally deleted it, <a
+								href="{$page.url.origin}/contact?{inquiryCategoryParam}=other"
+								class="underline">please contact support.</a
+							>
+						</p>
+					{:else if data.isBoughtBook}
+						<p>You bought it so you can read it.</p>
+					{/if}
 				</div>
 			</div>
 		{/if}
