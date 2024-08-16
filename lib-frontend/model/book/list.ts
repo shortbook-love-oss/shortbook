@@ -4,6 +4,7 @@ import prisma from '$lib/prisma/connect';
 export interface DbBookListRequest {
 	bookIds?: string[];
 	userId?: string;
+	isIncludeDraft?: boolean;
 	isIncludeDelete?: boolean;
 }
 
@@ -17,6 +18,12 @@ export async function dbBookList(req: DbBookListRequest) {
 	if (req.bookIds?.length) {
 		whereByCond.id = { in: req.bookIds };
 	}
+	if (req.isIncludeDraft) {
+		whereByCond.status = { in: [0, 1] };
+	} else {
+		whereByCond.status = { in: [1] };
+	}
+
 	const whereCondDelete: { deleted_at?: null } = {};
 	if (!req.isIncludeDelete) {
 		whereCondDelete.deleted_at = null;

@@ -21,6 +21,7 @@ export const load = async ({ url, locals, params }) => {
 	const { book, dbError: dbBookGetError } = await dbBookGet({
 		bookKeyName: params.bookKey,
 		userKeyName: params.userKey,
+		isIncludeDraft: true,
 		isIncludeDelete: true
 	});
 	if (!book || !book.cover || dbBookGetError) {
@@ -31,7 +32,7 @@ export const load = async ({ url, locals, params }) => {
 		bookLang = book.languages[0];
 	}
 	if (!bookLang) {
-		return error(404, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
+		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
 	}
 	const profile = book.user.profiles;
 	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
@@ -39,7 +40,7 @@ export const load = async ({ url, locals, params }) => {
 		profileLang = profile.languages[0];
 	}
 	if (!profile || !profileLang) {
-		return error(404, {
+		return error(500, {
 			message: `Failed to get profile contents. User Key-name=${params.userKey}`
 		});
 	}
@@ -83,6 +84,9 @@ export const load = async ({ url, locals, params }) => {
 		userPoint = currentPoint;
 	}
 
+	if (book.status === 0 && book.user_id !== userId) {
+		return error(404, { message: 'Not found' });
+	}
 	if (book.deleted_at != null && !isBoughtBook) {
 		return error(404, { message: 'Not found' });
 	}

@@ -13,9 +13,8 @@ import {
 	setLanguageTagToPath
 } from '$lib/utilities/url';
 
-export const load = async ({ url, params }) => {
+export const load = async ({ url }) => {
 	const requestLang = getLanguageTagFromUrl(url);
-	const bookId = params.bookId;
 
 	// Allow payment data to be processed even if the ShortBook session expires during payment
 	// Solution: use encrypt data in url search-param, instead of requests and cookies
@@ -35,16 +34,6 @@ export const load = async ({ url, params }) => {
 		});
 	}
 
-	const { book, dbError: dbBookGetError } = await dbBookGet({ bookId });
-	if (!book?.user.profiles || dbBookGetError) {
-		return error(500, { message: dbBookGetError?.message ?? '' });
-	}
-
-	const afterUrl = new URL(
-		url.origin +
-			setLanguageTagToPath(`/@${book.user.profiles.key_name}/book/${book.key_name}`, requestLang)
-	);
-
 	// After charging points, create book bought history
 	let bookPaymentInfo: DbBookBuyCreateRequest;
 	try {
@@ -57,6 +46,22 @@ export const load = async ({ url, params }) => {
 	} catch {
 		return error(500, { message: 'Invalid URL parameter of book-info' });
 	}
+
+	const { book, dbError: dbBookGetError } = await dbBookGet({
+		bookId: bookPaymentInfo.bookId,
+		isIncludeDraft: true,
+		isIncludeDelete: true
+	});
+	if (!book?.user.profiles || dbBookGetError) {
+		return error(500, { message: dbBookGetError?.message ?? '' });
+	}
+	// @todo If the book you purchased is deleted or in draft status, points will not be consumed
+
+	const afterUrl = new URL(
+		url.origin +
+			setLanguageTagToPath(`/@${book.user.profiles.key_name}/book/${book.key_name}`, requestLang)
+	);
+
 	const { dbError: dbBookBuyError } = await dbBookBuyCreate({
 		...bookPaymentInfo,
 		payment: {

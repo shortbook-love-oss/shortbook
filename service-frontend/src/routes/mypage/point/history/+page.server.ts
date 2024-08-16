@@ -1,4 +1,4 @@
-import type { user_payment_checkouts, Prisma } from '@prisma/client';
+import type { user_payment_checkouts } from '@prisma/client';
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
 import { dbUserPaymentCheckoutList } from '$lib/model/user/payment-checkout/list';
@@ -48,6 +48,7 @@ export const load = async ({ url, locals }) => {
 	if (userPointBookIds.length) {
 		const { books, dbError: dbBookListError } = await dbBookList({
 			bookIds: userPointBookIds,
+			isIncludeDraft: true,
 			isIncludeDelete: true
 		});
 		if (!books || dbBookListError) {

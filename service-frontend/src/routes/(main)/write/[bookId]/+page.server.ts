@@ -25,7 +25,8 @@ export const load = async ({ locals, params }) => {
 
 	const { book, dbError } = await dbBookGet({
 		bookId: params.bookId,
-		userId
+		userId,
+		isIncludeDraft: true
 	});
 	if (!book || !book.cover || dbError) {
 		return error(500, { message: dbError?.message ?? '' });

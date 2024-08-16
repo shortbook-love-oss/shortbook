@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import prisma from '$lib/prisma/connect';
 
 type IdExclusiveProps =
@@ -14,11 +15,19 @@ type IdExclusiveProps =
 
 type DbBookGetRequest = IdExclusiveProps & {
 	userId?: string;
+	isIncludeDraft?: boolean;
 	isIncludeDelete?: boolean;
 };
 
 export async function dbBookGet(req: DbBookGetRequest) {
 	let dbError: Error | undefined;
+
+	const whereByCond: Prisma.booksWhereInput = {};
+	if (req.isIncludeDraft) {
+		whereByCond.status = { in: [0, 1] };
+	} else {
+		whereByCond.status = { in: [1] };
+	}
 
 	const whereCondDelete: { deleted_at?: null } = {};
 	if (!req.isIncludeDelete) {
@@ -30,6 +39,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			where: {
 				id: req.bookId,
 				key_name: req.bookKeyName,
+				...whereByCond,
 				...whereCondDelete,
 				user: {
 					profiles: {

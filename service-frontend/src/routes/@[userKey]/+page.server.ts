@@ -4,7 +4,7 @@ import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
 import { type BookItem, contentsToMarkdown, getBookCover } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-export const load = async ({ url, params }) => {
+export const load = async ({ url, params, locals }) => {
 	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.userKey });
 	if (!user || !user.profiles || dbError) {
 		return error(500, { message: dbError?.message ?? '' });

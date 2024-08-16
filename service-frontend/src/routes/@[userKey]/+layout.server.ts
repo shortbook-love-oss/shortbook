@@ -3,6 +3,8 @@ import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, params, locals }) => {
+	const signInUserId = locals.session?.user?.id;
+
 	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.userKey });
 	if (!user || !user.profiles || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
@@ -14,8 +16,7 @@ export const load = async ({ url, params, locals }) => {
 		profileLang = user.profiles.languages[0];
 	}
 
-	const loginUserId = locals.session?.user?.id;
-	const isOwn = user.id === loginUserId;
+	const isOwn = user.id === signInUserId;
 
 	return { user, profileLang, isOwn };
 };
