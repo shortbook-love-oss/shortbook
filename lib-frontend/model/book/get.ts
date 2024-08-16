@@ -1,10 +1,21 @@
 import prisma from '$lib/prisma/connect';
 
-export interface DbBookGetRequest {
-	bookId: string;
+type IdExclusiveProps =
+	| {
+			bookId: string;
+			bookKeyName?: never;
+			userKeyName?: never;
+	  }
+	| {
+			bookId?: never;
+			bookKeyName: string;
+			userKeyName: string;
+	  };
+
+type DbBookGetRequest = IdExclusiveProps & {
 	userId?: string;
 	isIncludeDelete?: boolean;
-}
+};
 
 export async function dbBookGet(req: DbBookGetRequest) {
 	let dbError: Error | undefined;
@@ -15,10 +26,17 @@ export async function dbBookGet(req: DbBookGetRequest) {
 	}
 
 	const book = await prisma.books
-		.findUnique({
+		.findFirst({
 			where: {
 				id: req.bookId,
-				...whereCondDelete
+				key_name: req.bookKeyName,
+				...whereCondDelete,
+				user: {
+					profiles: {
+						key_name: req.userKeyName,
+						...whereCondDelete
+					}
+				}
 			},
 			include: {
 				cover: {
@@ -29,9 +47,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 				},
 				tags: {
 					where: { ...whereCondDelete },
-					orderBy: {
-						sort: 'asc'
-					}
+					orderBy: { sort: 'asc' }
 				},
 				user: {
 					select: {
@@ -55,16 +71,22 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		})
 		.then((book) => {
 			if (!book) {
-				dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
+				dbError ??= new Error(
+					`Can't find book. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+				);
 				return undefined;
 			} else if (req.userId && book.user_id !== req.userId) {
-				dbError ??= new Error(`Can't edit book written by other writer. Book ID=${req.bookId}`);
+				dbError ??= new Error(
+					`Can't edit book written by other writer. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+				);
 				return undefined;
 			}
 			return book;
 		})
 		.catch(() => {
-			dbError ??= new Error(`Failed to get book. Book ID=${req.bookId}`);
+			dbError ??= new Error(
+				`Failed to get book. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+			);
 			return undefined;
 		});
 
