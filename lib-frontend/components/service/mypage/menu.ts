@@ -14,6 +14,11 @@ export const categories: MypageItem[] = [
 		]
 	},
 	{
+		name: 'Point',
+		href: 'point',
+		childs: [{ name: 'Point history', href: 'history' }]
+	},
+	{
 		name: 'Sign in & security',
 		href: 'security',
 		childs: [
@@ -21,11 +26,6 @@ export const categories: MypageItem[] = [
 			{ name: 'Sign in method', href: 'method' },
 			{ name: 'Danger action', href: 'danger' }
 		]
-	},
-	{
-		name: 'Point',
-		href: 'point',
-		childs: [{ name: 'Point history', href: 'history' }]
 	},
 	{
 		name: 'Payment',
