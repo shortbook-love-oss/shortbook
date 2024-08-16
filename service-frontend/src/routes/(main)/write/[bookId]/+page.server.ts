@@ -13,6 +13,7 @@ import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/curren
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
+import { dbBookBuyList } from '$lib/model/book-buy/list.js';
 
 export const load = async ({ locals, params }) => {
 	const userId = locals.session?.user?.id;
@@ -32,6 +33,12 @@ export const load = async ({ locals, params }) => {
 		return error(500, { message: dbError?.message ?? '' });
 	}
 	let bookLang = book?.languages[0];
+
+	const { bookBuys, dbError: dbBuyListError } = await dbBookBuyList({ bookId: params.bookId });
+	if (!bookBuys || dbBuyListError) {
+		return error(500, { message: dbBuyListError?.message ?? '' });
+	}
+	const isBoughtByOther = bookBuys.length > 0;
 
 	const { profile, dbError: profileDbError } = await dbUserProfileGet({ userId });
 	if (!profile || profileDbError) {
@@ -86,6 +93,7 @@ export const load = async ({ locals, params }) => {
 		langTags,
 		status,
 		initTitle,
+		isBoughtByOther,
 		selectedCurrencyKey,
 		currencyRates
 	};
@@ -129,6 +137,16 @@ export const actions = {
 		}
 
 		const form = await superValidate(request, zod(schema));
+		if (form.valid) {
+			const { bookBuys, dbError: dbBuyListError } = await dbBookBuyList({ bookId: params.bookId });
+			if (!bookBuys || dbBuyListError) {
+				return error(500, { message: dbBuyListError?.message ?? '' });
+			}
+			if (bookBuys.length) {
+				message(form, "Can't revert to draft because this book was bought by user.");
+				return fail(400, { form });
+			}
+		}
 		if (!form.valid) {
 			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
