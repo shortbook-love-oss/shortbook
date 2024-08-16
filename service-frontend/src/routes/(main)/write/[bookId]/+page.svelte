@@ -20,6 +20,9 @@
 
 	export let data;
 
+	let isEnableJS = false;
+	onMount(() => (isEnableJS = true));
+
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
 		validators: zod(schema),
@@ -143,10 +146,15 @@
 	</div>
 	<div class="flex justify-center gap-x-16">
 		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
-		<div class="flex w-full max-w-xl items-center gap-8 max-sm:flex-col">
-			<SubmitButton hasInvalid={!hasVaild} isLoading={$submitting}>
+		<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
+			<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
 				{data.status === 0 ? 'Publish book' : 'Republish book'}
 			</SubmitButton>
+			<SubmitText
+				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
+				hasInvalid={!hasVaild && isEnableJS}
+				{$submitting}>Save draft</SubmitText
+			>
 			<Dialog name="delete" openerClass="rounded-lg" dialogSizeClass="max-w-fit">
 				<NavLinkSmall slot="opener" name="Delete" className="text-red-800">
 					<IconDelete width="24" height="24" />
@@ -155,7 +163,7 @@
 				<SubmitText
 					slot="actions"
 					formaction="{removeLanguageTagFromPath($page.url.pathname)}?/delete"
-					hasInvalid={!hasVaild}
+					hasInvalid={!hasVaild && isEnableJS}
 					isLoading={$submitting}
 					className="mx-auto"
 				>

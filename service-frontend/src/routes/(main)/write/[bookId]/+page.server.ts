@@ -121,6 +121,31 @@ export const actions = {
 		redirect(303, setLanguageTagToPath(`/@${profile.key_name}/book/${book.key_name}`, url));
 	},
 
+	draft: async ({ request, url, locals, params }) => {
+		const userId = locals.session?.user?.id;
+		if (!userId) {
+			return error(401, { message: 'Unauthorized' });
+		}
+
+		const form = await superValidate(request, zod(schema));
+		if (!form.valid) {
+			message(form, 'There was an error. please check your input and resubmit.');
+			return fail(400, { form });
+		}
+
+		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
+			bookId: params.bookId,
+			userId,
+			status: 0,
+			...form.data
+		});
+		if (!book || dbBookUpdateError) {
+			return error(500, { message: dbBookUpdateError?.message ?? '' });
+		}
+
+		redirect(303, setLanguageTagToPath(`/write`, url));
+	},
+
 	delete: async ({ url, locals, params }) => {
 		const userId = locals.session?.user?.id;
 		if (!userId) {

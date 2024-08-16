@@ -3,10 +3,12 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
+	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/book-update';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
+	import SubmitText from '$lib/components/modules/form/submit-text.svelte';
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
@@ -142,8 +144,17 @@
 	</div>
 	<div class="flex justify-center gap-x-16">
 		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
-		<div class="w-full max-w-xl">
-			<SubmitButton hasInvalid={!hasVaild && isEnableJS} {$submitting}>Publish book</SubmitButton>
+		<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
+			<SubmitButton
+				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/publish"
+				hasInvalid={!hasVaild && isEnableJS}
+				{$submitting}>Publish book</SubmitButton
+			>
+			<SubmitText
+				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
+				hasInvalid={!hasVaild && isEnableJS}
+				{$submitting}>Save draft</SubmitText
+			>
 		</div>
 		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
 	</div>
