@@ -1,19 +1,17 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { editLoad } from '$lib/components/service/write/edit-load';
 import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbBookDelete } from '$lib/model/book/delete';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbBookUpdate } from '$lib/model/book/update';
-import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
+import { dbBookBuyList } from '$lib/model/book-buy/list';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getConvertedCurrencies } from '$lib/utilities/server/currency';
 import { getBookCover } from '$lib/utilities/book';
-import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
-import { dbBookBuyList } from '$lib/model/book-buy/list.js';
 
 export const load = async ({ locals, params }) => {
 	const userId = locals.session?.user?.id;
@@ -40,22 +38,7 @@ export const load = async ({ locals, params }) => {
 	}
 	const isBoughtByOther = bookBuys.length > 0;
 
-	const { profile, dbError: profileDbError } = await dbUserProfileGet({ userId });
-	if (!profile || profileDbError) {
-		return error(500, { message: profileDbError?.message ?? '' });
-	}
-	const userKeyName = profile.key_name;
-	const penName = profile.languages[0]?.pen_name ?? '';
-
-	const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
-	if (dbPayGetError) {
-		return error(500, { message: dbPayGetError.message });
-	}
-	const selectedCurrencyKey =
-		(paymentSetting?.currency as CurrencySupportKeys) ?? defaultCurrency.key;
-
-	// Show book price by all supported currencies
-	const currencyRates = await getConvertedCurrencies(1, defaultCurrency.key);
+	const { userKeyName, penName, selectedCurrencyKey, currencyRates } = await editLoad(userId);
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
