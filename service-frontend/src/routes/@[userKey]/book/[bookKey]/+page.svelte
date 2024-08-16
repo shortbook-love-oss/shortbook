@@ -20,15 +20,15 @@
 <article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
 	<div class="hidden w-full max-w-xl shrink-0 gap-8 break-words lg:flex lg:w-48 lg:justify-end">
 		<div class="max-w-full">
-			<a href="/@{data.bookDetail.keyName}" class="peer mb-2 inline-block">
+			<a href="/@{data.bookDetail.userKeyName}" class="peer mb-2 inline-block">
 				<img
-					src="{data.bookDetail.image}?w=64&h=64&fit=cover"
+					src="{data.bookDetail.userImage}?w=64&h=64&fit=cover"
 					alt="{data.bookDetail.penName} profile icon"
 					class="h-16 w-16 rounded bg-white align-middle"
 				/>
 			</a>
 			<a
-				href="/@{data.bookDetail.keyName}"
+				href="/@{data.bookDetail.userKeyName}"
 				class="mb-2 block whitespace-pre-wrap text-xl leading-snug hover:underline peer-hover:underline"
 			>
 				{data.bookDetail.penName}
@@ -51,8 +51,8 @@
 			<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
 				<ProfileCard
 					name={data.bookDetail.penName}
-					keyName={data.bookDetail.keyName}
-					imageSrc={data.bookDetail.image}
+					keyName={data.bookDetail.userKeyName}
+					imageSrc={data.bookDetail.userImage}
 				>
 					{#if data.profileLang?.headline}
 						<p class="mt-1">{data.profileLang.headline}</p>
@@ -96,11 +96,11 @@
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
-			<SalesMessage image={data.bookDetail.image} message={data.bookDetail.salesMessage}>
+			<SalesMessage image={data.bookDetail.userImage} message={data.bookDetail.salesMessage}>
 				<svelte:fragment slot="action">
 					{#if data.hasEnoughPoint}
 						<a
-							href="/book/{data.bookDetail.id}/buy"
+							href="/redirect/book/{data.bookDetail.id}/buy"
 							class="mb-2 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
 							data-sveltekit-reload>Buy for {data.bookDetail.buyPoint} point</a
 						>

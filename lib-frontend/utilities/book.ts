@@ -28,9 +28,10 @@ export interface MyBookItem extends BookCover {
 }
 
 export interface BookItem extends MyBookItem {
-	keyName: string;
+	bookKeyName: string;
+	userKeyName: string;
 	penName: string;
-	image: string;
+	userImage: string;
 }
 
 export interface BookDetail extends BookItem {

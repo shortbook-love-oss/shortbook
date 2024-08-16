@@ -49,9 +49,10 @@ export const load = async ({ url }) => {
 				subtitle: bookLang.subtitle,
 				publishedAt: book.published_at,
 				updatedAt: book.updated_at,
-				keyName: profile.key_name,
+				bookKeyName: book.key_name,
+				userKeyName: profile.key_name,
 				penName: profileLang.pen_name,
-				image: book.user.image ?? ''
+				userImage: book.user.image ?? ''
 			});
 		}
 	}

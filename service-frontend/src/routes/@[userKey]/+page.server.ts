@@ -5,7 +5,7 @@ import { type BookItem, contentsToMarkdown, getBookCover } from '$lib/utilities/
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, params }) => {
-	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.keyName });
+	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.userKey });
 	if (!user || !user.profiles || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
@@ -54,9 +54,10 @@ export const load = async ({ url, params }) => {
 			subtitle: bookLang.subtitle,
 			publishedAt: book.published_at,
 			updatedAt: book.updated_at,
-			keyName: profile.key_name,
+			bookKeyName: book.key_name,
+			userKeyName: profile.key_name,
 			penName: profileLang.pen_name,
-			image: book.user.image ?? ''
+			userImage: book.user.image ?? ''
 		});
 	}
 

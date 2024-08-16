@@ -19,7 +19,8 @@ export const load = async ({ url, locals, params }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 
 	const { book, dbError: dbBookGetError } = await dbBookGet({
-		bookId: params.bookId,
+		bookKeyName: params.bookKey,
+		userKeyName: params.userKey,
 		isIncludeDelete: true
 	});
 	if (!book || !book.cover || dbBookGetError) {
@@ -29,10 +30,18 @@ export const load = async ({ url, locals, params }) => {
 	if (!bookLang && book.languages.length) {
 		bookLang = book.languages[0];
 	}
+	if (!bookLang) {
+		return error(404, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
+	}
 	const profile = book.user.profiles;
 	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
 	if (!profileLang && profile?.languages.length) {
 		profileLang = profile.languages[0];
+	}
+	if (!profile || !profileLang) {
+		return error(404, {
+			message: `Failed to get profile contents. User Key-name=${params.userKey}`
+		});
 	}
 
 	let primaryCurrency: CurrencySupportKeys = defaultCurrency.key;
@@ -107,23 +116,24 @@ export const load = async ({ url, locals, params }) => {
 		userId: book.user_id,
 		status: book.status,
 		buyPoint,
-		title: bookLang?.title ?? '',
-		subtitle: bookLang?.subtitle ?? '',
+		title: bookLang.title,
+		subtitle: bookLang.subtitle,
 		publishedAt: book.published_at,
 		updatedAt: book.updated_at,
-		keyName: profile?.key_name ?? '',
-		penName: profileLang?.pen_name ?? '',
-		image: book.user.image ?? '',
-		prologue: await contentsToMarkdown(bookLang?.prologue ?? ''),
+		bookKeyName: book.key_name,
+		userKeyName: profile.key_name,
+		penName: profileLang.pen_name,
+		userImage: book.user.image ?? '',
+		prologue: await contentsToMarkdown(bookLang.prologue),
 		content: '',
 		salesMessage: '',
 		isBookDeleted: book.deleted_at != null
 	};
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
-		bookDetail.content = await contentsToMarkdown(bookLang?.content ?? '');
+		bookDetail.content = await contentsToMarkdown(bookLang.content);
 	} else {
-		bookDetail.salesMessage = await contentsToMarkdown(bookLang?.sales_message ?? '');
+		bookDetail.salesMessage = await contentsToMarkdown(bookLang.sales_message);
 	}
 
 	return {

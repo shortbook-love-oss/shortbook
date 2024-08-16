@@ -1,17 +1,22 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
 import { dbUserPaymentContractCreate } from '$lib/model/user/payment-contract/create';
 import { dbUserPaymentSettingUpsert } from '$lib/model/user/payment-setting/upsert';
 import { decryptFromFlat } from '$lib/utilities/server/crypto';
 import { checkPaymentStatus } from '$lib/utilities/server/payment';
 import {
+	getLanguageTagFromUrl,
 	paymentBookInfoParam,
 	paymentSessionIdParam,
 	setLanguageTagToPath
 } from '$lib/utilities/url';
 
 export const load = async ({ url, params }) => {
+	const requestLang = getLanguageTagFromUrl(url);
+	const bookId = params.bookId;
+
 	// Allow payment data to be processed even if the ShortBook session expires during payment
 	// Solution: use encrypt data in url search-param, instead of requests and cookies
 	const bookPaymentInfoRaw = url.searchParams.get(paymentBookInfoParam);
@@ -20,7 +25,7 @@ export const load = async ({ url, params }) => {
 		return error(404, { message: 'Not found' });
 	}
 
-	// /book/[bookId]/bought?sessionId=xxxxxxxxxx&bookInfo=xxxxxxxxxx
+	// /redirect/book/[bookId]/bought?sessionId=xxxxxxxxxx&bookInfo=xxxxxxxxxx
 	// @todo Block paymentSessionId that have already been used to eliminate potential vulnerabilities
 	const { paymentSessionId, currency, amount, customerId, isCreateCustomer, isAvailable } =
 		await checkPaymentStatus(paymentSessionIdRaw);
@@ -29,6 +34,16 @@ export const load = async ({ url, params }) => {
 			message: "Can't complete payment process, because your payment funds aren't yet available."
 		});
 	}
+
+	const { book, dbError: dbBookGetError } = await dbBookGet({ bookId });
+	if (!book?.user.profiles || dbBookGetError) {
+		return error(500, { message: dbBookGetError?.message ?? '' });
+	}
+
+	const afterUrl = new URL(
+		url.origin +
+			setLanguageTagToPath(`/@${book.user.profiles.key_name}/book/${book.key_name}`, requestLang)
+	);
 
 	// After charging points, create book bought history
 	let bookPaymentInfo: DbBookBuyCreateRequest;
@@ -76,5 +91,5 @@ export const load = async ({ url, params }) => {
 		}
 	}
 
-	redirect(303, url.origin + setLanguageTagToPath(`/book/${params.bookId}`, url));
+	redirect(303, afterUrl);
 };

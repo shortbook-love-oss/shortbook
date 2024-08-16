@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookGetMinimum } from '$lib/model/book/get-minimum';
+import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
 import { dbBookBuyGet } from '$lib/model/book-buy/get';
 import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
@@ -29,7 +29,9 @@ export const load = async ({ url, params, locals }) => {
 		env.ENCRYPT_EMAIL_USER,
 		env.ENCRYPT_SALT
 	);
-	const callbackUrl = url.origin + setLanguageTagToPath(`/book/${bookId}`, requestLang);
+	if (!userEmail) {
+		return error(401, { message: 'Unauthorized' });
+	}
 
 	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
 	if (dbBookBuyError) {
@@ -41,12 +43,22 @@ export const load = async ({ url, params, locals }) => {
 	if (dbUserPointError) {
 		return error(500, { message: dbUserPointError?.message ?? '' });
 	}
-	const { book, dbError: dbBookPointError } = await dbBookGetMinimum({ bookId });
-	if (!book || dbBookPointError) {
-		return error(500, { message: dbBookPointError?.message ?? '' });
-	} else if (book.user_id === userId) {
-		return error(404, { message: 'Not found' });
+
+	const { book, dbError: dbBookGetError } = await dbBookGet({ bookId });
+	if (!book?.user.profiles || dbBookGetError) {
+		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
+	const afterPaymentUrl = new URL(
+		url.origin + setLanguageTagToPath(`/redirect/book/${params.bookId}/bought`, requestLang)
+	);
+	const cancelUrl =
+		url.origin +
+		setLanguageTagToPath(`/@${book.user.profiles.key_name}/book/${book.key_name}`, requestLang);
+	if (book.user_id === userId) {
+		// Prevent buy own book
+		return redirect(303, cancelUrl);
+	}
+
 	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
 		userId,
 		providerKey: 'stripe'
@@ -69,14 +81,16 @@ export const load = async ({ url, params, locals }) => {
 		if (dbBookBuyError) {
 			return error(500, { message: dbBookBuyError?.message ?? '' });
 		}
-		redirect(303, callbackUrl);
+		redirect(303, cancelUrl);
 	}
 
+	// Currency specification is required for payment process
 	const requestCurrency = url.searchParams.get(paymentCurrencyParam);
 	if (!requestCurrency || !getCurrencyData(requestCurrency)) {
 		return error(400, { message: 'Currency must be specified.' });
 	}
 
+	// If do not have enough points, use Stripe Checkout.
 	// Need 456 points → charge 456 points
 	// Need 8000 points → charge 8000 points
 	dbBookBuyCreateReq.beforePointChargeAmount = book.buy_point;
@@ -84,10 +98,6 @@ export const load = async ({ url, params, locals }) => {
 		JSON.stringify(dbBookBuyCreateReq),
 		env.ENCRYPT_PAYMENT_BOOK_INFO,
 		env.ENCRYPT_SALT
-	);
-	// If do not have enough points, use Stripe Checkout.
-	const afterPaymentUrl = new URL(
-		url.origin + setLanguageTagToPath(`/book/${params.bookId}/bought`, requestLang)
 	);
 	afterPaymentUrl.searchParams.set(paymentBookInfoParam, bookPaymentInfo);
 
@@ -100,8 +110,8 @@ export const load = async ({ url, params, locals }) => {
 		paymentCustomerId,
 		userEmail,
 		afterPaymentUrl.href,
-		callbackUrl
+		cancelUrl
 	);
 
-	redirect(303, paymentSession.url ?? callbackUrl);
+	redirect(303, paymentSession.url ?? cancelUrl);
 };

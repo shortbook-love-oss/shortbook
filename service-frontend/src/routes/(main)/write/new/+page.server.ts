@@ -66,15 +66,20 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { book, dbError } = await dbBookCreate({
+		const { book, dbError: dbBookCreateError } = await dbBookCreate({
 			userId,
 			status: 1,
 			...form.data
 		});
-		if (!book || dbError) {
-			return error(500, { message: dbError?.message ?? '' });
+		if (!book || dbBookCreateError) {
+			return error(500, { message: dbBookCreateError?.message ?? '' });
 		}
 
-		redirect(303, setLanguageTagToPath(`/book/${book.id}`, url));
+		const { profile, dbError: dbProfileGetError } = await dbUserProfileGet({ userId });
+		if (!profile || dbProfileGetError) {
+			return error(500, { message: dbProfileGetError?.message ?? '' });
+		}
+
+		redirect(303, setLanguageTagToPath(`/@${profile.key_name}/book/${book.key_name}`, url));
 	}
 };
