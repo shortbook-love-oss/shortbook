@@ -1,6 +1,7 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { isExistBookKeyName } from '$lib/components/service/write/edit-action';
 import { editLoad } from '$lib/components/service/write/edit-load';
 import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbBookDelete } from '$lib/model/book/delete';
@@ -90,6 +91,14 @@ export const actions = {
 		}
 
 		const form = await superValidate(request, zod(schema));
+		if (form.valid) {
+			const isExist = await isExistBookKeyName(userId, form.data.keyName, params.bookId);
+			if (isExist) {
+				form.valid = false;
+				form.errors.keyName = form.errors.keyName ?? [];
+				form.errors.keyName.push('There is a book with the same URL.');
+			}
+		}
 		if (!form.valid) {
 			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
@@ -128,6 +137,14 @@ export const actions = {
 			if (bookBuys.length) {
 				message(form, "Can't revert to draft because this book was bought by user.");
 				return fail(400, { form });
+			}
+		}
+		if (form.valid) {
+			const isExist = await isExistBookKeyName(userId, form.data.keyName, params.bookId);
+			if (isExist) {
+				form.valid = false;
+				form.errors.keyName = form.errors.keyName ?? [];
+				form.errors.keyName.push('There is a book with the same URL.');
 			}
 		}
 		if (!form.valid) {

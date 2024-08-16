@@ -1,6 +1,7 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { isExistBookKeyName } from '$lib/components/service/write/edit-action';
 import { editLoad } from '$lib/components/service/write/edit-load';
 import { dbBookCreate } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
@@ -45,6 +46,14 @@ export const actions = {
 		}
 
 		const form = await superValidate(request, zod(schema));
+		if (form.valid) {
+			const isExist = await isExistBookKeyName(userId, form.data.keyName, '');
+			if (isExist) {
+				form.valid = false;
+				form.errors.keyName = form.errors.keyName ?? [];
+				form.errors.keyName.push('There is a book with the same URL.');
+			}
+		}
 		if (!form.valid) {
 			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
@@ -74,6 +83,14 @@ export const actions = {
 		}
 
 		const form = await superValidate(request, zod(schema));
+		if (form.valid) {
+			const isExist = await isExistBookKeyName(userId, form.data.keyName, '');
+			if (isExist) {
+				form.valid = false;
+				form.errors.keyName = form.errors.keyName ?? [];
+				form.errors.keyName.push('There is a book with the same URL.');
+			}
+		}
 		if (!form.valid) {
 			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
