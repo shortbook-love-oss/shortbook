@@ -74,8 +74,9 @@ export const load = async ({ url, locals }) => {
 		const pointItem: PointListItem = {
 			amount: point.amount,
 			createdAt: point.created_at,
-			bookId: point.book_id,
 			bookTitle,
+			bookKeyName: book.key_name,
+			writeKeyName: book.user.profiles?.key_name ?? '',
 			isSell: point.is_sell > 0
 		};
 		if (checkout) {

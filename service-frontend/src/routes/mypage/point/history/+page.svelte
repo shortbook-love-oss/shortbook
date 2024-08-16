@@ -58,7 +58,10 @@
 					{:else if point.bookTitle}
 						<p class="truncate text-lg">
 							{getStatus(point).text}
-							<a href="/book/{point.bookId}" class="font-semibold underline">{point.bookTitle}</a>
+							<a
+								href="/@{point.writeKeyName}/book/{point.bookKeyName}"
+								class="font-semibold underline">{point.bookTitle}</a
+							>
 						</p>
 					{/if}
 					<time datetime={point.createdAt.toISOString()}
