@@ -28,7 +28,7 @@
 					<NavLinkSmall
 						name={item.name}
 						href="/mypage/{category.href}/{item.href}"
-						className={isMatchPath(category.href, item.href) ? 'bg-primary-100' : ''}
+						className={isMatchPath(category.href, item.href) ? 'bg-primary-200' : ''}
 					/>
 				</li>
 			{/if}

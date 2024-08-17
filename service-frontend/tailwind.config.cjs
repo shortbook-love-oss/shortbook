@@ -17,12 +17,12 @@ const config = {
 			colors: {
 				// ShortBook brand color (standard is #924240)
 				primary: {
-					50: '#FCF9F9',
-					100: '#F4E7E7',
-					200: '#E8CBCA',
-					300: '#DCAFAE',
-					400: '#C98584',
-					500: '#BC6967',
+					50: '#FEFBFB',
+					100: '#FCF3F2',
+					200: '#F8E3E3',
+					300: '#EDC1C0',
+					400: '#D78A89',
+					500: '#C46B68',
 					600: '#AE4F4C',
 					700: '#924240',
 					800: '#763534',

@@ -38,7 +38,7 @@
 				{#each secondaryCurrencies as currency}
 					<a
 						href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-						class="inline-block rounded bg-primary-100 px-3 py-2 text-lg hover:bg-primary-200 focus:bg-primary-200"
+						class="inline-block rounded bg-primary-200 px-3 py-2 text-lg hover:bg-primary-200 focus:bg-primary-200"
 						data-sveltekit-reload>{currency.label}</a
 					>
 				{/each}
