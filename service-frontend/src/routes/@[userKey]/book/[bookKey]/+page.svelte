@@ -88,7 +88,7 @@
 						<p>Bought users can still read this book.</p>
 						<p>
 							If you accidentally deleted it, <a
-								href="{$page.url.origin}/contact?{inquiryCategoryParam}=other"
+								href="{$page.url.origin}/support/contact?{inquiryCategoryParam}=other"
 								class="underline">please contact support.</a
 							>
 						</p>

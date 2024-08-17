@@ -3,10 +3,9 @@ import DOMPurify from 'isomorphic-dompurify';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbTicketCreate } from '$lib/model/contact/create';
 import { dbLogActionCreate } from '$lib/model/log/action-create';
 import { dbLogActionList } from '$lib/model/log/action-list';
-import { schema } from '$lib/validation/schema/contact-create';
+import { dbTicketCreate } from '$lib/model/support/ticket-create';
 import { encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
 import { fileUpload } from '$lib/utilities/server/file';
@@ -14,6 +13,7 @@ import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib/utilities/s
 import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
 import { getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
+import { schema } from '$lib/validation/schema/support/ticket-create';
 
 export const load = async ({ url, getClientAddress }) => {
 	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);

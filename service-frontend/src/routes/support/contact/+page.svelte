@@ -3,7 +3,7 @@
 	import { superForm, filesProxy } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
-	import { schema } from '$lib/validation/schema/contact-create';
+	import { schema } from '$lib/validation/schema/support/ticket-create';
 	import File from '$lib/components/modules/form/file.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';

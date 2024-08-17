@@ -138,7 +138,7 @@
 	<h2 class="mt-16 text-xl font-semibold">第10条（プライバシーポリシーに関するお問い合わせ）</h2>
 	<p>
 		本ポリシーに関して疑問点がある場合、<a
-			href="/contact"
+			href="/support/contact"
 			target="_blank"
 			class="text-primary-700 underline">お問い合わせフォーム</a
 		>をご利用ください。
