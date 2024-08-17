@@ -3,6 +3,7 @@ import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib/model/book/list';
 import { dbUserPaymentCheckoutList } from '$lib/model/user/payment-checkout/list';
 import { dbUserPointList } from '$lib/model/user/point/list';
+import type { CurrencySupportKeys } from '$lib/utilities/currency';
 import type { PointListItem } from '$lib/utilities/point';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
@@ -75,14 +76,14 @@ export const load = async ({ url, locals }) => {
 			amount: point.amount,
 			createdAt: point.created_at,
 			bookTitle,
-			bookKeyName: book.key_name,
-			writeKeyName: book.user.profiles?.key_name ?? '',
+			bookKeyName: book?.key_name ?? '',
+			writeKeyName: book?.user.profiles?.key_name ?? '',
 			isSell: point.is_sell > 0
 		};
 		if (checkout) {
 			pointItem.payment = {
 				provider: checkout.provider_key,
-				currency: checkout.currency,
+				currency: checkout.currency.toLowerCase() as CurrencySupportKeys,
 				amount: checkout.amount.toNumber()
 			};
 		}

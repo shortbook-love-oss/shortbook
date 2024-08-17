@@ -1,10 +1,12 @@
 import {
 	currencySupportKeys,
 	currencySupports,
+	formatPrice,
 	getCurrencyData,
 	getLocalizedPrice,
 	type CurrencySupportKeys
 } from '$lib/utilities/currency';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SelectItem } from '$lib/utilities/select';
 
 // Service fee is 8%
@@ -28,7 +30,7 @@ export function getPaymentProvider(key: string) {
 // ]
 export function calcPriceByPoint(
 	currencyConverted: Partial<Record<CurrencySupportKeys, number>>,
-	requestLang: string
+	requestLang: AvailableLanguageTags
 ) {
 	const currencyPreviews: SelectItem<CurrencySupportKeys>[] = [];
 	for (const currencyData of currencySupports) {
@@ -38,13 +40,9 @@ export function calcPriceByPoint(
 				convertedPrice * (100 / (100 - shortbookChargeFee)),
 				currencyData.allowDecimal && !currencyData.rule00
 			);
-			const l10nPrice = new Intl.NumberFormat(requestLang, {
-				style: 'currency',
-				currency: currencyData.label
-			}).format(priceWithFee);
 			currencyPreviews.push({
 				value: currencyData.key,
-				label: l10nPrice
+				label: formatPrice(priceWithFee, currencyData.key, requestLang)
 			});
 		}
 	}

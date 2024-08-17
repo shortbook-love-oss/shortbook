@@ -97,3 +97,16 @@ export function getLocalizedPrice(originPrice: number, isAllowDecimal: boolean) 
 		return Math.floor(originPrice);
 	}
 }
+
+// 20.25 → €20.25
+export function formatPrice(
+	amount: number,
+	currency: CurrencySupportKeys,
+	requestLang: AvailableLanguageTags
+) {
+	return new Intl.NumberFormat(requestLang, {
+		style: 'currency',
+		currency,
+		minimumFractionDigits: 0
+	}).format(amount);
+}

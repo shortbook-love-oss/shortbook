@@ -1,6 +1,7 @@
 <script lang="ts">
 	import IconCash from '~icons/mdi/attach-money';
 	import { page } from '$app/stores';
+	import { formatPrice } from '$lib/utilities/currency';
 	import type { PointListItem } from '$lib/utilities/point';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -13,11 +14,8 @@
 		if (point.isSell) {
 			return { amountSuffix: 'Sold', text: 'Sold', bgColor: 'bg-emerald-100' };
 		} else if (point.payment) {
-			const l10nAmount = new Intl.NumberFormat(requestLang, {
-				style: 'currency',
-				currency: point.payment.currency
-			}).format(point.payment.amount);
-			return { amountSuffix: 'Charged', text: `Charged ${l10nAmount}`, bgColor: 'bg-orange-100' };
+			const price = formatPrice(point.payment.amount, point.payment.currency, requestLang);
+			return { amountSuffix: 'Charged', text: `Charged ${price}`, bgColor: 'bg-orange-100' };
 		}
 		return { amountSuffix: 'Spent', text: 'Bought', bgColor: 'bg-stone-200' };
 	}

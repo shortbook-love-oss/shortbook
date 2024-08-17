@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import {
 		currencySelect,
+		formatPrice,
 		getCurrencyData,
 		getLocalizedPrice,
 		type CurrencySupportKeys
@@ -64,11 +65,9 @@
 		if (!currencyData || price == undefined) {
 			return undefined;
 		}
-		const localizedPrice = getLocalizedPrice(price * quantity, currencyData.allowDecimal);
-		return new Intl.NumberFormat(requestLang, {
-			style: 'currency',
-			currency: currencyData.label
-		}).format(localizedPrice);
+		const l10nPrice = getLocalizedPrice(price * quantity, currencyData.allowDecimal);
+
+		return formatPrice(l10nPrice, currencyData.key, requestLang);
 	}
 </script>
 
