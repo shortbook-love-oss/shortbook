@@ -30,7 +30,9 @@
 			aria-invalid={errorMessages?.length ? true : undefined}
 			on:input
 		/>
-		<div class="min-h-48 whitespace-pre-wrap rounded-md border px-4 py-2">{value + '\u200b'}</div>
+		<div class="min-h-48 whitespace-pre-wrap break-words rounded-md border px-4 py-2">
+			{value + '\u200b'}
+		</div>
 	</div>
 	{#if errorMessages?.length}
 		<div class="mt-2 text-red-800">
