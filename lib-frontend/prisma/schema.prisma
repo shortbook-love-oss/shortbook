@@ -14,8 +14,9 @@ datasource db {
 
 model User {
   id                      String              @id @default(cuid())
-  name                    String?
-  email                   String?             @unique @db.VarChar(254)
+  name                    String?             // Only using on signed-up process, but required for Auth.js
+  email                   String?             @unique @db.VarChar(510) // Encrypted
+  email_hash              String?             @unique @db.VarChar(127) // Email + provider name
   emailVerified           DateTime?           @map("email_verified")
   image                   String?             @db.VarChar(510)
   created_at              DateTime            @default(now())
@@ -26,14 +27,19 @@ model User {
   authenticator           Authenticator[]
   sessions                Session[]
   profiles                user_profiles?
+  points                  user_points[]
   fans                    user_fans[]
+  payment_checkouts       user_payment_checkouts[]
+  payment_setting         user_payment_settings?
+  payment_contracts       user_payment_contracts[]
   books                   books[]
+  book_buys               book_buys[]
 
   @@map("users")
 }
 
 model Account {
-  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   userId                  String              @map("user_id")
@@ -56,7 +62,7 @@ model Account {
 }
 
 model Authenticator {
-  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
 
   credentialID            String              @unique @map("credential_id")
   userId                  String              @map("user_id")
@@ -75,7 +81,7 @@ model Authenticator {
 }
 
 model Session {
-  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   sessionToken            String              @unique @map("session_token")
@@ -90,7 +96,8 @@ model Session {
 
 model VerificationToken {
   identifier              String
-  token                   String
+  token                   String              @db.VarChar(510)
+  user_id                 String?
   expires                 DateTime
 
   @@unique([identifier, token])
@@ -98,7 +105,7 @@ model VerificationToken {
 }
 
 model user_profiles {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String              @unique
@@ -114,7 +121,7 @@ model user_profiles {
 }
 
 model user_profile_languages {
-  user_profile            user_profiles       @relation(fields: [profile_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user_profile            user_profiles       @relation(fields: [profile_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   profile_id              String
@@ -129,8 +136,24 @@ model user_profile_languages {
   @@unique([profile_id, language_code])
 }
 
+model user_points {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  payment_checkout_id     String              // For charge
+  amount                  Int
+  book_id                 String              // For buy book
+  is_refund               Int                 @db.SmallInt // Use when refunding bought book
+  is_sell                 Int                 @db.SmallInt // Use when writer sold book
+  is_income               Int                 @db.SmallInt // Use when user's point → money received
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
 model user_fans {
-  target_user             User                @relation(fields: [target_user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  target_user             User                @relation(fields: [target_user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   target_user_id          String
@@ -140,28 +163,94 @@ model user_fans {
   deleted_at              DateTime?
 }
 
-// -----------------------------------------------------------------------
-// Books
-// -----------------------------------------------------------------------
-
-model books {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+model user_payment_checkouts {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String
+  provider_key            String              @db.VarChar(15)
+  session_id              String              // Encrypted
+  currency                String              @db.VarChar(3)
+  amount                  Decimal
+  is_refund               Int                 @db.SmallInt
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model user_payment_settings {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String              @unique
+  currency                String              @db.VarChar(3)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model user_payment_contracts {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  provider_key            String              @db.VarChar(15)
+  provider_customer_id    String              // Encrypted
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([user_id, provider_key])
+}
+
+// -----------------------------------------------------------------------
+// Book
+// -----------------------------------------------------------------------
+
+model books {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  key_name                String              @db.VarChar(100) // Length 1 - 100
   status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
-  price                   Float               @db.Double
+  buy_point               Int
   published_at            DateTime            @default(now())
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
+  cover                   book_covers?
   languages               book_languages[]
   tags                    book_tags[]
+  buys                    book_buys[]
+
+  @@unique([user_id, key_name])
+}
+
+model book_covers {
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  book_id                 String              @unique
+  base_color_start        String              @db.VarChar(15) // Hex code with "#"
+  base_color_end          String              @db.VarChar(15)
+  base_color_direction    Int                 @db.SmallInt // 0: bottom→top 90: left→right
+  title_font_size         Int                 @db.SmallInt // Font size unit is "px"
+  title_align             Int                 @db.SmallInt // 0: left 1: center 2:right
+  title_color             String              @db.VarChar(15)
+  subtitle_font_size      Int                 @db.SmallInt
+  subtitle_align          Int                 @db.SmallInt
+  subtitle_color          String              @db.VarChar(15)
+  writer_align            Int                 @db.SmallInt
+  writer_color            String              @db.VarChar(15)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
 }
 
 model book_languages {
-  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   book_id                 String
@@ -178,7 +267,7 @@ model book_languages {
 }
 
 model book_tags {
-  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   book_id                 String
@@ -189,4 +278,60 @@ model book_tags {
   deleted_at              DateTime?
 
   @@index([name])
+}
+
+model book_buys {
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  book_id                 String
+  user_id                 String
+  point_spend             Int                 // It won't change if writer change the price later
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([book_id, user_id])
+}
+
+// -----------------------------------------------------------------------
+// Contact
+// -----------------------------------------------------------------------
+
+model tickets {
+  id                      String              @id @default(cuid())
+  category_key_name       String              @db.VarChar(31)
+  email                   String              @db.VarChar(510)
+  description             String              @db.LongText
+  language_code           String              @db.VarChar(5)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  files                   ticket_files[]
+}
+
+model ticket_files {
+  ticket                  tickets             @relation(fields: [ticket_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  ticket_id               String
+  file_url                String              @db.VarChar(510)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+// -----------------------------------------------------------------------
+// Limit rate control
+// -----------------------------------------------------------------------
+
+model log_actions {
+  id                      String              @id @default(cuid())
+  action_name             String              @db.VarChar(31)
+  ip_address_hash         String              @db.VarChar(127)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
 }

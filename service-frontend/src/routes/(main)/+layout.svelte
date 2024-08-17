@@ -1,13 +1,12 @@
-<script>
-	import Header from '$lib/components/service/header.svelte';
+<script lang="ts">
+	import Meta from '$lib/components/service/meta.svelte';
 	import LayoutRule from '../_layout-rule.svelte';
 </script>
 
+<svelte:head>
+	<Meta />
+</svelte:head>
+
 <LayoutRule>
-	<div slot="header" class="hidden sm:block">
-		<Header />
-	</div>
-	<main class="w-full flex-1">
-		<slot></slot>
-	</main>
+	<slot />
 </LayoutRule>

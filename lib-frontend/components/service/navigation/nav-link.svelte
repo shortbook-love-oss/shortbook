@@ -1,12 +1,27 @@
-<script>
+<script lang="ts">
 	export let name = '';
-	export let href = '/';
+	export let href = '';
+	export let className = '';
 </script>
 
-<a
-	{href}
-	class="flex items-center gap-2 rounded-lg p-3 text-stone-950 hover:bg-stone-200 focus:bg-stone-200"
->
-	<div class="shrink-0"><slot></slot></div>
-	<h2 class="flex-1 text-2xl break-all">{name}</h2>
-</a>
+{#if href}
+	<a
+		{href}
+		class="flex items-center gap-2 px-3 py-2 text-lg hover:bg-stone-200 focus:bg-stone-200 {className}"
+	>
+		{#if $$slots.default}
+			<div class="shrink-0"><slot /></div>
+		{/if}
+		<p>{name}</p>
+	</a>
+{:else}
+	<!-- use inside focusable element -->
+	<div
+		class="flex items-center gap-2 px-3 py-2 text-lg hover:bg-stone-200 focus:bg-stone-200 {className}"
+	>
+		{#if $$slots.default}
+			<div class="shrink-0"><slot /></div>
+		{/if}
+		<p>{name}</p>
+	</div>
+{/if}

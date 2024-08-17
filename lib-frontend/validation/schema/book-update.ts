@@ -20,5 +20,27 @@ export const schema = z.object({
 	}),
 	salesMessage: z.string().max(1000).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
-	})
+	}),
+	keyName: z
+		.string()
+		.max(100)
+		.regex(/[a-zA-Z0-9]/, {
+			message: 'Please include at least one alphanumeric character'
+		})
+		.regex(/^[\w-.]*$/, {
+			message: 'Use only alphanumeric, hyphens, underscore, and periods'
+		}),
+	buyPoint: z.coerce.number().min(70).max(1_000_000),
+	// For book cover design
+	baseColorStart: z.string().max(15),
+	baseColorEnd: z.string().max(15),
+	baseColorDirection: z.number().min(0).max(360),
+	titleFontSize: z.number().min(10).max(160),
+	titleAlign: z.number().min(0).max(2),
+	titleColor: z.string().max(15),
+	subtitleFontSize: z.number().min(10).max(160),
+	subtitleAlign: z.number().min(0).max(2),
+	subtitleColor: z.string().max(15),
+	writerAlign: z.number().min(0).max(2),
+	writerColor: z.string().max(15)
 });

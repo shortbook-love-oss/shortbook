@@ -32,21 +32,21 @@
 		type="checkbox"
 		name="common_overlay_{name}"
 		id="common_overlay_open_{name}"
-		class="absolute left-0 top-0 h-full w-full opacity-0"
+		class="absolute start-0 top-0 h-full w-full cursor-pointer appearance-none"
 	/>
 </label>
 
 <!-- Overlay -->
 <div
 	id="common_overlay_{name}"
-	class="fixed left-0 top-0 z-40 hidden h-dvh h-screen w-screen bg-stone-400/30 peer-has-[:checked]/common_overlay_open:flex"
+	class="fixed start-0 top-0 z-40 hidden h-dvh w-screen bg-stone-500/50 peer-has-[:checked]/common_overlay_open:flex"
 >
 	<div class="inline-flex h-full flex-col border-r border-primary-300 bg-white">
 		<div class="relative ms-auto inline-block flex focus-within:bg-stone-200 hover:bg-stone-200">
 			{#if isEnableJS}
 				<button
 					type="button"
-					class="absolute left-0 top-0 h-full w-full opacity-0"
+					class="absolute start-0 top-0 h-full w-full appearance-none"
 					on:click|self={closeOverlay}
 				/>
 			{/if}

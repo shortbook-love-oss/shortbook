@@ -1,41 +1,33 @@
-<script>
-	import { updated } from '$app/stores';
+<script lang="ts">
 	import NavSp from '$lib/components/service/navigation/nav-sp.svelte';
 	import Footer from '$lib/components/service/footer.svelte';
-
-	export let isNarrow = false;
+	import Header from '$lib/components/service/header.svelte';
 </script>
 
 <div
-	data-sveltekit-reload={$updated}
-	class="flex h-dvh h-screen flex-col tracking-wide text-stone-950 underline-offset-[3px]"
+	class="flex h-dvh w-dvw flex-col overflow-x-hidden tracking-wide text-stone-950 underline-offset-[3px]"
 >
-	<slot name="alert" {isNarrow} />
-	<slot name="header" {isNarrow} />
-	<div class="flex flex-1 flex-col overflow-x-auto">
-		<div class="w-full flex-1">
-			<slot name="contents" {isNarrow}>
-				<div
-					class="mx-auto min-h-80 w-full flex-1 gap-12 px-4 pb-16 pt-12 sm:flex sm:px-6 md:px-8 lg:gap-20 {isNarrow
-						? 'max-w-screen-lg'
-						: 'max-w-screen-2xl'}"
-				>
-					{#if $$slots.side}
-						<div class="hidden w-48 sm:-ms-3 sm:block">
-							<slot name="side" />
-						</div>
-					{/if}
-					<slot></slot>
-				</div>
-			</slot>
+	<slot name="alert" />
+	<slot name="header">
+		<div class="hidden w-full sm:block">
+			<Header />
 		</div>
-		<slot name="footer" {isNarrow}>
-			<Footer />
+	</slot>
+	<div class="flex flex-1 flex-col {$$slots.footerNav ? '' : 'max-sm:pb-[3.75rem]'}">
+		<slot name="contents">
+			<div class="flex-1 pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]">
+				<main class="min-h-80 w-full flex-1 px-4 pb-24 pt-12 sm:px-8 sm:pt-24">
+					<slot />
+				</main>
+			</div>
+			<slot name="footer">
+				<Footer />
+			</slot>
 		</slot>
 	</div>
-	<div class="sm:hidden">
-		<slot name="footerNav">
+	<slot name="footerNav">
+		<div class="fixed bottom-0 start-0 w-full sm:hidden">
 			<NavSp />
-		</slot>
-	</div>
+		</div>
+	</slot>
 </div>

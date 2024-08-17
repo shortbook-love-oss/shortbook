@@ -1,6 +1,8 @@
 <script lang="ts">
-	export let value: string;
-	export let list: Item[];
+	import type { SelectItem } from '$lib/utilities/select';
+
+	export let value: string | number;
+	export let list: SelectItem<string | number>[];
 	export let name: string;
 	export let className = '';
 	export let label = '';
@@ -8,18 +10,22 @@
 	export let inputClass = '';
 	export let errorMessages: string[] | undefined = undefined;
 
-	type Item = {
-		value: string;
-		text: string;
-	};
+	// When value changed by outside, reselect value-match item
+	$: displayList = list.map((item) => {
+		const displayItem: SelectItem<string | number> = {
+			...item,
+			selected: item.value === value
+		};
+		return displayItem;
+	});
 </script>
 
 <label class="block {className}">
 	{#if label}
-		<div class="mb-2 flex items-end gap-4">
-			<p class="text-lg">{label}</p>
+		<div class="mb-1 flex items-end gap-4">
+			<p class="pb-px text-lg">{label}</p>
 			{#if required}
-				<div class="pb-0.5 text-red-800">Required</div>
+				<div class="pb-1 text-base text-red-800">Required</div>
 			{/if}
 		</div>
 	{/if}
@@ -31,13 +37,14 @@
 			{name}
 			{required}
 			bind:value
-			class="block w-full appearance-none rounded-md border border-stone-700 py-2 pl-3 pr-10 disabled:bg-stone-100 disabled:text-stone-500 disabled:opacity-100 [&:user-invalid]:border-2 [&:user-invalid]:border-red-700 {errorMessages?.length
+			class="block w-full appearance-none rounded-md border border-stone-700 bg-white py-2 pl-3 pr-10 disabled:bg-stone-100 disabled:text-stone-500 disabled:opacity-100 [&:user-invalid]:border-2 [&:user-invalid]:border-red-700 {errorMessages?.length
 				? 'border-2 border-red-700'
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
+			on:input
 		>
-			{#each list as item}
-				<option value={item.value} selected={item.value === value}>{item.text}</option>
+			{#each displayList as item}
+				<option value={item.value} selected={item.selected}>{item.label}</option>
 			{/each}
 		</select>
 	</div>

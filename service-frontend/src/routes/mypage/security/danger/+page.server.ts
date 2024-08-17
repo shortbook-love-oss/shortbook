@@ -3,16 +3,19 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserDelete } from '$lib/model/user/delete';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
-import { getLangTagPathPart } from '$lib/utilities/url';
+import { deleteSessionToken } from '$lib/utilities/cookie';
+import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user-delete';
 
-export const load = async ({ cookies }) => {
+export const load = async ({ locals }) => {
+	const userId = locals.session?.user?.id;
+	if (!userId) {
+		return error(401, { message: 'Unauthorized' });
+	}
+
 	const form = await superValidate(zod(schema));
 
-	const { profile, dbError } = await dbUserProfileGet({
-		userId: getAuthUserId(cookies)
-	});
+	const { profile, dbError } = await dbUserProfileGet({ userId });
 	if (dbError) {
 		return error(500, { message: dbError.message });
 	}
@@ -24,8 +27,8 @@ export const load = async ({ cookies }) => {
 };
 
 export const actions = {
-	default: async ({ request, url, cookies }) => {
-		const userId = getAuthUserId(cookies);
+	default: async ({ request, url, cookies, locals }) => {
+		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}
@@ -41,6 +44,8 @@ export const actions = {
 			return error(500, { message: dbError.message });
 		}
 
-		redirect(303, `${getLangTagPathPart(url.pathname)}/goodbye`);
+		deleteSessionToken(cookies);
+
+		redirect(303, setLanguageTagToPath('/goodbye', url));
 	}
 };

@@ -5,7 +5,7 @@ export interface DbBookUpdateRequest extends DbBookCreateRequest {
 	bookId: string;
 }
 
-export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
+export async function dbBookUpdate(req: DbBookUpdateRequest) {
 	let dbError: Error | undefined;
 
 	const bookBeforeEdit = await prisma.books.findUnique({
@@ -39,7 +39,9 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 					deleted_at: null
 				},
 				data: {
+					key_name: req.keyName,
 					status: req.status,
+					buy_point: req.buyPoint,
 					published_at: publishedAt
 				}
 			});
@@ -47,6 +49,25 @@ export async function dbBookUpdateRequest(req: DbBookUpdateRequest) {
 				dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
 				throw dbError;
 			}
+
+			await tx.book_covers.update({
+				where: {
+					book_id: book.id
+				},
+				data: {
+					base_color_start: req.baseColorStart,
+					base_color_end: req.baseColorEnd,
+					base_color_direction: req.baseColorDirection,
+					title_font_size: req.titleFontSize,
+					title_align: req.titleAlign,
+					title_color: req.titleColor,
+					subtitle_font_size: req.subtitleFontSize,
+					subtitle_align: req.subtitleAlign,
+					subtitle_color: req.subtitleColor,
+					writer_align: req.writerAlign,
+					writer_color: req.writerColor
+				}
+			});
 
 			await tx.book_languages.deleteMany({
 				where: {

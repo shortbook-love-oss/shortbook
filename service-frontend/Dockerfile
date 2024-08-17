@@ -1,41 +1,71 @@
-FROM node:22.3.0-bookworm-slim as base
-
-WORKDIR /usr/src/app
+FROM node:22.5.1-bookworm-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl
 
-# Include devDependencies for build
+WORKDIR /home/node/app
+
+# Develop ---------------------------------------------------
+FROM base AS dev
+
+ENV NODE_ENV=development
+
+COPY ./service-frontend/package.json .
+RUN npm i
+
+COPY ./service-frontend .
+COPY ./lib-frontend ./lib
+
+# Vite use 5173 port
+EXPOSE 5173
+
+
+# Production ---------------------------------------------------
+FROM base AS prd-process
+
+ENV NODE_ENV=production
+
 COPY ./service-frontend/package*.json .
-RUN npm ci
+
+# prd-install and prd-build are run in parallel.
+FROM prd-process AS prd-install
+
+# Install prd-bundle in another directory
+RUN cd ../ \
+  && mkdir install \
+  && cp ./app/package.json ./install/ \
+  && cp ./app/package-lock.json ./install/ \
+  && cd install \
+  && npm ci --omit=dev
+
+COPY ./lib-frontend/prisma/schema.prisma ../install/lib/prisma/schema.prisma
+
+RUN cd ../install && npm run schema-generate
+
+FROM prd-process AS prd-build
+
+# Install the same patch version
+RUN npm ci --include=dev
 
 COPY ./service-frontend .
 COPY ./lib-frontend ./lib
 
 # Production-setting build
-ENV NODE_ENV=production
 RUN npm run build
 
-FROM base as dev
+FROM --platform=linux/arm64 node:22.5.1-bookworm-slim AS prd
 
-ENV NODE_ENV=development
+RUN apt-get update -y && apt-get install -y openssl \
+  && rm -rf /var/lib/apt/lists/*
 
-# SvelteKit(Vite) use 5173 port
-EXPOSE 5173
-
-FROM node:22.3.0-bookworm-slim as prd
-
-WORKDIR /usr/src/app
-
-RUN apt-get update -y && apt-get install -y openssl
+USER node
+WORKDIR /home/node
 
 # Copy only necessary files
-COPY --from=base --chown=nonroot:nonroot /usr/src/app/node_modules ./node_modules
-COPY --from=base --chown=nonroot:nonroot /usr/src/app/build ./build
-COPY --from=base --chown=nonroot:nonroot /usr/src/app/package.json .
+COPY --chown=node:node --from=prd-install /home/node/install/node_modules ./node_modules
+COPY --chown=node:node --from=prd-build /home/node/app/package.json .
+COPY --chown=node:node --from=prd-build /home/node/app/build ./build
 
-ENV PORT=443
-
-# Node use 3000 port
-EXPOSE 443
+# Node port for production
+EXPOSE 3000
 
 CMD ["node", "./build"]

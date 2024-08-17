@@ -1,23 +1,18 @@
 import { error } from '@sveltejs/kit';
 import { dbUserSessionGet } from '$lib/model/user/session/get';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
 import { getSessionToken } from '$lib/utilities/cookie';
-import { guessNativeLangFromRequest } from '$lib/utilities/language';
+import { signInProviders } from '$lib/utilities/signin';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-const brandNames = {
-	linkedin: 'LinkedIn',
-	github: 'GitHub'
-};
-
-export const load = async ({ request, cookies }) => {
-	const userId = getAuthUserId(cookies);
+export const load = async ({ url, cookies, locals }) => {
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
 	const sessionToken = getSessionToken(cookies);
-	const langTag = guessNativeLangFromRequest(request);
+	const langTag = getLanguageTagFromUrl(url);
 
-	const { user, session, dbError } = await dbUserSessionGet({
+	const { user, account, session, dbError } = await dbUserSessionGet({
 		userId,
 		sessionToken
 	});
@@ -25,10 +20,16 @@ export const load = async ({ request, cookies }) => {
 		return error(500, { message: dbError.message });
 	}
 
-	const providerNameLowercase = (user?.accounts[0].provider ?? '') as keyof typeof brandNames;
-	const providerName = brandNames[providerNameLowercase] ?? '';
+	const isSignedByEmail = !account;
+	let signInProvider = null;
+	for (const provider of signInProviders) {
+		if (account?.provider === provider.key) {
+			signInProvider = provider;
+			break;
+		}
+	}
 	const userCreatedAt = user?.created_at?.toLocaleString(langTag) ?? '';
 	const lastSignedAt = session?.created_at?.toLocaleString(langTag) ?? '';
 
-	return { providerName, userCreatedAt, lastSignedAt };
+	return { isSignedByEmail, signInProvider, userCreatedAt, lastSignedAt };
 };

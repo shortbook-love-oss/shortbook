@@ -1,62 +1,110 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { dbBookCreateRequest } from '$lib/model/book/create';
+import { isExistBookKeyName } from '$lib/components/service/write/edit-action';
+import { editLoad } from '$lib/components/service/write/edit-load';
+import { dbBookCreate } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
-import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
-import type { AvailableLanguageTags } from '$lib/utilities/language';
-import { getLangTagPathPart } from '$lib/utilities/url';
+import { getBookCover } from '$lib/utilities/book';
+import { type AvailableLanguageTags, languageAndNotSelect } from '$lib/utilities/language';
+import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
 
-export const load = async ({ request, cookies }) => {
-	const userId = getAuthUserId(cookies);
+export const load = async ({ url, locals }) => {
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
+	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
 
-	const { profile, dbError } = await dbUserProfileGet({ userId });
-	if (dbError) {
-		return error(500, { message: dbError.message });
-	}
-	const requestLang = guessNativeLangFromRequest(request);
+	const { profile, userKeyName, penName, selectedCurrencyKey, currencyRates } =
+		await editLoad(userId);
 
-	form.data.title = '';
-	form.data.subtitle = '';
-	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTags;
+	const bookCover = getBookCover({});
+	for (const coverProp in bookCover) {
+		const prop = coverProp as keyof typeof bookCover;
+		form.data[prop] = bookCover[prop] as never;
+	}
+	form.data.nativeLanguage = (profile.native_language || requestLang) as AvailableLanguageTags;
 	form.data.prologue = '';
 	form.data.content = '';
-	form.data.salesMessage = 'Read this! Will be helpful to you!';
-	const status = 0;
+	form.data.salesMessage = '';
+	form.data.keyName = '';
+	form.data.buyPoint = 200;
 
-	return { form, status, langTags };
+	return { form, userKeyName, penName, langTags, selectedCurrencyKey, currencyRates };
 };
 
 export const actions = {
-	default: async ({ request, cookies, url }) => {
-		const userId = getAuthUserId(cookies);
+	publish: async ({ request, url, locals }) => {
+		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
 		const form = await superValidate(request, zod(schema));
+		if (form.valid) {
+			const isExist = await isExistBookKeyName(userId, form.data.keyName, '');
+			if (isExist) {
+				form.valid = false;
+				form.errors.keyName = form.errors.keyName ?? [];
+				form.errors.keyName.push('There is a book with the same URL.');
+			}
+		}
 		if (!form.valid) {
 			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
 		}
 
-		const { dbError } = await dbBookCreateRequest({
+		const { book, dbError: dbBookCreateError } = await dbBookCreate({
 			userId,
 			status: 1,
 			...form.data
 		});
-		if (dbError) {
-			return error(500, { message: dbError.message });
+		if (!book || dbBookCreateError) {
+			return error(500, { message: dbBookCreateError?.message ?? '' });
 		}
 
-		redirect(303, getLangTagPathPart(url.pathname) + '/write');
+		const { profile, dbError: dbProfileGetError } = await dbUserProfileGet({ userId });
+		if (!profile || dbProfileGetError) {
+			return error(500, { message: dbProfileGetError?.message ?? '' });
+		}
+
+		redirect(303, setLanguageTagToPath(`/@${profile.key_name}/book/${book.key_name}`, url));
+	},
+
+	draft: async ({ request, url, locals }) => {
+		const userId = locals.session?.user?.id;
+		if (!userId) {
+			return error(401, { message: 'Unauthorized' });
+		}
+
+		const form = await superValidate(request, zod(schema));
+		if (form.valid) {
+			const isExist = await isExistBookKeyName(userId, form.data.keyName, '');
+			if (isExist) {
+				form.valid = false;
+				form.errors.keyName = form.errors.keyName ?? [];
+				form.errors.keyName.push('There is a book with the same URL.');
+			}
+		}
+		if (!form.valid) {
+			message(form, 'There was an error. please check your input and resubmit.');
+			return fail(400, { form });
+		}
+
+		const { book, dbError: dbBookCreateError } = await dbBookCreate({
+			userId,
+			status: 0,
+			...form.data
+		});
+		if (!book || dbBookCreateError) {
+			return error(500, { message: dbBookCreateError?.message ?? '' });
+		}
+
+		redirect(303, setLanguageTagToPath(`/write`, url));
 	}
 };

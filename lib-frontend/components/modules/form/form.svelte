@@ -3,15 +3,18 @@
 	import IconCheck from '~icons/mdi/check';
 	import IconWarning from '~icons/mdi/warning';
 	import IconError from '~icons/mdi/warning-circle';
+	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import SubmitButton from './submit-button.svelte';
 
 	export let enhance: Function;
+	export let action: string;
 	export let hasInvalid = false;
 	export let isLoading = false;
 	export let submitLabel = 'Save';
 	export let warnMessage = '';
 	export let successMessage = '';
 	export let errorMessage = '';
+	export let className = '';
 
 	let isEnableJS = false;
 	onMount(() => {
@@ -19,7 +22,7 @@
 	});
 </script>
 
-<form use:enhance {...$$restProps}>
+<form use:enhance action={removeLanguageTagFromPath(action)} {...$$restProps}>
 	{#if warnMessage}
 		<div
 			class="mb-6 flex items-center gap-2 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
@@ -52,7 +55,7 @@
 			</p>
 		</div>
 	{/if}
-	<fieldset disabled={isLoading ? true : undefined}>
+	<fieldset class="w-full {className}" disabled={isLoading ? true : undefined}>
 		<slot />
 	</fieldset>
 	<slot name="submit">

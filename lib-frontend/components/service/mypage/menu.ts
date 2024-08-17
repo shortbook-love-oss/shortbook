@@ -1,31 +1,35 @@
 type MypageItem = {
-  name: string;
-  href: string;
-  childs: Omit<MypageItem, 'childs'>[];
-}
+	name: string;
+	href: string;
+	childs: Omit<MypageItem, 'childs'>[];
+};
 
 export const categories: MypageItem[] = [
 	{
 		name: 'Personnel information',
 		href: 'personnel',
 		childs: [
-			{ name: 'Public profile', href: 'profile' }
+			{ name: 'Public profile', href: 'profile' },
+			{ name: 'Profile image', href: 'image' }
 		]
+	},
+	{
+		name: 'Point',
+		href: 'point',
+		childs: [{ name: 'Point history', href: 'history' }]
 	},
 	{
 		name: 'Sign in & security',
 		href: 'security',
 		childs: [
+			{ name: 'Email', href: 'email' },
 			{ name: 'Sign in method', href: 'method' },
 			{ name: 'Danger action', href: 'danger' }
 		]
 	},
 	{
-		name: 'Payment & point',
+		name: 'Payment',
 		href: 'payment',
-		childs: [
-			{ name: 'Card', href: 'card' },
-			{ name: 'Point', href: 'point' }
-		]
+		childs: [{ name: 'Currency', href: 'currency' }]
 	}
 ];

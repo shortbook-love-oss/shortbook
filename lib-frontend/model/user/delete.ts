@@ -33,6 +33,13 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				throw dbError;
 			}
 
+			await tx.account.updateMany({
+				where: {
+					userId: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
 			await tx.user_profile_languages.updateMany({
 				where: {
 					profile_id: deletedProfile.id,
@@ -47,39 +54,87 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				},
 				data: { deleted_at: deletedAt }
 			});
+			await tx.user_payment_checkouts.updateMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
+			await tx.user_payment_contracts.updateMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
+			await tx.user_payment_settings.updateMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
+			await tx.user_points.updateMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
+			await tx.book_buys.updateMany({
+				where: {
+					user_id: req.userId,
+					deleted_at: null
+				},
+				data: { deleted_at: deletedAt }
+			});
 			await tx.authenticator.deleteMany({
 				where: { userId: req.userId }
 			});
 			await tx.session.deleteMany({
 				where: { userId: req.userId }
 			});
+			await tx.verificationToken.deleteMany({
+				where: { user_id: req.userId }
+			});
 
-			const deleteBooks = await tx.user_profiles.findMany({
+			const deleteBooks = await tx.books.findMany({
 				where: {
 					user_id: req.userId,
 					deleted_at: null
+				},
+				select: {
+					id: true
 				}
 			});
 			const deleteBookIds = deleteBooks.map((item) => item.id);
 			if (deleteBookIds.length) {
-				await tx.user_profiles.updateMany({
+				await tx.books.updateMany({
 					where: {
 						user_id: req.userId,
 						deleted_at: null
 					},
 					data: { deleted_at: deletedAt }
 				});
+				await tx.book_covers.updateMany({
+					where: {
+						book_id: { in: deleteBookIds },
+						deleted_at: null
+					},
+					data: { deleted_at: deletedAt }
+				});
 				await tx.book_languages.updateMany({
 					where: {
-						deleted_at: null,
-						book_id: { in: deleteBookIds }
+						book_id: { in: deleteBookIds },
+						deleted_at: null
 					},
 					data: { deleted_at: deletedAt }
 				});
 				await tx.book_tags.updateMany({
 					where: {
-						deleted_at: null,
-						book_id: { in: deleteBookIds }
+						book_id: { in: deleteBookIds },
+						deleted_at: null
 					},
 					data: { deleted_at: deletedAt }
 				});

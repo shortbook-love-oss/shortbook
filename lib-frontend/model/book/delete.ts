@@ -5,16 +5,16 @@ export interface DbBookDeleteRequest {
 	userId: string;
 }
 
-export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
+export async function dbBookDelete(req: DbBookDeleteRequest) {
 	let dbError: Error | undefined;
 
 	const bookBeforeDelete = await prisma.books.findUnique({
-		select: {
-			user_id: true
-		},
 		where: {
 			id: req.bookId,
 			deleted_at: null
+		},
+		select: {
+			user_id: true
 		}
 	});
 	if (!bookBeforeDelete) {
@@ -31,6 +31,15 @@ export async function dbBookDeleteRequest(req: DbBookDeleteRequest) {
 			await tx.books.update({
 				where: {
 					id: req.bookId,
+					deleted_at: null
+				},
+				data: {
+					deleted_at: deletedAt
+				}
+			});
+			await tx.book_covers.update({
+				where: {
+					book_id: req.bookId,
 					deleted_at: null
 				},
 				data: {

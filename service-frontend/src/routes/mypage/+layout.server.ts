@@ -1,11 +1,9 @@
-import { redirectToSignInPage } from '$lib/utilities/url';
+import { redirectToSignInPage } from '$lib/utilities/server/url';
 
-export const load = async ({ locals, url, cookies }) => {
+export const load = async ({ locals, url }) => {
 	if (!locals.session?.user) {
-		redirectToSignInPage(url, cookies);
+		redirectToSignInPage(url);
 	}
 
-	return {
-		session: locals.session
-	};
+	return {};
 };

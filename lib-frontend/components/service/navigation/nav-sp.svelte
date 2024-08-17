@@ -6,59 +6,63 @@
 	import IconSignin from '~icons/mdi/user-check-outline';
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
+	import * as m from '$lib/i18n/paraglide/messages';
+	import { callbackParam, removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 	import NavLinkSp from './nav-link-sp.svelte';
 
 	// After sign-in/up redirect to
-	let redirectPathname = '';
-	if (['/signin', '/signup'].includes(removeLangTagFromPath($page.url.pathname))) {
-		// On sign-in/up → sign-in/up page move, keep callback url;
-		const callbackUrl = $page.url.searchParams.get('callbackUrl') ?? '';
-		redirectPathname = encodeURIComponent(callbackUrl);
-	} else {
-		// On (any page) → sign-in/up page move, show the (any page) after sign-in/up
-		redirectPathname = encodeURIComponent($page.url.href);
-	}
+	$: redirectPathname = (() => {
+		if (['/signin', '/signup'].includes(removeLanguageTagFromPath($page.url.pathname))) {
+			// On sign-in/up → sign-in/up page move, keep callback url;
+			const callbackUrl = $page.url.searchParams.get(callbackParam) ?? '';
+			return encodeURIComponent(callbackUrl);
+		} else {
+			// On (any page) → sign-in/up page move, show the (any page) after sign-in/up
+			return encodeURIComponent($page.url.href);
+		}
+	})();
 </script>
 
-<header class="border-t-2 border-primary-700 bg-white">
+<header
+	class="border-t-2 border-primary-700 bg-white pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]"
+>
 	<nav>
-		<ul class="relative flex justify-center">
+		<ul class="flex justify-center">
 			<li>
-				<NavLinkSp name="Home" href="/">
-					<IconHome width="32" height="32" />
+				<NavLinkSp name={m.header_home()} href="/">
+					<IconHome width="30" height="30" />
 				</NavLinkSp>
 			</li>
 			{#if $page.data.session?.user}
 				<li>
-					<NavLinkSp name="Write" href="/write">
-						<IconWrite width="32" height="32" />
+					<NavLinkSp name={m.header_sp_write()} href="/write">
+						<IconWrite width="30" height="30" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name="Mypage" href="/mypage">
-						<IconUser width="32" height="32" />
+					<NavLinkSp name={m.header_mypage()} href="/mypage">
+						<IconUser width="30" height="30" />
 					</NavLinkSp>
 				</li>
 			{:else}
 				<li>
-					<NavLinkSp name="Sign in" href="/signin?callbackUrl={redirectPathname}">
-						<IconSignin width="32" height="32" />
+					<NavLinkSp name={m.signin_label()} href="/signin?{callbackParam}={redirectPathname}">
+						<IconSignin width="30" height="30" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name="Sign up" href="/signup?callbackUrl={redirectPathname}">
-						<IconSignup width="32" height="32" />
+					<NavLinkSp name={m.signup_label()} href="/signup?{callbackParam}={redirectPathname}">
+						<IconSignup width="30" height="30" />
 					</NavLinkSp>
 				</li>
 			{/if}
 			{#if $page.data.session?.user}
 				<li class="relative">
-					<Dropdown name="sp_submenu" dropdownClass="bottom-20 end-[10%] min-w-40">
-						<NavLinkSp slot="opener" name="More">
-							<IconMore width="32" height="32" />
+					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-0 min-w-40">
+						<NavLinkSp slot="opener" name={m.header_more()}>
+							<IconMore width="30" height="30" />
 						</NavLinkSp>
 						<ul>
 							<li>

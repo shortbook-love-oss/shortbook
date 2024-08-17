@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import 'dotenv/config';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -18,22 +19,14 @@ const config = {
 			mode: 'hash',
 			directives: {
 				'base-uri': ['self'],
-				'form-action': [
-					'self',
-					'https://github.com/login/oauth/',
-					'https://www.linkedin.com/oauth/'
-				],
+				'form-action': ['self', 'https://checkout.stripe.com'],
+				'frame-src': ['self', 'https://js.stripe.com'],
 				'frame-ancestors': ['none'], // For click-jacking protection
-				'script-src': ['self'],
+				'script-src': ['self', 'https://js.stripe.com'],
 				'worker-src': ['self'],
 				'connect-src': ['self', 'wss://localhost:*'],
 				'style-src': ['self', 'unsafe-inline'],
-				'img-src': [
-					'self',
-					'data:',
-					'https://media.licdn.com/dms/image/',
-					'https://avatars.githubusercontent.com/u/'
-				],
+				'img-src': ['self', 'data:', 'blob:', 'https:'],
 				'media-src': ['self', 'data:'],
 				'object-src': ['self'],
 				'font-src': ['self', 'data:'],

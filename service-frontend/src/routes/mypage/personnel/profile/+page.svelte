@@ -8,7 +8,6 @@
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
-	import { removeLangTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/profile-update';
 
 	export let data;
@@ -18,10 +17,11 @@
 		validators: zod(schema),
 		onUpdated: ({ form }) => {
 			if (form.valid) {
-				initPenName = form.data.penName;
+				initForm = { ...form.data };
 			}
 		}
 	});
+	let initForm = { ...$form };
 
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = true;
@@ -33,8 +33,6 @@
 	onDestroy(() => formObserver());
 
 	const user = $page.data.session?.user;
-	const actionUrl = removeLangTagFromPath($page.url.pathname);
-	let initPenName = data.initPenName;
 </script>
 
 <svelte:head>
@@ -42,10 +40,19 @@
 </svelte:head>
 
 <h1 class="mb-4 text-2xl font-semibold">Public profile</h1>
-<ProfileCard name={initPenName} imageSrc={user?.image ?? ''} className="mb-8" />
+<ProfileCard
+	name={initForm.penName}
+	keyName={initForm.keyName}
+	imageSrc={user?.image ?? ''}
+	className="mb-8"
+>
+	{#if initForm.headline}
+		<p class="mt-1 whitespace-pre-wrap">{initForm.headline}</p>
+	{/if}
+</ProfileCard>
 <Form
 	method="POST"
-	action={actionUrl}
+	action={$page.url.pathname}
 	{enhance}
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}
@@ -87,8 +94,8 @@
 	/>
 	<TextArea
 		bind:value={$form.selfIntroduction}
-		name="selfIntro"
-		label="Self Intro"
+		name="selfIntroduction"
+		label="Self introduction"
 		errorMessages={$errors.selfIntroduction}
 		className="mb-8"
 	/>

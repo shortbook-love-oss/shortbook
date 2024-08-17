@@ -1,6 +1,11 @@
-<script>
+<script lang="ts">
+	import Meta from '$lib/components/service/meta.svelte';
 	import LayoutRule from '../_layout-rule.svelte';
 </script>
+
+<svelte:head>
+	<Meta />
+</svelte:head>
 
 <LayoutRule>
 	<div slot="header" class="flex justify-center border-b border-stone-300 px-8 py-1">
@@ -12,8 +17,6 @@
 			/>
 		</a>
 	</div>
-	<main class="flex-1">
-		<slot></slot>
-	</main>
+	<slot />
 	<svelte:fragment slot="footerNav" />
 </LayoutRule>

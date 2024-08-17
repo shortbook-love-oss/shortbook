@@ -1,3 +1,5 @@
+import * as m from '$lib/i18n/paraglide/messages';
+
 type FooterItem = {
 	name: string;
 	childs: FooterItemChild[];
@@ -8,19 +10,25 @@ type FooterItemChild = {
 	href: string;
 };
 
-export const categories: FooterItem[] = [
-	{
-		name: 'About company',
-		childs: [
-			{ name: 'About', href: '/about' },
-			{ name: 'Contact', href: 'https://www.linkedin.com/in/kurachiweb/' }
-		]
-	},
-	{
-		name: 'ShortBook',
-		childs: [
-			{ name: 'Term of use', href: '/policies/term' },
-			{ name: 'Privacy policy', href: '/policies/privacy' }
-		]
-	}
-];
+export function categories(languageTag: string): FooterItem[] {
+	return [
+		{
+			name: m.footer_about_company_heading({ languageTag }),
+			childs: [
+				{ name: m.footer_about_company_about({ languageTag }), href: '/about' },
+				{ name: m.footer_about_company_contact({ languageTag }), href: '/support/contact' },
+				{
+					name: m.footer_about_company_sct({ languageTag }),
+					href: '/about/japan-act-of-sct'
+				}
+			]
+		},
+		{
+			name: m.footer_about_shortbook_heading({ languageTag }),
+			childs: [
+				{ name: m.footer_about_shortbook_term({ languageTag }), href: '/policies/term' },
+				{ name: m.footer_about_shortbook_privacy({ languageTag }), href: '/policies/privacy' }
+			]
+		}
+	];
+}

@@ -1,18 +1,19 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib/model/user/profile/update';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
-import { getAuthUserId } from '$lib/utilities/server/crypto';
-import { guessNativeLangFromRequest, languageAndNotSelect } from '$lib/utilities/language';
+import { languageAndNotSelect } from '$lib/utilities/language';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/profile-update';
 
-export const load = async ({ request, cookies }) => {
+export const load = async ({ url, locals }) => {
+	const requestLang = getLanguageTagFromUrl(url);
 	const form = await superValidate(zod(schema));
-	const langTags = languageAndNotSelect;
 
-	const userId = getAuthUserId(cookies);
+	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
@@ -22,10 +23,11 @@ export const load = async ({ request, cookies }) => {
 		return error(500, { message: dbError.message });
 	}
 	const profileLangs = profile?.languages[0];
-	const requestLang = guessNativeLangFromRequest(request);
+
+	const langTags = languageAndNotSelect;
 
 	form.data.keyName = profile?.key_name ?? '';
-	form.data.nativeLanguage = profile?.native_language || requestLang;
+	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTag;
 	form.data.penName = profileLangs?.pen_name ?? '';
 	form.data.headline = profileLangs?.headline ?? '';
 	form.data.selfIntroduction = profileLangs?.self_introduction ?? '';
@@ -35,8 +37,8 @@ export const load = async ({ request, cookies }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
-		const userId = getAuthUserId(cookies);
+	default: async ({ request, locals }) => {
+		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });
 		}

@@ -24,14 +24,32 @@ mkdir ./cache/dynamodb
 docker compose -f docker/compose.yaml up -d --build
 ```
 
-### On release
+## On release
+
+### Check IAM policy to send email
+
+Here is IAM policy for SES.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SESSendEmail",
+      "Effect": "Allow",
+      "Action": ["ses:SendEmail", "ses:SendRawEmail"],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### Push repository
 
 TODO: Use GitHub Action in the future.
 
 ```bash
-docker build -f ./service-frontend/Dockerfile --target prd -t shortbook-service-frontend:(((version-tag))) .
-aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin (((your-aws-account-id-without-hyphen))).dkr.ecr.us-west-2.amazonaws.com
-docker tag shortbook-service-frontend:(((version-tag))) (((your-aws-account-id-without-hyphen))).dkr.ecr.us-west-2.amazonaws.com/shortbook-service-frontend:(((version-tag)))
-docker push (((your-aws-account-id-without-hyphen))).dkr.ecr.us-west-2.amazonaws.com/shortbook-service-frontend:(((version-tag)))
-docker logout (((your-aws-account-id-without-hyphen))).dkr.ecr.us-west-2.amazonaws.com
+docker build -f ./service-frontend/Dockerfile --target prd -t shortbook-service-frontend:(((version-tag))) . --progress=plain
+docker tag shortbook-service-frontend:(((version-tag))) us-west1-docker.pkg.dev/(((project-id)))/shortbook-service-frontend/shortbook-service-frontend:(((version-tag)))
+docker push us-west1-docker.pkg.dev/(((project-id)))/shortbook-service-frontend/shortbook-service-frontend:(((version-tag)))
 ```
