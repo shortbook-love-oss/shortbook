@@ -20,6 +20,7 @@
 					<a
 						href="/"
 						class="inline-block rounded-md p-2 align-middle hover:bg-stone-200 focus:bg-stone-200"
+						data-sveltekit-reload
 					>
 						<img
 							src="/assets/shortbook-logotype.svg"
