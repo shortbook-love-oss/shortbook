@@ -66,7 +66,11 @@ export const load = async ({ url, params, locals }) => {
 	if (dbContractGetError) {
 		return error(500, { message: dbContractGetError?.message ?? '' });
 	}
-	const paymentCustomerId = paymentContract?.provider_customer_id ?? '';
+	const paymentCustomerId = decryptFromFlat(
+		paymentContract?.provider_customer_id ?? '',
+		env.ENCRYPT_PAYMENT_CUSTOMER_ID,
+		env.ENCRYPT_SALT
+	);
 
 	// If users can pay with the points they have, use it
 	const dbBookBuyCreateReq: DbBookBuyCreateRequest = {

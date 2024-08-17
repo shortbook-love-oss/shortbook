@@ -4,7 +4,7 @@ import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
 import { dbUserPaymentContractCreate } from '$lib/model/user/payment-contract/create';
 import { dbUserPaymentSettingUpsert } from '$lib/model/user/payment-setting/upsert';
-import { decryptFromFlat } from '$lib/utilities/server/crypto';
+import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
 import { checkPaymentStatus } from '$lib/utilities/server/payment';
 import {
 	getLanguageTagFromUrl,
@@ -66,7 +66,7 @@ export const load = async ({ url }) => {
 		...bookPaymentInfo,
 		payment: {
 			provider: 'stripe',
-			sessionId: paymentSessionId,
+			sessionId: encryptAndFlat(paymentSessionId, env.ENCRYPT_PAYMENT_SESSION_ID, env.ENCRYPT_SALT),
 			currency,
 			amount
 		}
@@ -89,7 +89,7 @@ export const load = async ({ url }) => {
 		const { dbError: dbContractError } = await dbUserPaymentContractCreate({
 			userId: bookPaymentInfo.userId,
 			providerKey: 'stripe',
-			customerId
+			customerId: encryptAndFlat(customerId, env.ENCRYPT_PAYMENT_CUSTOMER_ID, env.ENCRYPT_SALT)
 		});
 		if (dbContractError) {
 			return error(500, { message: dbContractError?.message ?? '' });

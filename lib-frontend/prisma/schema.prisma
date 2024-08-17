@@ -169,7 +169,7 @@ model user_payment_checkouts {
   id                      String              @id @default(cuid())
   user_id                 String
   provider_key            String              @db.VarChar(15)
-  session_id              String
+  session_id              String              // Encrypted
   currency                String              @db.VarChar(3)
   amount                  Decimal
   is_refund               Int                 @db.SmallInt
@@ -195,7 +195,7 @@ model user_payment_contracts {
   id                      String              @id @default(cuid())
   user_id                 String
   provider_key            String              @db.VarChar(15)
-  provider_customer_id    String
+  provider_customer_id    String              // Encrypted
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
