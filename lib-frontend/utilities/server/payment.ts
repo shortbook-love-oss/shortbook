@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
+import { decryptFromFlat } from '$lib/utilities/server/crypto';
 import { getConvertedCurrencies } from '$lib/utilities/server/currency';
 import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
 import {
@@ -119,4 +120,11 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 		isCreateCustomer: checkoutSession.customer_creation != null,
 		isAvailable: checkoutSession.payment_status !== 'unpaid'
 	};
+}
+
+export async function changeCustomerEmail(customerId: string, newEmail: string) {
+	await stripe.customers.update(
+		decryptFromFlat(customerId, env.ENCRYPT_PAYMENT_CUSTOMER_ID, env.ENCRYPT_SALT),
+		{ email: newEmail }
+	);
 }

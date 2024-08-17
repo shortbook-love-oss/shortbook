@@ -6,9 +6,11 @@ import { dbVerificationTokenDelete } from '$lib/model/verification-token/delete'
 import { dbVerificationTokenGet } from '$lib/model/verification-token/get';
 import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
 import { toHashUserEmail } from '$lib/utilities/server/email';
+import { changeCustomerEmail } from '$lib/utilities/server/payment';
 import { emailChangeTokenName } from '$lib/utilities/server/verification-token';
 import { signInEmailLinkMethod } from '$lib/utilities/signin';
 import { emailChangeTokenParam, setLanguageTagToPath } from '$lib/utilities/url';
+import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
 
 export const load = async ({ url, locals }) => {
 	const userId = locals.session?.user?.id;
@@ -58,6 +60,18 @@ export const load = async ({ url, locals }) => {
 	});
 	if (dbUserUpdateError) {
 		return error(500, { message: dbUserUpdateError.message });
+	}
+
+	// Change payment provider registerd email
+	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
+		userId,
+		providerKey: 'stripe'
+	});
+	if (dbContractGetError) {
+		return error(500, { message: dbContractGetError.message });
+	}
+	if (paymentContract) {
+		await changeCustomerEmail(paymentContract.provider_customer_id, userEmail);
 	}
 
 	// Delete dangling verification token
