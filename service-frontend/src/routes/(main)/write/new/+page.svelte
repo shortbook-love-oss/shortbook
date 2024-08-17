@@ -132,7 +132,7 @@
 			/>
 		</div>
 		<div class="shrink-0 lg:w-48">
-			<div class="w-fit lg:-mx-4 lg:-mt-4">
+			<div class="w-fit lg:-mx-4 lg:-mt-3">
 				<BookCoverEdit
 					book={$form}
 					penName={data.penName}

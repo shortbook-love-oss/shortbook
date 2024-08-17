@@ -20,7 +20,9 @@
 </svelte:head>
 
 <article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
-	<div class="hidden w-full max-w-xl shrink-0 gap-8 break-words lg:flex lg:w-48 lg:justify-end">
+	<div
+		class="hidden w-full max-w-xl shrink-0 gap-8 break-words pt-2 lg:flex lg:w-48 lg:justify-end"
+	>
 		<div class="max-w-full">
 			<a href="/@{data.bookDetail.userKeyName}" class="peer mb-2 inline-block">
 				<img
@@ -41,7 +43,7 @@
 		</div>
 	</div>
 	<div class="w-full min-w-0 max-w-xl break-words">
-		<div class="-mx-4 w-[calc(100%+2rem)] overflow-x-hidden px-4">
+		<div class="-mx-4 px-4">
 			<h1 class="mb-4 whitespace-pre-wrap text-3xl font-semibold leading-tight sm:text-4xl">
 				{data.bookDetail.title}
 			</h1>
@@ -128,7 +130,7 @@
 			</SalesMessage>
 		{/if}
 	</div>
-	<div class="hidden shrink-0 lg:block lg:w-48">
+	<div class="hidden shrink-0 pt-1 lg:block lg:w-48">
 		<BookCover
 			book={data.bookDetail}
 			penName={data.bookDetail.penName}
