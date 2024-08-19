@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
+import { finalizeSign } from '$lib/components/service/auth/finalizeSign';
 import { callbackParam, getSafetyUrl } from '$lib/utilities/url';
-import { finalizeSign } from '../../finalizeSign';
 
 export async function load({ cookies, url, locals, getClientAddress }) {
 	const session = await locals.auth();
