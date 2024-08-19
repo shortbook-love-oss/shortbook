@@ -43,7 +43,7 @@
 		</div>
 	</div>
 	<div class="w-full min-w-0 max-w-xl break-words">
-		<div class="-mx-4 px-4">
+		<div class="-mx-4 mb-8 px-4">
 			<h1 class="mb-4 whitespace-pre-wrap text-3xl font-semibold leading-tight sm:text-4xl">
 				{data.bookDetail.title}
 			</h1>
@@ -79,7 +79,7 @@
 		</div>
 		{#if data.bookDetail.isBookDeleted}
 			<div
-				class="mt-8 flex items-center gap-3 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
+				class="mb-8 flex items-center gap-3 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
 			>
 				<IconWarning width="24" height="24" class="shrink-0" />
 				<div class="text-lg leading-snug">
@@ -98,12 +98,11 @@
 				</div>
 			</div>
 		{/if}
-		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.prologue}
-			<section class="article_content text-lg">
+			<hr class="my-8 border-stone-300" />
+			<section class="article_content mb-8 text-lg">
 				{@html data.bookDetail.prologue}
 			</section>
-			<hr class="my-8 border-stone-300" />
 		{/if}
 		{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
 			<section class="article_content text-lg">
