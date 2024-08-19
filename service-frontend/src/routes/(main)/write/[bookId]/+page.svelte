@@ -48,7 +48,7 @@
 </script>
 
 <svelte:head>
-	<title>Edit book | ShortBook</title>
+	<title>Edit "{data.initTitle}" | ShortBook</title>
 </svelte:head>
 
 <Form
