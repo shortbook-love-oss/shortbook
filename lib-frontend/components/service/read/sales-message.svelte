@@ -18,7 +18,7 @@
 	>
 		<div class="z-1 relative rounded-[0.4375rem] bg-white p-4">
 			{#if message}
-				<div class="article_content mb-4 text-lg">
+				<div class="article_content mb-4 font-serif text-lg">
 					{@html message}
 				</div>
 			{/if}

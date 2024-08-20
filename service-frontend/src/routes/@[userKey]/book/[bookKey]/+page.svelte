@@ -21,7 +21,7 @@
 
 <article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
 	<div
-		class="hidden w-full max-w-xl shrink-0 gap-8 break-words pt-2 lg:flex lg:w-48 lg:justify-end"
+		class="hidden w-full max-w-2xl shrink-0 gap-8 break-words pt-2 lg:flex lg:w-48 lg:justify-end"
 	>
 		<div class="max-w-full">
 			<a href="/@{data.bookDetail.userKeyName}" class="peer mb-2 inline-block">
@@ -42,13 +42,15 @@
 			{/if}
 		</div>
 	</div>
-	<div class="w-full min-w-0 max-w-xl break-words">
+	<div class="w-full min-w-0 max-w-2xl break-words">
 		<div class="-mx-4 mb-8 px-4">
-			<h1 class="mb-4 whitespace-pre-wrap text-3xl font-semibold leading-tight sm:text-4xl">
+			<h1
+				class="mb-4 whitespace-pre-wrap font-serif text-4xl font-semibold leading-tight xs:text-5xl"
+			>
 				{data.bookDetail.title}
 			</h1>
 			{#if data.bookDetail.subtitle}
-				<p class="mb-4 whitespace-pre-wrap text-xl leading-normal">
+				<p class="mb-4 whitespace-pre-wrap font-serif text-xl leading-normal">
 					{data.bookDetail.subtitle}
 				</p>
 			{/if}
@@ -100,12 +102,12 @@
 		{/if}
 		{#if data.bookDetail.prologue}
 			<hr class="my-8 border-stone-300" />
-			<section class="article_content mb-8 text-lg">
+			<section class="article_content mb-8 font-serif text-lg">
 				{@html data.bookDetail.prologue}
 			</section>
 		{/if}
 		{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
-			<section class="article_content text-lg">
+			<section class="article_content font-serif text-lg">
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
