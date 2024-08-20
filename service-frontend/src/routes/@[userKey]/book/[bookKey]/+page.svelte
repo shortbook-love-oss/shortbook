@@ -3,6 +3,7 @@
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconWarning from '~icons/mdi/warning';
 	import { page } from '$app/stores';
+	import { env as envPublic } from '$env/dynamic/public';
 	import { inquiryCategoryParam } from '$lib/utilities/url';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -26,7 +27,8 @@
 		<div class="max-w-full">
 			<a href="/@{data.bookDetail.userKeyName}" class="peer mb-2 inline-block">
 				<img
-					src="{data.bookDetail.userImage}?w=64&h=64&fit=cover"
+					src="{envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}{data.bookDetail
+						.userImage}?w=64&h=64&fit=cover"
 					alt="{data.bookDetail.penName} profile icon"
 					class="h-16 w-16 rounded bg-white align-middle"
 				/>

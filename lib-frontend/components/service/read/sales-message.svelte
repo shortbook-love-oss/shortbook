@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { env as envPublic } from '$env/dynamic/public';
+
 	export let image: string;
 	export let message: string;
 </script>
@@ -6,7 +8,7 @@
 <div class="items-start gap-4 xs:flex">
 	<div class="shrink-0 max-xs:mb-4">
 		<img
-			src="{image}?w=128&h=128&fit=cover"
+			src="{envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}{image}?w=128&h=128&fit=cover"
 			width="128"
 			height="128"
 			class="rounded-lg"
