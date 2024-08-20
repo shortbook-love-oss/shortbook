@@ -10,10 +10,10 @@
 	<title>ShortBook — Writing platform</title>
 </svelte:head>
 
-<div class="mx-auto max-w-[108rem]">
+<div class="mx-auto max-w-3xl">
 	<div class="mb-12 flex flex-wrap items-center gap-4">
 		{#if data.bookList.length}
-			<h1 class="text-2xl font-semibold">{m.top_heading()}</h1>
+			<h1 class="text-2xl">{m.top_heading()}</h1>
 		{/if}
 		<a
 			href="/write/new"
@@ -24,11 +24,9 @@
 		</a>
 	</div>
 	{#if data.bookList.length}
-		<ul
-			class="xs:grid-cols-2 grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
-		>
+		<ul>
 			{#each data.bookList as book (book.id)}
-				<li>
+				<li class="mb-16">
 					<BookItem
 						{book}
 						penName={book.penName}

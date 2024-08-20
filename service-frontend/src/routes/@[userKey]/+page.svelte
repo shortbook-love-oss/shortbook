@@ -59,11 +59,9 @@
 <div class="mx-auto max-w-[108rem]">
 	<h2 class="mb-8 text-2xl font-semibold">Recent books</h2>
 	{#if data.bookList.length}
-		<ul
-			class="grid grid-cols-1 gap-x-8 gap-y-12 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
-		>
+		<ul>
 			{#each data.bookList as book (book.id)}
-				<li>
+				<li class="mb-16">
 					<BookItem
 						{book}
 						penName={book.penName}
