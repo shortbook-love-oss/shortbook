@@ -1,5 +1,6 @@
 <script lang="ts">
 	import IconEdit from '~icons/mdi/edit-outline';
+	import { env as envPublic } from '$env/dynamic/public';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookItem from '$lib/components/service/read/book-item.svelte';
 
@@ -27,7 +28,7 @@
 				</p>
 			{/if}
 			<img
-				src="{data.user.image}?w=128&h=128&fit=cover"
+				src="{envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}{data.user.image}?w=128&h=128&fit=cover"
 				class="mb-4 h-32 w-32 rounded-md bg-white"
 				alt="{data.profileLang?.headline} profile image"
 			/>

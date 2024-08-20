@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { env as envPublic } from '$env/dynamic/public';
+
 	export let name: string;
 	export let keyName = '';
 	export let imageSrc = '';
@@ -13,7 +15,7 @@
 			class="peer shrink-0"
 		>
 			<img
-				src="{imageSrc}?w=64&h=64&fit=cover"
+				src="{envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}{imageSrc}?w=64&h=64&fit=cover"
 				class="h-16 w-16 rounded-md bg-white"
 				alt="Profile icon"
 			/>
