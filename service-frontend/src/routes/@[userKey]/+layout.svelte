@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { guessImageTypeByUrl } from '$lib/utilities/file';
-	import LayoutRule from '../_layout-rule.svelte';
+	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 
 	export let data;
 

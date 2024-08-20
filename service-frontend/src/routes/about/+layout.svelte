@@ -1,6 +1,6 @@
 <script lang="ts">
+	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
-	import LayoutRule from '../_layout-rule.svelte';
 </script>
 
 <svelte:head>
