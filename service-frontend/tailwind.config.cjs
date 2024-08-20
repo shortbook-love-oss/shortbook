@@ -10,8 +10,8 @@ const config = {
 
 	theme: {
 		screens: {
-			xs: '480px',
-			...defaultTheme.screens
+			...defaultTheme.screens,
+			xs: '480px'
 		},
 		extend: {
 			colors: {
@@ -43,6 +43,27 @@ const config = {
 					'99.9%, 100%': { opacity: '0' },
 					'100%': { display: 'none' }
 				}
+			},
+			fontFamily: {
+				...defaultTheme.fontFamily,
+				sans: [
+					'-apple-system', // Mac・iOS
+					'BlinkMacSystemFont', // Mac・iOS
+					'"Helvetica Neue"', // Mac・iOS
+					'"Hiragino Sans"', // Mac・iOS
+					'"Apple Color Emoji"', // Mac・iOS
+					'"Noto Color Emoji"',
+					'Roboto', // Android
+					'Arial', // Windows・Mac・iOS
+					'sans-serif'
+				],
+				serif: [
+					'"Cambria"', // Windows
+					'"Hiragino Mincho ProN"', // Mac・iOS
+					'"Apple Color Emoji"', // Mac・iOS
+					'"Noto Color Emoji"',
+					'serif'
+				]
 			}
 		}
 	}
