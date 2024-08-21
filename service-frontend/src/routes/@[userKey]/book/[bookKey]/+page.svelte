@@ -47,16 +47,16 @@
 	<div class="w-full min-w-0 max-w-2xl break-words">
 		<div class="-mx-4 mb-8 px-4">
 			<h1
-				class="font-title mb-4 whitespace-pre-wrap text-4xl font-semibold leading-tight xs:text-5xl"
+				class="font-title mb-2 whitespace-pre-wrap text-[2.25rem] font-semibold leading-snug xs:text-[3rem]"
 			>
 				{data.bookDetail.title}
 			</h1>
 			{#if data.bookDetail.subtitle}
-				<p class="mb-4 whitespace-pre-wrap font-serif text-2xl leading-snug">
+				<p class="mb-8 whitespace-pre-wrap font-serif text-2xl leading-snug">
 					{data.bookDetail.subtitle}
 				</p>
 			{/if}
-			<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
+			<div class="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
 				<ProfileCard
 					name={data.bookDetail.penName}
 					keyName={data.bookDetail.userKeyName}

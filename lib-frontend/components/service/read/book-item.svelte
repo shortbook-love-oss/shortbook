@@ -17,12 +17,12 @@
 		<BookCover {book} {penName} width={96} />
 	</a>
 	<div
-		class="-mt-1 w-full min-w-0 flex-1 peer-hover:[&>h2>a]:underline peer-hover:[&>p>a]:underline"
+		class="-mt-2 w-full min-w-0 flex-1 peer-hover:[&>h2>a]:underline peer-hover:[&>p>a]:underline"
 	>
 		<h2>
 			<a
 				href={bookUrl}
-				class="font-title line-clamp-4 whitespace-pre-wrap break-words pb-[0.125em] text-4xl font-semibold leading-tight hover:underline xs:text-5xl"
+				class="font-title line-clamp-4 whitespace-pre-wrap break-words pb-[0.1em] text-[2.25rem] font-semibold leading-tight hover:underline xs:text-[3rem]"
 			>
 				{book.title}
 			</a>
@@ -31,7 +31,7 @@
 			<p class="mb-1.5">
 				<a
 					href={bookUrl}
-					class="font-title line-clamp-3 whitespace-pre-wrap break-words pb-[0.125em] text-lg hover:underline"
+					class="font-title line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] text-lg hover:underline"
 					>{book.subtitle}</a
 				>
 			</p>

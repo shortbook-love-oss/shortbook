@@ -42,7 +42,7 @@
 		</div>
 		<div style="text-align: {getSelectedText(bookTextAlignSelect, book.writerAlign)};">
 			<p
-				class="whitespace-pre-wrap break-words rounded-md p-6 text-5xl leading-snug"
+				class="whitespace-pre-wrap break-words rounded-md p-6 text-[3rem] leading-snug"
 				style="color: {book.writerColor};"
 			>
 				{penName}
