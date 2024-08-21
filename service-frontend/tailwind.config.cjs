@@ -51,18 +51,24 @@ const config = {
 					'BlinkMacSystemFont', // Mac・iOS
 					'"Helvetica Neue"', // Mac・iOS
 					'"Hiragino Sans"', // Mac・iOS
-					'"Apple Color Emoji"', // Mac・iOS
-					'"Noto Color Emoji"',
 					'Roboto', // Android
 					'Arial', // Windows・Mac・iOS
-					'sans-serif'
+					'sans-serif',
+					'"Apple Color Emoji"', // Mac・iOS
+					'"Noto Color Emoji"'
 				],
 				serif: [
+					'"Times New Roman"',
+					'serif',
+					'"Apple Color Emoji"', // Mac・iOS
+					'"Noto Color Emoji"'
+				],
+				title: [
 					'"Cambria"', // Windows
 					'"Hiragino Mincho ProN"', // Mac・iOS
+					'serif',
 					'"Apple Color Emoji"', // Mac・iOS
-					'"Noto Color Emoji"',
-					'serif'
+					'"Noto Color Emoji"'
 				]
 			}
 		}

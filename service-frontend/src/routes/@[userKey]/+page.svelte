@@ -44,7 +44,7 @@
 		</section>
 	</div>
 	<div
-		class="w-full flex-1 overflow-x-hidden rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-1 font-serif text-lg {data
+		class="w-full flex-1 overflow-x-hidden rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-1 font-serif text-xl {data
 			.profileLang?.self_introduction
 			? ''
 			: 'hidden'}"

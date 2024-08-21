@@ -22,7 +22,7 @@
 		<h2>
 			<a
 				href={bookUrl}
-				class="line-clamp-4 whitespace-pre-wrap break-words pb-[0.125em] font-serif text-4xl font-semibold leading-tight hover:underline xs:text-5xl"
+				class="font-title line-clamp-4 whitespace-pre-wrap break-words pb-[0.125em] text-4xl font-semibold leading-tight hover:underline xs:text-5xl"
 			>
 				{book.title}
 			</a>
@@ -31,7 +31,7 @@
 			<p class="mb-1.5">
 				<a
 					href={bookUrl}
-					class="line-clamp-3 whitespace-pre-wrap break-words pb-[0.125em] font-serif text-lg hover:underline"
+					class="font-title line-clamp-3 whitespace-pre-wrap break-words pb-[0.125em] text-lg hover:underline"
 					>{book.subtitle}</a
 				>
 			</p>
