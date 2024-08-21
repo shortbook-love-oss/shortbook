@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyGet } from '$lib/model/book-buy/get';
+import { dbCurrencyRateGet } from '$lib/model/currency/get';
 import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
 import { dbUserPointList } from '$lib/model/user/point/list';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
-import { getConvertedCurrencies } from '$lib/utilities/server/currency';
 import {
 	defaultCurrency,
 	guessCurrencyByLang,
@@ -92,11 +92,16 @@ export const load = async ({ url, locals, params }) => {
 	}
 
 	let currencyPreviews: SelectItem<CurrencySupportKeys>[] = [];
+	// Skip check if buy with points only
 	if (!isBoughtBook && buyPoint > 0 && !isOwn && !hasEnoughPoint) {
 		// Show book price by all supported currencies
-		// Skip check if buy with points only
-		const converted = await getConvertedCurrencies(buyPoint, defaultCurrency.key);
-		currencyPreviews = calcPriceByPoint(converted, requestLang);
+		const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
+			amount: buyPoint / 100
+		});
+		if (dbRateGetError) {
+			error(500, { message: dbRateGetError.message });
+		}
+		currencyPreviews = calcPriceByPoint(currencyRateIndex, requestLang);
 	}
 
 	const bookCover = getBookCover({

@@ -128,7 +128,7 @@
 			<PricePreview
 				point={$form.buyPoint}
 				selectedCurrencyKey={data.selectedCurrencyKey}
-				currencyRates={data.currencyRates}
+				currencyRates={data.currencyRateIndex}
 			/>
 		</div>
 		<div class="shrink-0 lg:w-48">

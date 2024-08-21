@@ -1,8 +1,9 @@
+import { error } from '@sveltejs/kit';
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
+import { dbCurrencyRateGet } from '$lib/model/currency/get';
 import { decryptFromFlat } from '$lib/utilities/server/crypto';
-import { getConvertedCurrencies } from '$lib/utilities/server/currency';
-import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
+import type { CurrencySupportKeys } from '$lib/utilities/currency';
 import {
 	decidePaymentAmountForStripe,
 	reversePaymentAmountOfStripe,
@@ -37,10 +38,15 @@ export async function createPaymentSession(
 		successUrlWithSession += `?${paymentSessionIdParam}={CHECKOUT_SESSION_ID}`;
 	}
 
-	// Need 100 USD and service fee to buy 100 point
-	const paymentAmountBase = pointAmount / (100 - shortbookChargeFee);
-	const currencyConverted = await getConvertedCurrencies(paymentAmountBase, defaultCurrency.key);
-	const paymentAmount = (await decidePaymentAmountForStripe(currencyConverted))[currency];
+	// Need 100 USD + service fee to buy 100 point
+	const pointAmountBase = (pointAmount / 100) * (100 / (100 - shortbookChargeFee));
+	const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
+		amount: pointAmountBase
+	});
+	if (dbRateGetError) {
+		error(500, { message: dbRateGetError.message });
+	}
+	const paymentAmount = (await decidePaymentAmountForStripe(currencyRateIndex))[currency];
 	if (!paymentAmount) {
 		// Doesn't support currency, just reload the page
 		return { url: null };

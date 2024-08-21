@@ -1,8 +1,8 @@
+import { error } from '@sveltejs/kit';
 import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { getConvertedCurrencies } from '$lib/utilities/server/currency';
 import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
-import { error } from '@sveltejs/kit';
+import { dbCurrencyRateGet } from '$lib/model/currency/get';
 
 export async function editLoad(userId: string) {
 	const { profile, dbError: dbProfileGetError } = await dbUserProfileGet({ userId });
@@ -20,7 +20,10 @@ export async function editLoad(userId: string) {
 		(paymentSetting?.currency as CurrencySupportKeys) ?? defaultCurrency.key;
 
 	// Show book price by all supported currencies
-	const currencyRates = await getConvertedCurrencies(1, defaultCurrency.key);
+	const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({ amount: 0.01 });
+	if (dbRateGetError) {
+		error(500, { message: dbRateGetError.message });
+	}
 
-	return { profile, userKeyName, penName, selectedCurrencyKey, currencyRates };
+	return { profile, userKeyName, penName, selectedCurrencyKey, currencyRateIndex };
 }

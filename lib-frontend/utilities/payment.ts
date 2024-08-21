@@ -77,19 +77,19 @@ function toPaymentAmountOfStripe(
 	if (currencyData.rule00) {
 		if (currencyData.allowDecimal) {
 			// "45600" Only used by ISK (Island)
-			return String(Math.floor(originAmount * 100) * 100);
+			return String(Math.floor(originAmount) * 100);
 		} else {
 			// "45600" Only used by UGX (Uganda)
 			// The currency rate is high, so it is not divided by 100
-			return String(Math.floor(originAmount * 100) * 100);
+			return String(Math.floor(originAmount) * 100);
 		}
 	} else {
 		if (currencyData.allowDecimal) {
 			// "45678"
-			return String(Math.floor(originAmount * 10000));
+			return String(Math.floor(originAmount * 100));
 		} else {
 			// "456"
-			return String(Math.floor(originAmount * 100));
+			return String(Math.floor(originAmount));
 		}
 	}
 }
