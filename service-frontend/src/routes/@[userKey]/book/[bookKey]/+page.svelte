@@ -46,7 +46,10 @@
 	<div class="w-full min-w-0 max-w-2xl break-words">
 		<div class="-mx-4 mb-8 px-4">
 			<h1
-				class="mb-2 whitespace-pre-wrap font-title text-[2.25rem] font-semibold leading-snug xs:text-[3rem]"
+				class="whitespace-pre-wrap font-title text-[2.25rem] font-semibold leading-tight xs:text-[3rem] {data
+					.bookDetail.subtitle
+					? 'mb-2'
+					: 'mb-6'}"
 			>
 				{data.bookDetail.title}
 			</h1>
@@ -101,8 +104,8 @@
 				</div>
 			</div>
 		{/if}
+		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.prologue}
-			<hr class="my-8 border-stone-300" />
 			<section class="article_content mb-8 font-serif text-xl">
 				{@html data.bookDetail.prologue}
 			</section>
