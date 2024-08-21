@@ -20,7 +20,7 @@
 	<div
 		class="-mt-2 w-full min-w-0 flex-1 peer-hover:[&>h2>a]:underline peer-hover:[&>p>a]:underline"
 	>
-		<h2>
+		<h2 class={book.subtitle ? '' : 'mb-2'}>
 			<a
 				href={bookUrl}
 				class="line-clamp-4 whitespace-pre-wrap break-words pb-[0.1em] font-title text-[2.25rem] font-semibold leading-tight hover:underline xs:text-[3rem]"
