@@ -2,6 +2,7 @@
 	import IconCash from '~icons/mdi/attach-money';
 	import { page } from '$app/stores';
 	import { formatPrice } from '$lib/utilities/currency';
+	import { toLocaleDatetime } from '$lib/utilities/date';
 	import type { PointListItem } from '$lib/utilities/point';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -63,7 +64,7 @@
 						</p>
 					{/if}
 					<time datetime={point.createdAt.toISOString()}
-						>{point.createdAt.toLocaleString(getLanguageTagFromUrl($page.url))}</time
+						>{toLocaleDatetime(point.createdAt, getLanguageTagFromUrl($page.url))}</time
 					>
 				</div>
 			</li>

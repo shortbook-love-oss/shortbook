@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { BookItem } from '$lib/utilities/book';
+	import { toLocaleDate } from '$lib/utilities/date';
 	import type { AvailableLanguageTags } from '$lib/utilities/language';
+	import ProfileCardSmall from '$lib/components/service/mypage/profile-card-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
-	import ProfileCardSmall from '../mypage/profile-card-small.svelte';
 
 	export let book: BookItem;
 	export let penName: string;
@@ -22,16 +23,16 @@
 		<h2>
 			<a
 				href={bookUrl}
-				class="font-title line-clamp-4 whitespace-pre-wrap break-words pb-[0.1em] text-[2.25rem] font-semibold leading-tight hover:underline xs:text-[3rem]"
+				class="line-clamp-4 whitespace-pre-wrap break-words pb-[0.1em] font-title text-[2.25rem] font-semibold leading-tight hover:underline xs:text-[3rem]"
 			>
 				{book.title}
 			</a>
 		</h2>
 		{#if book.subtitle}
-			<p class="mb-1.5">
+			<p class="mb-2">
 				<a
 					href={bookUrl}
-					class="font-title line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] text-lg hover:underline"
+					class="line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] font-title text-lg hover:underline"
 					>{book.subtitle}</a
 				>
 			</p>
@@ -43,7 +44,7 @@
 				imageSrc={book.userImage}
 				className="min-w-0"
 			/>
-			<p class="break-keep">{book.publishedAt.toLocaleDateString(requestLang)}</p>
+			<p class="break-keep">{toLocaleDate(book.publishedAt, requestLang)}</p>
 		</div>
 	</div>
 </article>

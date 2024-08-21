@@ -3,6 +3,7 @@
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconWarning from '~icons/mdi/warning';
 	import { page } from '$app/stores';
+	import { toLocaleDate } from '$lib/utilities/date';
 	import { inquiryCategoryParam } from '$lib/utilities/url';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -12,7 +13,7 @@
 
 	export let data;
 
-	const publishedAt = data.bookDetail.publishedAt.toLocaleDateString(data.requestLang);
+	const publishedAt = toLocaleDate(data.bookDetail.publishedAt, data.requestLang);
 </script>
 
 <svelte:head>
