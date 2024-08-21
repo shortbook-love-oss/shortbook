@@ -3,12 +3,14 @@ import { env } from '$env/dynamic/private';
 import { dbBookGet } from '$lib/model/book/get';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
 import { dbBookBuyGet } from '$lib/model/book-buy/get';
+import { dbCurrencyRateGet } from '$lib/model/currency/get';
 import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
 import { dbUserPointList } from '$lib/model/user/point/list';
 import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
 import { createPaymentSession } from '$lib/utilities/server/payment';
 import { redirectToSignInPage } from '$lib/utilities/server/url';
 import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
+import { shortbookChargeFee } from '$lib/utilities/payment';
 import {
 	getLanguageTagFromUrl,
 	paymentBookInfoParam,
@@ -59,19 +61,6 @@ export const load = async ({ url, params, locals }) => {
 		return redirect(303, cancelUrl);
 	}
 
-	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
-		userId,
-		providerKey: 'stripe'
-	});
-	if (dbContractGetError) {
-		return error(500, { message: dbContractGetError?.message ?? '' });
-	}
-	const paymentCustomerId = decryptFromFlat(
-		paymentContract?.provider_customer_id ?? '',
-		env.ENCRYPT_PAYMENT_CUSTOMER_ID,
-		env.ENCRYPT_SALT
-	);
-
 	// If users can pay with the points they have, use it
 	const dbBookBuyCreateReq: DbBookBuyCreateRequest = {
 		bookId,
@@ -89,10 +78,37 @@ export const load = async ({ url, params, locals }) => {
 	}
 
 	// Currency specification is required for payment process
-	const requestCurrency = url.searchParams.get(paymentCurrencyParam);
+	const requestCurrency = url.searchParams.get(paymentCurrencyParam) as CurrencySupportKeys | null;
 	if (!requestCurrency || !getCurrencyData(requestCurrency)) {
 		return error(400, { message: 'Currency must be specified.' });
 	}
+
+	// Need 100 USD + service fee to buy 100 point
+	const pointAmountBase = (book.buy_point / 100) * (100 / (100 - shortbookChargeFee));
+	const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
+		amount: pointAmountBase
+	});
+	if (dbRateGetError) {
+		error(500, { message: dbRateGetError.message });
+	}
+	const paymentAmount = currencyRateIndex[requestCurrency];
+	if (!paymentAmount) {
+		// Doesn't support currency, just reload the page
+		return error(400, { message: 'Selected currency is not support.' });
+	}
+
+	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
+		userId,
+		providerKey: 'stripe'
+	});
+	if (dbContractGetError) {
+		return error(500, { message: dbContractGetError?.message ?? '' });
+	}
+	const paymentCustomerId = decryptFromFlat(
+		paymentContract?.provider_customer_id ?? '',
+		env.ENCRYPT_PAYMENT_CUSTOMER_ID,
+		env.ENCRYPT_SALT
+	);
 
 	// If do not have enough points, use Stripe Checkout.
 	// Need 456 points → charge 456 points
@@ -110,7 +126,7 @@ export const load = async ({ url, params, locals }) => {
 		`Charge ${dbBookBuyCreateReq.beforePointChargeAmount} points for ShortBook`,
 		'txcd_10103000', // SaaS for personnel (If business, use txcd_10103001)
 		requestCurrency as CurrencySupportKeys,
-		dbBookBuyCreateReq.beforePointChargeAmount,
+		paymentAmount,
 		paymentCustomerId,
 		userEmail,
 		afterPaymentUrl.href,

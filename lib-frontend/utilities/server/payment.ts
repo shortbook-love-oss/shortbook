@@ -1,13 +1,7 @@
-import { error } from '@sveltejs/kit';
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
-import { dbCurrencyRateGet } from '$lib/model/currency/get';
 import type { CurrencySupportKeys } from '$lib/utilities/currency';
-import {
-	decidePaymentAmountForStripe,
-	reversePaymentAmountOfStripe,
-	shortbookChargeFee
-} from '$lib/utilities/payment';
+import { reversePaymentAmountOfStripe, toPaymentAmountOfStripe } from '$lib/utilities/payment';
 import { paymentSessionIdParam } from '$lib/utilities/url';
 
 /** Don't call from client-side code */
@@ -23,12 +17,17 @@ export async function createPaymentSession(
 	paymentDescription: string,
 	paymentTaxCode: string,
 	currency: CurrencySupportKeys,
-	pointAmount: number,
+	paymentAmount: number,
 	customerId: string,
 	customerEmail: string,
 	successUrl: string,
 	cancelUrl: string
 ) {
+	const amountForStripe = toPaymentAmountOfStripe(currency, paymentAmount);
+	if (!amountForStripe) {
+		return { url: null };
+	}
+
 	let successUrlWithSession = successUrl;
 	// See about {CHECKOUT_SESSION_ID} https://docs.stripe.com/payments/checkout/custom-success-page
 	if (new URL(successUrl).searchParams.size > 0) {
@@ -37,25 +36,13 @@ export async function createPaymentSession(
 		successUrlWithSession += `?${paymentSessionIdParam}={CHECKOUT_SESSION_ID}`;
 	}
 
-	// Need 100 USD + service fee to buy 100 point
-	const pointAmountBase = (pointAmount / 100) * (100 / (100 - shortbookChargeFee));
-	const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
-		amount: pointAmountBase
-	});
-	if (dbRateGetError) {
-		error(500, { message: dbRateGetError.message });
-	}
-	const paymentAmount = (await decidePaymentAmountForStripe(currencyRateIndex))[currency];
-	if (!paymentAmount) {
-		// Doesn't support currency, just reload the page
-		return { url: null };
-	}
-
 	const checkoutCreateParam: Stripe.Checkout.SessionCreateParams = {
 		line_items: [
 			{
 				price_data: {
 					currency,
+					unit_amount_decimal: amountForStripe,
+					tax_behavior: 'inclusive',
 					product_data: {
 						name: paymentName,
 						description: paymentDescription,
@@ -63,9 +50,7 @@ export async function createPaymentSession(
 							'https://profile-image.shortbook.life/shortbook/shortbook-logo-bg-white-wh512-margin64.png'
 						],
 						tax_code: paymentTaxCode
-					},
-					unit_amount_decimal: paymentAmount,
-					tax_behavior: 'inclusive'
+					}
 				},
 				quantity: 1
 			}

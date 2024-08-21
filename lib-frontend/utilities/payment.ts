@@ -1,5 +1,4 @@
 import {
-	currencySupportKeys,
 	currencySupports,
 	formatPrice,
 	getCurrencyData,
@@ -50,30 +49,11 @@ export function calcPriceByPoint(
 	return currencyPreviews;
 }
 
-// Payment request ... $100 * (100 / (100 - shortbookChargeFee)) → 10,000 points
-// Any fractional amounts invoiced will be rounded down
-export async function decidePaymentAmountForStripe(
-	currencyConverted: Partial<Record<CurrencySupportKeys, number>>
-) {
-	const amountByCurrencies: Partial<Record<CurrencySupportKeys, string>> = {};
-	for (const wantCurrency of currencySupportKeys) {
-		const currencyData = getCurrencyData(wantCurrency);
-		if (!currencyData) {
-			continue;
-		}
-		amountByCurrencies[currencyData.key] = toPaymentAmountOfStripe(
-			currencyData,
-			currencyConverted[currencyData.key] as number
-		);
+export function toPaymentAmountOfStripe(currency: CurrencySupportKeys, originAmount: number) {
+	const currencyData = getCurrencyData(currency);
+	if (!currencyData) {
+		return null;
 	}
-
-	return amountByCurrencies;
-}
-
-function toPaymentAmountOfStripe(
-	currencyData: (typeof currencySupports)[number],
-	originAmount: number
-) {
 	if (currencyData.rule00) {
 		if (currencyData.allowDecimal) {
 			// "45600" Only used by ISK (Island)
