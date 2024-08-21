@@ -47,7 +47,7 @@
 	<ul>
 		{#each data.pointList as point}
 			<li class="mb-4 flex items-center gap-4 rounded-lg p-4 {getStatus(point).bgColor}">
-				<div class="break-keep text-center">
+				<div class="text-nowrap text-center">
 					<p class="text-4xl font-semibold">{Math.abs(point.amount)}</p>
 					<p class="text-lg">{getStatus(point).amountSuffix}</p>
 				</div>

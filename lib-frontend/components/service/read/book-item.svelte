@@ -44,7 +44,9 @@
 				imageSrc={book.userImage}
 				className="min-w-0"
 			/>
-			<p class="break-keep">{toLocaleDate(book.publishedAt, requestLang)}</p>
+			<time datetime={book.publishedAt.toISOString()} class="text-nowrap pb-1"
+				>{toLocaleDate(book.publishedAt, requestLang)}</time
+			>
 		</div>
 	</div>
 </article>
