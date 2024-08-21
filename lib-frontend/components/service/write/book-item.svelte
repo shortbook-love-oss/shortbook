@@ -16,7 +16,7 @@
 		<BookCover {book} {penName} width={64} />
 		<div class="flex-1 overflow-x-hidden">
 			<h2
-				class="-mt-1.5 mb-2 line-clamp-3 whitespace-pre-wrap break-words text-2xl font-semibold lg:line-clamp-4"
+				class="-mt-1.5 mb-1 line-clamp-3 whitespace-pre-wrap break-words pb-[0.125em] text-2xl font-semibold lg:line-clamp-4"
 			>
 				{book.title}
 			</h2>

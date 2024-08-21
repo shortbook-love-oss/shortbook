@@ -16,19 +16,25 @@
 	<a href={bookUrl} class="peer flex w-24 shrink-0 justify-center overflow-hidden max-sm:hidden">
 		<BookCover {book} {penName} width={96} />
 	</a>
-	<div class="-mt-1 w-full min-w-0 flex-1 peer-hover:[&>a]:underline">
-		<a
-			href={bookUrl}
-			class="mb-1 block break-words font-serif text-4xl font-semibold leading-tight hover:underline xs:text-5xl"
-		>
-			<h2 class="line-clamp-4 whitespace-pre-wrap">{book.title}</h2>
-		</a>
-		{#if book.subtitle}
+	<div
+		class="-mt-1 w-full min-w-0 flex-1 peer-hover:[&>h2>a]:underline peer-hover:[&>p>a]:underline"
+	>
+		<h2>
 			<a
 				href={bookUrl}
-				class="mb-2 line-clamp-3 block whitespace-pre-wrap break-words font-serif text-lg hover:underline"
-				>{book.subtitle}</a
+				class="line-clamp-4 whitespace-pre-wrap break-words pb-[0.125em] font-serif text-4xl font-semibold leading-tight hover:underline xs:text-5xl"
 			>
+				{book.title}
+			</a>
+		</h2>
+		{#if book.subtitle}
+			<p class="mb-1.5">
+				<a
+					href={bookUrl}
+					class="line-clamp-3 whitespace-pre-wrap break-words pb-[0.125em] font-serif text-lg hover:underline"
+					>{book.subtitle}</a
+				>
+			</p>
 		{/if}
 		<div class="flex items-center gap-6">
 			<ProfileCardSmall
