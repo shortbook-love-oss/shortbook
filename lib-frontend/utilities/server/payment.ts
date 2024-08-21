@@ -2,7 +2,6 @@ import { error } from '@sveltejs/kit';
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
 import { dbCurrencyRateGet } from '$lib/model/currency/get';
-import { decryptFromFlat } from '$lib/utilities/server/crypto';
 import type { CurrencySupportKeys } from '$lib/utilities/currency';
 import {
 	decidePaymentAmountForStripe,
@@ -129,8 +128,5 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 }
 
 export async function changeCustomerEmail(customerId: string, newEmail: string) {
-	await stripe.customers.update(
-		decryptFromFlat(customerId, env.ENCRYPT_PAYMENT_CUSTOMER_ID, env.ENCRYPT_SALT),
-		{ email: newEmail }
-	);
+	await stripe.customers.update(customerId, { email: newEmail });
 }

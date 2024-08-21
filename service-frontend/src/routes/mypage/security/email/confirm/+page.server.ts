@@ -71,7 +71,12 @@ export const load = async ({ url, locals }) => {
 		return error(500, { message: dbContractGetError.message });
 	}
 	if (paymentContract) {
-		await changeCustomerEmail(paymentContract.provider_customer_id, userEmail);
+		const paymentCustomerId = decryptFromFlat(
+			paymentContract.provider_customer_id,
+			env.ENCRYPT_PAYMENT_CUSTOMER_ID,
+			env.ENCRYPT_SALT
+		);
+		await changeCustomerEmail(paymentCustomerId, userEmail);
 	}
 
 	// Delete dangling verification token
