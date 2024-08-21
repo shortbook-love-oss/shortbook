@@ -335,3 +335,12 @@ model log_actions {
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 }
+
+// -----------------------------------------------------------------------
+// Reference: Currency rate from 1 USD
+// -----------------------------------------------------------------------
+
+model currency_rates {
+  currency                String              @id @db.VarChar(3)
+  rate                    Decimal
+}
