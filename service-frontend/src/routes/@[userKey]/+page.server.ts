@@ -1,19 +1,25 @@
 import { error } from '@sveltejs/kit';
+import { env as envPublic } from '$env/dynamic/public';
 import { dbBookList } from '$lib/model/book/list';
 import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
 import { type BookItem, contentsToMarkdown, getBookCover } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, params }) => {
+	const requestLang = getLanguageTagFromUrl(url);
+
 	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.userKey });
 	if (!user || !user.profiles || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
+	if (user.image) {
+		user.image = envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE + user.image;
+	}
+
 	const { books, dbError: bookDbError } = await dbBookList({ userId: user.id });
 	if (!books || bookDbError) {
 		return error(500, { message: bookDbError?.message ?? '' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const profile = user.profiles;
 	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
@@ -57,7 +63,7 @@ export const load = async ({ url, params }) => {
 			bookKeyName: book.key_name,
 			userKeyName: profile.key_name,
 			penName: profileLang.pen_name,
-			userImage: book.user.image ?? ''
+			userImage: user.image ?? ''
 		});
 	}
 

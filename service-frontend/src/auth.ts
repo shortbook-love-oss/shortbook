@@ -63,7 +63,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					id: user.id,
 					name: user.name,
 					email: user.email,
-					image: user.image
+					image: user.image ? envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE + user.image : ''
 				}
 			};
 			return Promise.resolve(customSession);
@@ -131,7 +131,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 				// 3. Save image URL to DB
 				await dbUserProfileImageUpdate({
 					userId: user.id,
-					image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${user.id}/profile-image-${cacheRefresh}.${extension}`
+					image: `/${user.id}/profile-image-${cacheRefresh}.${extension}`
 				});
 			}
 		}

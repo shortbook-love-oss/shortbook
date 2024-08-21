@@ -45,7 +45,7 @@
 	<div class="w-full min-w-0 max-w-2xl break-words">
 		<div class="-mx-4 mb-8 px-4">
 			<h1
-				class="font-title mb-2 whitespace-pre-wrap text-[2.25rem] font-semibold leading-snug xs:text-[3rem]"
+				class="mb-2 whitespace-pre-wrap font-title text-[2.25rem] font-semibold leading-snug xs:text-[3rem]"
 			>
 				{data.bookDetail.title}
 			</h1>
