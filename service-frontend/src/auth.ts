@@ -10,6 +10,7 @@ import Google from '@auth/sveltekit/providers/google';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
 import { env } from '$env/dynamic/private';
+import { env as envPublic } from '$env/dynamic/public';
 import { dbUserProfileCreate } from '$lib/model/user/profile/create';
 import { dbUserRestore } from '$lib/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
@@ -130,7 +131,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 				// 3. Save image URL to DB
 				await dbUserProfileImageUpdate({
 					userId: user.id,
-					image: `/${user.id}/profile-image-${cacheRefresh}.${extension}`
+					image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${user.id}/profile-image-${cacheRefresh}.${extension}`
 				});
 			}
 		}

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { env as envPublic } from '$env/dynamic/public';
-
 	export let name: string;
 	export let keyName = '';
 	export let imageSrc = '';
@@ -13,7 +11,7 @@
 	class="flex items-center gap-2 {keyName ? 'hover:underline' : ''} {className}"
 >
 	<img
-		src="{envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}{imageSrc}?w=32&h=32&fit=cover"
+		src="{imageSrc}?w=32&h=32&fit=cover"
 		alt="{name} profile icon"
 		class="h-6 w-6 rounded bg-white"
 	/>

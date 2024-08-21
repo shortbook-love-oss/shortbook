@@ -2,6 +2,7 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
+import { env as envPublic } from '$env/dynamic/public';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
 import { fileUpload } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
@@ -47,7 +48,7 @@ export const actions = {
 		// Save image URL to DB
 		const { dbError } = await dbUserProfileImageUpdate({
 			userId: userId,
-			image: `/${userId}/profile-image-${cacheRefresh}.${extension}`
+			image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${userId}/profile-image-${cacheRefresh}.${extension}`
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });
