@@ -48,7 +48,7 @@
 					type="button"
 					class="absolute start-0 top-0 h-full w-full appearance-none"
 					on:click|self={closeOverlay}
-				/>
+				></button>
 			{/if}
 			<label for="common_overlay_open_{name}" class="ms-auto block">
 				<slot name="closer">
@@ -60,5 +60,5 @@
 			<slot />
 		</div>
 	</div>
-	<label for="common_overlay_open_{name}" class="flex-1" aria-hidden="true" />
+	<label for="common_overlay_open_{name}" class="flex-1" aria-hidden="true"></label>
 </div>

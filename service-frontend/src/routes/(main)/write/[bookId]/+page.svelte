@@ -145,7 +145,7 @@
 		</div>
 	</div>
 	<div class="flex justify-center gap-x-16">
-		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 		<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
 			<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
 				{data.status === 0 ? 'Publish book' : 'Republish book'}
@@ -153,7 +153,7 @@
 			<SubmitText
 				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
 				hasInvalid={!hasVaild && isEnableJS}
-				{$submitting}>Save draft</SubmitText
+				isLoading={$submitting}>Save draft</SubmitText
 			>
 			<Dialog name="delete" openerClass="rounded-lg" dialogSizeClass="max-w-fit">
 				<NavLinkSmall slot="opener" name="Delete" className="text-red-800">
@@ -171,7 +171,7 @@
 				</SubmitText>
 			</Dialog>
 		</div>
-		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 	</div>
-	<div slot="submit" />
+	<div slot="submit"></div>
 </Form>

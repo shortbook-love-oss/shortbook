@@ -47,5 +47,5 @@
 			</div>
 		</div>
 	</div>
-	<div slot="footerNav" />
+	<div slot="footerNav"></div>
 </LayoutRule>

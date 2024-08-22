@@ -143,20 +143,20 @@
 		</div>
 	</div>
 	<div class="flex justify-center gap-x-16">
-		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 		<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
 			<SubmitButton
 				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/publish"
 				hasInvalid={!hasVaild && isEnableJS}
-				{$submitting}>Publish book</SubmitButton
+				isLoading={$submitting}>Publish book</SubmitButton
 			>
 			<SubmitText
 				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
 				hasInvalid={!hasVaild && isEnableJS}
-				{$submitting}>Save draft</SubmitText
+				isLoading={$submitting}>Save draft</SubmitText
 			>
 		</div>
-		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 	</div>
-	<div slot="submit" />
+	<div slot="submit"></div>
 </Form>
