@@ -1,7 +1,7 @@
-/** @type {import('tailwindcss').Config}*/
-const defaultTheme = require('tailwindcss/defaultTheme');
+import defaultTheme from 'tailwindcss/defaultTheme';
 
-const config = {
+/** @type {import('tailwindcss').Config} */
+export default {
 	content: ['./src/**/*.{html,js,svelte,ts}', './lib/components/**/*.{html,js,svelte,ts}'],
 
 	plugins: [],
@@ -74,5 +74,3 @@ const config = {
 		}
 	}
 };
-
-module.exports = config;
