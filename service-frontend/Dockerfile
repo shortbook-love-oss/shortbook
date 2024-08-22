@@ -1,4 +1,5 @@
-FROM node:22.5.1-bookworm-slim AS base
+# Debian 12 Node.js
+FROM node:22.6.0-bookworm-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl
 
@@ -52,7 +53,7 @@ COPY ./lib-frontend ./lib
 # Production-setting build
 RUN npm run build
 
-FROM --platform=linux/arm64 node:22.5.1-bookworm-slim AS prd
+FROM --platform=linux/arm64 node:22.6.0-bookworm-slim AS prd
 
 RUN apt-get update -y && apt-get install -y openssl \
   && rm -rf /var/lib/apt/lists/*
