@@ -1,6 +1,6 @@
 <script lang="ts">
+	import Footer from '$lib/components/service/footer/footer.svelte';
 	import NavSp from '$lib/components/service/navigation/nav-sp.svelte';
-	import Footer from '$lib/components/service/footer.svelte';
 	import Header from '$lib/components/service/header.svelte';
 </script>
 
