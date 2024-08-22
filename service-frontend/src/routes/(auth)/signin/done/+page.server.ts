@@ -1,5 +1,5 @@
 import { error, redirect } from '@sveltejs/kit';
-import { finalizeSign } from '$lib/components/service/auth/finalizeSign';
+import { finalizeSign } from '$lib/functions/service/auth/finalizeSign';
 import { callbackParam, getSafetyUrl } from '$lib/utilities/url';
 
 export async function load({ cookies, url, locals, getClientAddress }) {

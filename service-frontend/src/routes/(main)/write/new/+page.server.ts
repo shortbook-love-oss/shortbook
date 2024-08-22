@@ -1,8 +1,8 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { isExistBookKeyName } from '$lib/components/service/write/edit-action';
-import { editLoad } from '$lib/components/service/write/edit-load';
+import { isExistBookKeyName } from '$lib/functions/service/write/edit-action';
+import { editLoad } from '$lib/functions/service/write/edit-load';
 import { dbBookCreate } from '$lib/model/book/create';
 import { dbUserProfileGet } from '$lib/model/user/profile/get';
 import { getBookCover } from '$lib/utilities/book';

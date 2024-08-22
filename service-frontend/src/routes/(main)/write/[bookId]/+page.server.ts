@@ -1,8 +1,8 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { isExistBookKeyName } from '$lib/components/service/write/edit-action';
-import { editLoad } from '$lib/components/service/write/edit-load';
+import { isExistBookKeyName } from '$lib/functions/service/write/edit-action';
+import { editLoad } from '$lib/functions/service/write/edit-load';
 import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { dbBookDelete } from '$lib/model/book/delete';
 import { dbBookGet } from '$lib/model/book/get';
