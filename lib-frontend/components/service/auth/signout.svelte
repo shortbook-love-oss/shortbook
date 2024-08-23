@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SignOut } from '@auth/sveltekit/components';
+	import { enhance } from '$app/forms';
 	import * as m from '$lib/i18n/paraglide/messages';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 
@@ -10,8 +10,10 @@
 	let { dialogName = 'signout', openerClass = 'rounded-md' }: Props = $props();
 
 	function onSignOut() {
-		// If auth-only page, redirect to sign-in page by +layout.server.ts
-		location.reload();
+		requestAnimationFrame(() => {
+			// If auth-only page, redirect to sign-in page by +layout.server.ts
+			location.reload();
+		});
 	}
 </script>
 
@@ -21,13 +23,13 @@
 	{/snippet}
 	<p>{m.signout_confirm()}</p>
 	{#snippet actions()}
-		<SignOut
-			className="w-fit rounded-md mx-auto hover:bg-stone-200 focus-within:bg-stone-200"
-			on:submit={onSignOut}
-		>
-			<p slot="submitButton" class="px-3 py-2 text-xl text-red-800">
+		<form method="POST" action="/signout" use:enhance class="mx-auto w-fit" onsubmit={onSignOut}>
+			<button
+				type="submit"
+				class="rounded-md px-3 py-2 text-xl text-red-800 hover:bg-stone-200 focus:bg-stone-200"
+			>
 				{m.signout_label()}
-			</p>
-		</SignOut>
+			</button>
+		</form>
 	{/snippet}
 </Dialog>
