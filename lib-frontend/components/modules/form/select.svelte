@@ -58,7 +58,6 @@
 				? 'border-2 border-red-700'
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
-			on:input
 		>
 			{#each displayList as item}
 				<option value={item.value} selected={item.selected}>{item.label}</option>

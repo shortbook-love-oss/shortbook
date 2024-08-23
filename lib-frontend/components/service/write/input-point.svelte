@@ -39,7 +39,7 @@
 				<button
 					type="button"
 					aria-label="Set selling point to {point.value}"
-					on:click={() => changeBookPoint(point.value)}
+					onclick={() => changeBookPoint(point.value)}
 				>
 					<NavLinkSmall name={point.label} colorClass="bg-primary-200" />
 				</button>

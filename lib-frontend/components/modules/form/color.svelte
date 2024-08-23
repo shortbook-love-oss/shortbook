@@ -32,11 +32,10 @@
 		<input
 			type="color"
 			{...restProps}
-			{name}
 			bind:value
+			{name}
 			class="relative h-[1.5em] w-[1.5em] shrink-0 appearance-none overflow-hidden rounded border-0 bg-transparent align-middle [&::-moz-color-swatch]:absolute [&::-moz-color-swatch]:start-0 [&::-moz-color-swatch]:top-0 [&::-moz-color-swatch]:h-[1.5em] [&::-moz-color-swatch]:w-[1.5em] [&::-moz-color-swatch]:border-0 [&::-webkit-color-swatch]:absolute [&::-webkit-color-swatch]:start-0 [&::-webkit-color-swatch]:top-0 [&::-webkit-color-swatch]:h-[1.5em] [&::-webkit-color-swatch]:w-[1.5em] [&::-webkit-color-swatch]:border-0 {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
-			on:input
 		/>
 	</div>
 	{#if Array.isArray(errorMessages) && errorMessages?.length}

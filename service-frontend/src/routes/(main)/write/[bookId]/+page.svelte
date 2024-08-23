@@ -42,8 +42,8 @@
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
 
-	function applyChildChange(event: CustomEvent<{ book: typeof $form }>) {
-		form.set({ ...event.detail.book });
+	function applyChildChange(book: typeof $form) {
+		form.set({ ...book });
 	}
 </script>
 
@@ -139,7 +139,7 @@
 					book={$form}
 					penName={data.penName}
 					errors={$errors}
-					on:input={applyChildChange}
+					oninput={applyChildChange}
 				/>
 			</div>
 		</div>

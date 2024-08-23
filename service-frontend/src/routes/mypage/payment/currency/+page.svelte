@@ -60,7 +60,7 @@
 			<button
 				type="button"
 				class="rounded border border-primary-700 bg-primary-100 px-3 py-1.5 text-lg hover:bg-primary-200 focus:bg-primary-200"
-				on:click={() => setCurrency(currencyData.key)}
+				onclick={() => setCurrency(currencyData.key)}
 			>
 				Set to {currencyData.label}
 			</button>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SignOut } from '@auth/sveltekit/components';
-	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import * as m from '$lib/i18n/paraglide/messages';
+	import Dialog from '$lib/components/layouts/dialog.svelte';
 
 	type Props = {
 		dialogName?: string;

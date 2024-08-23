@@ -21,9 +21,11 @@
 		closeOverlay();
 	});
 
-	function closeOverlay() {
-		const openSwitch = document.getElementById('common_overlay_open_' + name) as HTMLInputElement;
-		openSwitch.checked = false;
+	function closeOverlay(event?: Event) {
+		if (!event || event.target === event.currentTarget) {
+			const openSwitch = document.getElementById('common_overlay_open_' + name) as HTMLInputElement;
+			openSwitch.checked = false;
+		}
 	}
 </script>
 
@@ -54,7 +56,7 @@
 				<button
 					type="button"
 					class="absolute start-0 top-0 h-full w-full appearance-none"
-					on:click|self={closeOverlay}
+					onclick={closeOverlay}
 				></button>
 			{/if}
 			<label for="common_overlay_open_{name}" class="ms-auto block">

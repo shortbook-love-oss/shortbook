@@ -23,17 +23,19 @@
 	}: Props = $props();
 
 	let isEnableJS = $state(false);
-	onMount(() => {
-		isEnableJS = true;
-	});
+	onMount(() => (isEnableJS = true));
 
-	onNavigate(() => {
-		closeDialog();
-	});
+	onNavigate(() => closeDialog());
 
-	function closeDialog() {
-		const openSwitch = document.getElementById('common_dialog_open_' + name) as HTMLInputElement;
-		openSwitch.checked = false;
+	function closeDialog(event?: Event) {
+		if (!event || event.target === event.currentTarget) {
+			const openSwitch = document.getElementById(
+				'common_dialog_open_' + name
+			) as HTMLInputElement | null;
+			if (openSwitch) {
+				openSwitch.checked = false;
+			}
+		}
 	}
 
 	function onKeyDown(e: KeyboardEvent) {
@@ -43,7 +45,7 @@
 	}
 </script>
 
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window onkeydown={onKeyDown} />
 
 <label class="peer/common_dialog_open relative block">
 	<div class="focus-within:bg-stone-200 hover:bg-stone-200 {openerClass}">
@@ -81,7 +83,7 @@
 						<button
 							type="button"
 							class="absolute start-0 top-0 h-full w-full appearance-none"
-							on:click|self={closeDialog}
+							onclick={closeDialog}
 						></button>
 					{/if}
 					<label for="common_dialog_open_{name}" class="inline-block h-full">

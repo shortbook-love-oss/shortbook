@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import IconEdit from '~icons/mdi/edit-outline';
 	import { bookFontSizeSelect, bookTextAlignSelect } from '$lib/utilities/book';
 	import type { BookCover as BookCoverProp } from '$lib/utilities/book';
@@ -16,19 +15,19 @@
 	}
 
 	type Props = {
+		oninput: Function;
 		book: BookCoverProp;
 		penName: string;
 		errors?: Errors;
 		className?: string;
 	};
-	let { book, penName, errors = {}, className = '' }: Props = $props();
+	let { oninput, book, penName, errors = {}, className = '' }: Props = $props();
 
 	let previewWidth = $state(256);
 
-	const dispatch = createEventDispatcher();
 	function applyChanges() {
 		requestAnimationFrame(() => {
-			dispatch('input', { book });
+			oninput(book);
 		});
 	}
 </script>
@@ -57,6 +56,7 @@
 		</div>
 		<div>
 			<!-- Background -->
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Range
 				min="0"
 				max="360"
@@ -67,25 +67,28 @@
 				errorMessages={errors.baseColorDirection}
 				className="mb-4"
 				inputClass="min-w-60"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
 				bind:value={book.baseColorStart}
 				name="baseColorStart"
 				label="Background color start"
 				errorMessages={errors.baseColorStart}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
 				bind:value={book.baseColorEnd}
 				name="baseColorEnd"
 				label="Background color end"
 				errorMessages={errors.baseColorEnd}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
 			<!-- Title -->
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
 				bind:value={book.titleFontSize}
 				name="titleFontSize"
@@ -93,8 +96,9 @@
 				label="Title font size"
 				errorMessages={errors.titleFontSize}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
 				bind:value={book.titleAlign}
 				name="titleAlign"
@@ -102,17 +106,19 @@
 				label="Title align"
 				errorMessages={errors.titleAlign}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
 				bind:value={book.titleColor}
 				name="titleColor"
 				label="Title text color"
 				errorMessages={errors.titleColor}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
 			<!-- Subtitle -->
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
 				bind:value={book.subtitleFontSize}
 				name="subtitleFontSize"
@@ -120,8 +126,9 @@
 				label="Subtitle font size"
 				errorMessages={errors.subtitleFontSize}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
 				bind:value={book.subtitleAlign}
 				name="subtitleAlign"
@@ -129,16 +136,18 @@
 				label="Subtitle align"
 				errorMessages={errors.subtitleAlign}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
 				bind:value={book.subtitleColor}
 				name="subtitleColor"
 				label="Subtitle text color"
 				errorMessages={errors.subtitleColor}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
 				bind:value={book.writerAlign}
 				name="writerAlign"
@@ -146,15 +155,16 @@
 				label="Pen name align"
 				errorMessages={errors.writerAlign}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
+			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
 				bind:value={book.writerColor}
 				name="writerColor"
 				label="Pen name text color"
 				errorMessages={errors.writerColor}
 				className="mb-4"
-				on:input={applyChanges}
+				oninput={applyChanges}
 			/>
 		</div>
 	</div>

@@ -88,9 +88,9 @@
 	{/if}
 	<div class="peer relative">
 		<input
+			type="file"
 			{...restProps}
 			bind:files={$filesProxy}
-			type="file"
 			{name}
 			{required}
 			accept={acceptTypes?.join()}
@@ -98,7 +98,7 @@
 				? 'file:border-2 file:border-red-700'
 				: 'file:border file:border-stone-600'}"
 			aria-invalid={errorMsgs?.length ? true : undefined}
-			on:input={updateSelectedList}
+			oninput={updateSelectedList}
 		/>
 		<div
 			class="absolute start-0 top-0 flex h-full w-full cursor-pointer items-center justify-start gap-2 rounded-lg p-3 {inputClass}"
