@@ -47,28 +47,25 @@ export default {
 			fontFamily: {
 				...defaultTheme.fontFamily,
 				sans: [
-					'-apple-system', // Mac・iOS
-					'BlinkMacSystemFont', // Mac・iOS
-					'"Helvetica Neue"', // Mac・iOS
-					'"Hiragino Sans"', // Mac・iOS
-					'Roboto', // Android
-					'Arial', // Windows・Mac・iOS
-					'sans-serif',
-					'"Apple Color Emoji"', // Mac・iOS
-					'"Noto Color Emoji"'
+					// -apple-system ... Mac・iOS
+					// BlinkMacSystemFont ... Mac・iOS
+					// "Helvetica Neue" ... Mac・iOS
+					// "Hiragino Sans" ... Mac・iOS
+					// Roboto ... Android
+					// Arial ... Windows・Mac・iOS
+					// "Apple Color Emoji" ... Mac・iOS
+					'-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", Roboto, Arial, sans-serif, "Apple Color Emoji", "Noto Color Emoji"',
+					{ fontFeatureSettings: '"palt"' }
 				],
 				serif: [
-					'"Times New Roman"',
-					'serif',
-					'"Apple Color Emoji"', // Mac・iOS
-					'"Noto Color Emoji"'
+					'"Times New Roman", serif, "Noto Color Emoji"',
+					{ fontFeatureSettings: '"palt"' }
 				],
 				title: [
-					'"Cambria"', // Windows
-					'"Hiragino Mincho ProN"', // Mac・iOS
-					'serif',
-					'"Apple Color Emoji"', // Mac・iOS
-					'"Noto Color Emoji"'
+					// "Cambria" ... Windows
+					// "Hiragino Mincho ProN" ... Mac・iOS
+					'"Cambria", "Hiragino Mincho ProN", serif, "Apple Color Emoji", "Noto Color Emoji"',
+					{ fontFeatureSettings: '"palt"' }
 				]
 			}
 		}
