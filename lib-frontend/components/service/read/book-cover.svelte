@@ -3,10 +3,13 @@
 	import type { BookCover } from '$lib/utilities/book';
 	import { getSelectedText } from '$lib/utilities/select';
 
-	export let book: BookCover;
-	export let penName: string;
-	export let width = 240;
-	export let className = '';
+	type Props = {
+		book: BookCover;
+		penName: string;
+		width?: number;
+		className?: string;
+	};
+	let { book, penName, width = 240, className = '' }: Props = $props();
 </script>
 
 <div

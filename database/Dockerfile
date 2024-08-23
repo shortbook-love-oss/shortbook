@@ -1,5 +1,5 @@
-# Ubuntu MariaDB 11.4.2
-FROM mariadb:11.4.2
+# Ubuntu MariaDB
+FROM mariadb:11.5.2
 
 # Set OS timezone to UTC
 # MariaDB timezone to match OS setting by default

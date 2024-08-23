@@ -5,6 +5,8 @@
 	import Header from '$lib/components/service/header.svelte';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
+
+	let { children } = $props();
 </script>
 
 <svelte:head>
@@ -13,7 +15,7 @@
 </svelte:head>
 
 <LayoutRule>
-	<svelte:fragment slot="header">
+	{#snippet header()}
 		<div class="max-sm:hidden">
 			<Header />
 		</div>
@@ -23,7 +25,7 @@
 			</Overlay>
 			<p class="pe-4 text-xl">Mypage</p>
 		</div>
-	</svelte:fragment>
+	{/snippet}
 	<div class="justify-center gap-12 sm:flex">
 		<div class="shrink-0 max-sm:hidden">
 			<a href="/" class="mb-6 flex items-center gap-1 gap-3">
@@ -35,7 +37,7 @@
 			</nav>
 		</div>
 		<div class="mx-auto max-w-xl flex-1 sm:-mx-4 sm:overflow-x-hidden sm:px-4">
-			<slot />
+			{@render children()}
 		</div>
 	</div>
 </LayoutRule>

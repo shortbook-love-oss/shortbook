@@ -1,6 +1,5 @@
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import 'dotenv/config';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -33,7 +32,19 @@ const config = {
 				'default-src': ['self']
 			}
 		}
-	}
+	},
+
+	compilerOptions: {
+		runes: true
+	},
+
+	vitePlugin: {
+		dynamicCompileOptions({ filename }) {
+			if (filename.includes('node_modules')) {
+				return { runes: undefined };
+			}
+		}
+	},
 };
 
 export default config;

@@ -5,10 +5,7 @@
 	import SigninByEmail from '$lib/components/service/auth/signin-by-email.svelte';
 	import SignInByOAuth from '$lib/components/service/auth/signin-by-oauth.svelte';
 
-	export let data;
-
-	// After sign-in/sign-up redirect to
-	const searchParam = $page.url.search;
+	let { data } = $props();
 </script>
 
 <section class="flex flex-col gap-8 text-lg">
@@ -24,6 +21,6 @@
 	</div>
 	<hr class="border-stone-300" />
 	<p class="text-center">
-		<a href="/signup{searchParam}" class="break-keep underline">{m.signin_to_signup()}</a>
+		<a href="/signup{$page.url.search}" class="break-keep underline">{m.signin_to_signup()}</a>
 	</p>
 </section>

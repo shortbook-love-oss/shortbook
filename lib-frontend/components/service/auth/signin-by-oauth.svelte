@@ -2,9 +2,12 @@
 	import { SignIn } from '@auth/sveltekit/components';
 	import type { signInProviders } from '$lib/utilities/signin';
 
-	export let provider: (typeof signInProviders)[number];
-	export let callbackUrl: string;
-	export let className = '';
+	type Props = {
+		provider: (typeof signInProviders)[number];
+		callbackUrl: string;
+		className?: string;
+	};
+	let { provider, callbackUrl, className = '' }: Props = $props();
 </script>
 
 <SignIn

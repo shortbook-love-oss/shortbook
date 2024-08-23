@@ -4,9 +4,12 @@
 	import type { AvailableLanguageTags } from '$lib/utilities/language';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
 
-	export let book: MyBookItem;
-	export let penName: string;
-	export let requestLang: AvailableLanguageTags;
+	type Props = {
+		book: MyBookItem;
+		penName: string;
+		requestLang: AvailableLanguageTags;
+	};
+	let { book, penName, requestLang }: Props = $props();
 </script>
 
 <article>

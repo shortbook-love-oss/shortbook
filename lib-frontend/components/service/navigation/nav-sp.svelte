@@ -10,10 +10,10 @@
 	import { callbackParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
-	import NavLinkSp from './nav-link-sp.svelte';
+	import NavLinkSp from '$lib/components/service/navigation/nav-link-sp.svelte';
 
 	// After sign-in/up redirect to
-	$: redirectPathname = encodeURIComponent($page.url.href);
+	const redirectPathname = $derived(encodeURIComponent($page.url.href));
 </script>
 
 <header
@@ -52,9 +52,11 @@
 			{#if $page.data.session?.user}
 				<li class="relative">
 					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-0 min-w-40">
-						<NavLinkSp slot="opener" name={m.header_more()}>
-							<IconMore width="30" height="30" />
-						</NavLinkSp>
+						{#snippet opener()}
+							<NavLinkSp name={m.header_more()}>
+								<IconMore width="30" height="30" />
+							</NavLinkSp>
+						{/snippet}
 						<ul>
 							<li>
 								<Signout dialogName="footer_signout" />

@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
+import { env as envPublic } from '$env/dynamic/public';
 import type { CurrencySupportKeys } from '$lib/utilities/currency';
 import { reversePaymentAmountOfStripe, toPaymentAmountOfStripe } from '$lib/utilities/payment';
 import { paymentSessionIdParam } from '$lib/utilities/url';
@@ -47,7 +48,7 @@ export async function createPaymentSession(
 						name: paymentName,
 						description: paymentDescription,
 						images: [
-							'https://profile-image.shortbook.life/shortbook/shortbook-logo-bg-white-wh512-margin64.png'
+							`${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/shortbook/shortbook-logo-bg-white-wh512-margin64.png`
 						],
 						tax_code: paymentTaxCode
 					}

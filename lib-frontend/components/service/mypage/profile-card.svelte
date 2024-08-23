@@ -1,8 +1,14 @@
 <script lang="ts">
-	export let name: string;
-	export let keyName = '';
-	export let imageSrc = '';
-	export let className = '';
+	import type { Snippet } from 'svelte';
+
+	type Props = {
+		children?: Snippet;
+		name: string;
+		keyName?: string;
+		imageSrc?: string;
+		className?: string;
+	};
+	let { children, name, keyName = '', imageSrc = '', className = '' }: Props = $props();
 </script>
 
 <div class="flex w-full items-center gap-3 {className}">
@@ -26,6 +32,8 @@
 			class="whitespace-pre-wrap text-xl leading-snug {keyName ? 'hover:underline' : ''}"
 			>{name}</svelte:element
 		>
-		<slot />
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 </div>

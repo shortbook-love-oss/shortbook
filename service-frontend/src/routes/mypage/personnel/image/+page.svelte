@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import ProfileImageUpload from '$lib/components/service/mypage/profile-image-upload.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	const user = $page.data.session?.user;
 </script>

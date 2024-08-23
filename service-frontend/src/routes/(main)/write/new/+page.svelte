@@ -15,9 +15,9 @@
 	import InputPoint from '$lib/components/service/write/input-point.svelte';
 	import PricePreview from '$lib/components/service/write/price-preview.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	let isEnableJS = false;
+	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
 	const { form, enhance, capture, restore, validateForm, submitting, message, errors } = superForm(
@@ -31,7 +31,7 @@
 	export const snapshot = { capture, restore };
 
 	// Validate and set enable/disable submit button when the input value changes
-	let hasVaild = true;
+	let hasVaild = $state(true);
 	function validateBackground() {
 		validateForm().then((result) => {
 			hasVaild = result.valid;
@@ -43,8 +43,8 @@
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
 
-	function applyChildChange(event: CustomEvent<{ book: typeof $form }>) {
-		form.set({ ...event.detail.book });
+	function applyChildChange(book: typeof $form) {
+		form.set({ ...book });
 	}
 </script>
 
@@ -137,26 +137,28 @@
 					book={$form}
 					penName={data.penName}
 					errors={$errors}
-					on:input={applyChildChange}
+					oninput={applyChildChange}
 				/>
 			</div>
 		</div>
 	</div>
 	<div class="flex justify-center gap-x-16">
-		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 		<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
 			<SubmitButton
 				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/publish"
 				hasInvalid={!hasVaild && isEnableJS}
-				{$submitting}>Publish book</SubmitButton
+				isLoading={$submitting}>Publish book</SubmitButton
 			>
 			<SubmitText
 				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
 				hasInvalid={!hasVaild && isEnableJS}
-				{$submitting}>Save draft</SubmitText
+				isLoading={$submitting}>Save draft</SubmitText
 			>
 		</div>
-		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 	</div>
-	<div slot="submit" />
+	{#snippet submit()}
+		<div></div>
+	{/snippet}
 </Form>

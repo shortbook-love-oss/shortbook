@@ -18,9 +18,9 @@
 	import InputPoint from '$lib/components/service/write/input-point.svelte';
 	import PricePreview from '$lib/components/service/write/price-preview.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	let isEnableJS = false;
+	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
@@ -30,7 +30,7 @@
 	});
 
 	// Validate and set enable/disable submit button when the input value changes
-	let hasVaild = true;
+	let hasVaild = $state(true);
 	function validateBackground() {
 		validateForm().then((result) => {
 			hasVaild = result.valid;
@@ -42,8 +42,8 @@
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
 
-	function applyChildChange(event: CustomEvent<{ book: typeof $form }>) {
-		form.set({ ...event.detail.book });
+	function applyChildChange(book: typeof $form) {
+		form.set({ ...book });
 	}
 </script>
 
@@ -139,13 +139,13 @@
 					book={$form}
 					penName={data.penName}
 					errors={$errors}
-					on:input={applyChildChange}
+					oninput={applyChildChange}
 				/>
 			</div>
 		</div>
 	</div>
 	<div class="flex justify-center gap-x-16">
-		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 		<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
 			<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
 				{data.status === 0 ? 'Publish book' : 'Republish book'}
@@ -153,25 +153,30 @@
 			<SubmitText
 				formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
 				hasInvalid={!hasVaild && isEnableJS}
-				{$submitting}>Save draft</SubmitText
+				isLoading={$submitting}>Save draft</SubmitText
 			>
 			<Dialog name="delete" openerClass="rounded-lg" dialogSizeClass="max-w-fit">
-				<NavLinkSmall slot="opener" name="Delete" className="text-red-800">
-					<IconDelete width="24" height="24" />
-				</NavLinkSmall>
+				{#snippet opener()}
+					<NavLinkSmall name="Delete" className="text-red-800">
+						<IconDelete width="24" height="24" />
+					</NavLinkSmall>
+				{/snippet}
 				<p>Do you want to delete it?</p>
-				<SubmitText
-					slot="actions"
-					formaction="{removeLanguageTagFromPath($page.url.pathname)}?/delete"
-					hasInvalid={!hasVaild && isEnableJS}
-					isLoading={$submitting}
-					className="mx-auto"
-				>
-					<span class="text-red-800">Delete</span>
-				</SubmitText>
+				{#snippet actions()}
+					<SubmitText
+						formaction="{removeLanguageTagFromPath($page.url.pathname)}?/delete"
+						hasInvalid={!hasVaild && isEnableJS}
+						isLoading={$submitting}
+						className="mx-auto"
+					>
+						<span class="text-red-800">Delete</span>
+					</SubmitText>
+				{/snippet}
 			</Dialog>
 		</div>
-		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true" />
+		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 	</div>
-	<div slot="submit" />
+	{#snippet submit()}
+		<div></div>
+	{/snippet}
 </Form>

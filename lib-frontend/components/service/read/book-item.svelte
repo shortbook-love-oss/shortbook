@@ -5,12 +5,15 @@
 	import ProfileCardSmall from '$lib/components/service/mypage/profile-card-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
 
-	export let book: BookItem;
-	export let penName: string;
-	export let requestLang: AvailableLanguageTags;
-	export let className = '';
+	type Props = {
+		book: BookItem;
+		penName: string;
+		requestLang: AvailableLanguageTags;
+		className?: string;
+	};
+	let { book, penName, requestLang, className = '' }: Props = $props();
 
-	$: bookUrl = `/@${book.userKeyName}/book/${book.bookKeyName}`;
+	const bookUrl = $state(`/@${book.userKeyName}/book/${book.bookKeyName}`);
 </script>
 
 <article class="flex items-start gap-4 {className}">

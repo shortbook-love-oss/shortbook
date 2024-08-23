@@ -2,7 +2,7 @@
 	import { guessImageTypeByUrl } from '$lib/utilities/file';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 
-	export let data;
+	let { data, children } = $props();
 
 	const imageContentType = guessImageTypeByUrl(data.user.image ?? '');
 </script>
@@ -27,5 +27,5 @@
 </svelte:head>
 
 <LayoutRule>
-	<slot />
+	{@render children()}
 </LayoutRule>

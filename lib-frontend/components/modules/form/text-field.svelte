@@ -1,14 +1,26 @@
 <script lang="ts">
 	import type { ValidationErrors } from 'sveltekit-superforms';
 
-	export let value: string | number;
-	export let name: string;
-	export let className = '';
-	export let label = '';
-	export let required = false;
-	export let inputClass = '';
-	export let errorMessages: string[] | ValidationErrors<Record<string, unknown>> | undefined =
-		undefined;
+	type Props = {
+		value: string | number;
+		name: string;
+		label?: string;
+		required?: boolean;
+		errorMessages?: string[] | ValidationErrors<Record<string, unknown>>;
+		className?: string;
+		inputClass?: string;
+		[key: string]: unknown;
+	};
+	let {
+		value = $bindable(),
+		name,
+		label = '',
+		required = false,
+		errorMessages,
+		className = '',
+		inputClass = '',
+		...restProps
+	}: Props = $props();
 </script>
 
 <label class="block {className}">
@@ -21,7 +33,7 @@
 		</div>
 	{/if}
 	<input
-		{...$$restProps}
+		{...restProps}
 		{name}
 		{required}
 		bind:value
@@ -29,7 +41,6 @@
 			? 'border-2 border-red-700'
 			: 'border-stone-600'} {inputClass}"
 		aria-invalid={errorMessages?.length ? true : undefined}
-		on:input
 	/>
 	{#if Array.isArray(errorMessages) && errorMessages?.length}
 		<div class="mt-2 text-red-800">
