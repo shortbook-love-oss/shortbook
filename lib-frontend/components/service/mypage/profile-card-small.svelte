@@ -18,7 +18,9 @@
 		alt="{name} profile icon"
 		class="h-6 w-6 rounded bg-white"
 	/>
-	<p class="overflow-x-hidden whitespace-pre-wrap break-words text-lg leading-snug">
+	<p
+		class="line-clamp-3 whitespace-pre-wrap break-words text-lg leading-snug xs:line-clamp-2 md:line-clamp-1"
+	>
 		{name}
 	</p>
 </svelte:element>

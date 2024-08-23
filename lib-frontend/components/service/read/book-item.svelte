@@ -40,14 +40,14 @@
 				>
 			</p>
 		{/if}
-		<div class="flex items-center gap-6">
+		<div class="flex items-center gap-5">
 			<ProfileCardSmall
 				name={book.penName}
 				keyName={book.userKeyName}
 				imageSrc={book.userImage}
 				className="min-w-0"
 			/>
-			<time datetime={book.publishedAt.toISOString()} class="text-nowrap pb-1"
+			<time datetime={book.publishedAt.toISOString()} class="text-nowrap pb-0.5"
 				>{toLocaleDate(book.publishedAt, requestLang)}</time
 			>
 		</div>
