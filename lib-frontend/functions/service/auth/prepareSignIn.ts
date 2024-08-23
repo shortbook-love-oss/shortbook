@@ -1,9 +1,11 @@
+import DOMPurify from 'isomorphic-dompurify';
 import { env } from '$env/dynamic/private';
 import type { SignResult } from '$lib/functions/service/auth/actionInit';
 import type { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
 import { signInTokenName } from '$lib/utilities/server/verification-token';
+import { escapeHTML } from '$lib/utilities/html';
 import {
 	callbackParam,
 	getLanguageTagFromUrl,
@@ -38,6 +40,7 @@ export async function prepareSignIn(
 	}
 
 	// 5. Send magic link by email
+	const penName = profileLang?.pen_name ?? '';
 	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
 	const signInConfirmUrl =
 		requestUrl.origin +
@@ -49,12 +52,12 @@ export async function prepareSignIn(
 		env.EMAIL_FROM,
 		[emailTo],
 		'Sign in confirm | ShortBook',
-		`<p>${profileLang?.pen_name}, thank you for your continued activity.</p>
+		`<p>${escapeHTML(penName)}, thank you for your continued activity.</p>
 		<p>Please click this button to confirm.</p>
 		<p style="margin-bottom: 2rem;"><a href="${signInConfirmUrl}" style="border-radius: 0.25em; background-color: #924240; color: #fff; display: inline-block; font-size: 2.5rem; font-weight: bold; padding: 0.5em;">Confirm Sign In</a></p>
 		<p>ShortBook LLC</p>
 		<p>Shunsuke Kurachi (KurachiWeb)</p>`,
-		`Thank you for your continued activity.\nPlease click this button to confirm.\n${signInConfirmUrl}\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
+		`${penName}, thank you for your continued activity.\nPlease click this button to confirm.\n${signInConfirmUrl}\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
 	);
 	if (sendEmailError instanceof Error) {
 		return { error: null, fail: "Can't sent email." };
