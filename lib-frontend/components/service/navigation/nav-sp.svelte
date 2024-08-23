@@ -10,10 +10,10 @@
 	import { callbackParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
-	import NavLinkSp from './nav-link-sp.svelte';
+	import NavLinkSp from '$lib/components/service/navigation/nav-link-sp.svelte';
 
 	// After sign-in/up redirect to
-	const redirectPathname = $state(encodeURIComponent($page.url.href));
+	const redirectPathname = $derived(encodeURIComponent($page.url.href));
 </script>
 
 <header

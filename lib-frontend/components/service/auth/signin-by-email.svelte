@@ -21,7 +21,7 @@
 		validators: zod(schema)
 	});
 
-	const successMessage = $state($page.status === 200 ? $message : '');
+	const successMessage = $derived($page.status === 200 ? $message : '');
 
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = $state(true);

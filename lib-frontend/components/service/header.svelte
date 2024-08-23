@@ -12,7 +12,7 @@
 	let { className = '' }: Props = $props();
 
 	// After sign-in/sign-up redirect to
-	const redirectUrl = $state(encodeURIComponent($page.url.href));
+	const redirectUrl = $derived(encodeURIComponent($page.url.href));
 </script>
 
 <header
