@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { dbBookGet } from '$lib/model/book/get';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 
