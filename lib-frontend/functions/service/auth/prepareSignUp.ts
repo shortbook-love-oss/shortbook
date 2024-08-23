@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import type { SignResult } from '$lib/functions/service/auth/actionInit';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
 import { signUpTokenName } from '$lib/utilities/server/verification-token';
@@ -8,7 +9,6 @@ import {
 	setLanguageTagToPath,
 	signConfirmTokenParam
 } from '$lib/utilities/url';
-import type { SignResult } from './actionInit';
 
 export async function prepareSignUp(
 	requestUrl: URL,
@@ -44,7 +44,7 @@ export async function prepareSignUp(
 		'Sign up almost done | ShortBook',
 		`<p>Thank you for signing up.</p>
 		<p>Please click this button to confirm.</p>
-		<p style="margin-bottom: 2rem;"><a href="${signUpConfirmUrl}" style="border-radius: 0.25em; background-color: #924240; color: #fff; display: inline-block; font-size: 1.5rem; font-weight: bold; padding: 0.5em;">Got it!</a></p>
+		<p style="margin-bottom: 2rem;"><a href="${signUpConfirmUrl}" style="border-radius: 0.25em; background-color: #924240; color: #fff; display: inline-block; font-size: 2.5rem; font-weight: bold; padding: 0.5em;">Confirm Sign Up</a></p>
 		<p>ShortBook LLC</p>
 		<p>Shunsuke Kurachi (KurachiWeb)</p>`,
 		`Thank you for signing up.\nPlease click this button to confirm.\n${signUpConfirmUrl}\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`

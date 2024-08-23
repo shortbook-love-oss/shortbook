@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import type { SignResult } from '$lib/functions/service/auth/actionInit';
 import type { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
@@ -9,7 +10,6 @@ import {
 	setLanguageTagToPath,
 	signConfirmTokenParam
 } from '$lib/utilities/url';
-import type { SignResult } from './actionInit';
 
 export async function prepareSignIn(
 	requestUrl: URL,
@@ -51,7 +51,7 @@ export async function prepareSignIn(
 		'Sign in confirm | ShortBook',
 		`<p>${profileLang?.pen_name}, thank you for your continued activity.</p>
 		<p>Please click this button to confirm.</p>
-		<p style="margin-bottom: 2rem;"><a href="${signInConfirmUrl}" style="border-radius: 0.25em; background-color: #924240; color: #fff; display: inline-block; font-size: 1.5rem; font-weight: bold; padding: 0.5em;">Got it!</a></p>
+		<p style="margin-bottom: 2rem;"><a href="${signInConfirmUrl}" style="border-radius: 0.25em; background-color: #924240; color: #fff; display: inline-block; font-size: 2.5rem; font-weight: bold; padding: 0.5em;">Confirm Sign In</a></p>
 		<p>ShortBook LLC</p>
 		<p>Shunsuke Kurachi (KurachiWeb)</p>`,
 		`Thank you for your continued activity.\nPlease click this button to confirm.\n${signInConfirmUrl}\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
