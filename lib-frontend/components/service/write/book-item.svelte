@@ -18,9 +18,9 @@
 		class="flex items-center gap-x-4 px-4 py-6 hover:bg-stone-200 focus:bg-stone-200 sm:gap-6"
 	>
 		<BookCover {book} {penName} width={64} />
-		<div class="flex-1 overflow-x-hidden">
+		<div class="-mt-1.5 flex-1 overflow-x-hidden">
 			<h2
-				class="-mt-1.5 mb-1 line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] font-title text-3xl font-semibold lg:line-clamp-4"
+				class="mb-1 line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] font-title text-3xl font-semibold lg:line-clamp-4"
 			>
 				{book.title}
 			</h2>
