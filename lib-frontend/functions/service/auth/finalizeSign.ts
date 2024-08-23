@@ -70,7 +70,7 @@ export async function finalizeSign(
 			emailVerified: new Date(),
 			keyName: getRandom(16),
 			penName: `User ${getRandom(6).toUpperCase()}`,
-			profileImage: 'https://profile-image.shortbook.life/initial/profile.png'
+			profileImage: '/initial/profile.png'
 		});
 		if (!user || dbUserGetError) {
 			return { error: new Error(dbUserGetError?.message ?? '') };
