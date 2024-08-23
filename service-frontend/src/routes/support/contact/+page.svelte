@@ -10,7 +10,7 @@
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	const { form, enhance, capture, restore, validateForm, submitting, message, errors } = superForm(
 		data.form,
@@ -20,7 +20,7 @@
 	const filesAttach = filesProxy(form, 'files' as never);
 
 	// Validate and set enable/disable submit button when the input value changes
-	let hasVaild = true;
+	let hasVaild = $state(true);
 	function validateBackground() {
 		validateForm().then((result) => (hasVaild = result.valid));
 	}

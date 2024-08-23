@@ -15,12 +15,15 @@
 		_errors?: string[] | undefined;
 	}
 
-	export let book: BookCoverProp;
-	export let penName: string;
-	export let errors: Errors = {};
-	export let className = '';
+	type Props = {
+		book: BookCoverProp;
+		penName: string;
+		errors?: Errors;
+		className?: string;
+	};
+	let { book, penName, errors = {}, className = '' }: Props = $props();
 
-	let previewWidth = 256;
+	let previewWidth = $state(256);
 
 	const dispatch = createEventDispatcher();
 	function applyChanges() {
@@ -31,19 +34,18 @@
 </script>
 
 <Dialog name="book-preview" title="Cover editor" dialogSizeClass="max-w-3xl">
-	<div
-		slot="opener"
-		class="flex flex-col items-center gap-4 p-4 sm:flex-row lg:flex-col {className}"
-	>
-		<div class="mx-auto" aria-hidden="true">
-			<BookCover {book} {penName} width={160} />
+	{#snippet opener()}
+		<div class="flex flex-col items-center gap-4 p-4 sm:flex-row lg:flex-col {className}">
+			<div class="mx-auto" aria-hidden="true">
+				<BookCover {book} {penName} width={160} />
+			</div>
+			<div class="mx-auto w-fit rounded-lg border-2 border-primary-700">
+				<NavLinkSmall name="Edit cover">
+					<IconEdit width="24" height="24" class="-me-1" />
+				</NavLinkSmall>
+			</div>
 		</div>
-		<div class="mx-auto w-fit rounded-lg border-2 border-primary-700">
-			<NavLinkSmall name="Edit cover">
-				<IconEdit width="24" height="24" class="-me-1" />
-			</NavLinkSmall>
-		</div>
-	</div>
+	{/snippet}
 
 	<div class="flex flex-col gap-8 sm:flex-row">
 		<div

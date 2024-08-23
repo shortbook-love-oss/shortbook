@@ -1,8 +1,11 @@
 <script lang="ts">
-	export let name: string;
-	export let keyName = '';
-	export let imageSrc = '';
-	export let className = '';
+	type Props = {
+		name: string;
+		keyName?: string;
+		imageSrc?: string;
+		className?: string;
+	};
+	let { name, keyName = '', imageSrc = '', className = '' }: Props = $props();
 </script>
 
 <svelte:element

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { superForm } from 'sveltekit-superforms';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import IconCheck from '~icons/mdi/check';
 	import { page } from '$app/stores';
@@ -10,18 +10,21 @@
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
 
-	export let formData;
-	export let submitLabel = 'Sign in';
+	type Props = {
+		formData: SuperValidated<Record<string, string>>;
+		submitLabel: string;
+	};
+	let { formData, submitLabel }: Props = $props();
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(formData, {
 		resetForm: false,
 		validators: zod(schema)
 	});
 
-	$: successMessage = $page.status === 200 ? $message : '';
+	const successMessage = $state($page.status === 200 ? $message : '');
 
 	// Validate and set enable/disable submit button when the input value changes
-	let hasVaild = true;
+	let hasVaild = $state(true);
 	function validateBackground() {
 		validateForm().then((result) => (hasVaild = result.valid));
 	}
@@ -49,7 +52,7 @@
 		errorMessages={$errors.email}
 		className="mb-4"
 	/>
-	<svelte:fragment slot="submit">
+	{#snippet submit()}
 		<SubmitButton isLoading={$submitting} className="mb-2 w-full">
 			{submitLabel}
 		</SubmitButton>
@@ -59,5 +62,5 @@
 				<p class="text-lg leading-snug">{successMessage}</p>
 			</div>
 		{/if}
-	</svelte:fragment>
+	{/snippet}
 </Form>

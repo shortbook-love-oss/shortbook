@@ -8,10 +8,12 @@
 </script>
 
 <Dropdown name="lang_select" dropdownClass="bottom-10 min-w-72">
-	<div slot="opener" class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
-		<p class="inline-block px-1">Change language</p>
-		<IconArrow width="28" height="28" class="peer-checked/common_footer_lang_open:rotate-180" />
-	</div>
+	{#snippet opener()}
+		<div class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
+			<p class="inline-block px-1">Change language</p>
+			<IconArrow width="28" height="28" class="peer-checked/common_footer_lang_open:rotate-180" />
+		</div>
+	{/snippet}
 	<ul class="grid grid-cols-2">
 		<li class="col-span-2 mb-3 border-b border-stone-300 p-3 pb-5" aria-current="page">
 			<p>Current language</p>

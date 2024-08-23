@@ -6,10 +6,13 @@
 	import Signout from '$lib/components/service/auth/signout.svelte';
 	import NavLink from '$lib/components/service/navigation/nav-link.svelte';
 
-	export let className = '';
+	type Props = {
+		className?: string;
+	};
+	let { className = '' }: Props = $props();
 
 	// After sign-in/sign-up redirect to
-	$: redirectUrl = encodeURIComponent($page.url.href);
+	const redirectUrl = $state(encodeURIComponent($page.url.href));
 </script>
 
 <header
@@ -35,7 +38,9 @@
 				</li>
 				<li class="relative">
 					<Dropdown name="header_submenu" dropdownClass="top-12 min-w-40">
-						<NavLink slot="opener" name={m.header_more()} className="rounded-ee-md" />
+						{#snippet opener()}
+							<NavLink name={m.header_more()} className="rounded-ee-md" />
+						{/snippet}
 						<ul>
 							<li>
 								<Signout dialogName="header_signout" />

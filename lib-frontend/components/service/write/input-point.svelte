@@ -5,12 +5,15 @@
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
-	export let point: number;
-	export let errorMessages: string[] | ValidationErrors<Record<string, unknown>> | undefined =
-		undefined;
-	export let className = '';
+	type Props = {
+		point: number;
+		errorMessages?: string[] | ValidationErrors<Record<string, unknown>>;
+		className?: string;
+		[key: string]: unknown;
+	};
+	let { point = $bindable(), errorMessages, className = '', ...restProps }: Props = $props();
 
-	let isEnableJS = false;
+	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
 	function changeBookPoint(amount: number) {
@@ -20,7 +23,7 @@
 
 <div class="flex flex-wrap items-end gap-2 {className}">
 	<TextField
-		{...$$restProps}
+		{...restProps}
 		min="70"
 		max="1000000"
 		type="number"

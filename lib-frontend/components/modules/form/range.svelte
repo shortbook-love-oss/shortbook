@@ -1,13 +1,28 @@
 <script lang="ts">
-	export let value: number;
-	export let name: string;
-	export let className = '';
-	export let label = '';
-	export let required = false;
-	export let inputClass = '';
-	export let errorMessages: string[] | undefined = undefined;
+	import type { ValidationErrors } from 'sveltekit-superforms';
 
-	$: id = `input-range-name-${name}`;
+	type Props = {
+		value: number;
+		name: string;
+		label?: string;
+		required?: boolean;
+		errorMessages?: string[] | ValidationErrors<Record<string, unknown>>;
+		className?: string;
+		inputClass?: string;
+		[key: string]: unknown;
+	};
+	let {
+		value = $bindable(),
+		name,
+		label = '',
+		required = false,
+		errorMessages,
+		className = '',
+		inputClass = '',
+		...restProps
+	}: Props = $props();
+
+	const id = $state(`input-range-name-${name}`);
 </script>
 
 <div class="block {className}">
@@ -22,7 +37,7 @@
 	<div class="relative">
 		<input
 			type="range"
-			{...$$restProps}
+			{...restProps}
 			bind:value
 			{name}
 			{id}
@@ -36,7 +51,7 @@
 			<p class="rounded-md border border-stone-400 bg-white px-2 py-0.5">{value}</p>
 		</div>
 	</div>
-	{#if errorMessages?.length}
+	{#if Array.isArray(errorMessages) && errorMessages?.length}
 		<div class="mt-2 text-red-800">
 			{#each errorMessages as errorMessage}
 				<p class="mt-1">{errorMessage}</p>

@@ -12,18 +12,23 @@
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
 	import Select from '$lib/components/modules/form/select.svelte';
 
-	export let point: number;
-	export let selectedCurrencyKey: CurrencySupportKeys;
-	export let currencyRates: Partial<Record<CurrencySupportKeys, number>>;
+	type Props = {
+		point: number;
+		selectedCurrencyKey: CurrencySupportKeys;
+		currencyRates: Partial<Record<CurrencySupportKeys, number>>;
+	};
+	let { point, selectedCurrencyKey, currencyRates }: Props = $props();
 
-	let isEnableJS = false;
+	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
 	const requestLang = getLanguageTagFromUrl($page.url);
-	let buyCurrencySelected = selectedCurrencyKey;
-	let earnCurrencySelected = selectedCurrencyKey;
+	let buyCurrencySelected = $state('' as CurrencySupportKeys);
+	buyCurrencySelected = selectedCurrencyKey;
+	let earnCurrencySelected = $state('' as CurrencySupportKeys);
+	earnCurrencySelected = selectedCurrencyKey;
 
-	$: pointToPriceRates = (() => {
+	const pointToPriceRates = $derived.by(() => {
 		const localRates: Partial<Record<CurrencySupportKeys, number>> = {};
 		for (const key in currencyRates) {
 			const localKey = key as CurrencySupportKeys;
@@ -33,9 +38,9 @@
 			}
 		}
 		return localRates;
-	})();
+	});
 
-	$: buyPrice = (() => {
+	const buyPrice = $derived.by(() => {
 		const currencyData = getCurrencyData(buyCurrencySelected);
 		const priceBase = pointToPriceRates[buyCurrencySelected];
 		let price;
@@ -43,19 +48,19 @@
 			price = priceBase * (100 / (100 - shortbookChargeFee));
 		}
 		return displayPrice(price, currencyData, 1);
-	})();
+	});
 
-	$: earnPrice = (() => {
+	const earnPrice = $derived.by(() => {
 		const currencyData = getCurrencyData(earnCurrencySelected);
 		const priceBase = pointToPriceRates[earnCurrencySelected];
 		return displayPrice(priceBase, currencyData, 1);
-	})();
+	});
 
-	$: earnPrice100Sold = (() => {
+	const earnPrice100Sold = $derived.by(() => {
 		const currencyData = getCurrencyData(earnCurrencySelected);
 		const priceBase = pointToPriceRates[earnCurrencySelected];
 		return displayPrice(priceBase, currencyData, 100);
-	})();
+	});
 
 	function displayPrice(
 		price: number | undefined,

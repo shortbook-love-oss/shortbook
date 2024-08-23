@@ -1,11 +1,26 @@
 <script lang="ts">
-	export let value: string;
-	export let name: string;
-	export let className = '';
-	export let label = '';
-	export let required = false;
-	export let inputClass = '';
-	export let errorMessages: string[] | undefined = undefined;
+	import type { ValidationErrors } from 'sveltekit-superforms';
+
+	type Props = {
+		value: string;
+		name: string;
+		label?: string;
+		required?: boolean;
+		errorMessages?: string[] | ValidationErrors<Record<string, unknown>>;
+		className?: string;
+		inputClass?: string;
+		[key: string]: unknown;
+	};
+	let {
+		value = $bindable(),
+		name,
+		label = '',
+		required = false,
+		errorMessages,
+		className = '',
+		inputClass = '',
+		...restProps
+	}: Props = $props();
 </script>
 
 <label class="block {className}">
@@ -20,7 +35,7 @@
 	<div class="relative min-h-48 break-all">
 		<!-- "textarea" height is the same as inner content height -->
 		<textarea
-			{...$$restProps}
+			{...restProps}
 			{name}
 			{required}
 			bind:value
@@ -29,12 +44,12 @@
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
 			on:input
-		/>
+		></textarea>
 		<div class="min-h-48 whitespace-pre-wrap break-words rounded-md border px-4 py-2">
 			{value + '\u200b'}
 		</div>
 	</div>
-	{#if errorMessages?.length}
+	{#if Array.isArray(errorMessages) && errorMessages?.length}
 		<div class="mt-2 text-red-800">
 			{#each errorMessages as errorMessage}
 				<p class="mt-1">{errorMessage}</p>

@@ -3,7 +3,7 @@
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookItem from '$lib/components/service/read/book-item.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>

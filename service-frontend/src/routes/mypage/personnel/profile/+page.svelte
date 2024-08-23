@@ -10,7 +10,7 @@
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import { schema } from '$lib/validation/schema/profile-update';
 
-	export let data;
+	let { data } = $props();
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
@@ -21,10 +21,10 @@
 			}
 		}
 	});
-	let initForm = { ...$form };
+	let initForm = $state({ ...$form });
 
 	// Validate and set enable/disable submit button when the input value changes
-	let hasVaild = true;
+	let hasVaild = $state(true);
 	function validateBackground() {
 		validateForm().then((result) => (hasVaild = result.valid));
 	}

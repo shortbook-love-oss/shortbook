@@ -6,7 +6,7 @@
 
 	const requestLang = getLanguageTagFromUrl($page.url);
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>

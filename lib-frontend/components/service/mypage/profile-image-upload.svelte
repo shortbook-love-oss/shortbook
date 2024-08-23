@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { superForm, filesProxy } from 'sveltekit-superforms';
+	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 	import Form from '$lib/components/modules/form/form.svelte';
@@ -8,10 +8,12 @@
 	import { schema } from '$lib/validation/schema/profile-image-update';
 	import File from '$lib/components/modules/form/file.svelte';
 
-	// Superforms initialized
-	export let formData;
-	export let actionUrl: string;
-	export let className = '';
+	type Props = {
+		formData: SuperValidated<Record<string, unknown>>;
+		actionUrl: string;
+		className?: string;
+	};
+	let { formData, actionUrl, className = '' }: Props = $props();
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(formData, {
 		validators: zod(schema)
@@ -19,7 +21,7 @@
 	const fileProfileImage = filesProxy(form, 'profileImage' as never);
 
 	// Validate and set enable/disable submit button when the input value changes
-	let hasVaild = true;
+	let hasVaild = $state(true);
 	function validateBackground() {
 		validateForm().then((result) => (hasVaild = result.valid));
 	}

@@ -32,7 +32,19 @@ const config = {
 				'default-src': ['self']
 			}
 		}
-	}
+	},
+
+	compilerOptions: {
+		runes: true
+	},
+
+	vitePlugin: {
+		dynamicCompileOptions({ filename }) {
+			if (filename.includes('node_modules')) {
+				return { runes: undefined };
+			}
+		}
+	},
 };
 
 export default config;

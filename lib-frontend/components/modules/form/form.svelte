@@ -1,28 +1,47 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import IconCheck from '~icons/mdi/check';
 	import IconWarning from '~icons/mdi/warning';
 	import IconError from '~icons/mdi/warning-circle';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import SubmitButton from './submit-button.svelte';
 
-	export let enhance: Function;
-	export let action: string;
-	export let hasInvalid = false;
-	export let isLoading = false;
-	export let submitLabel = 'Save';
-	export let warnMessage = '';
-	export let successMessage = '';
-	export let errorMessage = '';
-	export let className = '';
+	type Props = {
+		children: Snippet;
+		submit?: Snippet;
+		enhance: Function;
+		action: string;
+		hasInvalid?: boolean;
+		isLoading?: boolean;
+		submitLabel?: string;
+		warnMessage?: string;
+		successMessage?: string;
+		errorMessage?: string;
+		className?: string;
+		[key: string]: unknown;
+	};
+	let {
+		children,
+		submit,
+		enhance,
+		action,
+		hasInvalid = false,
+		isLoading = false,
+		submitLabel = '',
+		warnMessage = '',
+		successMessage = '',
+		errorMessage = '',
+		className = '',
+		...restProps
+	}: Props = $props();
 
-	let isEnableJS = false;
+	let isEnableJS = $state(false);
 	onMount(() => {
 		isEnableJS = true;
 	});
 </script>
 
-<form use:enhance action={removeLanguageTagFromPath(action)} {...$$restProps}>
+<form use:enhance action={removeLanguageTagFromPath(action)} {...restProps}>
 	{#if warnMessage}
 		<div
 			class="mb-6 flex items-center gap-2 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
@@ -55,10 +74,14 @@
 			</p>
 		</div>
 	{/if}
+
 	<fieldset class="w-full {className}" disabled={isLoading ? true : undefined}>
-		<slot />
+		{@render children()}
 	</fieldset>
-	<slot name="submit">
+
+	{#if submit}
+		{@render submit()}
+	{:else}
 		<div class="flex flex-col items-center gap-4 sm:flex-row">
 			<SubmitButton hasInvalid={hasInvalid && isEnableJS} {isLoading} className="shrink-0">
 				{submitLabel}
@@ -70,5 +93,5 @@
 				</div>
 			{/if}
 		</div>
-	</slot>
+	{/if}
 </form>

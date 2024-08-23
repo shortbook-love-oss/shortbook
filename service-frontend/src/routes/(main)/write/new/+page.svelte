@@ -15,9 +15,9 @@
 	import InputPoint from '$lib/components/service/write/input-point.svelte';
 	import PricePreview from '$lib/components/service/write/price-preview.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	let isEnableJS = false;
+	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
 	const { form, enhance, capture, restore, validateForm, submitting, message, errors } = superForm(
@@ -31,7 +31,7 @@
 	export const snapshot = { capture, restore };
 
 	// Validate and set enable/disable submit button when the input value changes
-	let hasVaild = true;
+	let hasVaild = $state(true);
 	function validateBackground() {
 		validateForm().then((result) => {
 			hasVaild = result.valid;
@@ -158,5 +158,7 @@
 		</div>
 		<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
 	</div>
-	<div slot="submit"></div>
+	{#snippet submit()}
+		<div></div>
+	{/snippet}
 </Form>

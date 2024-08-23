@@ -7,7 +7,7 @@
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	const requestLang = getLanguageTagFromUrl($page.url);
 

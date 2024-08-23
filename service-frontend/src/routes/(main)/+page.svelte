@@ -3,7 +3,7 @@
 	import * as m from '$lib/i18n/paraglide/messages';
 	import BookItem from '$lib/components/service/read/book-item.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>

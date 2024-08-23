@@ -11,7 +11,7 @@
 	import PaymentAction from '$lib/components/service/read/payment-action.svelte';
 	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	const publishedAt = toLocaleDate(data.bookDetail.publishedAt, data.requestLang);
 </script>
@@ -116,7 +116,7 @@
 			</section>
 		{:else}
 			<SalesMessage image={data.bookDetail.userImage} message={data.bookDetail.salesMessage}>
-				<svelte:fragment slot="action">
+				{#snippet action()}
 					{#if data.hasEnoughPoint}
 						<a
 							href="/redirect/book/{data.bookDetail.id}/buy"
@@ -131,7 +131,7 @@
 							primaryCurrency={data.primaryCurrency}
 						/>
 					{/if}
-				</svelte:fragment>
+				{/snippet}
 			</SalesMessage>
 		{/if}
 	</div>

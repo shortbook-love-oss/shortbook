@@ -1,6 +1,12 @@
 <script lang="ts">
-	export let image: string;
-	export let message: string;
+	import type { Snippet } from 'svelte';
+
+	type Props = {
+		action?: Snippet;
+		image: string;
+		message: string;
+	};
+	let { action, image, message }: Props = $props();
 </script>
 
 <div class="items-start gap-4 xs:flex">
@@ -22,7 +28,9 @@
 					{@html message}
 				</div>
 			{/if}
-			<slot name="action" />
+			{#if action}
+				{@render action()}
+			{/if}
 		</div>
 	</div>
 </div>

@@ -4,13 +4,13 @@
 	import { languageTag } from '$lib/i18n/paraglide/runtime';
 	import LanguageSelect from '$lib/components/modules/language-select.svelte';
 
-	export let className = '';
+	type Props = {
+		className?: string;
+	};
+	let { className = '' }: Props = $props();
 
-	let yearPeriod = '2024';
-	const currentYear = new Date().getFullYear();
-	if (currentYear > +yearPeriod) {
-		yearPeriod += '-' + currentYear;
-	}
+	// "2024" or "2024-2025"
+	const servicePeriod = $state([...new Set([2024, new Date().getFullYear()])].join('-'));
 </script>
 
 <footer
@@ -25,7 +25,7 @@
 					alt={m.logotype_alt()}
 				/>
 			</a>
-			<small class="mb-4 block text-base">© {yearPeriod} {m.company_name()}</small>
+			<small class="mb-4 block text-base">© {servicePeriod} {m.company_name()}</small>
 			<div class="relative">
 				<LanguageSelect />
 			</div>

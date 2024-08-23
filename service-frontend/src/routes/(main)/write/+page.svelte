@@ -2,7 +2,7 @@
 	import IconPlus from '~icons/mdi/plus';
 	import BookItem from '$lib/components/service/write/book-item.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>
