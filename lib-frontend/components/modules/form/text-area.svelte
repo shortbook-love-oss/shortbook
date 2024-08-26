@@ -44,7 +44,10 @@
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
 		></textarea>
-		<div class="min-h-48 whitespace-pre-wrap break-words rounded-md border px-4 py-2">
+		<div
+			class="min-h-48 whitespace-pre-wrap break-words rounded-md border px-4 py-2"
+			translate="no"
+		>
 			{value + '\u200b'}
 		</div>
 	</div>
