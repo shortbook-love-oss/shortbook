@@ -8,7 +8,7 @@
 		getLocalizedPrice,
 		type CurrencySupportKeys
 	} from '$lib/utilities/currency';
-	import { shortbookChargeFee } from '$lib/utilities/payment';
+	import { chargeFee } from '$lib/utilities/payment';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
 	import Select from '$lib/components/modules/form/select.svelte';
 
@@ -45,7 +45,7 @@
 		const priceBase = pointToPriceRates[buyCurrencySelected];
 		let price;
 		if (priceBase) {
-			price = priceBase * (100 / (100 - shortbookChargeFee));
+			price = priceBase * (100 / (100 - chargeFee));
 		}
 		return displayPrice(price, currencyData, 1);
 	});
@@ -92,9 +92,7 @@
 			</div>
 		{/if}
 		<div class="mb-4">
-			Total service fee and transaction fee is <span class="font-semibold"
-				>{shortbookChargeFee}%</span
-			>
+			Total service fee and transaction fee is <span class="font-semibold">{chargeFee}%</span>
 		</div>
 		{#if earnPrice != undefined}
 			<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1">

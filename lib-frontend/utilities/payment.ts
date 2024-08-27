@@ -9,7 +9,7 @@ import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SelectItem } from '$lib/utilities/select';
 
 // Service fee is 8%
-export const shortbookChargeFee = 8;
+export const chargeFee = 8;
 
 export const paymentProviders = [{ key: 'stripe', label: 'Stripe' }] as const;
 
@@ -36,7 +36,7 @@ export function calcPriceByPoint(
 		const convertedPrice = currencyConverted[currencyData.key];
 		if (convertedPrice) {
 			const priceWithFee = getLocalizedPrice(
-				convertedPrice * (100 / (100 - shortbookChargeFee)),
+				convertedPrice * (100 / (100 - chargeFee)),
 				currencyData.allowDecimal && !currencyData.rule00
 			);
 			currencyPreviews.push({

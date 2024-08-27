@@ -10,7 +10,7 @@ import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
 import { createPaymentSession } from '$lib/utilities/server/payment';
 import { redirectToSignInPage } from '$lib/utilities/server/url';
 import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
-import { shortbookChargeFee } from '$lib/utilities/payment';
+import { chargeFee } from '$lib/utilities/payment';
 import {
 	getLanguageTagFromUrl,
 	paymentBookInfoParam,
@@ -84,7 +84,7 @@ export const load = async ({ url, params, locals }) => {
 	}
 
 	// Need 100 USD + service fee to buy 100 point
-	const pointAmountBase = (book.buy_point / 100) * (100 / (100 - shortbookChargeFee));
+	const pointAmountBase = (book.buy_point / 100) * (100 / (100 - chargeFee));
 	const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
 		amount: pointAmountBase
 	});
