@@ -104,7 +104,7 @@ export const actions = {
 		const signUpConfirmUrl =
 			url.origin +
 			setLanguageTagToPath(
-				`${url.pathname}/confirm?${emailChangeTokenParam}=${encodeURIComponent(emailChangeToken)}`,
+				`/mypage/security/email/confirm?${emailChangeTokenParam}=${encodeURIComponent(emailChangeToken)}`,
 				requestLang
 			);
 
