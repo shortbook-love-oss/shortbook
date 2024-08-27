@@ -18,7 +18,11 @@
 			const price = formatPrice(point.payment.amount, point.payment.currency, requestLang);
 			return { amountSuffix: 'Charged', text: `Charged ${price}`, bgColor: 'bg-orange-100' };
 		}
-		return { amountSuffix: 'Spent', text: 'Bought', bgColor: 'bg-stone-200' };
+		if (point.amount > 0) {
+			return { amountSuffix: 'Charged', text: 'Charged', bgColor: 'bg-orange-100' };
+		} else {
+			return { amountSuffix: 'Spent', text: 'Bought', bgColor: 'bg-stone-200' };
+		}
 	}
 </script>
 

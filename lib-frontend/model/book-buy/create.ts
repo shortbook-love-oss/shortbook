@@ -1,5 +1,5 @@
+import type { DbUserPaymentCheckoutCreateRequest } from '$lib/model/user/point/create';
 import prisma from '$lib/prisma/connect';
-import type { paymentProviders } from '$lib/utilities/payment';
 
 export interface DbBookBuyCreateRequest {
 	bookId: string;
@@ -8,12 +8,7 @@ export interface DbBookBuyCreateRequest {
 	pointSpend: number;
 	// For point charge
 	beforePointChargeAmount: number;
-	payment?: {
-		provider: (typeof paymentProviders)[number]['key'];
-		sessionId: string;
-		currency: string;
-		amount: number;
-	};
+	payment?: DbUserPaymentCheckoutCreateRequest;
 }
 
 export async function dbBookBuyCreate(req: DbBookBuyCreateRequest) {
