@@ -45,7 +45,8 @@
 			aria-invalid={errorMessages?.length ? true : undefined}
 		></textarea>
 		<div
-			class="min-h-48 whitespace-pre-wrap break-words rounded-md border px-4 py-2"
+			class="min-h-48 select-none whitespace-pre-wrap break-words rounded-md border px-4 py-2"
+			aria-hidden="true"
 			translate="no"
 		>
 			{value + '\u200b'}
