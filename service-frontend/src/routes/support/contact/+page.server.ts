@@ -118,6 +118,7 @@ export const actions = {
 
 		const sentDescription = form.data.description;
 		await sendEmail(
+			'ShortBook Support Team',
 			env.EMAIL_FROM,
 			[form.data.email],
 			'Your inquiry has been sent.',

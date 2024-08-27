@@ -140,6 +140,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	if (user.email) {
 		// 4. Send welcome email
 		await sendEmail(
+			'ShortBook Service',
 			env.EMAIL_FROM,
 			[user.email],
 			'Welcome to ShortBook.',

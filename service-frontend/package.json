@@ -27,6 +27,7 @@
 		"@inlang/paraglide-sveltekit": "0.11.0",
 		"@prisma/client": "^5.18.0",
 		"isomorphic-dompurify": "^2.14.0",
+		"libmime": "^5.3.5",
 		"stripe": "^16.8.0"
 	},
 	"devDependencies": {
@@ -38,6 +39,7 @@
 		"@sveltejs/kit": "^2.5.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
 		"@types/eslint": "^9.6.0",
+		"@types/libmime": "^5.0.3",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",

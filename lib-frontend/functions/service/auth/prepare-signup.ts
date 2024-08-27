@@ -39,6 +39,7 @@ export async function prepareSignUp(
 			requestLang
 		);
 	const { sendEmailError } = await sendEmail(
+		'ShortBook Service',
 		env.EMAIL_FROM,
 		[emailTo],
 		'Sign up almost done | ShortBook',

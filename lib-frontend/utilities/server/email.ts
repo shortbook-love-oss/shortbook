@@ -1,8 +1,10 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import libmime from 'libmime';
 import { env } from '$env/dynamic/private';
 import { toHash } from '$lib/utilities/server/crypto';
 
 export async function sendEmail(
+	senderName: string,
 	from: string,
 	to: string[],
 	subject: string,
@@ -18,7 +20,7 @@ export async function sendEmail(
 	});
 
 	const sendEmailCommand = new SendEmailCommand({
-		Source: from,
+		Source: `${libmime.encodeWord(senderName, 'Q')} <${from}>`,
 		Destination: {
 			CcAddresses: [],
 			ToAddresses: to

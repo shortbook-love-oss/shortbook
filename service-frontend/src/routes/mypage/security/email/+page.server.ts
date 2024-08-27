@@ -123,6 +123,7 @@ export const actions = {
 
 		// Send email with magic link
 		const { sendEmailError } = await sendEmail(
+			'ShortBook Service',
 			env.EMAIL_FROM,
 			[form.data.email],
 			'Confirm your email address change.',

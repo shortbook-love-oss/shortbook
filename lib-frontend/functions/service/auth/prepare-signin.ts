@@ -48,6 +48,7 @@ export async function prepareSignIn(
 			requestLang
 		);
 	const { sendEmailError } = await sendEmail(
+		'ShortBook Service',
 		env.EMAIL_FROM,
 		[emailTo],
 		'Sign in confirm | ShortBook',
