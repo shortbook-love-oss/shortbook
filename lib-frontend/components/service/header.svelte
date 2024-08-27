@@ -15,11 +15,9 @@
 	const redirectUrl = $derived(encodeURIComponent($page.url.href));
 </script>
 
-<header
-	class="fixed start-0 top-0 z-10 flex w-full items-center pe-[env(safe-area-inset-right,0px)] pt-[env(safe-area-inset-top,0px)] {className}"
->
+<header class="fixed start-0 top-0 z-10 flex items-center {className}">
 	<nav
-		class="flex items-center rounded-ee-lg border-b border-e border-stone-300 bg-white pl-[env(safe-area-inset-left,0px)] rtl:pr-[env(safe-area-inset-right,0px)]"
+		class="flex items-center rounded-ee-lg border-b border-e border-stone-300 bg-white pl-[env(safe-area-inset-left,0px)] pt-[env(safe-area-inset-top,0px)] rtl:pr-[env(safe-area-inset-right,0px)]"
 	>
 		<a href="/" class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200">
 			<img
