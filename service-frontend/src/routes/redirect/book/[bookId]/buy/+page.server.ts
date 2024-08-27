@@ -34,13 +34,6 @@ export const load = async ({ url, params, locals }) => {
 	if (!userEmail) {
 		return error(401, { message: 'Unauthorized' });
 	}
-
-	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
-	if (dbBookBuyError) {
-		return error(500, { message: dbBookBuyError?.message ?? '' });
-	} else if (bookBuy) {
-		return error(500, { message: `Already bought this book, Book ID=${bookId}` });
-	}
 	const { currentPoint, dbError: dbUserPointError } = await dbUserPointList({ userId });
 	if (dbUserPointError) {
 		return error(500, { message: dbUserPointError?.message ?? '' });
@@ -58,6 +51,14 @@ export const load = async ({ url, params, locals }) => {
 		setLanguageTagToPath(`/@${book.user.profiles.key_name}/book/${book.key_name}`, requestLang);
 	if (book.user_id === userId) {
 		// Prevent buy own book
+		return redirect(303, cancelUrl);
+	}
+
+	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
+	if (dbBookBuyError) {
+		return error(500, { message: dbBookBuyError?.message ?? '' });
+	} else if (bookBuy) {
+		// Already bought this book
 		return redirect(303, cancelUrl);
 	}
 
