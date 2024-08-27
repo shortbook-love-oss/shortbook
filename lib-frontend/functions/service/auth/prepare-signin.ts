@@ -1,6 +1,5 @@
-import DOMPurify from 'isomorphic-dompurify';
 import { env } from '$env/dynamic/private';
-import type { SignResult } from '$lib/functions/service/auth/actionInit';
+import type { SignResult } from '$lib/functions/service/auth/action-init';
 import type { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';

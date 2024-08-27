@@ -14,7 +14,7 @@ import { signInTokenName, signUpTokenName } from '$lib/utilities/server/verifica
 import { setSessionToken } from '$lib/utilities/cookie';
 import { signInEmailLinkMethod } from '$lib/utilities/signin';
 import { signConfirmTokenParam } from '$lib/utilities/url';
-import type { SignResult } from './actionInit';
+import type { SignResult } from './action-init';
 import { dbUserRestore } from '$lib/model/user/restore';
 
 export async function finalizeSign(

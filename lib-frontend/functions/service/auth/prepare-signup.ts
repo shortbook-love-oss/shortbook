@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import type { SignResult } from '$lib/functions/service/auth/actionInit';
+import type { SignResult } from '$lib/functions/service/auth/action-init';
 import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
 import { sendEmail } from '$lib/utilities/server/email';
 import { signUpTokenName } from '$lib/utilities/server/verification-token';
