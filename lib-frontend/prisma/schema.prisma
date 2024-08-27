@@ -200,7 +200,7 @@ model user_payment_contracts {
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
-  @@unique([user_id, provider_key])
+  @@unique([provider_key, provider_customer_id])
 }
 
 // -----------------------------------------------------------------------

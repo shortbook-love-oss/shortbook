@@ -63,21 +63,23 @@ export const load = async ({ url, locals }) => {
 	}
 
 	// Change payment provider registerd email
-	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
+	const { paymentContracts, dbError: dbContractGetError } = await dbUserPaymentContractGet({
 		userId,
 		providerKey: 'stripe'
 	});
-	if (dbContractGetError) {
-		return error(500, { message: dbContractGetError.message });
+	if (!paymentContracts || dbContractGetError) {
+		return error(500, { message: dbContractGetError?.message ?? '' });
 	}
-	if (paymentContract) {
-		const paymentCustomerId = decryptFromFlat(
-			paymentContract.provider_customer_id,
-			env.ENCRYPT_PAYMENT_CUSTOMER_ID,
-			env.ENCRYPT_SALT
-		);
-		await changeCustomerEmail(paymentCustomerId, userEmail);
-	}
+	await Promise.all(
+		paymentContracts.map((paymentContract) => {
+			const paymentCustomerId = decryptFromFlat(
+				paymentContract.provider_customer_id,
+				env.ENCRYPT_PAYMENT_CUSTOMER_ID,
+				env.ENCRYPT_SALT
+			);
+			return changeCustomerEmail(paymentCustomerId, userEmail);
+		})
+	);
 
 	// Delete dangling verification token
 	const { dbError: dbVerifyDeleteError } = await dbVerificationTokenDelete({

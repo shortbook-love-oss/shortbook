@@ -97,15 +97,15 @@ export const load = async ({ url, params, locals }) => {
 		return error(400, { message: 'Selected currency is not support.' });
 	}
 
-	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
+	const { paymentContracts, dbError: dbContractGetError } = await dbUserPaymentContractGet({
 		userId,
 		providerKey: 'stripe'
 	});
-	if (dbContractGetError) {
+	if (!paymentContracts || dbContractGetError) {
 		return error(500, { message: dbContractGetError?.message ?? '' });
 	}
 	const paymentCustomerId = decryptFromFlat(
-		paymentContract?.provider_customer_id ?? '',
+		paymentContracts[0]?.provider_customer_id ?? '',
 		env.ENCRYPT_PAYMENT_CUSTOMER_ID,
 		env.ENCRYPT_SALT
 	);

@@ -9,13 +9,11 @@ export interface DbUserPaymentContractGetRequest {
 export async function dbUserPaymentContractGet(req: DbUserPaymentContractGetRequest) {
 	let dbError: Error | undefined;
 
-	const paymentContract = await prisma.user_payment_contracts
-		.findUnique({
+	const paymentContracts = await prisma.user_payment_contracts
+		.findMany({
 			where: {
-				user_id_provider_key: {
-					user_id: req.userId,
-					provider_key: req.providerKey
-				},
+				user_id: req.userId,
+				provider_key: req.providerKey,
 				deleted_at: null
 			}
 		})
@@ -24,5 +22,5 @@ export async function dbUserPaymentContractGet(req: DbUserPaymentContractGetRequ
 			return undefined;
 		});
 
-	return { paymentContract, dbError };
+	return { paymentContracts, dbError };
 }
