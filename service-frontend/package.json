@@ -25,10 +25,10 @@
 		"@auth/sveltekit": "1.4.2",
 		"@inlang/paraglide-js": "1.11.2",
 		"@inlang/paraglide-sveltekit": "0.11.0",
-		"@prisma/client": "^5.18.0",
-		"isomorphic-dompurify": "^2.14.0",
+		"@prisma/client": "^5.19.0",
+		"isomorphic-dompurify": "^2.15.0",
 		"libmime": "^5.3.5",
-		"stripe": "^16.8.0"
+		"stripe": "^16.9.0"
 	},
 	"devDependencies": {
 		"@aws-sdk/client-s3": "^3.637.0",
@@ -50,8 +50,8 @@
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"prettier-plugin-tailwindcss": "^0.6.6",
-		"prisma": "^5.18.0",
-		"svelte": "5.0.0-next.239",
+		"prisma": "^5.19.0",
+		"svelte": "5.0.0-next.242",
 		"svelte-check": "^3.6.0",
 		"sveltekit-superforms": "^2.17.0",
 		"tailwindcss": "^3.4.10",
@@ -64,13 +64,13 @@
 	},
 	"optionalDependencies": {
 		"@esbuild/linux-x64": "0.23.1",
-		"@rollup/rollup-darwin-x64": "4.21.0",
-		"@rollup/rollup-linux-arm64-gnu": "4.21.0"
+		"@rollup/rollup-darwin-x64": "4.21.1",
+		"@rollup/rollup-linux-arm64-gnu": "4.21.1"
 	},
 	"overrides": {
 		"@auth/sveltekit": {
 			".": "1.4.2",
-			"svelte": "5.0.0-next.239"
+			"svelte": "5.0.0-next.242"
 		}
 	}
 }
