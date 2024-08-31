@@ -133,7 +133,7 @@ export const load = async ({ url, locals, params }) => {
 		bookKeyName: book.key_name,
 		userKeyName: profile.key_name,
 		penName: profileLang.pen_name,
-		userImage: envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE + (book.user.image ?? ''),
+		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + (book.user.image ?? ''),
 		prologue: await contentsToMarkdown(bookLang.prologue),
 		content: '',
 		salesMessage: '',

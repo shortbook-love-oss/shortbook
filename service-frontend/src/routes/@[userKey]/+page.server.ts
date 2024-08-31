@@ -13,7 +13,7 @@ export const load = async ({ url, params }) => {
 		return error(500, { message: dbError?.message ?? '' });
 	}
 	if (user.image) {
-		user.image = envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE + user.image;
+		user.image = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image;
 	}
 
 	const { books, dbError: bookDbError } = await dbBookList({ userId: user.id });
