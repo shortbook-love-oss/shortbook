@@ -36,7 +36,7 @@ export const actions = {
 
 		// Upload image to Amazon S3
 		const saveUrl = `profile/${userId}/profile-image-${cacheRefresh}.${extension}`;
-		const isSuccessUpload = await fileUpload(env.AWS_BUCKET_IMAGE_PROFILE, saveUrl, image);
+		const isSuccessUpload = await fileUpload(env.AWS_REGION, env.AWS_BUCKET_IMAGE_PROFILE, saveUrl, image);
 		if (!isSuccessUpload) {
 			return error(500, { message: "Can't upload profile image. Please contact us." });
 		}

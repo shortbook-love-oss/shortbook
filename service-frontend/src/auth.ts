@@ -123,7 +123,12 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 			const extension = imageMIMEextension[blob.type as keyof typeof imageMIMEextension];
 			// 2. Upload image to Amazon S3
 			const saveUrl = `profile/${user.id}/profile-image-${cacheRefresh}.${extension}`;
-			const isSuccessUpload = await fileUpload(env.AWS_BUCKET_IMAGE_PROFILE, saveUrl, blob);
+			const isSuccessUpload = await fileUpload(
+				env.AWS_REGION,
+				env.AWS_BUCKET_IMAGE_PROFILE,
+				saveUrl,
+				blob
+			);
 			if (isSuccessUpload) {
 				// 3. Save image URL to DB
 				await dbUserProfileImageUpdate({

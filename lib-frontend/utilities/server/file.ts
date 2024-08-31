@@ -1,10 +1,11 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { env } from '$env/dynamic/private';
 
-export async function fileUpload(bucketName: string, filePath: string, file: Blob) {
+export async function fileUpload(region: string, bucketName: string, filePath: string, file: Blob) {
 	const s3 = new S3Client({
-		region: env.AWS_REGION,
+		region,
 		forcePathStyle: true,
+		maxAttempts: 2,
 		credentials: {
 			accessKeyId: env.AWS_ACCESS_KEY_ID,
 			secretAccessKey: env.AWS_SECRET_ACCESS_KEY

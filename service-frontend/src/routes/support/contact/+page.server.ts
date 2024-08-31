@@ -83,6 +83,7 @@ export const actions = {
 		for (const file of form.data.files ?? []) {
 			const saveFilePath = `${filesKey}/${file.name.replace('/', '')}`;
 			const isSuccessUpload = await fileUpload(
+				env.AWS_REGION,
 				env.AWS_BUCKET_ATTACH_CONTACT_TICKET,
 				saveFilePath,
 				file
