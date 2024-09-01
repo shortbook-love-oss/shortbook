@@ -1,5 +1,17 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+	GetObjectCommand,
+	PutObjectCommand,
+	S3Client,
+	type StorageClass
+} from '@aws-sdk/client-s3';
 import { env } from '$env/dynamic/private';
+
+export interface StorageBucket {
+	storageBucketName: string;
+	storageCdnRegion: string;
+	storageCdnBucketName: string;
+	storageCdnStorageClass: StorageClass;
+}
 
 export async function getFile(region: string, bucketName: string, filePath: string) {
 	const s3 = new S3Client({
