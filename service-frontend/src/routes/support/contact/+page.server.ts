@@ -86,7 +86,7 @@ export const actions = {
 				file,
 				file.type,
 				env.AWS_REGION,
-				env.AWS_BUCKET_ATTACH_CONTACT_TICKET,
+				env.AWS_BUCKET_SUPPORT_TICKET_ATTACH,
 				saveFilePath,
 				undefined
 			);
@@ -94,7 +94,7 @@ export const actions = {
 				return error(500, { message: "Can't upload profile image. Please contact us." });
 			}
 			// Save as decoded (=original) URL string
-			const fullPath = `https://${env.AWS_BUCKET_ATTACH_CONTACT_TICKET}.s3.${env.AWS_REGION}.amazonaws.com/${saveFilePath}`;
+			const fullPath = `https://${env.AWS_BUCKET_SUPPORT_TICKET_ATTACH}.s3.${env.AWS_REGION}.amazonaws.com/${saveFilePath}`;
 			savedFileUrls.push(fullPath);
 		}
 
