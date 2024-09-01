@@ -1,5 +1,37 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { env } from '$env/dynamic/private';
+
+export async function getFile(region: string, bucketName: string, filePath: string) {
+	const s3 = new S3Client({
+		region,
+		forcePathStyle: true,
+		maxAttempts: 2,
+		credentials: {
+			accessKeyId: env.AWS_ACCESS_KEY_ID,
+			secretAccessKey: env.AWS_SECRET_ACCESS_KEY
+		}
+	});
+
+	let file: Uint8Array | undefined;
+	let contentType = '';
+	let error;
+
+	const command = new GetObjectCommand({
+		Bucket: bucketName,
+		Key: filePath
+	});
+	await s3
+		.send(command)
+		.then(async (response) => {
+			file = await response.Body?.transformToByteArray();
+			contentType = response.ContentType ?? '';
+		})
+		.catch((e: Error) => {
+			error = e;
+		});
+
+	return { file, contentType, error };
+}
 
 export async function uploadFile(
 	file: Blob | Buffer | Uint8Array,
