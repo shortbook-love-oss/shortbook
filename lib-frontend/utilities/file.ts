@@ -15,7 +15,13 @@ export const imageMIMEextension: Record<string, string> = {
 	'image/gif': 'gif',
 	'image/apng': 'png',
 	'image/webp': 'webp',
-	'image/avif': 'avif' // Safari support from v16
+	'image/avif': 'avif', // Safari support from v16
+	'image/heic': 'heic',
+	'image/heif': 'heif',
+	'image/tiff': 'tiff',
+	'image/bmp': 'bmp',
+	'image/x-icon': 'ico',
+	'image/svg+xml': 'svg'
 };
 
 // Guess MIME-type of profile image by path
