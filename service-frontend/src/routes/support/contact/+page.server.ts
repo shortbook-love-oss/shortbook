@@ -7,7 +7,7 @@ import { dbLogActionList } from '$lib/model/log/action-list';
 import { dbTicketCreate } from '$lib/model/support/ticket-create';
 import { encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
 import { sendEmail } from '$lib/utilities/server/email';
-import { fileUpload } from '$lib/utilities/server/file';
+import { uploadFile } from '$lib/utilities/server/file';
 import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib/utilities/server/log-action';
 import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
@@ -82,11 +82,13 @@ export const actions = {
 		const filesKey = getRandom(32);
 		for (const file of form.data.files ?? []) {
 			const saveFilePath = `${filesKey}/${file.name.replace('/', '')}`;
-			const isSuccessUpload = await fileUpload(
+			const { isSuccessUpload } = await uploadFile(
+				file,
+				file.type,
 				env.AWS_REGION,
 				env.AWS_BUCKET_ATTACH_CONTACT_TICKET,
 				saveFilePath,
-				file
+				undefined
 			);
 			if (!isSuccessUpload) {
 				return error(500, { message: "Can't upload profile image. Please contact us." });

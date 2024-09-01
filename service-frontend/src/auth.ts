@@ -18,7 +18,7 @@ import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
 import prisma from '$lib/prisma/connect';
 import { encryptAndFlat } from '$lib/utilities/server/crypto';
 import { sendEmail, toHashUserEmail } from '$lib/utilities/server/email';
-import { fileUpload } from '$lib/utilities/server/file';
+import { uploadFile } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { matchSigninProvider } from '$lib/utilities/signin';
 
@@ -122,18 +122,20 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 			const cacheRefresh = Date.now().toString(36);
 			const extension = imageMIMEextension[blob.type as keyof typeof imageMIMEextension];
 			// 2. Upload image to Amazon S3
-			const saveUrl = `profile/${user.id}/profile-image-${cacheRefresh}.${extension}`;
-			const isSuccessUpload = await fileUpload(
+			const savePath = `${user.id}/profile-image-${cacheRefresh}.${extension}`;
+			const { isSuccessUpload } = await uploadFile(
+				blob,
+				blob.type,
 				env.AWS_REGION,
 				env.AWS_BUCKET_IMAGE_PROFILE,
-				saveUrl,
-				blob
+				savePath,
+				undefined
 			);
 			if (isSuccessUpload) {
 				// 3. Save image URL to DB
 				await dbUserProfileImageUpdate({
 					userId: user.id,
-					image: '/' + saveUrl
+					image: '/profile/' + savePath
 				});
 			}
 		}

@@ -3,7 +3,7 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
 import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
-import { fileUpload } from '$lib/utilities/server/file';
+import { uploadFile } from '$lib/utilities/server/file';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { schema } from '$lib/validation/schema/profile-image-update';
 
@@ -35,8 +35,15 @@ export const actions = {
 		const extension = imageMIMEextension[image.type as keyof typeof imageMIMEextension];
 
 		// Upload image to Amazon S3
-		const saveUrl = `profile/${userId}/profile-image-${cacheRefresh}.${extension}`;
-		const isSuccessUpload = await fileUpload(env.AWS_REGION, env.AWS_BUCKET_IMAGE_PROFILE, saveUrl, image);
+		const savePath = `${userId}/profile-image-${cacheRefresh}.${extension}`;
+		const { isSuccessUpload } = await uploadFile(
+			image,
+			image.type,
+			env.AWS_REGION,
+			env.AWS_BUCKET_IMAGE_PROFILE,
+			savePath,
+			undefined
+		);
 		if (!isSuccessUpload) {
 			return error(500, { message: "Can't upload profile image. Please contact us." });
 		}
@@ -44,7 +51,7 @@ export const actions = {
 		// Save image URL to DB
 		const { dbError } = await dbUserProfileImageUpdate({
 			userId: userId,
-			image: '/' + saveUrl
+			image: '/profile/' + savePath
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });
