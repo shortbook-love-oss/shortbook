@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbBookList } from '$lib/model/book/list';
-import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
+import { dbBookList } from '$lib-backend/model/book/list';
+import { dbUserGetByKeyName } from '$lib-backend/model/user/get-by-key-name';
 import { type BookItem, contentsToMarkdown, getBookCover } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 

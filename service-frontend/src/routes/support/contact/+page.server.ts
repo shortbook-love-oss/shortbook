@@ -2,18 +2,18 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbLogActionCreate } from '$lib/model/log/action-create';
-import { dbLogActionList } from '$lib/model/log/action-list';
-import { dbTicketCreate } from '$lib/model/support/ticket-create';
-import { encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
-import { sendEmail } from '$lib/utilities/server/email';
-import { uploadFile } from '$lib/utilities/server/file';
-import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib/utilities/server/log-action';
+import { dbLogActionCreate } from '$lib-backend/model/log/action-create';
+import { dbLogActionList } from '$lib-backend/model/log/action-list';
+import { dbTicketCreate } from '$lib-backend/model/support/ticket-create';
 import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
 import { escapeHTML } from '$lib/utilities/html';
 import { getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/support/ticket-create';
+import { uploadFile } from '$lib-backend/utilities/infrastructure/file';
+import { encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
+import { sendEmail } from '$lib-backend/utilities/email';
+import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib-backend/utilities/log-action';
 
 export const load = async ({ url, getClientAddress }) => {
 	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);

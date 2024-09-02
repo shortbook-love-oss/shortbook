@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbBookGet } from '$lib/model/book/get';
-import { dbBookBuyGet } from '$lib/model/book-buy/get';
-import { dbCurrencyRateGet } from '$lib/model/currency/get';
-import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
-import { dbUserPointList } from '$lib/model/user/point/list';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
+import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
+import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
+import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import {
 	defaultCurrency,

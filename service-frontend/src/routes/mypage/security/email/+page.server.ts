@@ -2,15 +2,11 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbLogActionCreate } from '$lib/model/log/action-create';
-import { dbLogActionList } from '$lib/model/log/action-list';
-import { dbUserProfileGet } from '$lib/model/user/profile/get';
-import { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
-import { dbVerificationTokenCreate } from '$lib/model/verification-token/create';
-import { decryptFromFlat, encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
-import { sendEmail, toHashUserEmail } from '$lib/utilities/server/email';
-import { changeEmailLogActionName, changeEmailRateLimit } from '$lib/utilities/server/log-action';
-import { emailChangeTokenName } from '$lib/utilities/server/verification-token';
+import { dbLogActionCreate } from '$lib-backend/model/log/action-create';
+import { dbLogActionList } from '$lib-backend/model/log/action-list';
+import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
+import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash';
+import { dbVerificationTokenCreate } from '$lib-backend/model/verification-token/create';
 import { matchSigninProvider, signInEmailLinkMethod } from '$lib/utilities/signin';
 import {
 	emailChangeTokenParam,
@@ -18,6 +14,10 @@ import {
 	setLanguageTagToPath
 } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user/email-update';
+import { decryptFromFlat, encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
+import { sendEmail, toHashUserEmail } from '$lib-backend/utilities/email';
+import { changeEmailLogActionName, changeEmailRateLimit } from '$lib-backend/utilities/log-action';
+import { emailChangeTokenName } from '$lib-backend/utilities/verification-token';
 
 export const load = async ({ locals }) => {
 	const userId = locals.session?.user?.id;

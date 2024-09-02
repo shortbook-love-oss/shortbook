@@ -1,22 +1,22 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookGet } from '$lib/model/book/get';
-import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
-import { dbBookBuyGet } from '$lib/model/book-buy/get';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib-backend/model/book-buy/create';
+import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
 import {
 	dbUserPointCreate,
 	type DbUserPaymentCheckoutCreateRequest
-} from '$lib/model/user/point/create';
-import { dbUserPaymentContractCreate } from '$lib/model/user/payment-contract/create';
-import { dbUserPaymentSettingUpsert } from '$lib/model/user/payment-setting/upsert';
-import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
-import { checkPaymentStatus } from '$lib/utilities/server/payment';
+} from '$lib-backend/model/user/point/create';
+import { dbUserPaymentContractCreate } from '$lib-backend/model/user/payment-contract/create';
+import { dbUserPaymentSettingUpsert } from '$lib-backend/model/user/payment-setting/upsert';
 import {
 	getLanguageTagFromUrl,
 	paymentBookInfoParam,
 	paymentSessionIdParam,
 	setLanguageTagToPath
 } from '$lib/utilities/url';
+import { decryptFromFlat, encryptAndFlat } from '$lib-backend/utilities/crypto';
+import { checkPaymentStatus } from '$lib-backend/utilities/payment';
 
 export const load = async ({ url }) => {
 	const requestLang = getLanguageTagFromUrl(url);

@@ -9,7 +9,6 @@ services:
     tty: true
     depends_on:
       - database
-      - cache
     ports:
       - 55021:3000 # for build
       - 55022:5173 # for dev
@@ -25,7 +24,10 @@ services:
         target: /home/node
       - type: bind
         source: ../lib-frontend
-        target: /home/node/lib
+        target: /home/node/lib-frontend
+      - type: bind
+        source: ../lib-backend
+        target: /home/node/lib-backend
   database:
     container_name: database
     env_file: ../database/.env
@@ -47,7 +49,7 @@ services:
   cache:
     container_name: cache
     image: amazon/dynamodb-local:latest
-    command: ['-jar', 'DynamoDBLocal.jar', '-sharedDb', '-dbPath', './data']
+    command: [ '-jar', 'DynamoDBLocal.jar', '-sharedDb', '-dbPath', './data' ]
     ports:
       - 55025:8000
     networks:

@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { dbBookList } from '$lib/model/book/list';
-import { dbUserProfileGet } from '$lib/model/user/profile/get';
+import { dbBookList } from '$lib-backend/model/book/list';
+import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { getBookCover, type MyBookItem } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 

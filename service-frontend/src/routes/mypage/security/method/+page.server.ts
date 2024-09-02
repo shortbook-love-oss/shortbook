@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { dbUserSessionGet } from '$lib/model/user/session/get';
+import { dbUserSessionGet } from '$lib-backend/model/user/session/get';
 import { getSessionToken } from '$lib/utilities/cookie';
 import { signInProviders } from '$lib/utilities/signin';
 

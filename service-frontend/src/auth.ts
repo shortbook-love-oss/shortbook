@@ -11,16 +11,16 @@ import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbUserProfileCreate } from '$lib/model/user/profile/create';
-import { dbUserRestore } from '$lib/model/user/restore';
-import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
-import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
-import prisma from '$lib/prisma/connect';
-import { encryptAndFlat } from '$lib/utilities/server/crypto';
-import { sendEmail, toHashUserEmail } from '$lib/utilities/server/email';
-import { uploadFile } from '$lib/utilities/server/file';
+import { dbUserProfileCreate } from '$lib-backend/model/user/profile/create';
+import { dbUserRestore } from '$lib-backend/model/user/restore';
+import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
+import { dbUserProvideDataUpdate } from '$lib-backend/model/user/update-provide-data';
+import prisma from '$lib-backend/database/connect';
+import { uploadFile } from '$lib-backend/utilities/infrastructure/file';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { matchSigninProvider } from '$lib/utilities/signin';
+import { encryptAndFlat } from '$lib-backend/utilities/crypto';
+import { sendEmail, toHashUserEmail } from '$lib-backend/utilities/email';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -113,19 +113,26 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	// Upload profile image using in external service CDN
 	if (user.id && user.image?.startsWith('https://')) {
 		// 1. Fetch from external service CDN
-		const blob = await fetch(user.image, { mode: 'no-cors' })
-			.then((res) => res.blob())
-			.then((blob) => blob)
+		let contentType = '';
+		const image = await fetch(user.image, { mode: 'no-cors' })
+			.then(async (res) => {
+				if (res.status === 200) {
+					contentType = res.headers.get('Content-Type') ?? '';
+					return new Uint8Array(await res.arrayBuffer());
+				} else {
+					return null;
+				}
+			})
 			.catch(() => undefined);
 
-		if (blob) {
+		if (image) {
 			const cacheRefresh = Date.now().toString(36);
-			const extension = imageMIMEextension[blob.type as keyof typeof imageMIMEextension];
+			const extension = imageMIMEextension[contentType as keyof typeof imageMIMEextension];
 			// 2. Upload image to Amazon S3
 			const savePath = `${user.id}/profile-image-${cacheRefresh}.${extension}`;
 			const { isSuccessUpload } = await uploadFile(
-				blob,
-				blob.type,
+				image,
+				contentType,
 				env.AWS_DEFAULT_REGION,
 				env.AWS_BUCKET_IMAGE_PROFILE,
 				savePath,

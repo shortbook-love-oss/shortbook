@@ -6,7 +6,7 @@ import Icons from 'unplugin-icons/vite';
 
 export default defineConfig({
 	plugins: [
-		paraglide({ project: './lib/i18n/project.inlang', outdir: './lib/i18n/paraglide' }),
+		paraglide({ project: './lib-frontend/i18n/project.inlang', outdir: './lib-frontend/i18n/paraglide' }),
 		sveltekit(),
 		Icons({ compiler: 'svelte' })
 	],

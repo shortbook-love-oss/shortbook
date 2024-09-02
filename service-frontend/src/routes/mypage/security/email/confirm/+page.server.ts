@@ -1,16 +1,16 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbUserGetByEmailHash } from '$lib/model/user/get-by-email-hash';
-import { dbUserProvideDataUpdate } from '$lib/model/user/update-provide-data';
-import { dbVerificationTokenDelete } from '$lib/model/verification-token/delete';
-import { dbVerificationTokenGet } from '$lib/model/verification-token/get';
-import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
-import { toHashUserEmail } from '$lib/utilities/server/email';
-import { changeCustomerEmail } from '$lib/utilities/server/payment';
-import { emailChangeTokenName } from '$lib/utilities/server/verification-token';
+import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash';
+import { dbUserProvideDataUpdate } from '$lib-backend/model/user/update-provide-data';
+import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token/delete';
+import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
 import { signInEmailLinkMethod } from '$lib/utilities/signin';
 import { emailChangeTokenParam, setLanguageTagToPath } from '$lib/utilities/url';
-import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
+import { dbUserPaymentContractGet } from '$lib-backend/model/user/payment-contract/get';
+import { decryptFromFlat, encryptAndFlat } from '$lib-backend/utilities/crypto';
+import { toHashUserEmail } from '$lib-backend/utilities/email';
+import { changeCustomerEmail } from '$lib-backend/utilities/payment';
+import { emailChangeTokenName } from '$lib-backend/utilities/verification-token';
 
 export const load = async ({ url, locals }) => {
 	const userId = locals.session?.user?.id;

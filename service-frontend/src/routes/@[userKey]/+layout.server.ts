@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
+import { dbUserGetByKeyName } from '$lib-backend/model/user/get-by-key-name';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, params, locals }) => {

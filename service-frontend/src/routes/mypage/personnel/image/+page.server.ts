@@ -2,10 +2,10 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
-import { uploadFile } from '$lib/utilities/server/file';
+import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { schema } from '$lib/validation/schema/profile-image-update';
+import { uploadFile } from '$lib-backend/utilities/infrastructure/file';
 
 export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
