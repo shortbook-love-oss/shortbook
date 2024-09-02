@@ -1,12 +1,15 @@
+import sharp from 'sharp';
 import { env } from '$env/dynamic/private';
-import type { StorageBucket } from '$lib/utilities/server/file';
-import type { ImageBucketTransferKey } from '$lib/utilities/file';
+import { getFile, uploadFile, type StorageBucket } from '$lib/utilities/server/file';
+import { imageMIMEextension, type ImageBucketTransferKey } from '$lib/utilities/file';
 import {
 	allowedFromExtensions,
 	allowedResizeFit,
 	allowedSize,
 	allowedToExtensions,
-	type ImageConvertOption
+	vectorFileExtensions,
+	type ImageConvertOption,
+	type VectorFileExtension
 } from '$lib/utilities/image';
 
 export const cdnTransferIndex: Record<ImageBucketTransferKey, StorageBucket> = {
@@ -76,4 +79,110 @@ export function isValidDistributionRequest(req: ImageConvertOption | null) {
 	}
 
 	return true;
+}
+
+type ResponseConvertAndSaveSuccess = {
+	image: Uint8Array;
+	contentType: string;
+	errorMessage?: never;
+};
+type ResponseConvertAndSaveError = {
+	image?: never;
+	contentType?: never;
+	errorMessage: string;
+};
+
+export async function convertAndSave(
+	reqOption: ImageConvertOption
+): Promise<ResponseConvertAndSaveSuccess | ResponseConvertAndSaveError> {
+	const transfer = cdnTransferIndex[reqOption.transferKey];
+	const isFromVector = vectorFileExtensions.includes(
+		reqOption.fromExtension as VectorFileExtension
+	);
+	const isToVector = vectorFileExtensions.includes(reqOption.toExtension as VectorFileExtension);
+
+	// Get the source image
+	const {
+		file,
+		contentType,
+		error: getFileError
+	} = await getFile(
+		env.AWS_REGION,
+		transfer.storageBucketName,
+		`${reqOption.prefix}/${reqOption.imageName}.${reqOption.fromExtension}`
+	);
+	if (getFileError || !file?.byteLength) {
+		return { errorMessage: "Can't find original image." };
+	}
+	if (!Object.keys(imageMIMEextension).includes(contentType)) {
+		return { errorMessage: 'The specified file is unsupported content type.' };
+	}
+
+	let imageBuffer;
+	if (isFromVector && isToVector) {
+		imageBuffer = file;
+	} else {
+		let image = sharp(file);
+		if ((reqOption.width || reqOption.height) && !isFromVector) {
+			image = image.resize({
+				width: reqOption.width || undefined,
+				height: reqOption.height || undefined,
+				fit: reqOption.fit
+			});
+		}
+		switch (reqOption.toExtension) {
+			case 'jpg':
+			case 'jpeg':
+				if (!['jpg', 'jpeg'].includes(reqOption.fromExtension) || reqOption.quality !== 100) {
+					image = image.jpeg({ quality: reqOption.quality, progressive: true });
+				}
+				break;
+			case 'png':
+				if (reqOption.fromExtension !== 'png' || reqOption.quality !== 100) {
+					image = image.png({ quality: reqOption.quality, progressive: true });
+				}
+				break;
+			case 'gif':
+				if (reqOption.fromExtension !== 'gif') {
+					image = image.gif();
+				}
+				break;
+			case 'webp':
+				if (reqOption.fromExtension !== 'webp' || reqOption.quality !== 100) {
+					image = image.webp({ quality: reqOption.quality });
+				}
+				break;
+			case 'avif':
+				if (reqOption.fromExtension !== 'avif' || reqOption.quality !== 100) {
+					image = image.avif({ quality: reqOption.quality });
+				}
+				break;
+		}
+		if (isToVector) {
+			imageBuffer = await image.toBuffer();
+		} else {
+			imageBuffer = await image.rotate().keepIccProfile().toBuffer();
+		}
+	}
+
+	// Save the resized object to S3 bucket with appropriate object key.
+	const optionParam = new URLSearchParams();
+	optionParam.set('ext', reqOption.toExtension);
+	optionParam.set('w', String(reqOption.width));
+	optionParam.set('h', String(reqOption.height));
+	optionParam.set('fit', reqOption.fit);
+	optionParam.set('q', String(reqOption.quality));
+	const { error: uploadFileError } = await uploadFile(
+		imageBuffer,
+		contentType,
+		transfer.storageCdnRegion,
+		transfer.storageCdnBucketName,
+		`${reqOption.prefix}/${optionParam.toString()}/${reqOption.imageName}.${reqOption.toExtension}`,
+		`max-age=${86400 * 14}`
+	);
+	if (uploadFileError) {
+		return { errorMessage: 'Exception while saving resized image.' };
+	}
+
+	return { image: imageBuffer, contentType };
 }
