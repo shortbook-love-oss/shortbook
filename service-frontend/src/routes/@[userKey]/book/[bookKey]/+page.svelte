@@ -27,7 +27,7 @@
 		<div class="max-w-full">
 			<a href="/@{data.bookDetail.userKeyName}" class="peer mb-2 inline-block">
 				<img
-					src="{data.bookDetail.userImage}?w=64&h=64&fit=cover"
+					src="{data.bookDetail.userImage}?ext=jpg&w=64&h=64&q=80"
 					alt="{data.bookDetail.penName} profile icon"
 					class="h-16 w-16 rounded bg-white align-middle"
 				/>

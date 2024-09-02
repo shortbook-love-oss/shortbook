@@ -19,9 +19,9 @@
 			class="peer shrink-0"
 		>
 			<img
-				src="{imageSrc}?w=64&h=64&fit=cover"
-				class="h-16 w-16 rounded-md bg-white"
+				src="{imageSrc}?ext=jpg&w=64&h=64&q=80"
 				alt="Profile icon"
+				class="h-16 w-16 rounded-md bg-white"
 			/>
 		</svelte:element>
 	{/if}

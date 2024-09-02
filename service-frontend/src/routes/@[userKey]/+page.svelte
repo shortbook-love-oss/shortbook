@@ -27,7 +27,7 @@
 				</p>
 			{/if}
 			<img
-				src="{data.user.image}?w=128&h=128&fit=cover"
+				src="{data.user.image}?ext=jpg&w=128&h=128&q=100"
 				class="mb-4 h-32 w-32 rounded-md bg-white"
 				alt="{data.profileLang?.headline} profile image"
 			/>

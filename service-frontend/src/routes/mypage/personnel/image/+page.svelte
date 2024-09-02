@@ -14,17 +14,17 @@
 <h1 class="mb-4 text-2xl font-semibold">Change profile image</h1>
 <div class="mb-8 flex flex-wrap items-start gap-4">
 	<img
-		src="{user?.image}?w=128&h=128&fit=cover"
+		src="{user?.image}?ext=jpg&w=128&h=128&q=100"
 		class="h-32 w-32 rounded-md bg-white"
 		alt="Profile icon"
 	/>
 	<img
-		src="{user?.image}?w=64&h=64&fit=cover"
+		src="{user?.image}?ext=jpg&w=64&h=64&q=100"
 		class="h-16 w-16 rounded-md bg-white"
 		alt="Profile icon"
 	/>
 	<img
-		src="{user?.image}?w=32&h=32&fit=cover"
+		src="{user?.image}?ext=jpg&w=32&h=32&q=100"
 		class="h-8 w-8 rounded-md bg-white"
 		alt="Profile icon"
 	/>
