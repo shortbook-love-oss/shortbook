@@ -46,7 +46,7 @@ export async function getFile(region: string, bucketName: string, filePath: stri
 }
 
 export async function uploadFile(
-	file: Blob | Buffer | Uint8Array,
+	file: Uint8Array,
 	contentType: string,
 	region: string,
 	bucketName: string,

@@ -82,15 +82,15 @@ export const actions = {
 		const filesKey = getRandom(32);
 		for (const file of form.data.files ?? []) {
 			const saveFilePath = `${filesKey}/${file.name.replace('/', '')}`;
-			const { isSuccessUpload } = await uploadFile(
-				file,
+			const { isSuccessUpload, error: uploadFileError } = await uploadFile(
+				new Uint8Array(await file.arrayBuffer()),
 				file.type,
 				env.AWS_REGION,
 				env.AWS_BUCKET_SUPPORT_TICKET_ATTACH,
 				saveFilePath,
 				undefined
 			);
-			if (!isSuccessUpload) {
+			if (uploadFileError || !isSuccessUpload) {
 				return error(500, { message: "Can't upload profile image. Please contact us." });
 			}
 			// Save as decoded (=original) URL string

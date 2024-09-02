@@ -35,16 +35,16 @@ export const actions = {
 		const extension = imageMIMEextension[image.type as keyof typeof imageMIMEextension];
 
 		// Upload image to Amazon S3
-		const savePath = `${userId}/profile-image-${cacheRefresh}.${extension}`;
-		const { isSuccessUpload } = await uploadFile(
-			image,
+		const savePath = `${userId}/${cacheRefresh}.${extension}`;
+		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
+			new Uint8Array(await image.arrayBuffer()),
 			image.type,
 			env.AWS_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,
 			savePath,
 			undefined
 		);
-		if (!isSuccessUpload) {
+		if (uploadFileError || !isSuccessUpload) {
 			return error(500, { message: "Can't upload profile image. Please contact us." });
 		}
 
