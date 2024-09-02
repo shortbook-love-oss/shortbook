@@ -107,7 +107,7 @@ export async function convertAndSave(
 		contentType,
 		error: getFileError
 	} = await getFile(
-		env.AWS_REGION,
+		env.AWS_DEFAULT_REGION,
 		transfer.storageBucketName,
 		`${reqOption.prefix}/${reqOption.imageName}.${reqOption.fromExtension}`
 	);

@@ -126,7 +126,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 			const { isSuccessUpload } = await uploadFile(
 				blob,
 				blob.type,
-				env.AWS_REGION,
+				env.AWS_DEFAULT_REGION,
 				env.AWS_BUCKET_IMAGE_PROFILE,
 				savePath,
 				undefined

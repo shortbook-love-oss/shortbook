@@ -39,7 +39,7 @@ export const actions = {
 		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
 			new Uint8Array(await image.arrayBuffer()),
 			image.type,
-			env.AWS_REGION,
+			env.AWS_DEFAULT_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,
 			savePath,
 			undefined
