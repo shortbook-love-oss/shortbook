@@ -37,4 +37,5 @@ export function guessImageTypeByUrl(imageUrl: string) {
 			}
 		}
 	}
+	return undefined;
 }
