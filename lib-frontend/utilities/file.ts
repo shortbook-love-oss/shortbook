@@ -9,9 +9,6 @@ export interface SelectedFile {
 	key: number;
 }
 
-export const imageBucketTransferKeys = ['profile', 'book-cover', 'ogp', 'user-asset'] as const;
-export type ImageBucketTransferKey = (typeof imageBucketTransferKeys)[number];
-
 export const imageMIMEextension: Record<string, string> = {
 	'image/png': 'png',
 	'image/jpeg': 'jpg',
