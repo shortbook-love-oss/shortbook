@@ -60,6 +60,24 @@ services:
       - type: bind
         source: ../cache/.data
         target: /home/dynamodblocal/data
+  infra-image-cdn:
+    container_name: infra-image-cdn
+    build:
+      context: ../
+      dockerfile: ./infrastructure/image-cdn/Dockerfile
+    tty: true
+    networks:
+      - external
+    volumes:
+      - type: volume
+        source: infra-image-cdn
+        target: /home/node
+      - type: bind
+        source: ../infrastructure/image-cdn
+        target: /home/node
+      - type: bind
+        source: ../lib-backend/utilities/infrastructure
+        target: /home/node/lib-backend/utilities/infrastructure
 networks:
   external:
     driver: bridge
@@ -71,3 +89,4 @@ volumes:
   service-frontend:
   database:
   cache:
+  infra-image-cdn:

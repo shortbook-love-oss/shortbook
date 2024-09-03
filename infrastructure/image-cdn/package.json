@@ -1,0 +1,30 @@
+{
+  "name": "image-cdn",
+  "version": "1.0.0",
+  "bin": {
+    "image-cdn": "bin/app.js"
+  },
+  "scripts": {
+    "prebuild": "./prebuild.sh",
+    "build": "tsc",
+    "help": "tsc --help",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/jest": "^29.5.12",
+    "@types/node": "20.16.3",
+    "esbuild": "^0.23.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "~5.5.4"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.155.0",
+    "constructs": "^10.3.0"
+  }
+}
