@@ -10,7 +10,7 @@ import { getRandom } from '$lib/utilities/crypto';
 import { escapeHTML } from '$lib/utilities/html';
 import { getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/support/ticket-create';
-import { uploadFile } from '$lib-backend/utilities/infrastructure/file';
+import { uploadFile } from '$lib-backend/utilities/file';
 import { encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
 import { sendEmail } from '$lib-backend/utilities/email';
 import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib-backend/utilities/log-action';

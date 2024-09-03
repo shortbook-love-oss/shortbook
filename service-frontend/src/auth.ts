@@ -16,7 +16,7 @@ import { dbUserRestore } from '$lib-backend/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib-backend/model/user/update-provide-data';
 import prisma from '$lib-backend/database/connect';
-import { uploadFile } from '$lib-backend/utilities/infrastructure/file';
+import { uploadFile } from '$lib-backend/utilities/file';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { matchSigninProvider } from '$lib/utilities/signin';
 import { encryptAndFlat } from '$lib-backend/utilities/crypto';

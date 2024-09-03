@@ -5,7 +5,7 @@ import { env } from '$env/dynamic/private';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { schema } from '$lib/validation/schema/profile-image-update';
-import { uploadFile } from '$lib-backend/utilities/infrastructure/file';
+import { uploadFile } from '$lib-backend/utilities/file';
 
 export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
