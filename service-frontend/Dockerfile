@@ -1,5 +1,5 @@
 # Debian 12 Node.js
-FROM node:22.6.0-bookworm-slim AS base
+FROM node:22.7.0-bookworm-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl
 
@@ -39,7 +39,7 @@ RUN cd ../ \
   && cd install \
   && npm ci --omit=dev
 
-COPY ./lib-frontend/prisma/schema.prisma ../install/lib-frontend/prisma/schema.prisma
+COPY ./lib-backend/database/schema.prisma ../install/lib-backend/database/schema.prisma
 
 RUN cd ../install && npm run schema-generate
 
@@ -55,7 +55,7 @@ COPY ./lib-backend ./lib-backend
 # Production-setting build
 RUN npm run build
 
-FROM --platform=linux/arm64 node:22.6.0-bookworm-slim AS prd
+FROM --platform=linux/arm64 node:22.7.0-bookworm-slim AS prd
 
 RUN apt-get update -y \
   && apt-get install -y openssl \
