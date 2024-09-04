@@ -1,11 +1,12 @@
 import {
+	Duration,
 	Stack,
 	StackProps,
-	aws_s3,
-	aws_lambda,
+	aws_certificatemanager as aws_acm,
 	aws_cloudfront,
 	aws_cloudfront_origins,
-	aws_certificatemanager as aws_acm,
+	aws_lambda,
+	aws_s3,
 	aws_ssm
 } from 'aws-cdk-lib';
 import type { EdgeLambda, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
@@ -85,7 +86,12 @@ export class CloudFrontAssetsStack extends Stack {
 		const cacheQueryAllowList = ['ext', 'w', 'h', 'fit', 'q'];
 		const cachePolicy = new aws_cloudfront.CachePolicy(this, `${PREFIX}-cache-policy`, {
 			cachePolicyName: `${PREFIX}-cache-policy`,
-			queryStringBehavior: aws_cloudfront.CacheQueryStringBehavior.allowList(...cacheQueryAllowList)
+			minTtl: Duration.seconds(0),
+			defaultTtl: Duration.days(14),
+			maxTtl: Duration.days(14),
+			queryStringBehavior: aws_cloudfront.CacheQueryStringBehavior.allowList(...cacheQueryAllowList),
+			enableAcceptEncodingGzip: true,
+			enableAcceptEncodingBrotli: true
 		});
 
 		const transfer = {} as Record<`/${ImageBucketTransferKey}/*`, BehaviorOptions>;
