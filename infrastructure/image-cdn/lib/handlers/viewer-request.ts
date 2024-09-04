@@ -22,7 +22,7 @@ export const handler: Handler = async (event, context, callback) => {
 		const errorResponse = {
 			status: '500',
 			headers: {
-				'content-type': [{ key: 'Content-Type', value: 'text/plain' }]
+				'content-type': [{ key: 'content-type', value: 'text/plain' }]
 			},
 			body: errorMessage
 		};
@@ -38,7 +38,7 @@ export const handler: Handler = async (event, context, callback) => {
 		const errorResponse = {
 			status: '500',
 			headers: {
-				'content-type': [{ key: 'Content-Type', value: 'text/plain' }]
+				'content-type': [{ key: 'content-type', value: 'text/plain' }]
 			},
 			body: errorMessage
 		};

@@ -23,7 +23,7 @@ export async function convertAndSave(
 		const dataChunks: Buffer[] = [];
 		const req = https.request('https://shortbook.life/api/image/deliver', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' }
+			headers: { 'content-type': 'application/json' }
 		}, res => {
 			res.on('data', (chunk: Buffer) => {
 				dataChunks.push(chunk);

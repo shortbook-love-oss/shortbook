@@ -25,6 +25,6 @@ export async function POST({ request }) {
   }
 
   const response = new Response(image);
-  response.headers.set('Content-Type', contentType);
+  response.headers.set('content-type', contentType);
   return response;
 }

@@ -41,7 +41,7 @@ export const handler: Handler = async (event, context, callback) => {
 	response.status = 200;
 	response.body = Buffer.from(image).toString('base64');
 	response.bodyEncoding = 'base64';
-	response.headers['content-type'] = [{ key: 'Content-Type', value: contentType }];
+	response.headers['content-type'] = [{ key: 'content-type', value: contentType }];
 
 	callback(null, response);
 };

@@ -117,7 +117,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 		const image = await fetch(user.image, { mode: 'no-cors' })
 			.then(async (res) => {
 				if (res.status === 200) {
-					contentType = res.headers.get('Content-Type') ?? '';
+					contentType = res.headers.get('content-type') ?? res.headers.get('Content-Type') ?? '';
 					return new Uint8Array(await res.arrayBuffer());
 				} else {
 					return null;
