@@ -1,15 +1,15 @@
 import {
-	Duration,
-	Stack,
-	StackProps,
 	aws_certificatemanager as aws_acm,
 	aws_cloudfront,
 	aws_cloudfront_origins,
 	aws_lambda,
 	aws_s3,
-	aws_ssm
+	aws_ssm,
+	Duration,
+	Stack,
+	StackProps,
 } from 'aws-cdk-lib';
-import type { EdgeLambda, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
+import { type EdgeLambda, type BehaviorOptions, HttpVersion } from 'aws-cdk-lib/aws-cloudfront';
 import { Construct } from 'constructs';
 import { PREFIX } from './env';
 import type { ImageBucketTransferKey } from './option';
@@ -121,8 +121,10 @@ export class CloudFrontAssetsStack extends Stack {
 				defaultRootObject: 'index.html',
 				certificate: certificate,
 				domainNames: [params.cloudfront.route53RecordName],
+				httpVersion: HttpVersion.HTTP2_AND_3,
 				sslSupportMethod: aws_cloudfront.SSLMethod.SNI,
-				minimumProtocolVersion: aws_cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021
+				minimumProtocolVersion: aws_cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
+				comment: 'Image CDN'
 			}
 		);
 	}
