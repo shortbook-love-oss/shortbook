@@ -87,8 +87,7 @@ export const actions = {
 				file.type,
 				env.AWS_DEFAULT_REGION,
 				env.AWS_BUCKET_SUPPORT_TICKET_ATTACH,
-				saveFilePath,
-				undefined
+				saveFilePath
 			);
 			if (uploadFileError || !isSuccessUpload) {
 				return error(500, { message: "Can't upload profile image. Please contact us." });

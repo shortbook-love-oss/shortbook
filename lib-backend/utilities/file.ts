@@ -43,8 +43,7 @@ export async function uploadFile(
 	contentType: string,
 	region: string,
 	bucketName: string,
-	filePath: string,
-	cacheControl: string | undefined
+	filePath: string
 ) {
 	const s3 = new S3Client({
 		region,
@@ -64,8 +63,7 @@ export async function uploadFile(
 		Key: filePath,
 		Body: file,
 		ContentType: contentType,
-		ChecksumAlgorithm: 'SHA256',
-		CacheControl: cacheControl // e.g. "max-age=86400"
+		ChecksumAlgorithm: 'SHA256'
 	});
 	await s3
 		.send(command)

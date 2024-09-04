@@ -135,8 +135,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 				contentType,
 				env.AWS_DEFAULT_REGION,
 				env.AWS_BUCKET_IMAGE_PROFILE,
-				savePath,
-				undefined
+				savePath
 			);
 			if (isSuccessUpload) {
 				// 3. Save image URL to DB

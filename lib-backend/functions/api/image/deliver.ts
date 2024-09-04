@@ -181,8 +181,7 @@ export async function convertAndDeliver(
     contentType,
     env.AWS_DEFAULT_REGION,
     transfer.storageCdnBucketName,
-    `${reqOption.prefix}/${convertedImageName}/${optionParam.toString()}/${convertedImageName}`,
-    `max-age=${86400 * 14}`
+    `${reqOption.prefix}/${convertedImageName}/${optionParam.toString()}/${convertedImageName}`
   );
   if (uploadFileError) {
     return { errorMessage: 'Exception while saving resized image.' };

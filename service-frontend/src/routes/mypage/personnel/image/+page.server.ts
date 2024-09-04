@@ -41,8 +41,7 @@ export const actions = {
 			image.type,
 			env.AWS_DEFAULT_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,
-			savePath,
-			undefined
+			savePath
 		);
 		if (uploadFileError || !isSuccessUpload) {
 			return error(500, { message: "Can't upload profile image. Please contact us." });
