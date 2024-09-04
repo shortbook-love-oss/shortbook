@@ -15,13 +15,11 @@ import {
 	type ImageConvertOption,
 	type ImageDistributionOption,
 	type VectorFileExtension
-} from './option';
+} from '$lib-backend/utilities/infrastructure/image';
 
 export interface StorageBucket {
 	storageBucketName: string;
-	storageCdnRegion: string;
 	storageCdnBucketName: string;
-	storageCdnStorageClass: string;
 }
 
 export function decodeViewerRequestUri(uri: string) {

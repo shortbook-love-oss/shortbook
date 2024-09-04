@@ -1,4 +1,4 @@
-export const imageBucketTransferKeys = ['profile', 'book-cover', 'ogp', 'user-asset'] as const;
+export const imageBucketTransferKeys = ['profile', 'book-cover', 'ogp', 'user-album'] as const;
 export type ImageBucketTransferKey = (typeof imageBucketTransferKeys)[number];
 
 export interface ImageDistributionOption {
@@ -18,6 +18,20 @@ export interface ImageConvertOption extends ImageDistributionOption {
 
 export const vectorFileExtensions = ['svg'] as const;
 export type VectorFileExtension = (typeof vectorFileExtensions)[number];
+
+export const imageExtensionMIME: Record<string, string> = {
+  'png': 'image/png',
+  'jpg': 'image/jpeg',
+  'gif': 'image/gif',
+  'webp': 'image/webp',
+  'avif': 'image/avif',
+  'heic': 'image/heic',
+  'heif': 'image/heif',
+  'tiff': 'image/tiff',
+  'bmp': 'image/bmp',
+  'ico': 'image/x-icon',
+  'svg': 'image/svg+xml'
+};
 
 export const allowedToExtensions = [
   'jpg',

@@ -1,7 +1,10 @@
 'use strict';
 
 import type { Handler } from 'aws-lambda';
-import { allowedFromExtensions, imageBucketTransferKeys } from '../option';
+import {
+	allowedFromExtensions,
+	imageBucketTransferKeys
+} from '$lib-backend/utilities/infrastructure/image';
 import { decodeViewerRequestUri, optionToParam } from '../utilities';
 
 export const handler: Handler = async (event, context, callback) => {

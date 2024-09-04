@@ -1,7 +1,7 @@
 import { Environment } from 'aws-cdk-lib';
+import { ImageBucketTransferKey } from '$lib-backend/utilities/infrastructure/image';
 import { ICfAssetsStack } from './cloudfront-assets-stack';
 import { IAssetsLambdaEdgeStack } from './lambdaedge-stack';
-import { ImageBucketTransferKey } from './option';
 import { StorageBucket } from './utilities';
 
 export const PREFIX: string = 'shortbook-image-cdn-v____';
@@ -17,34 +17,26 @@ export const env = {
 	AWS_BUCKET_IMAGE_PROFILE: 'XXXXXX',
 	AWS_BUCKET_IMAGE_BOOK_COVER: 'XXXXXX',
 	AWS_BUCKET_IMAGE_OGP: 'XXXXXX',
-	AWS_BUCKET_IMAGE_USER_ASSET: 'XXXXXX'
+	AWS_BUCKET_IMAGE_USER_ALBUM: 'XXXXXX'
 }
 
 export const cdnTransferIndex: Record<ImageBucketTransferKey, StorageBucket> = {
-	profile: {
-		storageBucketName: env.AWS_BUCKET_IMAGE_PROFILE,
-		storageCdnRegion: 'eu-north-1', // Sweden
-		storageCdnBucketName: `${env.AWS_BUCKET_IMAGE_PROFILE}-cdn--eun1-az3--x-s3`, // AZ-3
-		storageCdnStorageClass: 'EXPRESS_ONEZONE' // <10 ms latency
-	},
-	'book-cover': {
-		storageBucketName: env.AWS_BUCKET_IMAGE_BOOK_COVER,
-		storageCdnRegion: 'eu-north-1', // Sweden
-		storageCdnBucketName: `${env.AWS_BUCKET_IMAGE_BOOK_COVER}-cdn--eun1-az2--x-s3`, // AZ-2
-		storageCdnStorageClass: 'EXPRESS_ONEZONE'
-	},
-	ogp: {
-		storageBucketName: env.AWS_BUCKET_IMAGE_OGP,
-		storageCdnRegion: 'eu-north-1', // Sweden
-		storageCdnBucketName: `${env.AWS_BUCKET_IMAGE_OGP}-cdn--eun1-az1--x-s3`, // AZ-1
-		storageCdnStorageClass: 'EXPRESS_ONEZONE'
-	},
-	'user-asset': {
-		storageBucketName: env.AWS_BUCKET_IMAGE_USER_ASSET,
-		storageCdnRegion: 'eu-north-1', // Sweden
-		storageCdnBucketName: `${env.AWS_BUCKET_IMAGE_USER_ASSET}-cdn--eun1-az2--x-s3`, // AZ-2
-		storageCdnStorageClass: 'EXPRESS_ONEZONE'
-	}
+  profile: {
+    storageBucketName: env.AWS_BUCKET_IMAGE_PROFILE,
+    storageCdnBucketName: `${env.AWS_BUCKET_IMAGE_PROFILE}-cdn`
+  },
+  'book-cover': {
+    storageBucketName: env.AWS_BUCKET_IMAGE_BOOK_COVER,
+    storageCdnBucketName: `${env.AWS_BUCKET_IMAGE_BOOK_COVER}-cdn`
+  },
+  ogp: {
+    storageBucketName: env.AWS_BUCKET_IMAGE_OGP,
+    storageCdnBucketName: `${env.AWS_BUCKET_IMAGE_OGP}-cdn`
+  },
+  'user-album': {
+    storageBucketName: env.AWS_BUCKET_IMAGE_USER_ALBUM,
+    storageCdnBucketName: `${env.AWS_BUCKET_IMAGE_USER_ALBUM}-cdn`
+  }
 } as const;
 
 export const cfAssetsParams: ICfAssetsStack = {

@@ -11,8 +11,8 @@ import {
 } from 'aws-cdk-lib';
 import { type EdgeLambda, type BehaviorOptions, HttpVersion } from 'aws-cdk-lib/aws-cloudfront';
 import { Construct } from 'constructs';
+import type { ImageBucketTransferKey } from '$lib-backend/utilities/infrastructure/image';
 import { PREFIX } from './env';
-import type { ImageBucketTransferKey } from './option';
 import { StorageBucket } from './utilities';
 
 export interface ICfAssetsStack {

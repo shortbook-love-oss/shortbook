@@ -1,7 +1,10 @@
 'use strict';
 
 import https from "https";
-import { imageExtensionMIME, type ImageConvertOption } from './option';
+import {
+	imageExtensionMIME,
+	type ImageConvertOption
+} from '$lib-backend/utilities/infrastructure/image';
 
 type ResponseConvertAndSaveSuccess = {
 	image: Uint8Array;
