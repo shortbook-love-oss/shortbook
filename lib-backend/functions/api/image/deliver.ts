@@ -84,7 +84,7 @@ type ResponseConvertAndSaveError = {
   errorMessage: string;
 };
 
-export async function convertAndSave(
+export async function convertAndDeliver(
   reqOption: ImageConvertOption
 ): Promise<ResponseConvertAndSaveSuccess | ResponseConvertAndSaveError> {
   const transfer = cdnTransferIndex[reqOption.transferKey];
@@ -93,18 +93,36 @@ export async function convertAndSave(
   );
   const isToVector = vectorFileExtensions.includes(reqOption.toExtension as VectorFileExtension);
 
-  // Get the source image
+  const optionParam = new URLSearchParams();
+  optionParam.set('ext', reqOption.toExtension);
+  optionParam.set('w', String(reqOption.width));
+  optionParam.set('h', String(reqOption.height));
+  optionParam.set('fit', reqOption.fit);
+  optionParam.set('q', String(reqOption.quality));
+
+  // Get the converted file first, because it's faster
+  const convertedImageName = `${reqOption.imageName}.${reqOption.toExtension}`;
   const {
-    file,
-    contentType,
-    error: getFileError
+    file: convertedImage,
+    contentType: convertedType,
+    error: getConvertedError
   } = await getFile(
+    env.AWS_DEFAULT_REGION,
+    transfer.storageCdnBucketName,
+    `${reqOption.prefix}/${convertedImageName}/${optionParam.toString()}/${convertedImageName}`
+  );
+  if (convertedImage && convertedType && !getConvertedError) {
+    return { image: convertedImage, contentType: convertedType };
+  }
+
+  // Get the source image
+  const { file, contentType, error: getFileError } = await getFile(
     env.AWS_DEFAULT_REGION,
     transfer.storageBucketName,
     `${reqOption.prefix}/${reqOption.imageName}.${reqOption.fromExtension}`
   );
   if (getFileError || !file?.byteLength) {
-    return { errorMessage: "Can't find original image." };
+    return { errorMessage: 'Original image not found.' };
   }
 
   let imageBuffer;
@@ -154,19 +172,16 @@ export async function convertAndSave(
     }
   }
 
-  // Save the resized object to S3 bucket with appropriate object key.
-  const optionParam = new URLSearchParams();
-  optionParam.set('ext', reqOption.toExtension);
-  optionParam.set('w', String(reqOption.width));
-  optionParam.set('h', String(reqOption.height));
-  optionParam.set('fit', reqOption.fit);
-  optionParam.set('q', String(reqOption.quality));
+  // Save the resized object to S3 bucket with appropriate object key
+  // Object key contains the filename twice
+  // First: To list all variants of the same file name
+  // Second: To specify the download file name
   const { error: uploadFileError } = await uploadFile(
     imageBuffer,
     contentType,
     env.AWS_DEFAULT_REGION,
     transfer.storageCdnBucketName,
-    `${reqOption.prefix}/${optionParam.toString()}/${reqOption.imageName}.${reqOption.toExtension}`,
+    `${reqOption.prefix}/${convertedImageName}/${optionParam.toString()}/${convertedImageName}`,
     `max-age=${86400 * 14}`
   );
   if (uploadFileError) {

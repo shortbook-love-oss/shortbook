@@ -1,5 +1,8 @@
 import { error } from '@sveltejs/kit';
-import { convertAndSave, isValidDistributionRequest } from '$lib-backend/functions/api/image/deliver';
+import {
+  convertAndDeliver,
+  isValidDistributionRequest
+} from '$lib-backend/functions/api/image/deliver';
 import {
   vectorFileExtensions,
   type ImageConvertOption,
@@ -19,7 +22,7 @@ export async function POST({ request }) {
     return error(400, { message: "Can't convert raster to vector." });
   }
 
-  const { image, contentType, errorMessage } = await convertAndSave(reqOption);
+  const { image, contentType, errorMessage } = await convertAndDeliver(reqOption);
   if (!image || !contentType || errorMessage) {
     return error(500, { message: errorMessage ?? '' });
   }

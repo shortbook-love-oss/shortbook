@@ -19,7 +19,7 @@ export async function getFile(region: string, bucketName: string, filePath: stri
 
 	let file: Uint8Array | undefined;
 	let contentType = '';
-	let error;
+	let error: Error | undefined;
 
 	const command = new GetObjectCommand({
 		Bucket: bucketName,
