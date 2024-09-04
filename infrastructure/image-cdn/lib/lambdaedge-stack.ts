@@ -1,4 +1,12 @@
-import { Stack, StackProps, aws_lambda, Duration, aws_iam } from 'aws-cdk-lib';
+import {
+	aws_iam,
+	aws_lambda,
+	aws_logs,
+	Duration,
+	RemovalPolicy,
+	Stack,
+	StackProps
+} from 'aws-cdk-lib';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import { CrossRegionParam } from './cross-region-param';
@@ -34,6 +42,13 @@ export class AssetsNodeLambdaEdgeStack extends Stack {
 	constructor(scope: Construct, id: string, params: IAssetsLambdaEdgeStack, props?: StackProps) {
 		super(scope, id, props);
 
+		const logGroup = new aws_logs.LogGroup(this, `${PREFIX}-log-group`, {
+			logGroupName: `${PREFIX}-log-group`,
+			retention: aws_logs.RetentionDays.THREE_DAYS,
+			logGroupClass: aws_logs.LogGroupClass.INFREQUENT_ACCESS,
+			removalPolicy: RemovalPolicy.DESTROY
+		});
+
 		const role = new aws_iam.Role(this, 'lambdaRole', {
 			roleName: `${PREFIX}-edge-node-role`,
 			assumedBy: new aws_iam.CompositePrincipal(
@@ -63,11 +78,16 @@ export class AssetsNodeLambdaEdgeStack extends Stack {
 		});
 
 		const edgeViewerRequest = new NodejsFunction(this, `${PREFIX}-edge-viewer-request`, {
+			functionName: `${PREFIX}-edge-viewer-request`,
 			entry: 'lib/handlers/viewer-request.ts',
 			runtime: aws_lambda.Runtime.NODEJS_20_X,
+			architecture: aws_lambda.Architecture.X86_64,
 			memorySize: 128,
 			timeout: Duration.seconds(5),
-			architecture: aws_lambda.Architecture.X86_64,
+			logGroup,
+			loggingFormat: aws_lambda.LoggingFormat.JSON,
+			applicationLogLevelV2: aws_lambda.ApplicationLogLevel.WARN,
+			systemLogLevelV2: aws_lambda.SystemLogLevel.WARN,
 			role
 		});
 		registerFunction({
@@ -77,11 +97,16 @@ export class AssetsNodeLambdaEdgeStack extends Stack {
 		});
 
 		const edgeOriginResponse = new NodejsFunction(this, `${PREFIX}-edge-origin-response`, {
+			functionName: `${PREFIX}-edge-origin-response`,
 			entry: 'lib/handlers/origin-response.ts',
 			runtime: aws_lambda.Runtime.NODEJS_20_X,
+			architecture: aws_lambda.Architecture.X86_64,
 			memorySize: 256,
 			timeout: Duration.seconds(30),
-			architecture: aws_lambda.Architecture.X86_64,
+			logGroup,
+			loggingFormat: aws_lambda.LoggingFormat.JSON,
+			applicationLogLevelV2: aws_lambda.ApplicationLogLevel.WARN,
+			systemLogLevelV2: aws_lambda.SystemLogLevel.WARN,
 			role
 		});
 		registerFunction({
