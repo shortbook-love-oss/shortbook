@@ -97,10 +97,10 @@ export class CloudFrontAssetsStack extends Stack {
 			}
 		);
 
-		const transfer = {} as Record<`/${ImageBucketTransferKey}/*`, BehaviorOptions>;
+		const transfer = {} as Record<`${ImageBucketTransferKey}/*`, BehaviorOptions>;
 		for (const transferKey in params.cloudfront.cfTransferIndex) {
 			const tKey = transferKey as ImageBucketTransferKey;
-			transfer[`/${tKey}/*`] = {
+			transfer[`${tKey}/*`] = {
 				origin: new aws_cloudfront_origins.S3Origin(
 					aws_s3.Bucket.fromBucketName(
 						this,
@@ -119,7 +119,7 @@ export class CloudFrontAssetsStack extends Stack {
 			this,
 			`${PREFIX}-assets-web-distribution`,
 			{
-				defaultBehavior: transfer['/profile/*'],
+				defaultBehavior: transfer['profile/*'],
 				additionalBehaviors: transfer,
 				defaultRootObject: 'index.html',
 				certificate: certificate,
