@@ -11,6 +11,7 @@ export const AWS_DEFAULT_REGION = 'some-region';
 export const AWS_CLOUDFRONT_REGION = 'some-region';
 
 export const env = {
+	PUBLIC_ORIGIN: 'https://shortbook.life',
 	AWS_DEFAULT_REGION,
 	AWS_ACCESS_KEY_ID: 'XXXXXX',
 	AWS_SECRET_ACCESS_KEY: 'XXXXXXXXXXXXXXXXXX',

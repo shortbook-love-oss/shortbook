@@ -22,7 +22,6 @@
 		"esModuleInterop": true,
 		"typeRoots": ["./node_modules/@types"],
 		"paths": {
-			"$env/dynamic/private": ["./lib/env"],
 			"$lib-backend/*": ["./lib-backend/*"]
 		}
 	},
