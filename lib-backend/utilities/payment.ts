@@ -48,7 +48,7 @@ export async function createPaymentSession(
 						name: paymentName,
 						description: paymentDescription,
 						images: [
-							`${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/shortbook/shortbook-logo-bg-white-wh512-margin64.png`
+							`${envPublic.PUBLIC_ORIGIN}/assets/shortbook-logo-bg-white-wh512-margin64.png`
 						],
 						tax_code: paymentTaxCode
 					}
