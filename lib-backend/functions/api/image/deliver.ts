@@ -146,7 +146,7 @@ export async function convertAndDeliver(
         break;
       case 'png':
         if (reqOption.fromExtension !== 'png' || reqOption.quality !== 100) {
-          image = image.png({ quality: reqOption.quality, progressive: true });
+          image = image.png({ quality: reqOption.quality, palette: true, progressive: true });
         }
         break;
       case 'gif':
