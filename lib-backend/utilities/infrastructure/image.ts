@@ -39,12 +39,8 @@ export const allowedToExtensions = [
   'gif',
   'webp',
   'avif',
-  ...vectorFileExtensions,
-  'heic',
-  'heif',
-  'tiff',
-  'bmp',
-  'ico'
+  'ico',
+  ...vectorFileExtensions
 ] as const;
 export type AllowedToExtension = (typeof allowedToExtensions)[number];
 
@@ -53,8 +49,7 @@ export const allowedFromExtensions = [
   'heic',
   'heif',
   'tiff',
-  'bmp',
-  'ico'
+  'bmp'
 ] as const;
 export type AllowedFromExtension = (typeof allowedFromExtensions)[number];
 
