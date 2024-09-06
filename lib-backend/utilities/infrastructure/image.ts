@@ -21,6 +21,7 @@ export type VectorFileExtension = (typeof vectorFileExtensions)[number];
 export const imageExtensionMIME: Record<string, string> = {
   'png': 'image/png',
   'jpg': 'image/jpeg',
+  'jpeg': 'image/jpeg',
   'gif': 'image/gif',
   'webp': 'image/webp',
   'avif': 'image/avif',

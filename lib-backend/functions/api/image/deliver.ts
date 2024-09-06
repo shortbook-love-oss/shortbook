@@ -1,12 +1,13 @@
 import sharp from 'sharp';
 import { env } from '$env/dynamic/private';
-import { getMIMEType, imageMIMEextension } from '$lib/utilities/file';
+import { imageMIMEextension } from '$lib/utilities/file';
 import { getFile, uploadFile, type StorageBucket } from '$lib-backend/utilities/file';
 import {
   allowedFromExtensions,
   allowedResizeFit,
   allowedSize,
   allowedToExtensions,
+  imageExtensionMIME,
   vectorFileExtensions,
   type AllowedFromExtension,
   type AllowedToExtension,
@@ -133,7 +134,7 @@ export async function convertAndDeliver(
       return { errorMessage: 'Please specify output file extension.' };
     }
   }
-  const toContentType = getMIMEType(reqOption.toExtension);
+  const toContentType = imageExtensionMIME[reqOption.toExtension];
   if (!toContentType) {
     return { errorMessage: 'Please specify output file extension.' };
   }
