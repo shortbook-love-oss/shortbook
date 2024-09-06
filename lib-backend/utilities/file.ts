@@ -1,4 +1,5 @@
 import {
+	CopyObjectCommand,
 	DeleteObjectsCommand,
 	GetObjectCommand,
 	ListObjectsV2Command,
@@ -12,7 +13,7 @@ export interface StorageBucket {
 	storageCdnBucketName: string;
 }
 
-function createClient(region: string) {
+function createStorageClient(region: string) {
 	return new S3Client({
 		region,
 		forcePathStyle: true,
@@ -25,7 +26,7 @@ function createClient(region: string) {
 }
 
 export async function getFile(region: string, bucketName: string, filePath: string) {
-	const s3 = createClient(region);
+	const s3 = createStorageClient(region);
 
 	let file: Uint8Array | undefined;
 	let contentType = '';
@@ -48,6 +49,37 @@ export async function getFile(region: string, bucketName: string, filePath: stri
 	return { file, contentType, error };
 }
 
+export async function copyFile(
+	region: string,
+	bucketName: string,
+	filePathFrom: string,
+	filePathTo: string
+) {
+	const s3 = createStorageClient(region);
+
+	let isSuccessCopy = false;
+	let error: Error | undefined;
+
+	const command = new CopyObjectCommand({
+		Bucket: bucketName,
+		CopySource: `${bucketName}/${filePathFrom}`,
+		Key: filePathTo
+	})
+	await s3
+		.send(command)
+		.then((response) => {
+			const statusCode = response.$metadata.httpStatusCode;
+			if (statusCode) {
+				isSuccessCopy = 200 <= statusCode && statusCode < 300;
+			}
+		})
+		.catch((e: Error) => {
+			error = e;
+		});
+
+	return { isSuccessCopy, error };
+}
+
 export async function uploadFile(
 	file: Uint8Array,
 	contentType: string,
@@ -55,10 +87,10 @@ export async function uploadFile(
 	bucketName: string,
 	filePath: string
 ) {
-	const s3 = createClient(region);
+	const s3 = createStorageClient(region);
 
 	let isSuccessUpload = false;
-	let error;
+	let error: Error | undefined;
 
 	const command = new PutObjectCommand({
 		Bucket: bucketName,
@@ -70,7 +102,10 @@ export async function uploadFile(
 	await s3
 		.send(command)
 		.then((response) => {
-			isSuccessUpload = response.$metadata.httpStatusCode === 200;
+			const statusCode = response.$metadata.httpStatusCode;
+			if (statusCode) {
+				isSuccessUpload = 200 <= statusCode && statusCode < 300;
+			}
 		})
 		.catch((e: Error) => {
 			error = e;
@@ -80,7 +115,7 @@ export async function uploadFile(
 }
 
 export async function deleteFiles(region: string, bucketName: string, filePrefix: string) {
-	const s3 = createClient(region);
+	const s3 = createStorageClient(region);
 
 	let isSuccessDelete = false;
 	let error: Error | undefined;
