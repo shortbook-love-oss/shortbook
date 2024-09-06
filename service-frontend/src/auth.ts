@@ -9,8 +9,10 @@ import {
 import Google from '@auth/sveltekit/providers/google';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
+import { fileTypeFromBuffer } from 'file-type';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
+import { imageMIMEextension } from '$lib/utilities/file';
 import { matchSigninProvider } from '$lib/utilities/signin';
 import { dbUserProfileCreate } from '$lib-backend/model/user/profile/create';
 import { dbUserRestore } from '$lib-backend/model/user/restore';
@@ -112,11 +114,9 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	// Upload profile image using in external service CDN
 	if (user.id && user.image?.startsWith('https://')) {
 		// 1. Fetch from external service CDN
-		let contentType = '';
 		const image = await fetch(user.image, { mode: 'no-cors' })
 			.then(async (res) => {
 				if (res.status === 200) {
-					contentType = res.headers.get('content-type') ?? res.headers.get('Content-Type') ?? '';
 					return new Uint8Array(await res.arrayBuffer());
 				} else {
 					return null;
@@ -125,21 +125,25 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 			.catch(() => undefined);
 
 		if (image) {
-			// 2. Upload image to Amazon S3
-			const savePath = `${user.id}/shortbook-profile`;
-			const { isSuccessUpload } = await uploadFile(
-				image,
-				contentType,
-				env.AWS_DEFAULT_REGION,
-				env.AWS_BUCKET_IMAGE_PROFILE,
-				savePath
-			);
-			if (isSuccessUpload) {
-				// 3. Save image URL to DB
-				await dbUserProfileImageUpdate({
-					userId: user.id,
-					image: '/profile/' + savePath
-				});
+			const fileTypeActual = await fileTypeFromBuffer(image);
+
+			if (fileTypeActual && Object.keys(imageMIMEextension).includes(fileTypeActual.mime)) {
+				// 2. Upload image to Amazon S3
+				const savePath = `${user.id}/shortbook-profile`;
+				const { isSuccessUpload } = await uploadFile(
+					image,
+					fileTypeActual.mime,
+					env.AWS_DEFAULT_REGION,
+					env.AWS_BUCKET_IMAGE_PROFILE,
+					savePath
+				);
+				if (isSuccessUpload) {
+					// 3. Save image URL to DB
+					await dbUserProfileImageUpdate({
+						userId: user.id,
+						image: '/profile/' + savePath
+					});
+				}
 			}
 		}
 	}

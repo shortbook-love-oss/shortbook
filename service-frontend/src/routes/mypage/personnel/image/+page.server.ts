@@ -1,8 +1,10 @@
 import { fail, error } from '@sveltejs/kit';
+import { fileTypeFromBuffer } from 'file-type';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
+import { imageMIMEextension } from '$lib/utilities/file';
 import { schema } from '$lib/validation/schema/profile-image-update';
 import { deleteImageCache } from '$lib-backend/utilities/cache';
 import { deleteFiles, uploadFile } from '$lib-backend/utilities/file';
@@ -30,7 +32,14 @@ export const actions = {
 			message(form, 'There was an error. please check your selected image and resubmit.');
 			return fail(400, { form });
 		}
-		const image = form.data.profileImage[0];
+		// Browsers trust filename extensions, but this is a security issue
+		// Check actual file type
+		const imageBuffer = await form.data.profileImage[0].arrayBuffer();
+		const fileTypeActual = await fileTypeFromBuffer(imageBuffer);
+		if (!fileTypeActual || !Object.keys(imageMIMEextension).includes(fileTypeActual.mime)) {
+			message(form, 'Please specify the image file.');
+			return fail(400, { form });
+		}
 
 		// Delete image cache
 		await deleteImageCache(env.AWS_CONTENT_DISTRIBUTION_ID_IMAGE_CDN, `/profile/${userId}/*`);
@@ -51,8 +60,8 @@ export const actions = {
 		// Upload image to Amazon S3
 		const savePath = `${userId}/shortbook-profile`;
 		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
-			new Uint8Array(await image.arrayBuffer()),
-			image.type,
+			new Uint8Array(imageBuffer),
+			fileTypeActual.mime,
 			env.AWS_DEFAULT_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,
 			savePath
