@@ -23,21 +23,3 @@ export const imageMIMEextension: Record<string, string> = {
 	'image/x-icon': 'ico',
 	'image/svg+xml': 'svg'
 };
-
-export function getMIMEType(extension: string) {
-	for (const allowType in imageMIMEextension) {
-		if (imageMIMEextension[allowType] === extension) {
-			return allowType;
-		}
-	}
-	return undefined;
-}
-
-// Guess MIME-type of profile image by path
-export function guessImageTypeByUrl(imageUrl: string) {
-	const extension = imageUrl.match(/\w+$/)?.[0];
-	if (extension != null) {
-		return getMIMEType(extension);
-	}
-	return '';
-}

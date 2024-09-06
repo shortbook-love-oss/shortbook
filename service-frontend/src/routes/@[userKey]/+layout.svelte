@@ -1,10 +1,7 @@
 <script lang="ts">
-	import { guessImageTypeByUrl } from '$lib/utilities/file';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 
 	let { data, children } = $props();
-
-	const imageContentType = guessImageTypeByUrl(data.user.image ?? '');
 </script>
 
 <svelte:head>
@@ -12,13 +9,13 @@
 	<link rel="apple-touch-icon" sizes="180x180" href="{data.user.image}?ext=jpg&w=32&h=32&q=80" />
 	<link
 		rel="icon"
-		type={imageContentType}
+		type="image/jpeg"
 		sizes="32x32"
 		href="{data.user.image}?ext=jpg&w=32&h=32&q=80"
 	/>
 	<link
 		rel="icon"
-		type={imageContentType}
+		type="image/jpeg"
 		sizes="16x16"
 		href="{data.user.image}?ext=jpg&w=16&h=16&q=80"
 	/>
