@@ -5,7 +5,8 @@ import { env } from '$env/dynamic/private';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { schema } from '$lib/validation/schema/profile-image-update';
-import { uploadFile } from '$lib-backend/utilities/file';
+import { deleteImageCache } from '$lib-backend/utilities/cache';
+import { deleteFiles, uploadFile } from '$lib-backend/utilities/file';
 
 export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
@@ -31,11 +32,26 @@ export const actions = {
 			return fail(400, { form });
 		}
 		const image = form.data.profileImage[0];
-		const cacheRefresh = Date.now().toString(36);
 		const extension = imageMIMEextension[image.type as keyof typeof imageMIMEextension];
 
+		// Delete image cache
+		await deleteImageCache(env.AWS_CONTENT_DISTRIBUTION_ID_IMAGE_CDN, `/profile/${userId}/*`);
+
+		// Delete image file in CDN
+		// Path format is /profile/${userId}/profile.${extension}/${someoption-w-h-q...}/profile.${extension}
+		// So delete /profile/${userId}/*
+		const { error: cdnDeleteError } = await deleteFiles(
+			env.AWS_DEFAULT_REGION,
+			`${env.AWS_BUCKET_IMAGE_PROFILE}-cdn`,
+			`${userId}/`
+		);
+		if (cdnDeleteError) {
+			console.error('Error when delete old converted profile-image.');
+			return error(500, { message: "Can't upload profile image. Please contact us." });
+		}
+
 		// Upload image to Amazon S3
-		const savePath = `${userId}/${cacheRefresh}.${extension}`;
+		const savePath = `${userId}/profile.${extension}`;
 		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
 			new Uint8Array(await image.arrayBuffer()),
 			image.type,
@@ -44,6 +60,7 @@ export const actions = {
 			savePath
 		);
 		if (uploadFileError || !isSuccessUpload) {
+			console.error('Error when upload new profile-image.');
 			return error(500, { message: "Can't upload profile image. Please contact us." });
 		}
 
