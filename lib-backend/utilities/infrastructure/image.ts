@@ -2,7 +2,7 @@ export const imageBucketTransferKeys = ['profile', 'book-cover', 'ogp', 'user-al
 export type ImageBucketTransferKey = (typeof imageBucketTransferKeys)[number];
 
 export interface ImageDistributionOption {
-  toExtension: AllowedToExtension;
+  toExtension: AllowedToExtension | '';
   width: number;
   height: number;
   fit: 'contain' | 'cover' | 'fill' | 'inside' | 'outside';
@@ -13,7 +13,6 @@ export interface ImageConvertOption extends ImageDistributionOption {
   transferKey: ImageBucketTransferKey;
   prefix: string;
   imageName: string;
-  fromExtension: AllowedFromExtension;
 }
 
 export const vectorFileExtensions = ['svg'] as const;
@@ -78,6 +77,5 @@ export const allowedResizeFit = [
 ] as ImageDistributionOption['fit'][];
 export const allowedQuality = [10, 20, 40, 60, 80, 90, 100];
 
-export const defaultToExtension = 'jpg';
 export const defaultResizeFit: ImageDistributionOption['fit'] = 'cover';
 export const defaultQuality = 60;

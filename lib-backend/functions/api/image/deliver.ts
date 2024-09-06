@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 import { env } from '$env/dynamic/private';
+import { getMIMEType, imageMIMEextension } from '$lib/utilities/file';
 import { getFile, uploadFile, type StorageBucket } from '$lib-backend/utilities/file';
 import {
   allowedFromExtensions,
@@ -7,6 +8,8 @@ import {
   allowedSize,
   allowedToExtensions,
   vectorFileExtensions,
+  type AllowedFromExtension,
+  type AllowedToExtension,
   type ImageBucketTransferKey,
   type ImageConvertOption,
   type VectorFileExtension
@@ -37,7 +40,7 @@ export function isValidDistributionRequest(req: ImageConvertOption | null) {
   }
 
   const invalidKeys: string[] = [];
-  if (!allowedToExtensions.includes(req.toExtension)) {
+  if (req.toExtension && !allowedToExtensions.includes(req.toExtension)) {
     invalidKeys.push('toExtension');
   }
   // If width === 0, ignore width, keep aspect by height
@@ -63,9 +66,6 @@ export function isValidDistributionRequest(req: ImageConvertOption | null) {
   if (typeof req.imageName !== 'string' || req.imageName.includes('/')) {
     invalidKeys.push('imageName');
   }
-  if (typeof req.fromExtension !== 'string' || !allowedFromExtensions.includes(req.fromExtension)) {
-    invalidKeys.push('fromExtension');
-  }
   if (invalidKeys.length > 0) {
     return invalidKeys;
   }
@@ -88,10 +88,6 @@ export async function convertAndDeliver(
   reqOption: ImageConvertOption
 ): Promise<ResponseConvertAndSaveSuccess | ResponseConvertAndSaveError> {
   const transfer = cdnTransferIndex[reqOption.transferKey];
-  const isFromVector = vectorFileExtensions.includes(
-    reqOption.fromExtension as VectorFileExtension
-  );
-  const isToVector = vectorFileExtensions.includes(reqOption.toExtension as VectorFileExtension);
 
   const optionParam = new URLSearchParams();
   optionParam.set('ext', reqOption.toExtension);
@@ -101,7 +97,6 @@ export async function convertAndDeliver(
   optionParam.set('q', String(reqOption.quality));
 
   // Get the converted file first, because it's faster
-  const convertedImageName = `${reqOption.imageName}.${reqOption.toExtension}`;
   const {
     file: convertedImage,
     contentType: convertedType,
@@ -109,7 +104,7 @@ export async function convertAndDeliver(
   } = await getFile(
     env.AWS_DEFAULT_REGION,
     transfer.storageCdnBucketName,
-    `${reqOption.prefix}/${convertedImageName}/${optionParam.toString()}/${convertedImageName}`
+    `${reqOption.prefix}/${reqOption.imageName}/${optionParam.toString()}/${reqOption.imageName}`
   );
   if (convertedImage && convertedType && !getConvertedError) {
     return { image: convertedImage, contentType: convertedType };
@@ -119,14 +114,38 @@ export async function convertAndDeliver(
   const { file, contentType, error: getFileError } = await getFile(
     env.AWS_DEFAULT_REGION,
     transfer.storageBucketName,
-    `${reqOption.prefix}/${reqOption.imageName}.${reqOption.fromExtension}`
+    `${reqOption.prefix}/${reqOption.imageName}`
   );
   if (getFileError || !file?.byteLength) {
     return { errorMessage: 'Original image not found.' };
   }
 
+  const fromExtension = imageMIMEextension[contentType];
+  if (!fromExtension || !allowedFromExtensions.includes(fromExtension as AllowedFromExtension)) {
+    return { errorMessage: `Specied file format (${fromExtension}) does not supported.` };
+  }
+  // If no output extension is specified, use original extension
+  // However, if the original extension does not correspond to output, return error
+  if (!reqOption.toExtension) {
+    if (allowedToExtensions.includes(fromExtension as AllowedToExtension)) {
+      reqOption.toExtension = fromExtension as AllowedToExtension;
+    } else {
+      return { errorMessage: 'Please specify output file extension.' };
+    }
+  }
+  const toContentType = getMIMEType(reqOption.toExtension);
+  if (!toContentType) {
+    return { errorMessage: 'Please specify output file extension.' };
+  }
+
+  const isFromVector = vectorFileExtensions.includes(fromExtension as VectorFileExtension);
+  const isToVector = vectorFileExtensions.includes(reqOption.toExtension as VectorFileExtension);
+
   let imageBuffer;
-  if (isFromVector && isToVector) {
+  if (!isFromVector && isToVector) {
+    return { errorMessage: "Can't convert raster to vector." };
+  } else if (isFromVector && isToVector) {
+    // No resize if vector
     imageBuffer = file;
   } else {
     let image = sharp(file);
@@ -140,27 +159,27 @@ export async function convertAndDeliver(
     switch (reqOption.toExtension) {
       case 'jpg':
       case 'jpeg':
-        if (!['jpg', 'jpeg'].includes(reqOption.fromExtension) || reqOption.quality !== 100) {
+        if (!['jpg', 'jpeg'].includes(fromExtension) || reqOption.quality !== 100) {
           image = image.jpeg({ quality: reqOption.quality, progressive: true });
         }
         break;
       case 'png':
-        if (reqOption.fromExtension !== 'png' || reqOption.quality !== 100) {
+        if (fromExtension !== 'png' || reqOption.quality !== 100) {
           image = image.png({ quality: reqOption.quality, palette: true, progressive: true });
         }
         break;
       case 'gif':
-        if (reqOption.fromExtension !== 'gif') {
+        if (fromExtension !== 'gif') {
           image = image.gif();
         }
         break;
       case 'webp':
-        if (reqOption.fromExtension !== 'webp' || reqOption.quality !== 100) {
+        if (fromExtension !== 'webp' || reqOption.quality !== 100) {
           image = image.webp({ quality: reqOption.quality });
         }
         break;
       case 'avif':
-        if (reqOption.fromExtension !== 'avif' || reqOption.quality !== 100) {
+        if (fromExtension !== 'avif' || reqOption.quality !== 100) {
           image = image.avif({ quality: reqOption.quality });
         }
         break;
@@ -178,14 +197,14 @@ export async function convertAndDeliver(
   // Second: To specify the download file name
   const { error: uploadFileError } = await uploadFile(
     imageBuffer,
-    contentType,
+    toContentType,
     env.AWS_DEFAULT_REGION,
     transfer.storageCdnBucketName,
-    `${reqOption.prefix}/${convertedImageName}/${optionParam.toString()}/${convertedImageName}`
+    `${reqOption.prefix}/${reqOption.imageName}/${optionParam.toString()}/${reqOption.imageName}`
   );
   if (uploadFileError) {
     return { errorMessage: 'Exception while saving resized image.' };
   }
 
-  return { image: imageBuffer, contentType };
+  return { image: imageBuffer, contentType: toContentType };
 }

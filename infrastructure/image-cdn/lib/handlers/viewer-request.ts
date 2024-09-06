@@ -1,10 +1,7 @@
 'use strict';
 
 import type { Handler } from 'aws-lambda';
-import {
-	allowedFromExtensions,
-	imageBucketTransferKeys
-} from '$lib-backend/utilities/infrastructure/image';
+import { imageBucketTransferKeys } from '$lib-backend/utilities/infrastructure/image';
 import { decodeViewerRequestUri, optionToParam } from '../utilities';
 
 export const handler: Handler = async (event, context, callback) => {
@@ -14,22 +11,6 @@ export const handler: Handler = async (event, context, callback) => {
 	const decodedUriObj = decodeViewerRequestUri(request.uri);
 	if (!decodedUriObj) {
 		callback(null, request);
-		return;
-	}
-
-	// Not allowed extension
-	if (!allowedFromExtensions.includes(decodedUriObj.fromExtension)) {
-		const errorMessage =
-			`Not supported ".${decodedUriObj.fromExtension}". please specify image extension.`;
-		console.error(`${errorMessage} querystring: ${request.querystring}`);
-		const errorResponse = {
-			status: '500',
-			headers: {
-				'content-type': [{ key: 'content-type', value: 'text/plain' }]
-			},
-			body: errorMessage
-		};
-		callback(null, errorResponse);
 		return;
 	}
 
@@ -49,10 +30,7 @@ export const handler: Handler = async (event, context, callback) => {
 		return;
 	}
 
-	const { toExtension, width, height, fit, quality } = optionToParam(
-		request.querystring,
-		decodedUriObj.fromExtension
-	);
+	const { toExtension, width, height, fit, quality } = optionToParam(request.querystring);
 	const decodedParam = new URLSearchParams();
 	decodedParam.set('ext', toExtension);
 	decodedParam.set('w', String(width));
@@ -61,7 +39,7 @@ export const handler: Handler = async (event, context, callback) => {
 	decodedParam.set('q', String(quality));
 
 	const convertedUri = `/${decodedUriObj.transferKey}/${decodedUriObj.prefix
-		}/${decodedParam.toString()}/${decodedUriObj.imageName}.${decodedUriObj.fromExtension}`;
+		}/${decodedParam.toString()}/${decodedUriObj.imageName}`;
 	request.uri = convertedUri;
 	request.querystring = decodedParam.toString();
 

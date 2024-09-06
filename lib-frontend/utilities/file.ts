@@ -24,15 +24,20 @@ export const imageMIMEextension: Record<string, string> = {
 	'image/svg+xml': 'svg'
 };
 
+export function getMIMEType(extension: string) {
+	for (const allowType in imageMIMEextension) {
+		if (imageMIMEextension[allowType] === extension) {
+			return allowType;
+		}
+	}
+	return undefined;
+}
+
 // Guess MIME-type of profile image by path
 export function guessImageTypeByUrl(imageUrl: string) {
 	const extension = imageUrl.match(/\w+$/)?.[0];
 	if (extension != null) {
-		for (const allowType in imageMIMEextension) {
-			if (imageMIMEextension[allowType] === extension) {
-				return allowType;
-			}
-		}
+		return getMIMEType(extension);
 	}
-	return undefined;
+	return '';
 }

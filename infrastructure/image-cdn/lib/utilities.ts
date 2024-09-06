@@ -7,9 +7,7 @@ import {
 	allowedToExtensions,
 	defaultQuality,
 	defaultResizeFit,
-	defaultToExtension,
 	vectorFileExtensions,
-	type AllowedFromExtension,
 	type AllowedToExtension,
 	type ImageBucketTransferKey,
 	type ImageConvertOption,
@@ -24,44 +22,30 @@ export interface StorageBucket {
 
 export function decodeViewerRequestUri(uri: string) {
 	// Example "/profile/abcdefg/current/image.original.jpg"
-	const match = uri.match(/([^/]+)\/(.+)\/([^/]*)\.(.+)/);
+	const match = uri.match(/([^/]+)\/(.+)\/([^/]+)/);
 	if (!match) {
 		return null;
 	}
 
 	const transferKey = match[1] as ImageBucketTransferKey; // "profile"
 	const prefix = match[2]; // "abcdefg/current"
-	const imageName = match[3]; // "image.original"
-	const fromExtension = match[4].toLowerCase() as AllowedFromExtension; // "jpg"
+	const imageName = match[3]; // "image.original.jpg"
 
 	return {
 		transferKey,
 		prefix,
-		imageName,
-		fromExtension
+		imageName
 	};
 }
 
-export function optionToParam(
-	optionQuery: string,
-	fromExtension: AllowedToExtension
-): ImageDistributionOption {
+export function optionToParam(optionQuery: string): ImageDistributionOption {
 	// "ext={paramExtension}&w=${paramWidth}&h=${height}&fit=${paramFit}&q=${paramQuality}"
 	const params = new URLSearchParams(optionQuery);
 
 	const paramExtension = params.get('ext') as AllowedToExtension;
-	let toExtension = defaultToExtension as AllowedToExtension;
+	let toExtension = '' as AllowedToExtension | '';
 	if (paramExtension && allowedToExtensions.includes(paramExtension)) {
 		toExtension = paramExtension;
-	} else if (allowedToExtensions.includes(fromExtension as AllowedToExtension)) {
-		// Use file name extension
-		toExtension = fromExtension;
-	}
-	// Can't convert raster to vector, set to original extension
-	const isFromNoResizeExt = vectorFileExtensions.includes(fromExtension as VectorFileExtension);
-	const isToNoResizeExt = vectorFileExtensions.includes(toExtension as VectorFileExtension);
-	if (!isFromNoResizeExt && isToNoResizeExt) {
-		toExtension = fromExtension;
 	}
 
 	let width = 0;
@@ -81,6 +65,7 @@ export function optionToParam(
 		}
 	}
 	// Not resize if vector-graph
+	const isToNoResizeExt = vectorFileExtensions.includes(toExtension as VectorFileExtension);
 	if (isToNoResizeExt) {
 		width = 0;
 		height = 0;
@@ -106,24 +91,22 @@ export function optionToParam(
 	};
 }
 
-export function decodeOriginResponseUri(url: string): ImageConvertOption | undefined {
+export function decodeOriginResponseUri(url: string): ImageConvertOption | null {
 	// "profile/abcdefg/current/ext={paramExtension}&w=${paramWidth}&h=${height}&fit=${paramFit}&q=${paramQuality}/image.origin.jpg"
-	const match = url.match(/([^/]+)\/(.+)\/(.+)\/([^/]*)\.(.+)/);
+	const match = url.match(/([^/]+)\/(.+)\/(.+)\/([^/]+)/);
 	if (!match) {
-		return undefined;
+		return null;
 	}
 
 	const transferKey = match[1] as ImageBucketTransferKey; // "profile"
 	const prefix = match[2]; // "abcdefg/current"
 	const optionParam = match[3]; // "ext={paramExtension}&w=${paramWidth}&h=${height}&fit=${paramFit}&q=${paramQuality}"
-	const imageName = match[4]; // "image.origin"
-	const fromExtension = match[5].toLowerCase() as AllowedFromExtension; // "jpg"
+	const imageName = match[4]; // "image.origin.jpg"
 
 	return {
 		transferKey,
 		prefix,
 		imageName,
-		fromExtension,
-		...optionToParam(optionParam, fromExtension)
+		...optionToParam(optionParam)
 	};
 }
