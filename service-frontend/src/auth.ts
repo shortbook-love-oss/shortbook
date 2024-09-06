@@ -11,15 +11,14 @@ import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
+import { matchSigninProvider } from '$lib/utilities/signin';
 import { dbUserProfileCreate } from '$lib-backend/model/user/profile/create';
 import { dbUserRestore } from '$lib-backend/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
 import { dbUserProvideDataUpdate } from '$lib-backend/model/user/update-provide-data';
 import prisma from '$lib-backend/database/connect';
-import { uploadFile } from '$lib-backend/utilities/file';
-import { imageMIMEextension } from '$lib/utilities/file';
-import { matchSigninProvider } from '$lib/utilities/signin';
 import { encryptAndFlat } from '$lib-backend/utilities/crypto';
+import { uploadFile } from '$lib-backend/utilities/file';
 import { sendEmail, toHashUserEmail } from '$lib-backend/utilities/email';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
@@ -126,10 +125,8 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 			.catch(() => undefined);
 
 		if (image) {
-			const cacheRefresh = Date.now().toString(36);
-			const extension = imageMIMEextension[contentType as keyof typeof imageMIMEextension];
 			// 2. Upload image to Amazon S3
-			const savePath = `${user.id}/profile-image-${cacheRefresh}.${extension}`;
+			const savePath = `${user.id}/shortbook-profile`;
 			const { isSuccessUpload } = await uploadFile(
 				image,
 				contentType,

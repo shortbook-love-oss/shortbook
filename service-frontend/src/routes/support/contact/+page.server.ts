@@ -2,14 +2,14 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbLogActionCreate } from '$lib-backend/model/log/action-create';
-import { dbLogActionList } from '$lib-backend/model/log/action-list';
-import { dbTicketCreate } from '$lib-backend/model/support/ticket-create';
 import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
 import { escapeHTML } from '$lib/utilities/html';
 import { getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/support/ticket-create';
+import { dbLogActionCreate } from '$lib-backend/model/log/action-create';
+import { dbLogActionList } from '$lib-backend/model/log/action-list';
+import { dbTicketCreate } from '$lib-backend/model/support/ticket-create';
 import { uploadFile } from '$lib-backend/utilities/file';
 import { encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
 import { sendEmail } from '$lib-backend/utilities/email';
@@ -81,7 +81,7 @@ export const actions = {
 		const savedFileUrls = [];
 		const filesKey = getRandom(32);
 		for (const file of form.data.files ?? []) {
-			const saveFilePath = `${filesKey}/${file.name.replace('/', '')}`;
+			const saveFilePath = `${filesKey}/${file.name.replace('/', '-')}`;
 			const { isSuccessUpload, error: uploadFileError } = await uploadFile(
 				new Uint8Array(await file.arrayBuffer()),
 				file.type,
