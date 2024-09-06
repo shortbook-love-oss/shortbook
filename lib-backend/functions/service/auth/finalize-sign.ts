@@ -7,15 +7,17 @@ import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash'
 import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token/delete';
 import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
 import { getRandom } from '$lib/utilities/crypto';
-import { decryptFromFlat, encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
-import { toHashUserEmail } from '$lib-backend/utilities/email';
-import { signMagicLogActionName } from '$lib-backend/utilities/log-action';
-import { signInTokenName, signUpTokenName } from '$lib-backend/utilities/verification-token';
 import { setSessionToken } from '$lib/utilities/cookie';
 import { signInEmailLinkMethod } from '$lib/utilities/signin';
 import { signConfirmTokenParam } from '$lib/utilities/url';
-import type { SignResult } from './action-init';
 import { dbUserRestore } from '$lib-backend/model/user/restore';
+import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
+import { decryptFromFlat, encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
+import { copyFile } from '$lib-backend/utilities/file';
+import { toHashUserEmail } from '$lib-backend/utilities/email';
+import { signMagicLogActionName } from '$lib-backend/utilities/log-action';
+import { signInTokenName, signUpTokenName } from '$lib-backend/utilities/verification-token';
+import type { SignResult } from './action-init';
 
 export async function finalizeSign(
 	requestUrl: URL,
@@ -70,12 +72,32 @@ export async function finalizeSign(
 			emailVerified: new Date(),
 			keyName: getRandom(16),
 			penName: `User ${getRandom(6).toUpperCase()}`,
-			profileImage: '/profile/initial/profile.png'
+			profileImage: ''
 		});
 		if (!user || dbUserGetError) {
 			return { error: new Error(dbUserGetError?.message ?? '') };
 		}
 		userId = user.id;
+
+		// Copy profile image to user's directory
+		const profileImagePath = `${userId}/shortbook-profile`;
+		const { error: copyFileError } = await copyFile(
+			env.AWS_DEFAULT_REGION,
+			env.AWS_BUCKET_IMAGE_PROFILE,
+			'initial/shortbook-profile',
+			profileImagePath
+		);
+		if (copyFileError) {
+			return { error: new Error(copyFileError.message) };
+		}
+		const { dbError: dbImageUpdateError } = await dbUserProfileImageUpdate({
+			userId,
+			image: `/profile/${profileImagePath}`
+		});
+		if (dbImageUpdateError) {
+			return { error: new Error(dbImageUpdateError.message) };
+		}
+
 	} else {
 		// Get user
 		const { user, dbError: dbUserGetError } = await dbUserGetByEmailHash({
