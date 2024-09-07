@@ -1,31 +1,36 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookGet } from '$lib/model/book/get';
-import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
-import { dbUserPaymentContractCreate } from '$lib/model/user/payment-contract/create';
-import { dbUserPaymentSettingUpsert } from '$lib/model/user/payment-setting/upsert';
-import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
-import { checkPaymentStatus } from '$lib/utilities/server/payment';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib-backend/model/book-buy/create';
+import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
+import {
+	dbUserPointCreate,
+	type DbUserPaymentCheckoutCreateRequest
+} from '$lib-backend/model/user/point/create';
+import { dbUserPaymentContractCreate } from '$lib-backend/model/user/payment-contract/create';
+import { dbUserPaymentSettingUpsert } from '$lib-backend/model/user/payment-setting/upsert';
 import {
 	getLanguageTagFromUrl,
 	paymentBookInfoParam,
 	paymentSessionIdParam,
 	setLanguageTagToPath
 } from '$lib/utilities/url';
+import { decryptFromFlat, encryptAndFlat } from '$lib-backend/utilities/crypto';
+import { checkPaymentStatus } from '$lib-backend/utilities/payment';
 
 export const load = async ({ url }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 
 	// Allow payment data to be processed even if the ShortBook session expires during payment
 	// Solution: use encrypt data in url search-param, instead of requests and cookies
+
+	// /redirect/book/[bookId]/bought?sessionId=xxxxxxxxxx&bookInfo=xxxxxxxxxx
 	const bookPaymentInfoRaw = url.searchParams.get(paymentBookInfoParam);
 	const paymentSessionIdRaw = url.searchParams.get(paymentSessionIdParam);
 	if (typeof bookPaymentInfoRaw !== 'string' || typeof paymentSessionIdRaw !== 'string') {
 		return error(404, { message: 'Not found' });
 	}
 
-	// /redirect/book/[bookId]/bought?sessionId=xxxxxxxxxx&bookInfo=xxxxxxxxxx
-	// @todo Block paymentSessionId that have already been used to eliminate potential vulnerabilities
 	const { paymentSessionId, currency, amount, customerId, isCreateCustomer, isAvailable } =
 		await checkPaymentStatus(paymentSessionIdRaw);
 	if (!isAvailable) {
@@ -55,24 +60,47 @@ export const load = async ({ url }) => {
 	if (!book?.user.profiles || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	// @todo If the book you purchased is deleted or in draft status, points will not be consumed
 
 	const afterUrl = new URL(
 		url.origin +
 			setLanguageTagToPath(`/@${book.user.profiles.key_name}/book/${book.key_name}`, requestLang)
 	);
+	const paymentCheckoutRequest: DbUserPaymentCheckoutCreateRequest = {
+		provider: 'stripe',
+		sessionId: encryptAndFlat(paymentSessionId, env.ENCRYPT_PAYMENT_SESSION_ID, env.ENCRYPT_SALT),
+		currency,
+		amount
+	};
 
-	const { dbError: dbBookBuyError } = await dbBookBuyCreate({
-		...bookPaymentInfo,
-		payment: {
-			provider: 'stripe',
-			sessionId: encryptAndFlat(paymentSessionId, env.ENCRYPT_PAYMENT_SESSION_ID, env.ENCRYPT_SALT),
-			currency,
-			amount
-		}
+	const { bookBuy, dbError: dbBookBuyGetError } = await dbBookBuyGet({
+		bookId: bookPaymentInfo.bookId,
+		userId: bookPaymentInfo.userId
 	});
-	if (dbBookBuyError) {
-		return error(500, { message: dbBookBuyError?.message ?? '' });
+	if (dbBookBuyGetError) {
+		return error(500, { message: dbBookBuyGetError.message });
+	}
+
+	if (book.status === 0 || book.deleted_at != null || bookBuy) {
+		// If the book is deleted or draft, return as point
+		// If already bought same book, return as point (this occurs due to multiple tab payments)
+		const { dbError } = await dbUserPointCreate({
+			userId: bookPaymentInfo.userId,
+			paymentCheckoutId: bookPaymentInfo.payment?.sessionId,
+			amount: bookPaymentInfo.pointSpend,
+			payment: paymentCheckoutRequest
+		});
+		if (dbError) {
+			return error(500, { message: dbError.message });
+		}
+		redirect(303, afterUrl);
+	}
+
+	const { dbError: dbBookBuyCreateError } = await dbBookBuyCreate({
+		...bookPaymentInfo,
+		payment: paymentCheckoutRequest
+	});
+	if (dbBookBuyCreateError) {
+		return error(500, { message: dbBookBuyCreateError?.message ?? '' });
 	}
 
 	if (currency) {

@@ -7,22 +7,13 @@
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
 	import * as m from '$lib/i18n/paraglide/messages';
-	import { callbackParam, removeLanguageTagFromPath } from '$lib/utilities/url';
+	import { callbackParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
-	import NavLinkSp from './nav-link-sp.svelte';
+	import NavLinkSp from '$lib/components/service/navigation/nav-link-sp.svelte';
 
 	// After sign-in/up redirect to
-	$: redirectPathname = (() => {
-		if (['/signin', '/signup'].includes(removeLanguageTagFromPath($page.url.pathname))) {
-			// On sign-in/up → sign-in/up page move, keep callback url;
-			const callbackUrl = $page.url.searchParams.get(callbackParam) ?? '';
-			return encodeURIComponent(callbackUrl);
-		} else {
-			// On (any page) → sign-in/up page move, show the (any page) after sign-in/up
-			return encodeURIComponent($page.url.href);
-		}
-	})();
+	const redirectPathname = $derived(encodeURIComponent($page.url.href));
 </script>
 
 <header
@@ -61,9 +52,11 @@
 			{#if $page.data.session?.user}
 				<li class="relative">
 					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-0 min-w-40">
-						<NavLinkSp slot="opener" name={m.header_more()}>
-							<IconMore width="30" height="30" />
-						</NavLinkSp>
+						{#snippet opener()}
+							<NavLinkSp name={m.header_more()}>
+								<IconMore width="30" height="30" />
+							</NavLinkSp>
+						{/snippet}
 						<ul>
 							<li>
 								<Signout dialogName="footer_signout" />

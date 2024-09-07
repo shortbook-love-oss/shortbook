@@ -4,9 +4,12 @@
 	import { categories } from './menu';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
-	export let className = '';
+	type Props = {
+		className?: string;
+	};
+	let { className = '' }: Props = $props();
 
-	let isRender = true;
+	let isRender = $state(true);
 	onNavigate(() => {
 		isRender = false;
 		requestAnimationFrame(() => (isRender = true));

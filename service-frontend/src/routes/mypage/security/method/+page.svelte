@@ -1,7 +1,12 @@
 <script lang="ts">
 	import IconEmail from '~icons/mdi/email-outline';
+	import { page } from '$app/stores';
+	import { toLocaleDatetime } from '$lib/utilities/date';
+	import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-	export let data;
+	const requestLang = getLanguageTagFromUrl($page.url);
+
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -25,6 +30,6 @@
 	</div>
 {/if}
 <p class="mb-1 font-semibold">Signed up at:</p>
-<p class="mb-4">{data.userCreatedAt}</p>
+<p class="mb-4">{toLocaleDatetime(data.userCreatedAt, requestLang)}</p>
 <p class="mb-1 font-semibold">Last signed in at:</p>
-<p>{data.lastSignedAt}</p>
+<p>{toLocaleDatetime(data.lastSignedAt, requestLang)}</p>

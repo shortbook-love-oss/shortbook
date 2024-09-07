@@ -2,7 +2,7 @@
 	import IconPlus from '~icons/mdi/plus';
 	import BookItem from '$lib/components/service/write/book-item.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -11,7 +11,7 @@
 
 <div class="mx-auto max-w-xl">
 	<div class="mb-8 flex flex-wrap items-center gap-4">
-		<h1 class="text-2xl font-semibold">My books</h1>
+		<h1 class="text-2xl">My books</h1>
 		<a
 			href="/write/new"
 			class="flex items-center gap-2 rounded-lg border-2 border-primary-700 bg-primary-100 px-3 py-2 text-lg font-semibold text-primary-950 hover:bg-primary-200"

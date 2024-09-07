@@ -1,6 +1,8 @@
 <script lang="ts">
+	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
-	import LayoutRule from '../_layout-rule.svelte';
+
+	let { children } = $props();
 </script>
 
 <svelte:head>
@@ -10,6 +12,6 @@
 
 <div class="contents" data-sveltekit-reload>
 	<LayoutRule>
-		<slot />
+		{@render children()}
 	</LayoutRule>
 </div>

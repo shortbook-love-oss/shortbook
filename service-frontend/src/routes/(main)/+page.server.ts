@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { dbBookList } from '$lib/model/book/list';
+import { env as envPublic } from '$env/dynamic/public';
+import { dbBookList } from '$lib-backend/model/book/list';
 import { type BookItem, getBookCover } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
@@ -52,7 +53,7 @@ export const load = async ({ url }) => {
 				bookKeyName: book.key_name,
 				userKeyName: profile.key_name,
 				penName: profileLang.pen_name,
-				userImage: book.user.image ?? ''
+				userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + (book.user.image ?? '')
 			});
 		}
 	}

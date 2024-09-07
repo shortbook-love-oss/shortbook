@@ -1,14 +1,14 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { isExistBookKeyName } from '$lib/components/service/write/edit-action';
-import { editLoad } from '$lib/components/service/write/edit-load';
-import { dbBookCreate } from '$lib/model/book/create';
-import { dbUserProfileGet } from '$lib/model/user/profile/get';
+import { dbBookCreate } from '$lib-backend/model/book/create';
+import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { getBookCover } from '$lib/utilities/book';
 import { type AvailableLanguageTags, languageAndNotSelect } from '$lib/utilities/language';
 import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
+import { isExistBookKeyName } from '$lib-backend/functions/service/write/edit-action';
+import { editLoad } from '$lib-backend/functions/service/write/edit-load';
 
 export const load = async ({ url, locals }) => {
 	const userId = locals.session?.user?.id;
@@ -20,7 +20,7 @@ export const load = async ({ url, locals }) => {
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
 
-	const { profile, userKeyName, penName, selectedCurrencyKey, currencyRates } =
+	const { profile, userKeyName, penName, selectedCurrencyKey, currencyRateIndex } =
 		await editLoad(userId);
 
 	const bookCover = getBookCover({});
@@ -35,7 +35,7 @@ export const load = async ({ url, locals }) => {
 	form.data.keyName = '';
 	form.data.buyPoint = 200;
 
-	return { form, userKeyName, penName, langTags, selectedCurrencyKey, currencyRates };
+	return { form, userKeyName, penName, langTags, selectedCurrencyKey, currencyRateIndex };
 };
 
 export const actions = {

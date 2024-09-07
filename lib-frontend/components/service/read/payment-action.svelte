@@ -4,17 +4,24 @@
 	import { paymentCurrencyParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 
-	export let bookId: string;
-	export let currencyList: SelectItem<CurrencySupportKeys>[];
-	export let primaryCurrency: CurrencySupportKeys;
+	type Props = {
+		bookId: string;
+		currencyList: SelectItem<CurrencySupportKeys>[];
+		primaryCurrency: CurrencySupportKeys;
+	};
+	let { bookId, currencyList, primaryCurrency }: Props = $props();
 
-	$: primaryCurrencies = currencyList.filter((currency) => {
-		return currency.value === primaryCurrency;
-	});
+	const primaryCurrencies = $state(
+		currencyList.filter((currency) => {
+			return currency.value === primaryCurrency;
+		})
+	);
 
-	$: secondaryCurrencies = currencyList.filter((currency) => {
-		return currency.value !== primaryCurrency;
-	});
+	const secondaryCurrencies = $state(
+		currencyList.filter((currency) => {
+			return currency.value !== primaryCurrency;
+		})
+	);
 </script>
 
 <div>
@@ -31,9 +38,9 @@
 			openerColorClass=""
 			dropdownClass="-start-[1.0625rem] top-8 min-w-72 max-md:max-w-[28rem] md:w-[30rem]"
 		>
-			<div slot="opener">
+			{#snippet opener()}
 				<p class="inline-block px-1 text-lg underline">Use other currency</p>
-			</div>
+			{/snippet}
 			<div class="flex flex-wrap items-center gap-3 p-2">
 				{#each secondaryCurrencies as currency}
 					<a

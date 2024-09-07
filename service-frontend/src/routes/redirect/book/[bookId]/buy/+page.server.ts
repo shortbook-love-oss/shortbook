@@ -1,20 +1,22 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookGet } from '$lib/model/book/get';
-import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
-import { dbBookBuyGet } from '$lib/model/book-buy/get';
-import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
-import { dbUserPointList } from '$lib/model/user/point/list';
-import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
-import { createPaymentSession } from '$lib/utilities/server/payment';
-import { redirectToSignInPage } from '$lib/utilities/server/url';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib-backend/model/book-buy/create';
+import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
+import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
+import { dbUserPaymentContractGet } from '$lib-backend/model/user/payment-contract/get';
+import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
+import { chargeFee } from '$lib/utilities/payment';
 import {
 	getLanguageTagFromUrl,
 	paymentBookInfoParam,
 	paymentCurrencyParam,
 	setLanguageTagToPath
 } from '$lib/utilities/url';
+import { decryptFromFlat, encryptAndFlat } from '$lib-backend/utilities/crypto';
+import { createPaymentSession } from '$lib-backend/utilities/payment';
+import { redirectToSignInPage } from '$lib-backend/utilities/url';
 
 export const load = async ({ url, params, locals }) => {
 	const userId = locals.session?.user?.id;
@@ -31,13 +33,6 @@ export const load = async ({ url, params, locals }) => {
 	);
 	if (!userEmail) {
 		return error(401, { message: 'Unauthorized' });
-	}
-
-	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
-	if (dbBookBuyError) {
-		return error(500, { message: dbBookBuyError?.message ?? '' });
-	} else if (bookBuy) {
-		return error(500, { message: `Already bought this book, Book ID=${bookId}` });
 	}
 	const { currentPoint, dbError: dbUserPointError } = await dbUserPointList({ userId });
 	if (dbUserPointError) {
@@ -59,18 +54,13 @@ export const load = async ({ url, params, locals }) => {
 		return redirect(303, cancelUrl);
 	}
 
-	const { paymentContract, dbError: dbContractGetError } = await dbUserPaymentContractGet({
-		userId,
-		providerKey: 'stripe'
-	});
-	if (dbContractGetError) {
-		return error(500, { message: dbContractGetError?.message ?? '' });
+	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
+	if (dbBookBuyError) {
+		return error(500, { message: dbBookBuyError?.message ?? '' });
+	} else if (bookBuy) {
+		// Already bought this book
+		return redirect(303, cancelUrl);
 	}
-	const paymentCustomerId = decryptFromFlat(
-		paymentContract?.provider_customer_id ?? '',
-		env.ENCRYPT_PAYMENT_CUSTOMER_ID,
-		env.ENCRYPT_SALT
-	);
 
 	// If users can pay with the points they have, use it
 	const dbBookBuyCreateReq: DbBookBuyCreateRequest = {
@@ -89,10 +79,37 @@ export const load = async ({ url, params, locals }) => {
 	}
 
 	// Currency specification is required for payment process
-	const requestCurrency = url.searchParams.get(paymentCurrencyParam);
+	const requestCurrency = url.searchParams.get(paymentCurrencyParam) as CurrencySupportKeys | null;
 	if (!requestCurrency || !getCurrencyData(requestCurrency)) {
 		return error(400, { message: 'Currency must be specified.' });
 	}
+
+	// Need 100 USD + service fee to buy 100 point
+	const pointAmountBase = (book.buy_point / 100) * (100 / (100 - chargeFee));
+	const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
+		amount: pointAmountBase
+	});
+	if (dbRateGetError) {
+		error(500, { message: dbRateGetError.message });
+	}
+	const paymentAmount = currencyRateIndex[requestCurrency];
+	if (!paymentAmount) {
+		// Doesn't support currency, just reload the page
+		return error(400, { message: 'Selected currency is not support.' });
+	}
+
+	const { paymentContracts, dbError: dbContractGetError } = await dbUserPaymentContractGet({
+		userId,
+		providerKey: 'stripe'
+	});
+	if (!paymentContracts || dbContractGetError) {
+		return error(500, { message: dbContractGetError?.message ?? '' });
+	}
+	const paymentCustomerId = decryptFromFlat(
+		paymentContracts[0]?.provider_customer_id ?? '',
+		env.ENCRYPT_PAYMENT_CUSTOMER_ID,
+		env.ENCRYPT_SALT
+	);
 
 	// If do not have enough points, use Stripe Checkout.
 	// Need 456 points → charge 456 points
@@ -110,7 +127,7 @@ export const load = async ({ url, params, locals }) => {
 		`Charge ${dbBookBuyCreateReq.beforePointChargeAmount} points for ShortBook`,
 		'txcd_10103000', // SaaS for personnel (If business, use txcd_10103001)
 		requestCurrency as CurrencySupportKeys,
-		dbBookBuyCreateReq.beforePointChargeAmount,
+		paymentAmount,
 		paymentCustomerId,
 		userEmail,
 		afterPaymentUrl.href,

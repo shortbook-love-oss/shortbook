@@ -1,8 +1,8 @@
 import { redirect, fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { dbUserDelete } from '$lib/model/user/delete';
-import { dbUserProfileGet } from '$lib/model/user/profile/get';
+import { dbUserDelete } from '$lib-backend/model/user/delete';
+import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { deleteSessionToken } from '$lib/utilities/cookie';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user-delete';

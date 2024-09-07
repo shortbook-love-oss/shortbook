@@ -1,18 +1,18 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { isExistBookKeyName } from '$lib/components/service/write/edit-action';
-import { editLoad } from '$lib/components/service/write/edit-load';
 import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
-import { dbBookDelete } from '$lib/model/book/delete';
-import { dbBookGet } from '$lib/model/book/get';
-import { dbBookUpdate } from '$lib/model/book/update';
-import { dbBookBuyList } from '$lib/model/book-buy/list';
-import { dbUserProfileGet } from '$lib/model/user/profile/get';
+import { dbBookDelete } from '$lib-backend/model/book/delete';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookUpdate } from '$lib-backend/model/book/update';
+import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
+import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { getBookCover } from '$lib/utilities/book';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book-update';
+import { isExistBookKeyName } from '$lib-backend/functions/service/write/edit-action';
+import { editLoad } from '$lib-backend/functions/service/write/edit-load';
 
 export const load = async ({ locals, params }) => {
 	const userId = locals.session?.user?.id;
@@ -39,7 +39,7 @@ export const load = async ({ locals, params }) => {
 	}
 	const isBoughtByOther = bookBuys.length > 0;
 
-	const { userKeyName, penName, selectedCurrencyKey, currencyRates } = await editLoad(userId);
+	const { userKeyName, penName, selectedCurrencyKey, currencyRateIndex } = await editLoad(userId);
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
@@ -79,7 +79,7 @@ export const load = async ({ locals, params }) => {
 		initTitle,
 		isBoughtByOther,
 		selectedCurrencyKey,
-		currencyRates
+		currencyRateIndex
 	};
 };
 

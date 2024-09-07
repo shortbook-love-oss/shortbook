@@ -6,19 +6,16 @@
 	import { schema } from '$lib/validation/schema/user/currency-update';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
-	import TextArea from '$lib/components/modules/form/text-area.svelte';
-	import TextField from '$lib/components/modules/form/text-field.svelte';
-	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
 	import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
 
-	export let data;
+	let { data } = $props();
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
 		validators: zod(schema)
 	});
 	// Validate and set enable/disable submit button when the input value changes
-	let hasVaild = true;
+	let hasVaild = $state(true);
 	function validateBackground() {
 		validateForm().then((result) => (hasVaild = result.valid));
 	}
@@ -26,7 +23,7 @@
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
 
-	let isEnableJS = false;
+	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
 	const currencyData = getCurrencyData(data.suggestCurrency);
@@ -63,7 +60,7 @@
 			<button
 				type="button"
 				class="rounded border border-primary-700 bg-primary-100 px-3 py-1.5 text-lg hover:bg-primary-200 focus:bg-primary-200"
-				on:click={() => setCurrency(currencyData.key)}
+				onclick={() => setCurrency(currencyData.key)}
 			>
 				Set to {currencyData.label}
 			</button>

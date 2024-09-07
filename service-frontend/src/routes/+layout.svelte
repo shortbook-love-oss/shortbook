@@ -3,6 +3,8 @@
 	import { page, updated } from '$app/stores';
 	import { i18n } from '$lib/i18n/i18n';
 	import '../app.css';
+
+	let { children } = $props();
 </script>
 
 <svelte:head>
@@ -18,6 +20,6 @@
 
 <ParaglideJS {i18n}>
 	<div class="contents" data-sveltekit-reload={$updated}>
-		<slot />
+		{@render children()}
 	</div>
 </ParaglideJS>

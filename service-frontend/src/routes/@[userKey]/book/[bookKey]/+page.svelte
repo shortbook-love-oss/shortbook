@@ -3,6 +3,7 @@
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import IconWarning from '~icons/mdi/warning';
 	import { page } from '$app/stores';
+	import { toLocaleDate } from '$lib/utilities/date';
 	import { inquiryCategoryParam } from '$lib/utilities/url';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -10,9 +11,9 @@
 	import PaymentAction from '$lib/components/service/read/payment-action.svelte';
 	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	const publishedAt = data.bookDetail.publishedAt.toLocaleDateString(data.requestLang);
+	const publishedAt = toLocaleDate(data.bookDetail.publishedAt, data.requestLang);
 </script>
 
 <svelte:head>
@@ -21,12 +22,12 @@
 
 <article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
 	<div
-		class="hidden w-full max-w-xl shrink-0 gap-8 break-words pt-2 lg:flex lg:w-48 lg:justify-end"
+		class="hidden w-full max-w-2xl shrink-0 gap-8 break-words pt-2 lg:flex lg:w-48 lg:justify-end"
 	>
 		<div class="max-w-full">
 			<a href="/@{data.bookDetail.userKeyName}" class="peer mb-2 inline-block">
 				<img
-					src="{data.bookDetail.userImage}?w=64&h=64&fit=cover"
+					src="{data.bookDetail.userImage}?ext=jpg&w=64&h=64&q=80"
 					alt="{data.bookDetail.penName} profile icon"
 					class="h-16 w-16 rounded bg-white align-middle"
 				/>
@@ -42,17 +43,22 @@
 			{/if}
 		</div>
 	</div>
-	<div class="w-full min-w-0 max-w-xl break-words">
-		<div class="-mx-4 px-4">
-			<h1 class="mb-4 whitespace-pre-wrap text-3xl font-semibold leading-tight sm:text-4xl">
+	<div class="w-full min-w-0 max-w-2xl break-words">
+		<div class="-mx-4 mb-8 px-4">
+			<h1
+				class="whitespace-pre-wrap font-title text-[2.25rem] font-semibold leading-tight xs:text-[3rem] {data
+					.bookDetail.subtitle
+					? 'mb-2'
+					: 'mb-6'}"
+			>
 				{data.bookDetail.title}
 			</h1>
 			{#if data.bookDetail.subtitle}
-				<p class="mb-4 whitespace-pre-wrap text-xl leading-normal">
+				<p class="mb-8 whitespace-pre-wrap font-serif text-2xl leading-snug">
 					{data.bookDetail.subtitle}
 				</p>
 			{/if}
-			<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
+			<div class="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
 				<ProfileCard
 					name={data.bookDetail.penName}
 					keyName={data.bookDetail.userKeyName}
@@ -79,7 +85,7 @@
 		</div>
 		{#if data.bookDetail.isBookDeleted}
 			<div
-				class="mt-8 flex items-center gap-3 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
+				class="mb-8 flex items-center gap-3 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
 			>
 				<IconWarning width="24" height="24" class="shrink-0" />
 				<div class="text-lg leading-snug">
@@ -100,18 +106,17 @@
 		{/if}
 		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.prologue}
-			<section class="article_content text-lg">
+			<section class="article_content mb-8 font-serif text-xl">
 				{@html data.bookDetail.prologue}
 			</section>
-			<hr class="my-8 border-stone-300" />
 		{/if}
 		{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
-			<section class="article_content text-lg">
+			<section class="article_content font-serif text-xl">
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
 			<SalesMessage image={data.bookDetail.userImage} message={data.bookDetail.salesMessage}>
-				<svelte:fragment slot="action">
+				{#snippet action()}
 					{#if data.hasEnoughPoint}
 						<a
 							href="/redirect/book/{data.bookDetail.id}/buy"
@@ -126,7 +131,7 @@
 							primaryCurrency={data.primaryCurrency}
 						/>
 					{/if}
-				</svelte:fragment>
+				{/snippet}
 			</SalesMessage>
 		{/if}
 	</div>

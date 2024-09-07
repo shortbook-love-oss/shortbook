@@ -1,6 +1,5 @@
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import 'dotenv/config';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -11,8 +10,12 @@ const config = {
 
 		files: {
 			// $lib alias change './src/lib' to './lib'
-			lib: 'lib',
-			assets: 'lib/static'
+			lib: 'lib-frontend',
+			assets: 'lib-frontend/static'
+		},
+
+		alias: {
+			'$lib-backend': 'lib-backend'
 		},
 
 		csp: {
@@ -31,6 +34,19 @@ const config = {
 				'object-src': ['self'],
 				'font-src': ['self', 'data:'],
 				'default-src': ['self']
+			}
+		}
+	},
+
+	compilerOptions: {
+		runes: true
+	},
+
+	vitePlugin: {
+		dynamicCompileOptions({ filename }) {
+			// Disabled rune mode in node_modules/*
+			if (filename.includes('node_modules')) {
+				return { runes: undefined };
 			}
 		}
 	}

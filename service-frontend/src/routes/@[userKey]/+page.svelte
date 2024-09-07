@@ -3,7 +3,7 @@
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookItem from '$lib/components/service/read/book-item.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -17,18 +17,18 @@
 		<section
 			class="flex min-h-[27rem] w-full flex-col items-center rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-4 pb-5 text-white md:min-h-[30rem]"
 		>
-			<h1 class="mb-1 max-w-full whitespace-pre-wrap break-words text-2xl">
+			<h1 class="max-w-full whitespace-pre-wrap break-words text-3xl">
 				{data.profileLang?.pen_name}
 			</h1>
-			<p class="mb-3 max-w-full break-words">@{data.user.profiles?.key_name}</p>
+			<p class="mb-6 max-w-full break-words">@{data.user.profiles?.key_name}</p>
 			{#if data.profileLang?.headline}
-				<p class="mb-4 max-w-full whitespace-pre-wrap break-words text-lg">
+				<p class="mb-8 max-w-full whitespace-pre-wrap break-words text-lg">
 					{data.profileLang.headline}
 				</p>
 			{/if}
 			<img
-				src="{data.user.image}?w=128&h=128&fit=cover"
-				class="mb-4 h-32 w-32 rounded-md"
+				src="{data.user.image}?ext=jpg&w=128&h=128&q=100"
+				class="mb-4 h-32 w-32 rounded-md bg-white"
 				alt="{data.profileLang?.headline} profile image"
 			/>
 			{#if data.isOwn}
@@ -43,7 +43,7 @@
 		</section>
 	</div>
 	<div
-		class="w-full flex-1 overflow-x-hidden rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-1 text-lg {data
+		class="w-full flex-1 overflow-x-hidden rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-1 font-serif text-xl {data
 			.profileLang?.self_introduction
 			? ''
 			: 'hidden'}"
@@ -56,14 +56,12 @@
 	</div>
 </div>
 
-<div class="mx-auto max-w-[108rem]">
-	<h2 class="mb-8 text-2xl font-semibold">Recent books</h2>
+<div class="mx-auto max-w-2xl">
+	<h2 class="mb-8 text-2xl">Recent books</h2>
 	{#if data.bookList.length}
-		<ul
-			class="grid grid-cols-1 gap-x-8 gap-y-12 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
-		>
+		<ul>
 			{#each data.bookList as book (book.id)}
-				<li>
+				<li class="mb-16">
 					<BookItem
 						{book}
 						penName={book.penName}

@@ -31,6 +31,13 @@
 	h1,
 	h2,
 	h3,
+	h4 {
+		font-family: 'Cambria', 'Hiragino Mincho ProN', serif, 'Apple Color Emoji', 'Noto Color Emoji';
+	}
+
+	h1,
+	h2,
+	h3,
 	h4,
 	h5,
 	h6,

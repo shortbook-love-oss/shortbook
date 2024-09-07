@@ -1,5 +1,5 @@
-import { redirect } from '@sveltejs/kit';
-import { dbBookGet } from '$lib/model/book/get';
+import { error, redirect } from '@sveltejs/kit';
+import { dbBookGet } from '$lib-backend/model/book/get';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 
 export const load = async ({ url, params }) => {

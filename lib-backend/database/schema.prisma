@@ -1,0 +1,346 @@
+generator client {
+  provider                = "prisma-client-js"
+  previewFeatures         = ["omitApi"]
+}
+
+datasource db {
+  provider                = "mysql"
+  url                     = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------
+// User
+// -----------------------------------------------------------------------
+
+model User {
+  id                      String              @id @default(cuid())
+  name                    String?             // Only using on signed-up process, but required for Auth.js
+  email                   String?             @unique @db.VarChar(510) // Encrypted
+  email_hash              String?             @unique @db.VarChar(127) // Email + provider name
+  emailVerified           DateTime?           @map("email_verified")
+  image                   String?             @db.VarChar(510)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  accounts                Account[]
+  authenticator           Authenticator[]
+  sessions                Session[]
+  profiles                user_profiles?
+  points                  user_points[]
+  fans                    user_fans[]
+  payment_checkouts       user_payment_checkouts[]
+  payment_setting         user_payment_settings?
+  payment_contracts       user_payment_contracts[]
+  books                   books[]
+  book_buys               book_buys[]
+
+  @@map("users")
+}
+
+model Account {
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  userId                  String              @map("user_id")
+  type                    String
+  provider                String
+  providerAccountId       String              @map("provider_account_id")
+  refresh_token           String?             @db.Text
+  access_token            String?             @db.Text
+  expires_at              Int?
+  token_type              String?
+  scope                   String?
+  id_token                String?             @db.Text
+  session_state           String?
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Authenticator {
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
+
+  credentialID            String              @unique @map("credential_id")
+  userId                  String              @map("user_id")
+  providerAccountId       String              @map("provider_account_id")
+  credentialPublicKey     String              @map("credential_public_key")
+  counter                 Int
+  credentialDeviceType    String              @map("credential_device_type")
+  credentialBackedUp      Boolean             @map("credential_backed_up")
+  transports              String?
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@id([userId, credentialID])
+  @@map("authenticator")
+}
+
+model Session {
+  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  sessionToken            String              @unique @map("session_token")
+  userId                  String              @map("user_id")
+  expires                 DateTime
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier              String
+  token                   String              @db.VarChar(510)
+  user_id                 String?
+  expires                 DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model user_profiles {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String              @unique
+  key_name                String              @unique @db.VarChar(30) // Length 1 - 30
+  native_language         String              @db.VarChar(5)
+  location                String              @db.VarChar(1022)
+  birthday                DateTime?           @db.Date()
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  languages               user_profile_languages[]
+}
+
+model user_profile_languages {
+  user_profile            user_profiles       @relation(fields: [profile_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  profile_id              String
+  language_code           String              @db.VarChar(5)
+  pen_name                String              @db.VarChar(210) // Length 1 - 50
+  headline                String              @db.VarChar(210) // Length 1 - 50
+  self_introduction       String              @db.MediumText
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([profile_id, language_code])
+}
+
+model user_points {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  payment_checkout_id     String              // For charge
+  amount                  Int
+  book_id                 String              // For buy book
+  is_refund               Int                 @db.SmallInt // Use when refunding bought book
+  is_sell                 Int                 @db.SmallInt // Use when writer sold book
+  is_income               Int                 @db.SmallInt // Use when user's point → money received
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model user_fans {
+  target_user             User                @relation(fields: [target_user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  target_user_id          String
+  support_user_id         String
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model user_payment_checkouts {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  provider_key            String              @db.VarChar(15)
+  session_id              String              // Encrypted
+  currency                String              @db.VarChar(3)
+  amount                  Decimal
+  is_refund               Int                 @db.SmallInt
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model user_payment_settings {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String              @unique
+  currency                String              @db.VarChar(3)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model user_payment_contracts {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  provider_key            String              @db.VarChar(15)
+  provider_customer_id    String              // Encrypted
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([provider_key, provider_customer_id])
+}
+
+// -----------------------------------------------------------------------
+// Book
+// -----------------------------------------------------------------------
+
+model books {
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  user_id                 String
+  key_name                String              @db.VarChar(100) // Length 1 - 100
+  status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
+  buy_point               Int
+  published_at            DateTime            @default(now())
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  cover                   book_covers?
+  languages               book_languages[]
+  tags                    book_tags[]
+  buys                    book_buys[]
+
+  @@unique([user_id, key_name])
+}
+
+model book_covers {
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  book_id                 String              @unique
+  base_color_start        String              @db.VarChar(15) // Hex code with "#"
+  base_color_end          String              @db.VarChar(15)
+  base_color_direction    Int                 @db.SmallInt // 0: bottom→top 90: left→right
+  title_font_size         Int                 @db.SmallInt // Font size unit is "px"
+  title_align             Int                 @db.SmallInt // 0: left 1: center 2:right
+  title_color             String              @db.VarChar(15)
+  subtitle_font_size      Int                 @db.SmallInt
+  subtitle_align          Int                 @db.SmallInt
+  subtitle_color          String              @db.VarChar(15)
+  writer_align            Int                 @db.SmallInt
+  writer_color            String              @db.VarChar(15)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model book_languages {
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  book_id                 String
+  language_code           String              @db.VarChar(5)
+  thumbnail_url           String              @db.VarChar(255)
+  title                   String              @db.VarChar(1400) // Max length is 200
+  subtitle                String              @db.VarChar(1400) // Max length is 200
+  prologue                String              @db.LongText
+  content                 String              @db.LongText
+  sales_message           String              @db.Text // Max length is 2000
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+model book_tags {
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  book_id                 String
+  name                    String              @db.VarChar(350) // Max length is 50
+  sort                    Int                 @db.SmallInt
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@index([name])
+}
+
+model book_buys {
+  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
+  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  book_id                 String
+  user_id                 String
+  point_spend             Int                 // It won't change if writer change the price later
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([book_id, user_id])
+}
+
+// -----------------------------------------------------------------------
+// Contact
+// -----------------------------------------------------------------------
+
+model tickets {
+  id                      String              @id @default(cuid())
+  category_key_name       String              @db.VarChar(31)
+  email                   String              @db.VarChar(510)
+  description             String              @db.LongText
+  language_code           String              @db.VarChar(5)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  files                   ticket_files[]
+}
+
+model ticket_files {
+  ticket                  tickets             @relation(fields: [ticket_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @default(cuid())
+  ticket_id               String
+  file_url                String              @db.VarChar(510)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+// -----------------------------------------------------------------------
+// Limit rate control
+// -----------------------------------------------------------------------
+
+model log_actions {
+  id                      String              @id @default(cuid())
+  action_name             String              @db.VarChar(31)
+  ip_address_hash         String              @db.VarChar(127)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+// -----------------------------------------------------------------------
+// Reference: Currency rate from 1 USD
+// -----------------------------------------------------------------------
+
+model currency_rates {
+  currency                String              @id @db.VarChar(3)
+  rate                    Decimal
+}

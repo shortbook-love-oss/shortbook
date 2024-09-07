@@ -1,8 +1,8 @@
 import type { user_payment_checkouts } from '@prisma/client';
 import { error } from '@sveltejs/kit';
-import { dbBookList } from '$lib/model/book/list';
-import { dbUserPaymentCheckoutList } from '$lib/model/user/payment-checkout/list';
-import { dbUserPointList } from '$lib/model/user/point/list';
+import { dbBookList } from '$lib-backend/model/book/list';
+import { dbUserPaymentCheckoutList } from '$lib-backend/model/user/payment-checkout/list';
+import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import type { CurrencySupportKeys } from '$lib/utilities/currency';
 import type { PointListItem } from '$lib/utilities/point';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';

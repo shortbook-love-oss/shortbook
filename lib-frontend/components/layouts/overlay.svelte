@@ -1,13 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import IconMenu from '~icons/mdi/menu';
 	import IconClose from '~icons/mdi/close';
 	import { onNavigate } from '$app/navigation';
 
 	// Need for unique attribute value
-	export let name: string;
+	type Props = {
+		opener?: Snippet;
+		children: Snippet;
+		name: string;
+	};
+	let { opener, children, name }: Props = $props();
 
-	let isEnableJS = false;
+	let isEnableJS = $state(false);
 	onMount(() => {
 		isEnableJS = true;
 	});
@@ -16,18 +21,22 @@
 		closeOverlay();
 	});
 
-	function closeOverlay() {
-		const openSwitch = document.getElementById('common_overlay_open_' + name) as HTMLInputElement;
-		openSwitch.checked = false;
+	function closeOverlay(event?: Event) {
+		if (!event || event.target === event.currentTarget) {
+			const openSwitch = document.getElementById('common_overlay_open_' + name) as HTMLInputElement;
+			openSwitch.checked = false;
+		}
 	}
 </script>
 
 <label class="peer/common_overlay_open relative focus-within:bg-stone-200 hover:bg-stone-200">
-	<slot name="opener">
+	{#if opener}
+		{@render opener()}
+	{:else}
 		<div class="p-2">
 			<IconMenu width="28" height="28" />
 		</div>
-	</slot>
+	{/if}
 	<input
 		type="checkbox"
 		name="common_overlay_{name}"
@@ -47,18 +56,16 @@
 				<button
 					type="button"
 					class="absolute start-0 top-0 h-full w-full appearance-none"
-					on:click|self={closeOverlay}
-				/>
+					onclick={closeOverlay}
+				></button>
 			{/if}
 			<label for="common_overlay_open_{name}" class="ms-auto block">
-				<slot name="closer">
-					<IconClose width="44" height="44" class="p-1" aria-label="Cancel and close overlay" />
-				</slot>
+				<IconClose width="44" height="44" class="p-1" aria-label="Cancel and close overlay" />
 			</label>
 		</div>
 		<div class="flex-1 overflow-x-auto p-2">
-			<slot />
+			{@render children()}
 		</div>
 	</div>
-	<label for="common_overlay_open_{name}" class="flex-1" aria-hidden="true" />
+	<label for="common_overlay_open_{name}" class="flex-1" aria-hidden="true"></label>
 </div>

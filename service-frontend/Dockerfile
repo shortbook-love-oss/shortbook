@@ -1,4 +1,5 @@
-FROM node:22.5.1-bookworm-slim AS base
+# Debian 12 Node.js
+FROM node:22.7.0-bookworm-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl
 
@@ -13,7 +14,8 @@ COPY ./service-frontend/package.json .
 RUN npm i
 
 COPY ./service-frontend .
-COPY ./lib-frontend ./lib
+COPY ./lib-frontend ./lib-frontend
+COPY ./lib-backend ./lib-backend
 
 # Vite use 5173 port
 EXPOSE 5173
@@ -37,7 +39,7 @@ RUN cd ../ \
   && cd install \
   && npm ci --omit=dev
 
-COPY ./lib-frontend/prisma/schema.prisma ../install/lib/prisma/schema.prisma
+COPY ./lib-backend/database/schema.prisma ../install/lib-backend/database/schema.prisma
 
 RUN cd ../install && npm run schema-generate
 
@@ -47,14 +49,16 @@ FROM prd-process AS prd-build
 RUN npm ci --include=dev
 
 COPY ./service-frontend .
-COPY ./lib-frontend ./lib
+COPY ./lib-frontend ./lib-frontend
+COPY ./lib-backend ./lib-backend
 
 # Production-setting build
 RUN npm run build
 
-FROM --platform=linux/arm64 node:22.5.1-bookworm-slim AS prd
+FROM --platform=linux/arm64 node:22.7.0-bookworm-slim AS prd
 
-RUN apt-get update -y && apt-get install -y openssl \
+RUN apt-get update -y \
+  && apt-get install -y openssl \
   && rm -rf /var/lib/apt/lists/*
 
 USER node

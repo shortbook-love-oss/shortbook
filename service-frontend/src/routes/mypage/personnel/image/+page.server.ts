@@ -2,11 +2,11 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { env as envPublic } from '$env/dynamic/public';
-import { dbUserProfileImageUpdate } from '$lib/model/user/update-profile-image';
-import { fileUpload } from '$lib/utilities/server/file';
-import { imageMIMEextension } from '$lib/utilities/file';
+import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
 import { schema } from '$lib/validation/schema/profile-image-update';
+import { deleteImageCache } from '$lib-backend/utilities/cache';
+import { deleteFiles, uploadFile } from '$lib-backend/utilities/file';
+import { imageSecureCheck } from '$lib-backend/utilities/image';
 
 export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
@@ -31,24 +31,48 @@ export const actions = {
 			message(form, 'There was an error. please check your selected image and resubmit.');
 			return fail(400, { form });
 		}
-		const image = form.data.profileImage[0];
-		const cacheRefresh = Date.now().toString(36);
-		const extension = imageMIMEextension[image.type as keyof typeof imageMIMEextension];
+
+		const profileImage = new Uint8Array(await form.data.profileImage[0].arrayBuffer());
+		const { mimeType, errorMessage } = await imageSecureCheck(profileImage);
+		if (!profileImage || !mimeType || errorMessage) {
+			message(form, errorMessage ?? '');
+			return fail(400, { form });
+		}
+
+		// Delete image cache
+		await deleteImageCache(env.AWS_CONTENT_DISTRIBUTION_ID_IMAGE_CDN, `/profile/${userId}/*`);
+
+		// Delete image file in CDN
+		// Path format is /profile/${userId}/profile.${extension}/${someoption-w-h-q...}/profile.${extension}
+		// So delete /profile/${userId}/*
+		const { error: cdnDeleteError } = await deleteFiles(
+			env.AWS_DEFAULT_REGION,
+			`${env.AWS_BUCKET_IMAGE_PROFILE}-cdn`,
+			`${userId}/`
+		);
+		if (cdnDeleteError) {
+			console.error('Error when delete old converted profile-image.');
+			return error(500, { message: "Can't upload profile image. Please contact us." });
+		}
 
 		// Upload image to Amazon S3
-		const isSuccessUpload = await fileUpload(
-			env.AWS_BUCKET_PROFILE_IMAGE,
-			`${userId}/profile-image-${cacheRefresh}.${extension}`,
-			image
+		const savePath = `${userId}/shortbook-profile`;
+		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
+			profileImage,
+			mimeType,
+			env.AWS_DEFAULT_REGION,
+			env.AWS_BUCKET_IMAGE_PROFILE,
+			savePath
 		);
-		if (!isSuccessUpload) {
+		if (uploadFileError || !isSuccessUpload) {
+			console.error('Error when upload new profile-image.');
 			return error(500, { message: "Can't upload profile image. Please contact us." });
 		}
 
 		// Save image URL to DB
 		const { dbError } = await dbUserProfileImageUpdate({
 			userId: userId,
-			image: `${envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE}/${userId}/profile-image-${cacheRefresh}.${extension}`
+			image: '/profile/' + savePath
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });

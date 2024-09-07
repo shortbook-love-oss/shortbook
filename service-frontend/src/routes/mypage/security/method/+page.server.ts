@@ -1,16 +1,14 @@
 import { error } from '@sveltejs/kit';
-import { dbUserSessionGet } from '$lib/model/user/session/get';
+import { dbUserSessionGet } from '$lib-backend/model/user/session/get';
 import { getSessionToken } from '$lib/utilities/cookie';
 import { signInProviders } from '$lib/utilities/signin';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
-export const load = async ({ url, cookies, locals }) => {
+export const load = async ({ cookies, locals }) => {
 	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
 	const sessionToken = getSessionToken(cookies);
-	const langTag = getLanguageTagFromUrl(url);
 
 	const { user, account, session, dbError } = await dbUserSessionGet({
 		userId,
@@ -28,8 +26,8 @@ export const load = async ({ url, cookies, locals }) => {
 			break;
 		}
 	}
-	const userCreatedAt = user?.created_at?.toLocaleString(langTag) ?? '';
-	const lastSignedAt = session?.created_at?.toLocaleString(langTag) ?? '';
+	const userCreatedAt = user?.created_at;
+	const lastSignedAt = session?.created_at;
 
 	return { isSignedByEmail, signInProvider, userCreatedAt, lastSignedAt };
 };

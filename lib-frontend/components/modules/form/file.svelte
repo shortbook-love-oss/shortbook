@@ -5,30 +5,50 @@
 	import IconFile from '~icons/mdi/file-outline';
 	import type { FileInputErrorMessages, SelectedFile } from '$lib/utilities/file';
 
-	export let filesProxy: Writable<any>;
-	export let name: string;
-	export let className = '';
-	export let label = '';
-	export let buttonSubLabel = '';
-	export let required = false;
-	export let acceptTypes: string[] | undefined = undefined; // Array of MIME types
-	export let inputClass = '';
-	export let errorMessages: any = { 0: undefined };
+	type Props = {
+		filesProxy: Writable<any>;
+		name: string;
+		label?: string;
+		buttonSubLabel?: string;
+		required?: boolean;
+		acceptTypes?: string[];
+		errorMessages?: any;
+		className?: string;
+		inputClass?: string;
+		[key: string]: unknown;
+	};
+	let {
+		filesProxy,
+		name,
+		label = '',
+		buttonSubLabel = '',
+		required = false,
+		acceptTypes,
+		errorMessages = { 0: undefined },
+		className = '',
+		inputClass = '',
+		...restProps
+	}: Props = $props();
 
-	let selectedFiles: SelectedFile[] = [];
+	let selectedFiles = $state<SelectedFile[]>([]);
 
-	$: errorMsgs = Object.values((errorMessages as FileInputErrorMessages) ?? {})
-		.flat()
-		.filter(Boolean);
+	const errorMsgs = $state(
+		Object.values((errorMessages as FileInputErrorMessages) ?? {})
+			.flat()
+			.filter(Boolean)
+	);
+
 	// If can only upload images, it's an image uploader
-	$: isImageUploader = (() => {
-		if (!acceptTypes || !acceptTypes.length) {
-			return false;
-		}
-		return acceptTypes.every((contentType) => {
-			return contentType.startsWith('image/');
-		});
-	})();
+	const isImageUploader = $state(
+		(() => {
+			if (!acceptTypes || !acceptTypes.length) {
+				return false;
+			}
+			return acceptTypes.every((contentType) => {
+				return contentType.startsWith('image/');
+			});
+		})()
+	);
 
 	function updateSelectedList() {
 		requestAnimationFrame(() => {
@@ -68,9 +88,9 @@
 	{/if}
 	<div class="peer relative">
 		<input
-			{...$$restProps}
-			bind:files={$filesProxy}
 			type="file"
+			{...restProps}
+			bind:files={$filesProxy}
 			{name}
 			{required}
 			accept={acceptTypes?.join()}
@@ -78,7 +98,7 @@
 				? 'file:border-2 file:border-red-700'
 				: 'file:border file:border-stone-600'}"
 			aria-invalid={errorMsgs?.length ? true : undefined}
-			on:input={updateSelectedList}
+			oninput={updateSelectedList}
 		/>
 		<div
 			class="absolute start-0 top-0 flex h-full w-full cursor-pointer items-center justify-start gap-2 rounded-lg p-3 {inputClass}"
