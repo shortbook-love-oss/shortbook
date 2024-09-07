@@ -150,7 +150,7 @@ export async function convertAndDeliver(
     imageBuffer = file;
   } else {
     let image = sharp(file);
-    if ((reqOption.width || reqOption.height) && !isFromVector) {
+    if (reqOption.width || reqOption.height) {
       image = image.resize({
         width: reqOption.width || undefined,
         height: reqOption.height || undefined,
@@ -165,9 +165,7 @@ export async function convertAndDeliver(
         }
         break;
       case 'png':
-        if (fromExtension !== 'png' || reqOption.quality !== 100) {
-          image = image.png({ quality: reqOption.quality, palette: true, progressive: true });
-        }
+        image = image.flatten(false).png({ quality: reqOption.quality, palette: true, progressive: true });
         break;
       case 'gif':
         if (fromExtension !== 'gif') {
