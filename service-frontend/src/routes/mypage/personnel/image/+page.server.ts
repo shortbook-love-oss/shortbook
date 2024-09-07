@@ -1,13 +1,12 @@
 import { fail, error } from '@sveltejs/kit';
-import { fileTypeFromBuffer } from 'file-type';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
-import { imageMIMEextension } from '$lib/utilities/file';
 import { schema } from '$lib/validation/schema/profile-image-update';
 import { deleteImageCache } from '$lib-backend/utilities/cache';
 import { deleteFiles, uploadFile } from '$lib-backend/utilities/file';
+import { imageSecureCheck } from '$lib-backend/utilities/image';
 
 export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
@@ -32,12 +31,18 @@ export const actions = {
 			message(form, 'There was an error. please check your selected image and resubmit.');
 			return fail(400, { form });
 		}
-		// Browsers trust filename extensions, but this is a security issue
-		// Check actual file type
-		const imageArray = new Uint8Array(await form.data.profileImage[0].arrayBuffer());
-		const fileTypeActual = await fileTypeFromBuffer(imageArray);
-		if (!fileTypeActual || !Object.keys(imageMIMEextension).includes(fileTypeActual.mime)) {
-			message(form, 'Please specify the image file.');
+
+		const { image, mimeType, errorMessage } = await imageSecureCheck(
+			new Uint8Array(await form.data.profileImage[0].arrayBuffer()),
+			512,
+			512
+		);
+		if (!image || !mimeType || errorMessage) {
+			message(form, errorMessage ?? '');
+			return fail(400, { form });
+		}
+		if (request.method.toLowerCase() === 'post') {
+			message(form, 'post .......');
 			return fail(400, { form });
 		}
 
@@ -60,8 +65,8 @@ export const actions = {
 		// Upload image to Amazon S3
 		const savePath = `${userId}/shortbook-profile`;
 		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
-			imageArray,
-			fileTypeActual.mime,
+			image,
+			mimeType,
 			env.AWS_DEFAULT_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,
 			savePath

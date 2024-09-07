@@ -23,3 +23,5 @@ export const imageMIMEextension: Record<string, string> = {
 	'image/x-icon': 'ico',
 	'image/svg+xml': 'svg'
 };
+
+export const maybeSvgMIMEs = ['image/svg+xml', 'application/xml', 'text/xml', 'plain/txt'];

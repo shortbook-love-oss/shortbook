@@ -9,10 +9,8 @@ import {
 import Google from '@auth/sveltekit/providers/google';
 import LinkedIn from '@auth/sveltekit/providers/linkedin';
 import GitHub from '@auth/sveltekit/providers/github';
-import { fileTypeFromBuffer } from 'file-type';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
-import { imageMIMEextension } from '$lib/utilities/file';
 import { matchSigninProvider } from '$lib/utilities/signin';
 import { dbUserProfileCreate } from '$lib-backend/model/user/profile/create';
 import { dbUserRestore } from '$lib-backend/model/user/restore';
@@ -22,6 +20,7 @@ import prisma from '$lib-backend/database/connect';
 import { encryptAndFlat } from '$lib-backend/utilities/crypto';
 import { uploadFile } from '$lib-backend/utilities/file';
 import { sendEmail, toHashUserEmail } from '$lib-backend/utilities/email';
+import { imageSecureCheck } from '$lib-backend/utilities/image';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -114,7 +113,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	// Upload profile image using in external service CDN
 	if (user.id && user.image?.startsWith('https://')) {
 		// 1. Fetch from external service CDN
-		const image = await fetch(user.image, { mode: 'no-cors' })
+		const externalProfileImage = await fetch(user.image, { mode: 'no-cors' })
 			.then(async (res) => {
 				if (res.status === 200) {
 					return new Uint8Array(await res.arrayBuffer());
@@ -124,15 +123,15 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 			})
 			.catch(() => undefined);
 
-		if (image) {
-			const fileTypeActual = await fileTypeFromBuffer(image);
+		if (externalProfileImage) {
+			const { image, mimeType } = await imageSecureCheck(externalProfileImage, 512, 512);
 
-			if (fileTypeActual && Object.keys(imageMIMEextension).includes(fileTypeActual.mime)) {
+			if (image && mimeType) {
 				// 2. Upload image to Amazon S3
 				const savePath = `${user.id}/shortbook-profile`;
 				const { isSuccessUpload } = await uploadFile(
 					image,
-					fileTypeActual.mime,
+					mimeType,
 					env.AWS_DEFAULT_REGION,
 					env.AWS_BUCKET_IMAGE_PROFILE,
 					savePath
