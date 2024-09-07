@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
-import { dbCurrencyRateUpsert, type DbCurrencyRateUpsertRequest } from '$lib/model/currency/upsert';
-import { fetchCurrencyRates } from '$lib/utilities/server/currency';
+import { dbCurrencyRateUpsert, type DbCurrencyRateUpsertRequest } from '$lib-backend/model/currency/upsert';
+import { fetchCurrencyRates } from '$lib-backend/utilities/currency';
 import {
 	currencySupportKeys,
 	defaultCurrency,

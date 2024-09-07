@@ -1,14 +1,11 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookGet } from '$lib/model/book/get';
-import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib/model/book-buy/create';
-import { dbBookBuyGet } from '$lib/model/book-buy/get';
-import { dbCurrencyRateGet } from '$lib/model/currency/get';
-import { dbUserPaymentContractGet } from '$lib/model/user/payment-contract/get';
-import { dbUserPointList } from '$lib/model/user/point/list';
-import { decryptFromFlat, encryptAndFlat } from '$lib/utilities/server/crypto';
-import { createPaymentSession } from '$lib/utilities/server/payment';
-import { redirectToSignInPage } from '$lib/utilities/server/url';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib-backend/model/book-buy/create';
+import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
+import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
+import { dbUserPaymentContractGet } from '$lib-backend/model/user/payment-contract/get';
+import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
 import { chargeFee } from '$lib/utilities/payment';
 import {
@@ -17,6 +14,9 @@ import {
 	paymentCurrencyParam,
 	setLanguageTagToPath
 } from '$lib/utilities/url';
+import { decryptFromFlat, encryptAndFlat } from '$lib-backend/utilities/crypto';
+import { createPaymentSession } from '$lib-backend/utilities/payment';
+import { redirectToSignInPage } from '$lib-backend/utilities/url';
 
 export const load = async ({ url, params, locals }) => {
 	const userId = locals.session?.user?.id;

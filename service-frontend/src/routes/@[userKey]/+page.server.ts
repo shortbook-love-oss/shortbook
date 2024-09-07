@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbBookList } from '$lib/model/book/list';
-import { dbUserGetByKeyName } from '$lib/model/user/get-by-key-name';
+import { dbBookList } from '$lib-backend/model/book/list';
+import { dbUserGetByKeyName } from '$lib-backend/model/user/get-by-key-name';
 import { type BookItem, contentsToMarkdown, getBookCover } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
@@ -13,7 +13,7 @@ export const load = async ({ url, params }) => {
 		return error(500, { message: dbError?.message ?? '' });
 	}
 	if (user.image) {
-		user.image = envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE + user.image;
+		user.image = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image;
 	}
 
 	const { books, dbError: bookDbError } = await dbBookList({ userId: user.id });

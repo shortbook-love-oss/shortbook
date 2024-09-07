@@ -1,19 +1,20 @@
 import { fail, error } from '@sveltejs/kit';
+import { fileTypeFromBuffer } from 'file-type';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbLogActionCreate } from '$lib/model/log/action-create';
-import { dbLogActionList } from '$lib/model/log/action-list';
-import { dbTicketCreate } from '$lib/model/support/ticket-create';
-import { encryptAndFlat, toHash } from '$lib/utilities/server/crypto';
-import { sendEmail } from '$lib/utilities/server/email';
-import { fileUpload } from '$lib/utilities/server/file';
-import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib/utilities/server/log-action';
 import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
 import { escapeHTML } from '$lib/utilities/html';
 import { getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/support/ticket-create';
+import { dbLogActionCreate } from '$lib-backend/model/log/action-create';
+import { dbLogActionList } from '$lib-backend/model/log/action-list';
+import { dbTicketCreate } from '$lib-backend/model/support/ticket-create';
+import { uploadFile } from '$lib-backend/utilities/file';
+import { encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
+import { sendEmail } from '$lib-backend/utilities/email';
+import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib-backend/utilities/log-action';
 
 export const load = async ({ url, getClientAddress }) => {
 	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
@@ -77,21 +78,29 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		// Upload files to Amazon S3
+		// Upload files
 		const savedFileUrls = [];
 		const filesKey = getRandom(32);
 		for (const file of form.data.files ?? []) {
-			const saveFilePath = `${filesKey}/${file.name.replace('/', '')}`;
-			const isSuccessUpload = await fileUpload(
-				env.AWS_BUCKET_CONTACT_TICKET_ATTACH,
-				saveFilePath,
-				file
+			// Upload with actual mime-type
+			const imageArray = new Uint8Array(await file.arrayBuffer());
+			const fileTypeActual = await fileTypeFromBuffer(imageArray);
+			if (!fileTypeActual) {
+				return error(500, { message: "Can't upload file. Please contact us without a file." });
+			}
+			const saveFilePath = `${filesKey}/${file.name.replace('/', '-')}`;
+			const { isSuccessUpload, error: uploadFileError } = await uploadFile(
+				imageArray,
+				fileTypeActual.mime,
+				env.AWS_DEFAULT_REGION,
+				env.AWS_BUCKET_SUPPORT_TICKET_ATTACH,
+				saveFilePath
 			);
-			if (!isSuccessUpload) {
-				return error(500, { message: "Can't upload profile image. Please contact us." });
+			if (uploadFileError || !isSuccessUpload) {
+				return error(500, { message: "Can't upload file. Please contact us without a file." });
 			}
 			// Save as decoded (=original) URL string
-			const fullPath = `https://${env.AWS_BUCKET_CONTACT_TICKET_ATTACH}.s3.${env.AWS_REGION}.amazonaws.com/${saveFilePath}`;
+			const fullPath = `https://${env.AWS_BUCKET_SUPPORT_TICKET_ATTACH}.s3.${env.AWS_DEFAULT_REGION}.amazonaws.com/${saveFilePath}`;
 			savedFileUrls.push(fullPath);
 		}
 

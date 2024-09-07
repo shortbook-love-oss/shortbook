@@ -10,8 +10,12 @@ const config = {
 
 		files: {
 			// $lib alias change './src/lib' to './lib'
-			lib: 'lib',
-			assets: 'lib/static'
+			lib: 'lib-frontend',
+			assets: 'lib-frontend/static'
+		},
+
+		alias: {
+			'$lib-backend': 'lib-backend'
 		},
 
 		csp: {
@@ -40,11 +44,12 @@ const config = {
 
 	vitePlugin: {
 		dynamicCompileOptions({ filename }) {
+			// Disabled rune mode in node_modules/*
 			if (filename.includes('node_modules')) {
 				return { runes: undefined };
 			}
 		}
-	},
+	}
 };
 
 export default config;

@@ -14,7 +14,7 @@
 	class="flex items-center gap-2 {keyName ? 'hover:underline' : ''} {className}"
 >
 	<img
-		src="{imageSrc}?w=32&h=32&fit=cover"
+		src="{imageSrc}?ext=jpg&w=24&h=24&q=80"
 		alt="{name} profile icon"
 		class="h-6 w-6 rounded bg-white"
 	/>

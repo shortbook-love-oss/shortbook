@@ -1,8 +1,8 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
-import { dbUserPaymentSettingUpsert } from '$lib/model/user/payment-setting/upsert';
+import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
+import { dbUserPaymentSettingUpsert } from '$lib-backend/model/user/payment-setting/upsert';
 import {
 	currencyAndNoSelect,
 	guessCurrencyByLang,

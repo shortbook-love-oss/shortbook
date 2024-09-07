@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbBookGet } from '$lib/model/book/get';
-import { dbBookBuyGet } from '$lib/model/book-buy/get';
-import { dbCurrencyRateGet } from '$lib/model/currency/get';
-import { dbUserPaymentSettingGet } from '$lib/model/user/payment-setting/get';
-import { dbUserPointList } from '$lib/model/user/point/list';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
+import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
+import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
+import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import {
 	defaultCurrency,
@@ -133,7 +133,7 @@ export const load = async ({ url, locals, params }) => {
 		bookKeyName: book.key_name,
 		userKeyName: profile.key_name,
 		penName: profileLang.pen_name,
-		userImage: envPublic.PUBLIC_ORIGIN_PROFILE_IMAGE + (book.user.image ?? ''),
+		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + (book.user.image ?? ''),
 		prologue: await contentsToMarkdown(bookLang.prologue),
 		content: '',
 		salesMessage: '',

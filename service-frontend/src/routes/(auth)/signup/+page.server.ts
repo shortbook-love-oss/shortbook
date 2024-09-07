@@ -2,12 +2,12 @@ import { error, redirect } from '@sveltejs/kit';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { beforeSign, type SignResult } from '$lib/functions/service/auth/action-init';
-import { prepareSignIn } from '$lib/functions/service/auth/prepare-signin';
-import { prepareSignUp } from '$lib/functions/service/auth/prepare-signup';
-import { encryptAndFlat } from '$lib/utilities/server/crypto';
 import { callbackParam, getSafetyUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/signin-by-email';
+import { beforeSign, type SignResult } from '$lib-backend/functions/service/auth/action-init';
+import { prepareSignIn } from '$lib-backend/functions/service/auth/prepare-signin';
+import { prepareSignUp } from '$lib-backend/functions/service/auth/prepare-signup';
+import { encryptAndFlat } from '$lib-backend/utilities/crypto';
 
 export async function load({ locals, url }) {
 	const session = await locals.auth();
