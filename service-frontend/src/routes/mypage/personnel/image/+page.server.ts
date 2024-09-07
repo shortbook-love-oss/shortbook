@@ -32,12 +32,9 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { image, mimeType, errorMessage } = await imageSecureCheck(
-			new Uint8Array(await form.data.profileImage[0].arrayBuffer()),
-			512,
-			512
-		);
-		if (!image || !mimeType || errorMessage) {
+		const profileImage = new Uint8Array(await form.data.profileImage[0].arrayBuffer());
+		const { mimeType, errorMessage } = await imageSecureCheck(profileImage);
+		if (!profileImage || !mimeType || errorMessage) {
 			message(form, errorMessage ?? '');
 			return fail(400, { form });
 		}
@@ -61,7 +58,7 @@ export const actions = {
 		// Upload image to Amazon S3
 		const savePath = `${userId}/shortbook-profile`;
 		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
-			image,
+			profileImage,
 			mimeType,
 			env.AWS_DEFAULT_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,

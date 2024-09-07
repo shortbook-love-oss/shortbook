@@ -161,11 +161,13 @@ export async function convertAndDeliver(
       case 'jpg':
       case 'jpeg':
         if (!['jpg', 'jpeg'].includes(fromExtension) || reqOption.quality !== 100) {
-          image = image.jpeg({ quality: reqOption.quality, progressive: true });
+          image = image.flatten({ background: { r: 255, g: 255, b: 255 } }).jpeg({ quality: reqOption.quality, progressive: true });
         }
         break;
       case 'png':
-        image = image.flatten(false).png({ quality: reqOption.quality, palette: true, progressive: true });
+        if (fromExtension !== 'png' || reqOption.quality !== 100) {
+          image = image.png({ quality: reqOption.quality, palette: true, progressive: true });
+        }
         break;
       case 'gif':
         if (fromExtension !== 'gif') {

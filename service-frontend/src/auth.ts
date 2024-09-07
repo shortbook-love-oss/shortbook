@@ -113,7 +113,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 	// Upload profile image using in external service CDN
 	if (user.id && user.image?.startsWith('https://')) {
 		// 1. Fetch from external service CDN
-		const externalProfileImage = await fetch(user.image, { mode: 'no-cors' })
+		const profileImage = await fetch(user.image, { mode: 'no-cors' })
 			.then(async (res) => {
 				if (res.status === 200) {
 					return new Uint8Array(await res.arrayBuffer());
@@ -123,14 +123,14 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 			})
 			.catch(() => undefined);
 
-		if (externalProfileImage) {
-			const { image, mimeType } = await imageSecureCheck(externalProfileImage, 512, 512);
+		if (profileImage) {
+			const { mimeType } = await imageSecureCheck(profileImage);
 
-			if (image && mimeType) {
+			if (profileImage && mimeType) {
 				// 2. Upload image to Amazon S3
 				const savePath = `${user.id}/shortbook-profile`;
 				const { isSuccessUpload } = await uploadFile(
-					image,
+					profileImage,
 					mimeType,
 					env.AWS_DEFAULT_REGION,
 					env.AWS_BUCKET_IMAGE_PROFILE,
