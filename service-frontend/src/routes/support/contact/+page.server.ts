@@ -1,4 +1,5 @@
 import { fail, error } from '@sveltejs/kit';
+import { fileTypeFromBuffer } from 'file-type';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
@@ -77,20 +78,26 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		// Upload files to Amazon S3
+		// Upload files
 		const savedFileUrls = [];
 		const filesKey = getRandom(32);
 		for (const file of form.data.files ?? []) {
+			// Upload with actual mime-type
+			const imageArray = new Uint8Array(await file.arrayBuffer());
+			const fileTypeActual = await fileTypeFromBuffer(imageArray);
+			if (!fileTypeActual) {
+				return error(500, { message: "Can't upload file. Please contact us without a file." });
+			}
 			const saveFilePath = `${filesKey}/${file.name.replace('/', '-')}`;
 			const { isSuccessUpload, error: uploadFileError } = await uploadFile(
-				new Uint8Array(await file.arrayBuffer()),
-				file.type,
+				imageArray,
+				fileTypeActual.mime,
 				env.AWS_DEFAULT_REGION,
 				env.AWS_BUCKET_SUPPORT_TICKET_ATTACH,
 				saveFilePath
 			);
 			if (uploadFileError || !isSuccessUpload) {
-				return error(500, { message: "Can't upload profile image. Please contact us." });
+				return error(500, { message: "Can't upload file. Please contact us without a file." });
 			}
 			// Save as decoded (=original) URL string
 			const fullPath = `https://${env.AWS_BUCKET_SUPPORT_TICKET_ATTACH}.s3.${env.AWS_DEFAULT_REGION}.amazonaws.com/${saveFilePath}`;

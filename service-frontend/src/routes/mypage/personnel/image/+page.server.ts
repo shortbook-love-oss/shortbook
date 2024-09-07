@@ -34,8 +34,8 @@ export const actions = {
 		}
 		// Browsers trust filename extensions, but this is a security issue
 		// Check actual file type
-		const imageBuffer = await form.data.profileImage[0].arrayBuffer();
-		const fileTypeActual = await fileTypeFromBuffer(imageBuffer);
+		const imageArray = new Uint8Array(await form.data.profileImage[0].arrayBuffer());
+		const fileTypeActual = await fileTypeFromBuffer(imageArray);
 		if (!fileTypeActual || !Object.keys(imageMIMEextension).includes(fileTypeActual.mime)) {
 			message(form, 'Please specify the image file.');
 			return fail(400, { form });
@@ -60,7 +60,7 @@ export const actions = {
 		// Upload image to Amazon S3
 		const savePath = `${userId}/shortbook-profile`;
 		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
-			new Uint8Array(imageBuffer),
+			imageArray,
 			fileTypeActual.mime,
 			env.AWS_DEFAULT_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,
