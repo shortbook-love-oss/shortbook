@@ -41,10 +41,6 @@ export const actions = {
 			message(form, errorMessage ?? '');
 			return fail(400, { form });
 		}
-		if (request.method.toLowerCase() === 'post') {
-			message(form, 'post .......');
-			return fail(400, { form });
-		}
 
 		// Delete image cache
 		await deleteImageCache(env.AWS_CONTENT_DISTRIBUTION_ID_IMAGE_CDN, `/profile/${userId}/*`);
