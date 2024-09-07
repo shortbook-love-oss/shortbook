@@ -1,6 +1,6 @@
 {
 	"name": "shortbook-service-frontend",
-	"version": "0.6.10",
+	"version": "0.6.13",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -30,17 +30,17 @@
 		"isomorphic-dompurify": "^2.15.0",
 		"libmime": "^5.3.5",
 		"sharp": "^0.33.5",
-		"stripe": "^16.9.0"
+		"stripe": "^16.10.0"
 	},
 	"devDependencies": {
 		"@aws-sdk/client-cloudfront": "^3.645.0",
-		"@aws-sdk/client-s3": "^3.637.0",
-		"@aws-sdk/client-ses": "^3.637.0",
+		"@aws-sdk/client-s3": "^3.645.0",
+		"@aws-sdk/client-ses": "^3.645.0",
 		"@iconify-json/mdi": "^1.2.0",
-		"@playwright/test": "^1.46.1",
+		"@playwright/test": "^1.47.0",
 		"@sveltejs/adapter-node": "^5.2.2",
 		"@sveltejs/kit": "^2.5.0",
-		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.7",
 		"@types/eslint": "^9.6.1",
 		"@types/libmime": "^5.0.3",
 		"autoprefixer": "^10.4.20",
@@ -48,21 +48,21 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
 		"globals": "^15.0.0",
-		"marked": "^14.1.0",
-		"postcss": "^8.4.44",
+		"marked": "^14.1.1",
+		"postcss": "^8.4.45",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"prettier-plugin-tailwindcss": "^0.6.6",
 		"prisma": "^5.19.1",
-		"svelte": "5.0.0-next.243",
-		"svelte-check": "^4.0.0",
+		"svelte": "5.0.0-next.244",
+		"svelte-check": "^4.0.1",
 		"sveltekit-superforms": "^2.17.0",
 		"tailwindcss": "^3.4.10",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.0.0",
-		"unplugin-icons": "^0.19.2",
+		"unplugin-icons": "^0.19.3",
 		"vite": "^5.0.3",
-		"vitest": "^2.0.0",
+		"vitest": "^2.0.5",
 		"zod": "^3.23.8"
 	},
 	"optionalDependencies": {
@@ -73,7 +73,7 @@
 	"overrides": {
 		"@auth/sveltekit": {
 			".": "1.4.2",
-			"svelte": "5.0.0-next.243"
+			"svelte": "5.0.0-next.244"
 		}
 	}
 }
