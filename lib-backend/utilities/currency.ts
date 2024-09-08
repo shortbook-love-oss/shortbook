@@ -11,7 +11,7 @@ export async function fetchCurrencyRates(fromCurrency: CurrencySupportKeys) {
 	// 		...
 	// 	}
 	// }
-	let result = await fetch(
+	const result = await fetch(
 		`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromCurrency}.json`
 	)
 		.then((res) => res.json())

@@ -26,7 +26,7 @@ export const load = async ({ url, locals }) => {
 	const checkoutIds = userPointHistories
 		.map((history) => history.payment_checkout_id)
 		.filter(Boolean);
-	let paymentCheckoutMap: Record<string, user_payment_checkouts> = {};
+	const paymentCheckoutMap: Record<string, user_payment_checkouts> = {};
 	if (checkoutIds.length) {
 		const { paymentCheckouts, dbError } = await dbUserPaymentCheckoutList({
 			userId,

@@ -20,7 +20,7 @@ export async function imageSecureCheck(file: Uint8Array) {
 
 	// Browsers trust filename extensions, but this is a security issue
 	// Check actual file type
-	let fileTypeActual = await fileTypeFromBuffer(file);
+	const fileTypeActual = await fileTypeFromBuffer(file);
 
 	// file-type module outputs SVG MIME-type as "application/xml"
 	if (fileTypeActual && maybeSvgMIMEs.includes(fileTypeActual.mime)) {

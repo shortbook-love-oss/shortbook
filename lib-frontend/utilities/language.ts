@@ -1,4 +1,3 @@
-import { i18n } from '$lib/i18n/i18n';
 import { availableLanguageTags } from '$lib/i18n/paraglide/runtime';
 
 export type AvailableLanguageTags = (typeof availableLanguageTags)[number];

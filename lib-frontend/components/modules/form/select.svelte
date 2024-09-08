@@ -51,9 +51,9 @@
 	>
 		<select
 			{...restProps}
+			bind:value
 			{name}
 			{required}
-			bind:value
 			class="block w-full appearance-none rounded-md border border-stone-700 bg-white py-2 pl-3 pr-10 disabled:bg-stone-100 disabled:text-stone-500 disabled:opacity-100 [&:user-invalid]:border-2 [&:user-invalid]:border-red-700 {errorMessages?.length
 				? 'border-2 border-red-700'
 				: 'border-stone-600'} {inputClass}"

@@ -31,7 +31,7 @@ export const load = async ({ locals, params }) => {
 	if (!book || !book.cover || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	let bookLang = book?.languages[0];
+	const bookLang = book?.languages[0];
 
 	const { bookBuys, dbError: dbBuyListError } = await dbBookBuyList({ bookId: params.bookId });
 	if (!bookBuys || dbBuyListError) {
