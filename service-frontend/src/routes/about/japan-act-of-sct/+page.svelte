@@ -29,7 +29,9 @@
 		お問い合わせはフォームまたはメールでのみ受け付けております。送信後18時間以内に返信いたします。
 	</p>
 	<p>
-		<a href="/support/contact" target="_blank" class="text-primary-700 underline">お問い合わせフォーム</a>
+		<a href="/support/contact" target="_blank" class="text-primary-700 underline"
+			>お問い合わせフォーム</a
+		>
 	</p>
 	<p>メールアドレス : {envPublic.PUBLIC_EMAIL_INQUIRY_TO}</p>
 </CompanyInfoItem>

@@ -1,6 +1,6 @@
-import { fileTypeFromBuffer } from "file-type";
-import sharp from "sharp";
-import { imageMIMEextension, maybeSvgMIMEs } from "$lib/utilities/file";
+import { fileTypeFromBuffer } from 'file-type';
+import sharp from 'sharp';
+import { imageMIMEextension, maybeSvgMIMEs } from '$lib/utilities/file';
 
 export async function isEnableImageFile(file: Uint8Array) {
 	try {

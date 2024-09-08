@@ -64,7 +64,7 @@ export async function copyFile(
 		Bucket: bucketName,
 		CopySource: `${bucketName}/${filePathFrom}`,
 		Key: filePathTo
-	})
+	});
 	await s3
 		.send(command)
 		.then((response) => {
@@ -124,13 +124,12 @@ export async function deleteFiles(region: string, bucketName: string, filePrefix
 	// Search by prefix and delete matched objects
 	const listCommand = new ListObjectsV2Command({
 		Bucket: bucketName,
-		Prefix: filePrefix,
-	})
-	const list = await s3.send(listCommand)
-		.catch((e: Error) => {
-			error = e;
-			return undefined;
-		});
+		Prefix: filePrefix
+	});
+	const list = await s3.send(listCommand).catch((e: Error) => {
+		error = e;
+		return undefined;
+	});
 	if (!list || error) {
 		return { isSuccessDelete: false, error };
 	}
@@ -146,7 +145,7 @@ export async function deleteFiles(region: string, bucketName: string, filePrefix
 		const deleteCommand = new DeleteObjectsCommand({
 			Bucket: bucketName,
 			Delete: {
-				Objects: objectKeys.map(key => ({ Key: key }))
+				Objects: objectKeys.map((key) => ({ Key: key }))
 			}
 		});
 		await s3

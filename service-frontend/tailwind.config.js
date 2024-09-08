@@ -57,10 +57,7 @@ export default {
 					'-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", Roboto, Arial, sans-serif, "Apple Color Emoji", "Noto Color Emoji"',
 					{ fontFeatureSettings: '"palt"' }
 				],
-				serif: [
-					'"Times New Roman", serif, "Noto Color Emoji"',
-					{ fontFeatureSettings: '"palt"' }
-				],
+				serif: ['"Times New Roman", serif, "Noto Color Emoji"', { fontFeatureSettings: '"palt"' }],
 				title: [
 					// "Cambria" ... Windows
 					// "Hiragino Mincho ProN" ... Mac・iOS

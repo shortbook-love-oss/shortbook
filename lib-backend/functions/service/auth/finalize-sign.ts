@@ -97,7 +97,6 @@ export async function finalizeSign(
 		if (dbImageUpdateError) {
 			return { error: new Error(dbImageUpdateError.message) };
 		}
-
 	} else {
 		// Get user
 		const { user, dbError: dbUserGetError } = await dbUserGetByEmailHash({

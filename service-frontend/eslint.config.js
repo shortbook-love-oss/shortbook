@@ -12,7 +12,7 @@ export default [
 	prettier,
 	...svelte.configs['flat/prettier'],
 	{
-		ignores: ["node_modules", "build", '.svelte-kit', 'package-lock.json', '.env']
+		ignores: ['node_modules', 'build', '.svelte-kit', 'package-lock.json', '.env']
 	},
 	{
 		languageOptions: {
