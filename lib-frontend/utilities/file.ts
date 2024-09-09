@@ -20,8 +20,9 @@ export const imageMIMEextension: Record<string, string> = {
 	'image/heif': 'heif',
 	'image/tiff': 'tiff',
 	'image/bmp': 'bmp',
-	'image/x-icon': 'ico',
+	'image/vnd.microsoft.icon': 'ico',
 	'image/svg+xml': 'svg'
 };
 
 export const maybeSvgMIMEs = ['image/svg+xml', 'application/xml', 'text/xml'];
+export const maybeIcoMIMEs = ['image/x-icon'];

@@ -1,6 +1,6 @@
 import { fileTypeFromBuffer } from 'file-type';
 import sharp from 'sharp';
-import { imageMIMEextension, maybeSvgMIMEs } from '$lib/utilities/file';
+import { imageMIMEextension, maybeIcoMIMEs, maybeSvgMIMEs } from '$lib/utilities/file';
 
 export async function isEnableImageFile(file: Uint8Array) {
 	try {
@@ -23,13 +23,18 @@ export async function imageSecureCheck(file: Uint8Array) {
 	const fileTypeActual = await fileTypeFromBuffer(file);
 
 	// file-type module outputs SVG MIME-type as "application/xml"
-	if (fileTypeActual && maybeSvgMIMEs.includes(fileTypeActual.mime)) {
-		return { mimeType: 'image/svg+xml' };
+	if (fileTypeActual) {
+		if (maybeSvgMIMEs.includes(fileTypeActual.mime)) {
+			return { image: file, mimeType: 'image/svg+xml', extension: 'svg' };
+		}
+		if (maybeIcoMIMEs.includes(fileTypeActual.mime)) {
+			return { image: file, mimeType: 'image/vnd.microsoft.icon', extension: 'ico' };
+		}
 	}
 	if (!fileTypeActual || !Object.keys(imageMIMEextension).includes(fileTypeActual.mime)) {
 		return { errorMessage: 'Please specify the image file.' };
 	}
 
 	// If enable file, return as-is
-	return { mimeType: fileTypeActual.mime };
+	return { image: file, mimeType: fileTypeActual.mime, extension: fileTypeActual.ext };
 }

@@ -29,7 +29,7 @@ export const imageExtensionMIME: Record<string, string> = {
 	heif: 'image/heif',
 	tiff: 'image/tiff',
 	bmp: 'image/bmp',
-	ico: 'image/x-icon',
+	ico: 'image/vnd.microsoft.icon',
 	svg: 'image/svg+xml'
 };
 
@@ -40,7 +40,6 @@ export const allowedToExtensions = [
 	'gif',
 	'webp',
 	'avif',
-	'ico',
 	...vectorFileExtensions
 ] as const;
 export type AllowedToExtension = (typeof allowedToExtensions)[number];
@@ -50,6 +49,7 @@ export const allowedFromExtensions = [
 	'heic',
 	'heif',
 	'tiff',
+	'ico',
 	'bmp'
 ] as const;
 export type AllowedFromExtension = (typeof allowedFromExtensions)[number];
