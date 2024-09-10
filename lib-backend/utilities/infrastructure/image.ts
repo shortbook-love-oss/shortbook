@@ -73,5 +73,16 @@ export const allowedResizeFit = [
 ] as ImageDistributionOption['fit'][];
 export const allowedQuality = [10, 20, 40, 60, 80, 90, 100];
 
+export const defaultExtension: AllowedToExtension = 'jpg';
 export const defaultResizeFit: ImageDistributionOption['fit'] = 'cover';
 export const defaultQuality = 60;
+
+export function getExtensionForAll(fromExtension: AllowedFromExtension | ''): AllowedToExtension {
+	// For example, heic is not compatible with Windows
+	// So, convert to another extension that can be viewed on all browsers
+	if (allowedToExtensions.includes(fromExtension as AllowedToExtension)) {
+		return fromExtension as AllowedToExtension;
+	} else {
+		return defaultExtension;
+	}
+}
