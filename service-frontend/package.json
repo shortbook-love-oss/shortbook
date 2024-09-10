@@ -30,6 +30,8 @@
 		"isomorphic-dompurify": "^2.15.0",
 		"libmime": "^5.3.5",
 		"sharp": "^0.33.5",
+		"sharp-bmp": "^0.1.5",
+		"sharp-ico": "^0.1.5",
 		"stripe": "^16.10.0"
 	},
 	"devDependencies": {

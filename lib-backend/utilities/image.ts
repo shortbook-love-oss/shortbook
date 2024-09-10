@@ -1,6 +1,8 @@
 import { fileTypeFromBuffer } from 'file-type';
 import sharp from 'sharp';
-import { imageMIMEextension, maybeIcoMIMEs, maybeSvgMIMEs } from '$lib/utilities/file';
+import { sharpFromBmp, type ImageData as ImageDataBmp } from 'sharp-bmp';
+import { sharpsFromIco, type ImageData as ImageDataIco } from 'sharp-ico';
+import { imageMIMEextension, maybeSvgMIMEs } from '$lib/utilities/file';
 
 export async function isEnableImageFile(image: Uint8Array) {
 	try {
@@ -18,11 +20,36 @@ export async function getActualImageData(image: Uint8Array) {
 
 	// Prevent uploading of broken and unviewable image files
 	const isEnableImage = await isEnableImageFile(image);
+	// Image enable check for .ico & .bmp (sharp is unsupported it)
+	if (!isEnableImage && fileTypeActual?.mime === 'image/x-icon') {
+		const pngImages = sharpsFromIco(Buffer.from(image), undefined, true);
+		if (pngImages?.[0]) {
+			const pngImage = pngImages[0] as ImageDataIco;
+			return {
+				image,
+				width: pngImage.width,
+				height: pngImage.height,
+				mimeType: 'image/vnd.microsoft.icon',
+				extension: fileTypeActual.ext
+			};
+		}
+	} else if (!isEnableImage && fileTypeActual?.mime === 'image/bmp') {
+		const bmpImage = sharpFromBmp(Buffer.from(image), undefined, true) as ImageDataBmp;
+		return {
+			image,
+			width: bmpImage.width,
+			height: bmpImage.height,
+			mimeType: fileTypeActual.mime,
+			extension: fileTypeActual.ext
+		};
+	}
 	if (!isEnableImage) {
 		return { errorMessage: 'Please specify the image file.' };
 	}
 
-	if (fileTypeActual && Object.keys(imageMIMEextension).includes(fileTypeActual.mime)) {
+	// Image enable check for other format
+	const allowMimeTypes = [...Object.keys(imageMIMEextension), ...maybeSvgMIMEs];
+	if (fileTypeActual && allowMimeTypes.includes(fileTypeActual.mime)) {
 		const metadata = await sharp(image).metadata();
 		if (!metadata.width || !metadata.height) {
 			return { errorMessage: "Can't get image size." };
@@ -33,10 +60,6 @@ export async function getActualImageData(image: Uint8Array) {
 			// file-type module outputs SVG MIME-type as "application/xml"
 			mimeType = 'image/svg+xml';
 			extension = 'svg';
-		} else if (maybeIcoMIMEs.includes(fileTypeActual.mime)) {
-			// file-type module outputs SVG MIME-type as "image/x-icon"
-			mimeType = 'image/vnd.microsoft.icon';
-			extension = 'ico';
 		}
 		return {
 			image,
