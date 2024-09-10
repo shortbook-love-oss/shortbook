@@ -6,7 +6,7 @@ import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile
 import { schema } from '$lib/validation/schema/profile-image-update';
 import { deleteImageCache } from '$lib-backend/utilities/cache';
 import { deleteFiles, uploadFile } from '$lib-backend/utilities/file';
-import { imageSecureCheck } from '$lib-backend/utilities/image';
+import { getActualImageData } from '$lib-backend/utilities/image';
 
 export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
@@ -33,7 +33,7 @@ export const actions = {
 		}
 
 		const profileImage = new Uint8Array(await form.data.profileImage[0].arrayBuffer());
-		const { mimeType, errorMessage } = await imageSecureCheck(profileImage);
+		const { mimeType, errorMessage } = await getActualImageData(profileImage);
 		if (!profileImage || !mimeType || errorMessage) {
 			message(form, errorMessage ?? '');
 			return fail(400, { form });
