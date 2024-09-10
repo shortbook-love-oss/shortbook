@@ -13,7 +13,7 @@
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
 		validators: zod(schema)
 	});
-	const fileProfileImage = filesProxy(form, 'images');
+	const fileImages = filesProxy(form, 'images');
 
 	// Validate and set enable/disable submit button when the input value changes
 	let hasVaild = $state(true);
@@ -40,9 +40,10 @@
 	submitLabel="Upload images"
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
+	class="mb-16"
 >
 	<File
-		filesProxy={fileProfileImage}
+		filesProxy={fileImages}
 		name="images"
 		required={true}
 		multiple
@@ -53,3 +54,18 @@
 		className="mb-8 w-full max-w-96"
 	/>
 </Form>
+{#if data.albumImageList.length}
+	<ul class="flex flex-wrap gap-4">
+		{#each data.albumImageList as image (image.id)}
+			<li>
+				<img
+					src="{image.filePath}?ext={image.toExtension}&w=128&h=128"
+					alt={image.alt}
+					class="h-32 w-32"
+				/>
+			</li>
+		{/each}
+	</ul>
+{:else}
+	<p>No image upload yet.</p>
+{/if}
