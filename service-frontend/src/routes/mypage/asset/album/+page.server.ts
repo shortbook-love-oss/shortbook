@@ -69,19 +69,21 @@ export const actions = {
 		}
 
 		const imageResults = await Promise.allSettled(
-			form.data.images.map(async (image) => {
-				return getActualImageData(new Uint8Array(await image.arrayBuffer()));
+			form.data.images.map(async (file) => {
+				return getActualImageData(new Uint8Array(await file.arrayBuffer()));
 			})
 		);
-		const isImageFulfilled = imageResults.some((image) => {
-			return image.status === 'fulfilled' && !image.value.errorMessage;
-		});
-		if (!isImageFulfilled) {
-			const reasons = (imageResults as PromiseRejectedResult[])
-				.map((result, i) => `${i + 1}—${result.reason}`)
-				.filter(Boolean);
+		const checkRejectReasons: string[] = [];
+		imageResults.forEach((result, i) => {
+			if (result.status === 'rejected') {
+				checkRejectReasons.push(`${i + 1}—${result.reason}`);
+			} else if (result.value.errorMessage) {
+				checkRejectReasons.push(`${i + 1}—${result.value.errorMessage}`);
+			}
+		})
+		if (checkRejectReasons.length) {
 			return error(500, {
-				message: `Can't upload image. Please contact us. Reason: ${reasons.join(', ')}`
+				message: `Can't upload image. Please contact us. Reason: ${checkRejectReasons.join(', ')}`
 			});
 		}
 
@@ -119,12 +121,15 @@ export const actions = {
 				}
 			})
 		);
-		if (uploadResults.some((image) => image.status !== 'fulfilled')) {
-			const reasons = (uploadResults as PromiseRejectedResult[])
-				.map((result, i) => `${i + 1}—${result.reason}`)
-				.filter(Boolean);
+		const uploadRejectReasons: string[] = [];
+		uploadResults.forEach((result, i) => {
+			if (result.status === 'rejected') {
+				uploadRejectReasons.push(`${i + 1}—${result.reason}`);
+			}
+		})
+		if (uploadRejectReasons.length) {
 			return error(500, {
-				message: `Can't upload image. Please contact us. Reason: ${reasons.join(', ')}`
+				message: `Can't upload image. Please contact us. Reason: ${uploadRejectReasons.join(', ')}`
 			});
 		}
 
