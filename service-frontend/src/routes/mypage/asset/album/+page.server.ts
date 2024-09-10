@@ -2,11 +2,11 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
+import { dbUserAlbumImageCreate } from '$lib-backend/model/user/album/image-create';
 import { getRandom } from '$lib/utilities/crypto';
 import { schema } from '$lib/validation/schema/user/album-update';
 import { uploadFile } from '$lib-backend/utilities/file';
-import { imageSecureCheck } from '$lib-backend/utilities/image';
+import { getActualImageData } from '$lib-backend/utilities/image';
 
 export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
@@ -34,43 +34,53 @@ export const actions = {
 
 		const imageResults = await Promise.allSettled(
 			form.data.images.map(async (image) => {
-				return imageSecureCheck(new Uint8Array(await image.arrayBuffer()));
+				return getActualImageData(new Uint8Array(await image.arrayBuffer()));
 			})
 		);
 		const isImageFulfilled = imageResults.some((image) => {
 			return image.status === 'fulfilled' && !image.value.errorMessage;
 		});
 		if (!isImageFulfilled) {
-			const reasons = (imageResults as PromiseRejectedResult[]).map((result, i) => `${i + 1}—${result.reason}`).filter(Boolean);
+			const reasons = (imageResults as PromiseRejectedResult[])
+				.map((result, i) => `${i + 1}—${result.reason}`)
+				.filter(Boolean);
 			return error(500, {
 				message: `Can't upload image. Please contact us. Reason: ${reasons.join(', ')}`
 			});
 		}
 
 		const uploadResults = await Promise.allSettled(
-			(imageResults).map(async (image) => {
+			imageResults.map(async (image) => {
 				if (image.status !== 'fulfilled') {
 					throw new Error(image.reason);
 				} else if (!image.value.image || image.value.errorMessage) {
 					throw new Error(image.value.errorMessage);
 				}
 
-				const savePath = `${userId}/album-${getRandom(20)}.${image.value.extension}`;
-				const { isSuccessUpload, error: uploadFileError } = await uploadFile(
+				const saveFileName = `album-${getRandom(20)}.${image.value.extension}`;
+				const {
+					isSuccessUpload,
+					checksum,
+					error: uploadFileError
+				} = await uploadFile(
 					image.value.image,
 					image.value.mimeType,
 					env.AWS_DEFAULT_REGION,
 					env.AWS_BUCKET_IMAGE_USER_ALBUM,
-					savePath
+					`${userId}/${saveFileName}`
 				);
 				if (uploadFileError || !isSuccessUpload) {
 					throw new Error('Error when upload new image.');
 				}
 
-				// Save image URL to DB
-				const { dbError } = await dbUserProfileImageUpdate({
+				const { dbError } = await dbUserAlbumImageCreate({
 					userId: userId,
-					image: '/user-album/' + savePath
+					name: saveFileName,
+					filePath: saveFileName,
+					width: image.value.width,
+					height: image.value.height,
+					mimeType: image.value.mimeType,
+					checksum
 				});
 				if (dbError) {
 					throw new Error(dbError.message);
@@ -78,7 +88,9 @@ export const actions = {
 			})
 		);
 		if (uploadResults.some((image) => image.status !== 'fulfilled')) {
-			const reasons = (uploadResults as PromiseRejectedResult[]).map((result, i) => `${i + 1}—${result.reason}`).filter(Boolean);
+			const reasons = (uploadResults as PromiseRejectedResult[])
+				.map((result, i) => `${i + 1}—${result.reason}`)
+				.filter(Boolean);
 			return error(500, {
 				message: `Can't upload image. Please contact us. Reason: ${reasons.join(', ')}`
 			});
