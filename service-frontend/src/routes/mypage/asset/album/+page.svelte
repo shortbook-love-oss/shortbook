@@ -4,9 +4,10 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 	import { imageMIMEextension } from '$lib/utilities/file';
-	import { schema } from '$lib/validation/schema/user/album-update';
+	import { schema } from '$lib/validation/schema/user/album/image-create';
 	import File from '$lib/components/modules/form/file.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
+	import ImageDataEdit from '$lib/components/service/mypage/album/image-data-edit.svelte';
 
 	let { data } = $props();
 
@@ -58,15 +59,13 @@
 	<ul class="grid grid-cols-3 gap-4 xs:grid-cols-4">
 		{#each data.albumImageList as image (image.id)}
 			<li class="relative">
-				<img
-					src="{image.filePath}?ext={image.toExtension}&w=144&h=144"
-					alt={image.alt}
-					width="144"
-					height="144"
+				<ImageDataEdit
+					imageData={image}
+					imageHref="{image.filePath}?ext={image.toExtension}&w=144&h=144"
 				/>
 			</li>
 		{/each}
 	</ul>
 {:else}
-	<p>No image upload yet.</p>
+	<p>No images uploaded yet.</p>
 {/if}

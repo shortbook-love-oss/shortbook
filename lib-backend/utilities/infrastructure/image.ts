@@ -42,12 +42,7 @@ export const allowedToExtensions = [
 ] as const;
 export type AllowedToExtension = (typeof allowedToExtensions)[number];
 
-export const allowedFromExtensions = [
-	...allowedToExtensions,
-	'tiff',
-	'ico',
-	'bmp'
-] as const;
+export const allowedFromExtensions = [...allowedToExtensions, 'tiff', 'ico', 'bmp'] as const;
 export type AllowedFromExtension = (typeof allowedFromExtensions)[number];
 
 // contain ... Keep aspect, not clip

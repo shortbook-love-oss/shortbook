@@ -3,12 +3,14 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbUserAlbumImageCreate } from '$lib-backend/model/user/album/image-create';
-import { dbUserAlbumImageList } from '$lib-backend/model/user/album/image-list';
+import type { AlbumImageItem } from '$lib/components/service/mypage/album/album';
 import { getRandom } from '$lib/utilities/crypto';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
-import { schema } from '$lib/validation/schema/user/album-update';
+import { schema } from '$lib/validation/schema/user/album/image-create';
+import { schema as schemaEdit } from '$lib/validation/schema/user/album/image-update';
+import { dbUserAlbumImageCreate } from '$lib-backend/model/user/album/image-create';
+import { dbUserAlbumImageList } from '$lib-backend/model/user/album/image-list';
 import {
 	getExtensionForAll,
 	type AllowedFromExtension
@@ -17,13 +19,13 @@ import { uploadFile } from '$lib-backend/utilities/file';
 import { getActualImageData } from '$lib-backend/utilities/image';
 
 export const load = async ({ url, locals }) => {
-	const form = await superValidate(zod(schema));
-
 	const userId = locals.session?.user?.id;
 	if (!userId) {
 		return error(401, { message: 'Unauthorized' });
 	}
+
 	const requestLang = getLanguageTagFromUrl(url);
+	const form = await superValidate(zod(schema));
 
 	const { albumImages, dbError } = await dbUserAlbumImageList({
 		userId,
@@ -33,18 +35,30 @@ export const load = async ({ url, locals }) => {
 		return error(500, { message: dbError?.message ?? '' });
 	}
 
-	const albumImageList = albumImages.map((image) => {
-		const fromExtension = imageMIMEextension[image.property?.mime_type ?? ''] ?? '';
-		return {
-			id: image.id,
-			name: image.name,
-			filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${userId}/${image.property?.file_path}`,
-			width: image.property?.width ?? 0,
-			height: image.property?.height ?? 0,
-			toExtension: getExtensionForAll(fromExtension as AllowedFromExtension | ''),
-			alt: image.alt ?? ''
-		};
-	});
+	const albumImageList = await Promise.all<AlbumImageItem>(
+		albumImages.map(async (image) => {
+			const editForm = await superValidate(zod(schemaEdit), { id: getRandom(15) });
+			editForm.data.name = image.name;
+			editForm.data.alt = image.alt;
+			editForm.data.place = image.place;
+			editForm.data.licenseUrl = image.license_url;
+			editForm.data.creditNotice = image.credit_notice;
+			editForm.data.isSensitive = image.is_sensitive;
+			editForm.data.isAi = image.is_ai;
+			const fromExtension = imageMIMEextension[image.property?.mime_type ?? ''] ?? '';
+
+			return {
+				editForm,
+				id: image.id,
+				name: image.name,
+				alt: image.alt,
+				filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${userId}/${image.property?.file_path}`,
+				width: image.property?.width ?? 0,
+				height: image.property?.height ?? 0,
+				toExtension: getExtensionForAll(fromExtension as AllowedFromExtension | '')
+			};
+		})
+	);
 
 	return { form, albumImageList };
 };
@@ -81,7 +95,7 @@ export const actions = {
 			});
 		}
 
-		const imageFIleNames = form.data.images.map(file => file.name);
+		const imageFIleNames = form.data.images.map((file) => file.name);
 
 		const uploadResults = await Promise.allSettled(
 			imageResults.map(async (image, i) => {
