@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { validateOnlyVisibleChar } from '$lib/utilities/validate';
+import { validateOnlyVisibleChar, validateOptionalUrl } from '$lib/utilities/validate';
 
 export const schema = z.object({
 	name: z.string().min(1).max(50).refine(validateOnlyVisibleChar, {
@@ -11,10 +11,9 @@ export const schema = z.object({
 	place: z.string().max(40).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),
-	licenseUrl: z.union([
-		z.string().url().max(255),
-		z.string().max(0)
-	]),
+	licenseUrl: z.string().max(255).refine(validateOptionalUrl, {
+		message: 'Invalid URL'
+	}),
 	creditNotice: z.string().max(50).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),

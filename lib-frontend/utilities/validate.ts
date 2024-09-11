@@ -7,3 +7,15 @@ export function validateOnlyVisibleChar(value: string) {
 	const visibleChars = value.match(/[^\s\u{200B}\u{2060}\u{0000}-\u{001F}\u{007F}]/gu);
 	return !!visibleChars;
 }
+
+export function validateOptionalUrl(value: string) {
+	if (!value) {
+		return true;
+	}
+	try {
+		new URL(value);
+		return true;
+	} catch {
+		return false;
+	}
+}
