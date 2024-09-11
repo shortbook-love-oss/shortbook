@@ -89,7 +89,7 @@ export const actions = {
 					throw new Error(image.value.errorMessage);
 				}
 
-				const saveFileName = `album-${getRandom(20)}.${image.value.extension}`;
+				const saveFileName = `album-${getRandom(24)}`;
 				const {
 					isSuccessUpload,
 					checksum,
