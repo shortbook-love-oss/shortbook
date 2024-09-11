@@ -11,8 +11,6 @@ export const imageMIMEextension: Record<string, string> = {
 	'image/apng': 'png',
 	'image/webp': 'webp',
 	'image/avif': 'avif', // Safari support from v16
-	'image/heic': 'heic',
-	'image/heif': 'heif',
 	'image/tiff': 'tiff',
 	'image/bmp': 'bmp',
 	'image/vnd.microsoft.icon': 'ico',

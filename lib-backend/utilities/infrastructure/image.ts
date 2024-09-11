@@ -25,8 +25,6 @@ export const imageExtensionMIME: Record<string, string> = {
 	gif: 'image/gif',
 	webp: 'image/webp',
 	avif: 'image/avif',
-	heic: 'image/heic',
-	heif: 'image/heif',
 	tiff: 'image/tiff',
 	bmp: 'image/bmp',
 	ico: 'image/vnd.microsoft.icon',
@@ -46,8 +44,6 @@ export type AllowedToExtension = (typeof allowedToExtensions)[number];
 
 export const allowedFromExtensions = [
 	...allowedToExtensions,
-	'heic',
-	'heif',
 	'tiff',
 	'ico',
 	'bmp'

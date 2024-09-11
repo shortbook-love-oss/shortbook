@@ -32,7 +32,7 @@
 <h1 class="mb-4 text-2xl font-semibold">Writer's album</h1>
 <Form
 	method="POST"
-	action={$page.url.pathname}
+	action="{$page.url.pathname}?/create"
 	enctype="multipart/form-data"
 	{enhance}
 	hasInvalid={!hasVaild}
@@ -55,13 +55,14 @@
 	/>
 </Form>
 {#if data.albumImageList.length}
-	<ul class="flex flex-wrap gap-4">
+	<ul class="grid grid-cols-3 gap-4 xs:grid-cols-4">
 		{#each data.albumImageList as image (image.id)}
-			<li>
+			<li class="relative">
 				<img
-					src="{image.filePath}?ext={image.toExtension}&w=128&h=128"
+					src="{image.filePath}?ext={image.toExtension}&w=144&h=144"
 					alt={image.alt}
-					class="h-32 w-32"
+					width="144"
+					height="144"
 				/>
 			</li>
 		{/each}
