@@ -44,7 +44,7 @@
 	errorMessage={$page.status === 400 ? $message : ''}
 >
 	<TextField
-		bind:value={$form.email}
+		bind:value={$form.email as string}
 		name="email"
 		label={m.sign_form_email_label()}
 		required={true}

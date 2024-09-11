@@ -70,7 +70,7 @@
 		className="mb-8"
 	/>
 	<Select
-		bind:value={$form.nativeLanguage}
+		bind:value={$form.nativeLanguage as string}
 		name="nativeLanguage"
 		list={data.langTags}
 		required={true}
