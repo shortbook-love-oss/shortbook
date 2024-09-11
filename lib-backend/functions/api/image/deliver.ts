@@ -1,4 +1,6 @@
 import sharp from 'sharp';
+import { sharpFromBmp } from 'sharp-bmp';
+import { sharpsFromIco, type ImageData as ImageDataIco } from 'sharp-ico';
 import { env } from '$env/dynamic/private';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { getFile, uploadFile, type StorageBucket } from '$lib-backend/utilities/file';
@@ -153,7 +155,22 @@ export async function convertAndDeliver(
 		// No resize if vector
 		imageBuffer = file;
 	} else {
-		let image = sharp(file);
+		let image;
+		switch (contentType) {
+			case 'image/vnd.microsoft.icon':
+				const pngImages = sharpsFromIco(Buffer.from(file), undefined, true);
+				image = (pngImages?.[0] as ImageDataIco)?.image;
+				break;
+			case 'image/bmp':
+				image = sharpFromBmp(Buffer.from(file)) as sharp.Sharp;
+				break;
+			default:
+				image = sharp(file);
+		}
+		if (!image) {
+			return { errorMessage: `Can't read image (as ${contentType}).` };
+		}
+
 		if (reqOption.width || reqOption.height) {
 			image = image.resize({
 				width: reqOption.width || undefined,
