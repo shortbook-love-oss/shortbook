@@ -13,19 +13,9 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 			where: {
 				user_id: req.userId
 			},
-			select: {
-				id: true,
-				user_id: true,
-				name: true,
-				alt: true,
-				property: {
-					select: {
-						file_path: true,
-						width: true,
-						height: true,
-						mime_type: true
-					}
-				}
+			include: {
+				property: true,
+				tags: true
 			},
 			orderBy: {
 				created_at: 'desc'
