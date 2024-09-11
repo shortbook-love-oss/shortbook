@@ -17,27 +17,13 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 				id: true,
 				user_id: true,
 				name: true,
-				file_path: true,
+				alt: true,
 				property: {
 					select: {
+						file_path: true,
 						width: true,
 						height: true,
 						mime_type: true
-					}
-				},
-				languages: {
-					where: {
-						OR: [
-							{ language_code: '' },
-							{ language_code: req.languageCode }
-						]
-					},
-					select: {
-						language_code: true,
-						alt: true
-					},
-					orderBy: {
-						id: 'asc'
 					}
 				}
 			},

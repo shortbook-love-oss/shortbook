@@ -214,7 +214,7 @@ model user_images {
   id                      String              @id @default(cuid())
   user_id                 String
   name                    String              @db.VarChar(350) // Length 0 - 50
-  file_path               String              @db.VarChar(31)
+  alt                     String              @db.VarChar(700) // Length 0 - 100
   image_created_at        DateTime?           @db.Date() // Filmed date or drew date, not published date
   language_in_image       String              @db.VarChar(5)
   place                   String              @db.VarChar(255)
@@ -227,9 +227,8 @@ model user_images {
   deleted_at              DateTime?
 
   property                user_image_properties?
-  languages               user_image_languages[]
+  creator                 user_image_creators?
   tags                    user_image_tags[]
-  creators                user_image_creators[]
 }
 
 model user_image_properties {
@@ -237,6 +236,7 @@ model user_image_properties {
 
   id                      String              @id @default(cuid())
   image_id                String              @unique
+  file_path               String              @db.VarChar(31)
   width                   Int
   height                  Int
   mime_type               String              @db.VarChar(31)
@@ -246,25 +246,12 @@ model user_image_properties {
   deleted_at              DateTime?
 }
 
-model user_image_languages {
+model user_image_creators {
   image                   user_images         @relation(fields: [image_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
-  image_id                String
-  language_code           String              @db.VarChar(5)
-  alt                     String              @db.VarChar(700) // Length 0 - 100
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              DateTime?
-
-  @@unique([image_id, language_code])
-}
-
-model user_image_tags {
-  image                   user_images         @relation(fields: [image_id], references: [id], onUpdate: Cascade)
-
-  id                      String              @id @default(cuid())
-  image_id                String
+  image_id                String              @unique
+  type                    Int                 @db.SmallInt // 0: Person 1: Organization
   name                    String              @db.VarChar(350) // Length 1 - 50
   sort                    Int                 @db.SmallInt
   created_at              DateTime            @default(now())
@@ -272,12 +259,11 @@ model user_image_tags {
   deleted_at              DateTime?
 }
 
-model user_image_creators {
+model user_image_tags {
   image                   user_images         @relation(fields: [image_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   image_id                String
-  type                    Int                 @db.SmallInt // 0: Person 1: Organization
   name                    String              @db.VarChar(350) // Length 1 - 50
   sort                    Int                 @db.SmallInt
   created_at              DateTime            @default(now())

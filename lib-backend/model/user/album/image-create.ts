@@ -18,7 +18,7 @@ export async function dbUserAlbumImageCreate(req: DbUserAlbumImageCreateRequest)
 			data: {
 				user_id: req.userId,
 				name: req.name,
-				file_path: req.filePath,
+				alt: '',
 				image_created_at: null,
 				language_in_image: '',
 				place: '',
@@ -28,6 +28,7 @@ export async function dbUserAlbumImageCreate(req: DbUserAlbumImageCreateRequest)
 				is_ai: 0,
 				property: {
 					create: {
+						file_path: req.filePath,
 						width: req.width,
 						height: req.height,
 						mime_type: req.mimeType,

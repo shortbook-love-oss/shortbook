@@ -34,23 +34,17 @@ export const load = async ({ url, locals }) => {
 	}
 
 	const albumImageList = albumImages.map((image) => {
-		let imageLang = image.languages.find(lang => {
-			return lang.language_code === requestLang;
-		});
-		if (!imageLang) {
-			imageLang = image.languages[0];
-		}
 		const fromExtension = imageMIMEextension[image.property?.mime_type ?? ''] ?? '';
 		return {
 			id: image.id,
 			name: image.name,
-			filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${userId}/${image.file_path}`,
+			filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${userId}/${image.property?.file_path}`,
 			width: image.property?.width ?? 0,
 			height: image.property?.height ?? 0,
 			toExtension: getExtensionForAll(fromExtension as AllowedFromExtension | ''),
-			alt: imageLang?.alt ?? ''
+			alt: image.alt ?? ''
 		};
-	})
+	});
 
 	return { form, albumImageList };
 };
@@ -80,7 +74,7 @@ export const actions = {
 			} else if (result.value.errorMessage) {
 				checkRejectReasons.push(`${i + 1}—${result.value.errorMessage}`);
 			}
-		})
+		});
 		if (checkRejectReasons.length) {
 			return error(500, {
 				message: `Can't upload image. Please contact us. Reason: ${checkRejectReasons.join(', ')}`
@@ -96,7 +90,11 @@ export const actions = {
 				}
 
 				const saveFileName = `album-${getRandom(20)}.${image.value.extension}`;
-				const { isSuccessUpload, checksum, error: uploadFileError } = await uploadFile(
+				const {
+					isSuccessUpload,
+					checksum,
+					error: uploadFileError
+				} = await uploadFile(
 					image.value.image,
 					image.value.mimeType,
 					env.AWS_DEFAULT_REGION,
@@ -126,7 +124,7 @@ export const actions = {
 			if (result.status === 'rejected') {
 				uploadRejectReasons.push(`${i + 1}—${result.reason}`);
 			}
-		})
+		});
 		if (uploadRejectReasons.length) {
 			return error(500, {
 				message: `Can't upload image. Please contact us. Reason: ${uploadRejectReasons.join(', ')}`
