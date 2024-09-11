@@ -81,15 +81,18 @@ export const actions = {
 			});
 		}
 
+		const imageFIleNames = form.data.images.map(file => file.name);
+
 		const uploadResults = await Promise.allSettled(
-			imageResults.map(async (image) => {
+			imageResults.map(async (image, i) => {
 				if (image.status !== 'fulfilled') {
 					throw new Error(image.reason);
 				} else if (!image.value.image || image.value.errorMessage) {
 					throw new Error(image.value.errorMessage);
 				}
 
-				const saveFileName = `album-${getRandom(24)}`;
+				const saveFilePath = `album-${getRandom(24)}`;
+				const fileName = imageFIleNames[i] ?? saveFilePath;
 				const {
 					isSuccessUpload,
 					checksum,
@@ -99,7 +102,7 @@ export const actions = {
 					image.value.mimeType,
 					env.AWS_DEFAULT_REGION,
 					env.AWS_BUCKET_IMAGE_USER_ALBUM,
-					`${userId}/${saveFileName}`
+					`${userId}/${saveFilePath}`
 				);
 				if (uploadFileError || !isSuccessUpload) {
 					throw new Error('Error when upload new image.');
@@ -107,8 +110,8 @@ export const actions = {
 
 				const { dbError } = await dbUserAlbumImageCreate({
 					userId: userId,
-					name: saveFileName,
-					filePath: saveFileName,
+					name: fileName,
+					filePath: saveFilePath,
 					width: image.value.width,
 					height: image.value.height,
 					mimeType: image.value.mimeType,
