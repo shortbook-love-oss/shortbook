@@ -40,7 +40,7 @@
 		<NavLinkSmall
 			name="Redeem points for cash"
 			colorClass="border-stone-600 bg-stone-200"
-			className="border cursor-not-allowed mb-1"
+			className="border cursor-no-drop mb-1"
 		>
 			<IconCash width="24" height="24" class="-mx-1" />
 		</NavLinkSmall>
