@@ -37,7 +37,7 @@ export async function dbUserAlbumImageCreate(req: DbUserAlbumImageCreateRequest)
 				}
 			}
 		})
-		.catch((error: Error) => {
+		.catch(() => {
 			dbError ??= new Error(`Failed to create user album image. User ID=${req.userId}`);
 			return undefined;
 		});

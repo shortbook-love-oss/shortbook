@@ -64,7 +64,7 @@ export const load = async ({ url, locals }) => {
 };
 
 export const actions = {
-	create: async ({ request, locals }) => {
+	default: async ({ request, locals }) => {
 		const userId = locals.session?.user?.id;
 		if (!userId) {
 			return error(401, { message: 'Unauthorized' });

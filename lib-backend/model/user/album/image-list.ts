@@ -21,7 +21,7 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 				created_at: 'desc'
 			}
 		})
-		.catch((error: Error) => {
+		.catch(() => {
 			dbError ??= new Error(`Failed to get user album images. User ID=${req.userId}`);
 			return undefined;
 		});

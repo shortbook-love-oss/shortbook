@@ -33,7 +33,7 @@
 <h1 class="mb-4 text-2xl font-semibold">Writer's album</h1>
 <Form
 	method="POST"
-	action="{$page.url.pathname}?/create"
+	action={$page.url.pathname}
 	enctype="multipart/form-data"
 	{enhance}
 	hasInvalid={!hasVaild}

@@ -56,7 +56,7 @@
 		<a
 			href="{imageData.filePath}?ext={imageData.toExtension}&q=100"
 			target="_blank"
-			class="inline-block"
+			class="inline-block shrink-0"
 		>
 			<img
 				src={imageHref}
@@ -68,7 +68,7 @@
 		</a>
 		<Form
 			method="POST"
-			action="{$page.url.pathname}/{imageData.id}?/update"
+			action="/redirect/album/{imageData.id}/update"
 			{enhance}
 			hasInvalid={!hasVaild}
 			isLoading={$submitting}
