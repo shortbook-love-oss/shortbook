@@ -1,10 +1,12 @@
 import type { SuperValidated } from 'sveltekit-superforms';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 export interface AlbumImageItem {
 	editForm: SuperValidated<Record<string, unknown>>;
 	id: string;
 	name: string;
 	alt: string;
+	languageInImage: AvailableLanguageTags | '';
 	filePath: string;
 	width: number;
 	height: number;

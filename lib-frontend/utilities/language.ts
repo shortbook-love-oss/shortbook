@@ -25,6 +25,6 @@ export const languageSelect: LanguageSelect[] = [
 ];
 
 export const languageAndNotSelect: LanguageSelect[] = [
-	{ value: '', label: 'Select your language', english: 'Select your language' },
+	{ value: '', label: 'Select language', english: 'Select language' },
 	...languageSelect
 ];

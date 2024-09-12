@@ -1,11 +1,12 @@
 import prisma from '$lib-backend/database/connect';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 export interface DbUserAlbumImageUpdateRequest {
 	userId: string;
 	imageId: string;
 	name: string;
 	alt: string;
-	languageInImage: string;
+	languageInImage: AvailableLanguageTags | '';
 	place: string;
 	licenseUrl: string;
 	creditNotice: string;

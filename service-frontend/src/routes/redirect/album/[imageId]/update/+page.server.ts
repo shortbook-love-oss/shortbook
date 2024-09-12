@@ -1,6 +1,7 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user/album/image-update';
 import { dbUserAlbumImageUpdate } from '$lib-backend/model/user/album/image-update';
@@ -25,7 +26,7 @@ export const actions = {
 			imageId: params.imageId,
 			name: form.data.name,
 			alt: form.data.alt,
-			languageInImage: '',
+			languageInImage: form.data.languageInImage as AvailableLanguageTags | '',
 			place: form.data.place,
 			licenseUrl: form.data.licenseUrl,
 			creditNotice: form.data.creditNotice,

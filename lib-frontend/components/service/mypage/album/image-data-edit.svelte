@@ -3,6 +3,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
+	import { languageAndNotSelect } from '$lib/utilities/language';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/user/album/image-update';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
@@ -91,6 +92,14 @@
 				label="Alternative text (alt)"
 				errorMessages={$errors.alt}
 				className="mb-8"
+			/>
+			<Select
+				bind:value={$form.languageInImage as string}
+				name="nativeLanguage"
+				list={languageAndNotSelect}
+				label="Language used in the image"
+				errorMessages={$errors.nativeLanguage}
+				className="mb-8 max-w-72"
 			/>
 			<TextField
 				bind:value={$form.place as string}

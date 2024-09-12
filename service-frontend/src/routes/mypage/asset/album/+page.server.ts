@@ -7,6 +7,7 @@ import type { AlbumImageItem } from '$lib/components/service/mypage/album/album'
 import { arrayToSquads } from '$lib/utilities/array';
 import { getRandom } from '$lib/utilities/crypto';
 import { imageMIMEextension } from '$lib/utilities/file';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user/album/image-create';
 import { schema as schemaEdit } from '$lib/validation/schema/user/album/image-update';
@@ -41,6 +42,7 @@ export const load = async ({ url, locals }) => {
 			const editForm = await superValidate(zod(schemaEdit), { id: getRandom(15) });
 			editForm.data.name = image.name;
 			editForm.data.alt = image.alt;
+			editForm.data.languageInImage = image.language_in_image;
 			editForm.data.place = image.place;
 			editForm.data.licenseUrl = image.license_url;
 			editForm.data.creditNotice = image.credit_notice;
@@ -53,6 +55,7 @@ export const load = async ({ url, locals }) => {
 				id: image.id,
 				name: image.name,
 				alt: image.alt,
+				languageInImage: image.language_in_image as AvailableLanguageTags | '',
 				filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${userId}/${image.property?.file_path}`,
 				width: image.property?.width ?? 0,
 				height: image.property?.height ?? 0,

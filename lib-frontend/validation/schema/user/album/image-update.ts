@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { validateOnlyVisibleChar, validateOptionalUrl } from '$lib/utilities/validate';
+import {
+	validateOnlyVisibleChar,
+	validateOptionalLanguageTag,
+	validateOptionalUrl
+} from '$lib/utilities/validate';
 
 export const schema = z.object({
 	name: z.string().min(1).max(50).refine(validateOnlyVisibleChar, {
@@ -7,6 +11,9 @@ export const schema = z.object({
 	}),
 	alt: z.string().max(100).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
+	}),
+	languageInImage: z.string().max(5).refine(validateOptionalLanguageTag, {
+		message: 'Please select language'
 	}),
 	place: z.string().max(40).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
