@@ -15,6 +15,7 @@ export async function isEnableImageFile(image: Uint8Array) {
 
 export type ActualImageDataSuccess = {
 	image: Uint8Array;
+	byteLength: number;
 	width: number;
 	height: number;
 	mimeType: string;
@@ -23,6 +24,7 @@ export type ActualImageDataSuccess = {
 };
 export type ActualImageDataError = {
 	image?: never;
+	byteLength?: never;
 	width?: never;
 	height?: never;
 	mimeType?: never;
@@ -46,6 +48,7 @@ export async function getActualImageData(
 			const pngImage = pngImages[0] as ImageDataIco;
 			return {
 				image,
+				byteLength: image.byteLength,
 				width: pngImage.width,
 				height: pngImage.height,
 				mimeType: 'image/vnd.microsoft.icon',
@@ -56,6 +59,7 @@ export async function getActualImageData(
 		const bmpImage = sharpFromBmp(Buffer.from(image), undefined, true) as ImageDataBmp;
 		return {
 			image,
+			byteLength: image.byteLength,
 			width: bmpImage.width,
 			height: bmpImage.height,
 			mimeType: fileTypeActual.mime,
@@ -82,6 +86,7 @@ export async function getActualImageData(
 		}
 		return {
 			image,
+			byteLength: image.byteLength,
 			width: metadata.width,
 			height: metadata.height,
 			mimeType,

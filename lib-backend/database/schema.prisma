@@ -237,6 +237,7 @@ model user_image_properties {
   id                      String              @id @default(cuid())
   image_id                String              @unique
   file_path               String              @db.VarChar(31)
+  byte_length             Int
   width                   Int
   height                  Int
   mime_type               String              @db.VarChar(31)

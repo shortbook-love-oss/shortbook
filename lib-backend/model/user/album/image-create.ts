@@ -4,6 +4,7 @@ export interface DbUserAlbumImageCreateRequest {
 	userId: string;
 	name: string;
 	filePath: string;
+	byteLength: number;
 	width: number;
 	height: number;
 	mimeType: string;
@@ -29,6 +30,7 @@ export async function dbUserAlbumImageCreate(req: DbUserAlbumImageCreateRequest)
 				property: {
 					create: {
 						file_path: req.filePath,
+						byte_length: req.byteLength,
 						width: req.width,
 						height: req.height,
 						mime_type: req.mimeType,

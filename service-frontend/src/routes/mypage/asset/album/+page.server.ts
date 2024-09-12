@@ -134,6 +134,7 @@ export const actions = {
 						userId: userId,
 						name: fileName,
 						filePath: saveFilePath,
+						byteLength: imageResult.value.byteLength,
 						width: imageResult.value.width,
 						height: imageResult.value.height,
 						mimeType: imageResult.value.mimeType,
