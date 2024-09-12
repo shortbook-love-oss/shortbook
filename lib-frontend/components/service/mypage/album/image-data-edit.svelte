@@ -4,11 +4,11 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 	import { languageAndNotSelect } from '$lib/utilities/language';
-	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/user/album/image-update';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
+	import SubmitText from '$lib/components/modules/form/submit-text.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import { albumImageAiSelect, albumImageSensitiveSelect, type AlbumImageItem } from './album';
@@ -74,7 +74,6 @@
 			hasInvalid={!hasVaild}
 			isLoading={$submitting}
 			submitLabel="Update image data"
-			successMessage={$page.status === 200 ? $message : ''}
 			errorMessage={$page.status === 400 ? $message : ''}
 			class="w-full"
 		>
@@ -145,12 +144,9 @@
 					<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
 						Save changed
 					</SubmitButton>
-					<SubmitButton
-						formaction="{removeLanguageTagFromPath($page.url.pathname)}/{imageData.id}?/delete"
-						isLoading={$submitting}
-					>
+					<SubmitText formaction="/redirect/album/{imageData.id}/delete" isLoading={$submitting}>
 						<span class="text-red-800">Delete image</span>
-					</SubmitButton>
+					</SubmitText>
 				</div>
 			{/snippet}
 		</Form>

@@ -22,8 +22,8 @@ export async function dbUserAlbumImageUpdate(req: DbUserAlbumImageUpdateRequest)
 			id: req.imageId
 		}
 	});
-	if (!beforeAlbumImage?.id) {
-		return { dbError: new Error(`Album image not found. Image ID=${req.imageId}`) };
+	if (!beforeAlbumImage) {
+		return { dbError: new Error(`Can't find album image. Image ID=${req.imageId}`) };
 	}
 	if (req.userId && req.userId !== beforeAlbumImage.user_id) {
 		return {
