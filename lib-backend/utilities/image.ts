@@ -43,9 +43,9 @@ export async function getActualImageData(
 	const isEnableImage = await isEnableImageFile(image);
 	// Image enable check for .ico & .bmp (sharp is unsupported it)
 	if (!isEnableImage && fileTypeActual?.mime === 'image/x-icon') {
-		const pngImages = sharpsFromIco(Buffer.from(image), undefined, true);
-		if (pngImages?.[0]) {
-			const pngImage = pngImages[0] as ImageDataIco;
+		const pngImages = sharpsFromIco(Buffer.from(image), undefined, true) as ImageDataIco[];
+		const pngImage = getLargestImageFromIco(pngImages ?? []);
+		if (pngImage) {
 			return {
 				image,
 				byteLength: image.byteLength,
@@ -95,4 +95,17 @@ export async function getActualImageData(
 	} else {
 		return { errorMessage: 'Please specify the image file.' };
 	}
+}
+
+export function getLargestImageFromIco(images: ImageDataIco[]): ImageDataIco | undefined {
+	let largestSize = 0;
+	let largestIndex = 0;
+	for (let i = 0; i < images.length; i++) {
+		if (images[i].data.byteLength > largestSize) {
+			largestSize = images[i].data.byteLength;
+			largestIndex = i;
+		}
+	}
+
+	return images[largestIndex];
 }
