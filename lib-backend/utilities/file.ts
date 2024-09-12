@@ -141,7 +141,11 @@ export async function deleteFiles(region: string, bucketName: string, filePrefix
 	if (list.Contents?.length) {
 		const objectKeys: string[] = [];
 		list.Contents.forEach((object) => {
-			if (object.Key) {
+			if (!object.Key) {
+				return;
+			}
+			const afterPrefix = object.Key.split(filePrefix)[1];
+			if (afterPrefix === '' || afterPrefix.startsWith('/')) {
 				objectKeys.push(object.Key);
 			}
 		});
