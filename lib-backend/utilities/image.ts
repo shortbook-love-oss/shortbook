@@ -13,7 +13,26 @@ export async function isEnableImageFile(image: Uint8Array) {
 	return true;
 }
 
-export async function getActualImageData(image: Uint8Array) {
+export type ActualImageDataSuccess = {
+	image: Uint8Array;
+	width: number;
+	height: number;
+	mimeType: string;
+	extension: string;
+	errorMessage?: never;
+};
+export type ActualImageDataError = {
+	image?: never;
+	width?: never;
+	height?: never;
+	mimeType?: never;
+	extension?: never;
+	errorMessage: string;
+};
+
+export async function getActualImageData(
+	image: Uint8Array
+): Promise<ActualImageDataSuccess | ActualImageDataError> {
 	// Browsers trust filename extensions, but this is a security issue
 	// Check actual file type
 	const fileTypeActual = await fileTypeFromBuffer(image);

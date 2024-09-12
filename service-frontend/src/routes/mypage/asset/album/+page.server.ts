@@ -4,6 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
 import type { AlbumImageItem } from '$lib/components/service/mypage/album/album';
+import { arrayToSquads } from '$lib/utilities/array';
 import { getRandom } from '$lib/utilities/crypto';
 import { imageMIMEextension } from '$lib/utilities/file';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
@@ -16,7 +17,7 @@ import {
 	type AllowedFromExtension
 } from '$lib-backend/utilities/infrastructure/image';
 import { uploadFile } from '$lib-backend/utilities/file';
-import { getActualImageData } from '$lib-backend/utilities/image';
+import { getActualImageData, type ActualImageDataSuccess } from '$lib-backend/utilities/image';
 
 export const load = async ({ url, locals }) => {
 	const userId = locals.session?.user?.id;
@@ -76,6 +77,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		type ImageResultSuccess = PromiseFulfilledResult<ActualImageDataSuccess>;
 		const imageResults = await Promise.allSettled(
 			form.data.images.map(async (file) => {
 				return getActualImageData(new Uint8Array(await file.arrayBuffer()));
@@ -97,47 +99,53 @@ export const actions = {
 
 		const imageFIleNames = form.data.images.map((file) => file.name);
 
-		const uploadResults = await Promise.allSettled(
-			imageResults.map(async (image, i) => {
-				if (image.status !== 'fulfilled') {
-					throw new Error(image.reason);
-				} else if (!image.value.image || image.value.errorMessage) {
-					throw new Error(image.value.errorMessage);
-				}
-
-				const saveFilePath = `album-${getRandom(24)}`;
-				const fileName = imageFIleNames[i] ?? saveFilePath;
-				const {
-					isSuccessUpload,
-					checksum,
-					error: uploadFileError
-				} = await uploadFile(
-					image.value.image,
-					image.value.mimeType,
-					env.AWS_DEFAULT_REGION,
-					env.AWS_BUCKET_IMAGE_USER_ALBUM,
-					`${userId}/${saveFilePath}`
-				);
-				if (uploadFileError || !isSuccessUpload) {
-					throw new Error('Error when upload new image.');
-				}
-
-				const { dbError } = await dbUserAlbumImageCreate({
-					userId: userId,
-					name: fileName,
-					filePath: saveFilePath,
-					width: image.value.width,
-					height: image.value.height,
-					mimeType: image.value.mimeType,
-					checksum
-				});
-				if (dbError) {
-					throw new Error(dbError.message);
-				}
-			})
+		// Split imageResults into groups of 10
+		// Prevent saving too many files or modifying DB records at the same time
+		const imageResultSquads = arrayToSquads<ImageResultSuccess>(
+			imageResults as ImageResultSuccess[],
+			10
 		);
+
+		const uploadResultSquads: PromiseSettledResult<void>[] = [];
+		for (const imageResults of imageResultSquads) {
+			const uploadResults = await Promise.allSettled(
+				imageResults.map(async (imageResult, i) => {
+					const saveFilePath = `album-${getRandom(24)}`;
+					const fileName = imageFIleNames[i] ?? saveFilePath;
+					const {
+						isSuccessUpload,
+						checksum,
+						error: uploadFileError
+					} = await uploadFile(
+						imageResult.value.image,
+						imageResult.value.mimeType,
+						env.AWS_DEFAULT_REGION,
+						env.AWS_BUCKET_IMAGE_USER_ALBUM,
+						`${userId}/${saveFilePath}`
+					);
+					if (uploadFileError || !isSuccessUpload) {
+						throw new Error('Error when upload new image.');
+					}
+
+					const { dbError } = await dbUserAlbumImageCreate({
+						userId: userId,
+						name: fileName,
+						filePath: saveFilePath,
+						width: imageResult.value.width,
+						height: imageResult.value.height,
+						mimeType: imageResult.value.mimeType,
+						checksum
+					});
+					if (dbError) {
+						throw new Error(dbError.message);
+					}
+				})
+			);
+
+			uploadResultSquads.push(...uploadResults);
+		}
 		const uploadRejectReasons: string[] = [];
-		uploadResults.forEach((result, i) => {
+		uploadResultSquads.forEach((result, i) => {
 			if (result.status === 'rejected') {
 				uploadRejectReasons.push(`${i + 1}—${result.reason}`);
 			}

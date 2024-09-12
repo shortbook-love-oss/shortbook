@@ -9,7 +9,7 @@ export const schema = z.object({
 		})
 		.array()
 		.min(1, { message: 'Please select images' })
-		.max(30, { message: 'Too many images' })
+		.max(200, { message: 'Too many images (up to 200)' })
 		.refine((files) => {
 			const sizeSum = files.map((f) => f.size).reduce((x, y) => x + y, 0);
 			return sizeSum < 1024 ** 2 * 28;
