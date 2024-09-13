@@ -6,7 +6,7 @@ import {
 } from '$lib/utilities/validate';
 
 export const schema = z.object({
-	name: z.string().min(1).max(50).refine(validateOnlyVisibleChar, {
+	name: z.string().min(1).max(250).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),
 	alt: z.string().max(150).refine(validateOnlyVisibleChar, {
