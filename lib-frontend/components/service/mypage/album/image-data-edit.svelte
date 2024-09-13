@@ -114,10 +114,10 @@
 			/>
 			<Select
 				bind:value={$form.languageInImage as string}
-				name="nativeLanguage"
+				name="languageInImage"
 				list={languageAndNotSelect}
 				label="Language used in the image"
-				errorMessages={$errors.nativeLanguage}
+				errorMessages={$errors.languageInImage}
 				className="mb-8 max-w-72"
 			/>
 			<TextField
@@ -128,19 +128,26 @@
 				className="mb-8"
 			/>
 			<TextField
+				bind:value={$form.copyrightOwner as string}
+				name="copyrightOwner"
+				label="Copyright owner"
+				errorMessages={$errors.copyrightOwner}
+				className="mb-8"
+			/>
+			<TextField
+				bind:value={$form.targetInImage as string}
+				name="targetInImage"
+				label="Who is in the photo?"
+				errorMessages={$errors.targetInImage}
+				className="mb-8"
+			/>
+			<TextField
 				bind:value={$form.licenseUrl as string}
 				type="url"
 				name="licenseUrl"
 				label="License information URL"
 				placeholder="e.g. https://license-source.example"
 				errorMessages={$errors.licenseUrl}
-				className="mb-8"
-			/>
-			<TextField
-				bind:value={$form.creditNotice as string}
-				name="creditNotice"
-				label="Credit notice"
-				errorMessages={$errors.creditNotice}
 				className="mb-8"
 			/>
 			<Select

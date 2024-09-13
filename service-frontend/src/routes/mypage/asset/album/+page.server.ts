@@ -44,8 +44,9 @@ export const load = async ({ url, locals }) => {
 			editForm.data.alt = image.alt;
 			editForm.data.languageInImage = image.language_in_image;
 			editForm.data.place = image.place;
-			editForm.data.licenseUrl = image.license_url;
-			editForm.data.creditNotice = image.credit_notice;
+			editForm.data.copyrightOwner = image.license?.copyright_owner ?? '';
+			editForm.data.targetInImage = image.license?.target_in_image ?? '';
+			editForm.data.licenseUrl = image.license?.license_url ?? '';
 			editForm.data.isSensitive = image.is_sensitive;
 			editForm.data.isAi = image.is_ai;
 			const fromExtension = imageMIMEextension[image.property?.mime_type ?? ''] ?? '';

@@ -45,7 +45,7 @@ export async function dbUserAlbumImageDelete(req: DbUserAlbumImageDeleteRequest)
 					deleted_at: deletedAt
 				}
 			});
-			await tx.user_image_creators.updateMany({
+			await tx.user_image_licenses.updateMany({
 				where: {
 					image_id: albumImage.id,
 					deleted_at: null

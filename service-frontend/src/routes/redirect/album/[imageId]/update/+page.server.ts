@@ -28,8 +28,9 @@ export const actions = {
 			alt: form.data.alt,
 			languageInImage: form.data.languageInImage as AvailableLanguageTags | '',
 			place: form.data.place,
+			copyrightOwner: form.data.copyrightOwner,
+			targetInImage: form.data.targetInImage,
 			licenseUrl: form.data.licenseUrl,
-			creditNotice: form.data.creditNotice,
 			isSensitive: form.data.isSensitive,
 			isAi: form.data.isAi
 		});

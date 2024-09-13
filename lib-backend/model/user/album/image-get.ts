@@ -23,7 +23,7 @@ export async function dbUserAlbumImageGet(req: DbUserAlbumImageGetRequest) {
 				property: {
 					where: { ...whereCondDelete }
 				},
-				creator: {
+				license: {
 					where: { ...whereCondDelete }
 				},
 				tags: {

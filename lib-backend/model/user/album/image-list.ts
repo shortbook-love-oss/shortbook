@@ -24,6 +24,9 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 				property: {
 					where: { ...whereCondDelete }
 				},
+				license: {
+					where: { ...whereCondDelete }
+				},
 				tags: {
 					where: { ...whereCondDelete }
 				}

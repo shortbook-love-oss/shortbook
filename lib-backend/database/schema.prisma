@@ -214,12 +214,10 @@ model user_images {
   id                      String              @id @default(cuid())
   user_id                 String
   name                    String              @db.VarChar(350) // Length 0 - 50
-  alt                     String              @db.VarChar(700) // Length 0 - 100
+  alt                     String              @db.VarChar(1000) // Length 0 - 150
   image_created_at        DateTime?           @db.Date() // Filmed date or drew date, not published date
   language_in_image       String              @db.VarChar(5)
   place                   String              @db.VarChar(255)
-  license_url             String              @db.VarChar(255)
-  credit_notice           String              @db.VarChar(350) // Length 0 - 50
   is_sensitive            Int                 @db.SmallInt // 0: No 1: Yes
   is_ai                   Int                 @db.SmallInt // 0: No 1: Yes (edited) 2: Yes (generated)
   created_at              DateTime            @default(now())
@@ -227,7 +225,7 @@ model user_images {
   deleted_at              DateTime?
 
   property                user_image_properties?
-  creator                 user_image_creators?
+  license                 user_image_licenses?
   tags                    user_image_tags[]
 }
 
@@ -247,14 +245,16 @@ model user_image_properties {
   deleted_at              DateTime?
 }
 
-model user_image_creators {
+model user_image_licenses {
   image                   user_images         @relation(fields: [image_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   image_id                String              @unique
-  type                    Int                 @db.SmallInt // 0: Person 1: Organization
-  name                    String              @db.VarChar(350) // Length 1 - 50
-  sort                    Int                 @db.SmallInt
+  creator_type            Int                 @db.SmallInt // 1: Person 2: Organization
+  creator_name            String              @db.VarChar(350) // Length 1 - 50
+  copyright_owner         String              @db.VarChar(350) // Length 0 - 50
+  target_in_image         String              @db.VarChar(700) // Length 0 - 100
+  license_url             String              @db.VarChar(255)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

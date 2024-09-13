@@ -23,8 +23,6 @@ export async function dbUserAlbumImageCreate(req: DbUserAlbumImageCreateRequest)
 				image_created_at: null,
 				language_in_image: '',
 				place: '',
-				license_url: '',
-				credit_notice: '',
 				is_sensitive: 0,
 				is_ai: 0,
 				property: {
@@ -35,6 +33,15 @@ export async function dbUserAlbumImageCreate(req: DbUserAlbumImageCreateRequest)
 						height: req.height,
 						mime_type: req.mimeType,
 						checksum: req.checksum
+					}
+				},
+				license: {
+					create: {
+						creator_type: 0,
+						creator_name: '',
+						copyright_owner: '',
+						target_in_image: '',
+						license_url: ''
 					}
 				}
 			}
