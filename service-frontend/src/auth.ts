@@ -20,7 +20,7 @@ import prisma from '$lib-backend/database/connect';
 import { encryptAndFlat } from '$lib-backend/utilities/crypto';
 import { uploadFile } from '$lib-backend/utilities/file';
 import { sendEmail, toHashUserEmail } from '$lib-backend/utilities/email';
-import { imageSecureCheck } from '$lib-backend/utilities/image';
+import { getActualImageData } from '$lib-backend/utilities/image';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
@@ -124,7 +124,7 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 			.catch(() => undefined);
 
 		if (profileImage) {
-			const { mimeType } = await imageSecureCheck(profileImage);
+			const { mimeType } = await getActualImageData(profileImage);
 
 			if (profileImage && mimeType) {
 				// 2. Upload image to Amazon S3

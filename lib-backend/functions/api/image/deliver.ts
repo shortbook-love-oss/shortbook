@@ -1,7 +1,8 @@
 import sharp from 'sharp';
+import { sharpFromBmp } from 'sharp-bmp';
+import { sharpsFromIco, type ImageData as ImageDataIco } from 'sharp-ico';
 import { env } from '$env/dynamic/private';
 import { imageMIMEextension } from '$lib/utilities/file';
-import { getFile, uploadFile, type StorageBucket } from '$lib-backend/utilities/file';
 import {
 	allowedFromExtensions,
 	allowedResizeFit,
@@ -15,6 +16,8 @@ import {
 	type ImageConvertOption,
 	type VectorFileExtension
 } from '$lib-backend/utilities/infrastructure/image';
+import { getFile, uploadFile, type StorageBucket } from '$lib-backend/utilities/file';
+import { getLargestImageFromIco } from '$lib-backend/utilities/image';
 
 export const cdnTransferIndex: Record<ImageBucketTransferKey, StorageBucket> = {
 	profile: {
@@ -153,7 +156,25 @@ export async function convertAndDeliver(
 		// No resize if vector
 		imageBuffer = file;
 	} else {
-		let image = sharp(file);
+		let image;
+		switch (contentType) {
+			case 'image/vnd.microsoft.icon':
+				const pngImages = sharpsFromIco(Buffer.from(file), undefined, true) as ImageDataIco[];
+				const pngImage = getLargestImageFromIco(pngImages ?? []);
+				if (pngImage?.image) {
+					image = pngImage.image;
+				}
+				break;
+			case 'image/bmp':
+				image = sharpFromBmp(Buffer.from(file)) as sharp.Sharp;
+				break;
+			default:
+				image = sharp(file);
+		}
+		if (!image) {
+			return { errorMessage: `Can't read image (as ${contentType}).` };
+		}
+
 		if (reqOption.width || reqOption.height) {
 			image = image.resize({
 				width: reqOption.width || undefined,

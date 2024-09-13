@@ -2,7 +2,7 @@
 	import type { ValidationErrors } from 'sveltekit-superforms';
 
 	type Props = {
-		value: string | number;
+		value: string;
 		name: string;
 		label?: string;
 		required?: boolean;

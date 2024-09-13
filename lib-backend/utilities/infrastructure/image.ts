@@ -25,11 +25,9 @@ export const imageExtensionMIME: Record<string, string> = {
 	gif: 'image/gif',
 	webp: 'image/webp',
 	avif: 'image/avif',
-	heic: 'image/heic',
-	heif: 'image/heif',
 	tiff: 'image/tiff',
 	bmp: 'image/bmp',
-	ico: 'image/x-icon',
+	ico: 'image/vnd.microsoft.icon',
 	svg: 'image/svg+xml'
 };
 
@@ -40,18 +38,11 @@ export const allowedToExtensions = [
 	'gif',
 	'webp',
 	'avif',
-	'ico',
 	...vectorFileExtensions
 ] as const;
 export type AllowedToExtension = (typeof allowedToExtensions)[number];
 
-export const allowedFromExtensions = [
-	...allowedToExtensions,
-	'heic',
-	'heif',
-	'tiff',
-	'bmp'
-] as const;
+export const allowedFromExtensions = [...allowedToExtensions, 'tiff', 'ico', 'bmp'] as const;
 export type AllowedFromExtension = (typeof allowedFromExtensions)[number];
 
 // contain ... Keep aspect, not clip
@@ -73,5 +64,16 @@ export const allowedResizeFit = [
 ] as ImageDistributionOption['fit'][];
 export const allowedQuality = [10, 20, 40, 60, 80, 90, 100];
 
+export const defaultExtension: AllowedToExtension = 'png';
 export const defaultResizeFit: ImageDistributionOption['fit'] = 'cover';
 export const defaultQuality = 60;
+
+export function getExtensionForAll(fromExtension: AllowedFromExtension | ''): AllowedToExtension {
+	// For example, heic is not compatible with Windows
+	// So, convert to another extension that can be viewed on all browsers
+	if (allowedToExtensions.includes(fromExtension as AllowedToExtension)) {
+		return fromExtension as AllowedToExtension;
+	} else {
+		return defaultExtension;
+	}
+}

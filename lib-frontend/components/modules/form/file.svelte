@@ -3,16 +3,16 @@
 	import IconCheck from '~icons/mdi/check';
 	import IconImage from '~icons/mdi/file-image-outline';
 	import IconFile from '~icons/mdi/file-outline';
-	import type { FileInputErrorMessages, SelectedFile } from '$lib/utilities/file';
+	import type { SelectedFile } from '$lib/utilities/file';
 
 	type Props = {
-		filesProxy: Writable<any>;
+		filesProxy: Writable<FileList | File[]>;
 		name: string;
 		label?: string;
 		buttonSubLabel?: string;
 		required?: boolean;
 		acceptTypes?: string[];
-		errorMessages?: any;
+		errorMessages?: { _errors?: string[] } & Record<string | number, string[]>;
 		className?: string;
 		inputClass?: string;
 		[key: string]: unknown;
@@ -24,7 +24,7 @@
 		buttonSubLabel = '',
 		required = false,
 		acceptTypes,
-		errorMessages = { 0: undefined },
+		errorMessages = undefined,
 		className = '',
 		inputClass = '',
 		...restProps
@@ -32,11 +32,7 @@
 
 	let selectedFiles = $state<SelectedFile[]>([]);
 
-	const errorMsgs = $state(
-		Object.values((errorMessages as FileInputErrorMessages) ?? {})
-			.flat()
-			.filter(Boolean)
-	);
+	const errorMsgs = $derived(errorMessages?._errors ?? errorMessages?.[0] ?? []);
 
 	// If can only upload images, it's an image uploader
 	const isImageUploader = $state(
@@ -90,14 +86,14 @@
 		<input
 			type="file"
 			{...restProps}
-			bind:files={$filesProxy}
+			bind:files={$filesProxy as FileList}
 			{name}
 			{required}
 			accept={acceptTypes?.join()}
 			class="peer w-full rounded-lg file:min-h-20 file:w-full file:appearance-none file:rounded-lg file:border-solid file:bg-white file:text-transparent hover:file:bg-stone-200 focus:file:bg-stone-200 {errorMsgs.length
 				? 'file:border-2 file:border-red-700'
 				: 'file:border file:border-stone-600'}"
-			aria-invalid={errorMsgs?.length ? true : undefined}
+			aria-invalid={errorMsgs.length ? true : undefined}
 			oninput={updateSelectedList}
 		/>
 		<div

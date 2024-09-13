@@ -10,6 +10,7 @@
 		name: string; // Need for unique attribute value
 		title?: string;
 		openerClass?: string;
+		openerCoverClass?: string;
 		dialogSizeClass?: string;
 	};
 	let {
@@ -19,6 +20,7 @@
 		name,
 		title = '',
 		openerClass = '',
+		openerCoverClass = '',
 		dialogSizeClass = 'max-w-xl'
 	}: Props = $props();
 
@@ -54,7 +56,7 @@
 			type="checkbox"
 			name="common_dialog_{name}"
 			id="common_dialog_open_{name}"
-			class="absolute start-0 top-0 h-full w-full cursor-pointer appearance-none"
+			class="absolute start-0 top-0 h-full w-full cursor-pointer appearance-none {openerCoverClass}"
 			tabindex="0"
 		/>
 	</div>

@@ -90,7 +90,7 @@
 			<!-- Title -->
 			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.titleFontSize}
+				bind:value={book.titleFontSize as string | number}
 				name="titleFontSize"
 				list={bookFontSizeSelect}
 				label="Title font size"
@@ -100,7 +100,7 @@
 			/>
 			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.titleAlign}
+				bind:value={book.titleAlign as string | number}
 				name="titleAlign"
 				list={bookTextAlignSelect}
 				label="Title align"
@@ -120,7 +120,7 @@
 			<!-- Subtitle -->
 			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.subtitleFontSize}
+				bind:value={book.subtitleFontSize as string | number}
 				name="subtitleFontSize"
 				list={bookFontSizeSelect}
 				label="Subtitle font size"
@@ -130,7 +130,7 @@
 			/>
 			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.subtitleAlign}
+				bind:value={book.subtitleAlign as string | number}
 				name="subtitleAlign"
 				list={bookTextAlignSelect}
 				label="Subtitle align"
@@ -149,7 +149,7 @@
 			/>
 			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.writerAlign}
+				bind:value={book.writerAlign as string | number}
 				name="writerAlign"
 				list={bookTextAlignSelect}
 				label="Pen name align"
