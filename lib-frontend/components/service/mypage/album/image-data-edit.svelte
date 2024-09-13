@@ -156,7 +156,7 @@
 				list={albumImageSensitiveSelect}
 				label="Flag as sensitive?"
 				errorMessages={$errors.isSensitive}
-				className="mb-8 max-w-72"
+				className="mb-8"
 			/>
 			<Select
 				bind:value={$form.isAi as number}

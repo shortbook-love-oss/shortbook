@@ -27,6 +27,6 @@ export const schema = z.object({
 	licenseUrl: z.string().max(255).refine(validateOptionalUrl, {
 		message: 'Invalid URL'
 	}),
-	isSensitive: z.number().min(0).max(1),
+	isSensitive: z.number().min(0).max(8),
 	isAi: z.number().min(0).max(2)
 });
