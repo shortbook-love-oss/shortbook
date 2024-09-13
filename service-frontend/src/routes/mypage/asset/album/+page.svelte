@@ -52,7 +52,7 @@
 		label="Select new album images"
 		buttonSubLabel="Max size 28 MB"
 		errorMessages={$errors.images}
-		className="mb-8 w-full max-w-96"
+		className="mb-8"
 	/>
 </Form>
 {#if data.albumImageList.length}
