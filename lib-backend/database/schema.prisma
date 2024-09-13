@@ -213,7 +213,7 @@ model user_images {
 
   id                      String              @id @default(cuid())
   user_id                 String
-  name                    String              @db.VarChar(350) // Length 0 - 50
+  name                    String              @db.VarChar(1400) // Length 0 - 250
   alt                     String              @db.VarChar(1000) // Length 0 - 150
   image_created_at        DateTime?           @db.Date() // Filmed date or drew date, not published date
   language_in_image       String              @db.VarChar(5)
