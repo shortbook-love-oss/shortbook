@@ -8,6 +8,7 @@ export interface AlbumImageItem {
 	alt: string;
 	languageInImage: AvailableLanguageTags | '';
 	filePath: string;
+	byteLength: number;
 	width: number;
 	height: number;
 	toExtension: string;

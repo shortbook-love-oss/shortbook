@@ -57,6 +57,7 @@ export const load = async ({ url, locals }) => {
 				alt: image.alt,
 				languageInImage: image.language_in_image as AvailableLanguageTags | '',
 				filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${userId}/${image.property?.file_path}`,
+				byteLength: image.property?.byte_length ?? 0,
 				width: image.property?.width ?? 0,
 				height: image.property?.height ?? 0,
 				toExtension: getExtensionForAll(fromExtension as AllowedFromExtension | '')
