@@ -37,8 +37,8 @@ export async function dbUserCreate(req: DbUserCreateRequest) {
 				}
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to create user. User key-name=${req.keyName}`);
 			return undefined;
 		});
 

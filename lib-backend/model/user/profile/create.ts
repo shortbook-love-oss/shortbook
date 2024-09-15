@@ -27,8 +27,8 @@ export async function dbUserProfileCreate(req: DbUserProfileCreateRequest) {
 				}
 			}
 		})
-		.catch((e: Error) => {
-			dbError = e;
+		.catch(() => {
+			dbError ??= new Error(`Failed to create user profile. User ID=${req.userId}`);
 			return undefined;
 		});
 
