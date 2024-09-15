@@ -48,7 +48,7 @@ export const actions = {
 		const { error: cdnDeleteError } = await deleteFiles(
 			env.AWS_DEFAULT_REGION,
 			`${env.AWS_BUCKET_IMAGE_PROFILE}-cdn`,
-			`${userId}/`
+			userId
 		);
 		if (cdnDeleteError) {
 			console.error('Error when delete old converted profile-image.');

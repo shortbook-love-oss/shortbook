@@ -138,36 +138,37 @@ export async function deleteFiles(region: string, bucketName: string, filePrefix
 		return { isSuccessDelete: false, error };
 	}
 
-	if (list.Contents?.length) {
-		const objectKeys: string[] = [];
-		list.Contents.forEach((object) => {
-			if (!object.Key) {
-				return;
-			}
-			const afterPrefix = object.Key.split(filePrefix)[1];
-			if (afterPrefix === '' || afterPrefix.startsWith('/')) {
-				objectKeys.push(object.Key);
-			}
-		});
-
-		const deleteCommand = new DeleteObjectsCommand({
-			Bucket: bucketName,
-			Delete: {
-				Objects: objectKeys.map((key) => ({ Key: key }))
-			}
-		});
-		await s3
-			.send(deleteCommand)
-			.then((response) => {
-				const statusCode = response.$metadata.httpStatusCode;
-				if (statusCode) {
-					isSuccessDelete = 200 <= statusCode && statusCode < 300;
-				}
-			})
-			.catch((e: Error) => {
-				error = e;
-			});
+	const deleteTargetKeys: string[] = [];
+	list.Contents?.forEach((object) => {
+		if (!object.Key) {
+			return;
+		}
+		const afterPrefix = object.Key.split(filePrefix)[1];
+		if (afterPrefix === '' || afterPrefix.startsWith('/')) {
+			deleteTargetKeys.push(object.Key);
+		}
+	});
+	if (!deleteTargetKeys.length) {
+		return { isSuccessDelete: true, error: undefined };
 	}
+
+	const deleteCommand = new DeleteObjectsCommand({
+		Bucket: bucketName,
+		Delete: {
+			Objects: deleteTargetKeys.map((key) => ({ Key: key }))
+		}
+	});
+	await s3
+		.send(deleteCommand)
+		.then((response) => {
+			const statusCode = response.$metadata.httpStatusCode;
+			if (statusCode) {
+				isSuccessDelete = 200 <= statusCode && statusCode < 300;
+			}
+		})
+		.catch((e: Error) => {
+			error = e;
+		});
 
 	return { isSuccessDelete, error };
 }
