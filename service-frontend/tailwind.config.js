@@ -31,7 +31,7 @@ export default {
 				}
 			},
 			aspectRatio: {
-				logotype: '3170 / 512',
+				logotype: '3240 / 512',
 				'book-cover': '2 / 3'
 			},
 			animation: {
