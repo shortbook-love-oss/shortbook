@@ -26,11 +26,14 @@
 					{data.profileLang.headline}
 				</p>
 			{/if}
-			<img
-				src="{data.user.image}?ext=jpg&w=128&h=128&q=100"
-				class="mb-4 h-32 w-32 rounded-md bg-white"
-				alt="{data.profileLang?.headline} profile image"
-			/>
+			<picture>
+				<source srcset="{data.user.image}?ext=avif&w=128&h=128&q=80" type="image/avif" />
+				<img
+					src="{data.user.image}?ext=png&w=128&h=128&q=80"
+					alt="{data.profileLang?.headline} profile icon"
+					class="mb-4 h-32 w-32 rounded-md bg-white"
+				/>
+			</picture>
 			{#if data.isOwn}
 				<NavLinkSmall
 					name="Edit profile"

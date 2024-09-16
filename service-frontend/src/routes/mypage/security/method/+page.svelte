@@ -23,7 +23,7 @@
 	<div class="mb-8 flex items-center gap-3">
 		<img
 			src="/assets/brands/{data.signInProvider.key}-logo.png"
-			class="w-12"
+			class="h-12"
 			alt="{data.signInProvider.label} logo"
 		/>
 		<p class="text-xl">Signed in by {data.signInProvider.label}</p>

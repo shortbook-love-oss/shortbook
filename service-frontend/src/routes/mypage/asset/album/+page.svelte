@@ -59,10 +59,7 @@
 	<ul class="grid grid-cols-3 gap-4 xs:grid-cols-4">
 		{#each data.albumImageList as image (image.id)}
 			<li class="relative">
-				<ImageDataEdit
-					imageData={image}
-					imageHref="{image.filePath}?ext={image.toExtension}&w=144&h=144"
-				/>
+				<ImageDataEdit imageData={image} />
 			</li>
 		{/each}
 	</ul>

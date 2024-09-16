@@ -13,11 +13,14 @@
 	href={keyName ? `/@${keyName}` : undefined}
 	class="flex items-center gap-2 {keyName ? 'hover:underline' : ''} {className}"
 >
-	<img
-		src="{imageSrc}?ext=jpg&w=24&h=24&q=80"
-		alt="{name} profile icon"
-		class="h-6 w-6 rounded bg-white"
-	/>
+	<picture>
+		<source srcset="{imageSrc}?ext=avif&w=24&h=24&q=80" type="image/avif" />
+		<img
+			src="{imageSrc}?ext=png&w=24&h=24&q=80"
+			alt="{name} profile icon"
+			class="h-6 w-6 rounded bg-white"
+		/>
+	</picture>
 	<p
 		class="line-clamp-3 whitespace-pre-wrap break-words text-lg leading-snug xs:line-clamp-2 md:line-clamp-1"
 	>

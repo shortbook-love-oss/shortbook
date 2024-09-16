@@ -16,9 +16,8 @@
 
 	type Props = {
 		imageData: AlbumImageItem;
-		imageHref: string;
 	};
-	let { imageData, imageHref }: Props = $props();
+	let { imageData }: Props = $props();
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(
 		imageData.editForm,
@@ -53,7 +52,7 @@
 >
 	{#snippet opener()}
 		<img
-			src={imageHref}
+			src="{imageData.filePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
 			alt={imageData.alt}
 			width="144"
 			height="144"
@@ -71,7 +70,7 @@
 				class="inline-block"
 			>
 				<img
-					src={imageHref}
+					src="{imageData.filePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
 					alt={imageData.alt}
 					width="144"
 					height="144"

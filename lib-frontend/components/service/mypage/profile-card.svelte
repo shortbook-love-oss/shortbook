@@ -18,11 +18,14 @@
 			href={keyName ? `/@${keyName}` : undefined}
 			class="peer shrink-0"
 		>
-			<img
-				src="{imageSrc}?ext=jpg&w=64&h=64&q=80"
-				alt="Profile icon"
-				class="h-16 w-16 rounded-md bg-white"
-			/>
+			<picture>
+				<source srcset="{imageSrc}?ext=avif&w=64&h=64&q=80" type="image/avif" />
+				<img
+					src="{imageSrc}?ext=png&w=64&h=64&q=80"
+					alt="Profile icon"
+					class="h-16 w-16 rounded-md bg-white"
+				/>
+			</picture>
 		</svelte:element>
 	{/if}
 	<div class="-m-2 flex flex-col overflow-x-hidden break-words p-2 peer-hover:[&>a]:underline">
