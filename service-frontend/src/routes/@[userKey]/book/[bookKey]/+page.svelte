@@ -73,7 +73,9 @@
 				</ProfileCard>
 			</div>
 			<div class="flex items-center gap-4">
-				<time datetime={data.bookDetail.publishedAt.toISOString()}>{publishedAt}</time>
+				<time datetime={data.bookDetail.publishedAt.toISOString()} class="text-stone-600"
+					>{publishedAt}</time
+				>
 				{#if data.isOwn && !data.bookDetail.isBookDeleted}
 					<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">
 						<IconWrite width="20" height="20" className="-me-1" />
