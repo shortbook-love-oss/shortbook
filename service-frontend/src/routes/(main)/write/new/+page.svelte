@@ -4,7 +4,7 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
-	import { schema } from '$lib/validation/schema/book-update';
+	import { schema } from '$lib/validation/schema/book/update';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';

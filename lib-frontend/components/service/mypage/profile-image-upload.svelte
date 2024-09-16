@@ -3,9 +3,9 @@
 	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
-	import Form from '$lib/components/modules/form/form.svelte';
 	import { imageMIMEextension } from '$lib/utilities/file';
-	import { schema } from '$lib/validation/schema/profile-image-update';
+	import { schema } from '$lib/validation/schema/user/profile/image-update';
+	import Form from '$lib/components/modules/form/form.svelte';
 	import File from '$lib/components/modules/form/file.svelte';
 
 	type Props = {

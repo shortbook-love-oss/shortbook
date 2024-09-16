@@ -2,17 +2,17 @@ import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
+import { getBookCover } from '$lib/utilities/book';
+import { languageAndNotSelect } from '$lib/utilities/language';
+import { setLanguageTagToPath } from '$lib/utilities/url';
+import { schema } from '$lib/validation/schema/book/update';
+import { isExistBookKeyName } from '$lib-backend/functions/service/write/edit-action';
+import { editLoad } from '$lib-backend/functions/service/write/edit-load';
 import { dbBookDelete } from '$lib-backend/model/book/delete';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
 import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
-import { getBookCover } from '$lib/utilities/book';
-import { languageAndNotSelect } from '$lib/utilities/language';
-import { setLanguageTagToPath } from '$lib/utilities/url';
-import { schema } from '$lib/validation/schema/book-update';
-import { isExistBookKeyName } from '$lib-backend/functions/service/write/edit-action';
-import { editLoad } from '$lib-backend/functions/service/write/edit-load';
 
 export const load = async ({ locals, params }) => {
 	const userId = locals.session?.user?.id;

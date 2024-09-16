@@ -2,10 +2,10 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
-import { schema } from '$lib/validation/schema/profile-image-update';
+import { schema } from '$lib/validation/schema/user/profile/image-update';
 import { deleteImageCache } from '$lib-backend/utilities/cache';
 import { deleteFiles, uploadFile } from '$lib-backend/utilities/file';
+import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
 import { getActualImageData } from '$lib-backend/utilities/image';
 
 export const load = async ({ locals }) => {

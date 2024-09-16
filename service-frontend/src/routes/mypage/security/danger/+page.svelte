@@ -3,7 +3,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
-	import { schema } from '$lib/validation/schema/user-delete';
+	import { schema } from '$lib/validation/schema/user/delete';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';

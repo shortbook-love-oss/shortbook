@@ -2,12 +2,12 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
+import { languageAndNotSelect } from '$lib/utilities/language';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
+import { schema } from '$lib/validation/schema/user/profile/update';
 import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib-backend/model/user/profile/update';
 import { dbUserGetByKeyName } from '$lib-backend/model/user/get-by-key-name';
-import { languageAndNotSelect } from '$lib/utilities/language';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
-import { schema } from '$lib/validation/schema/profile-update';
 
 export const load = async ({ url, locals }) => {
 	const requestLang = getLanguageTagFromUrl(url);

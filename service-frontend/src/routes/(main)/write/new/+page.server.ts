@@ -1,14 +1,14 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { dbBookCreate } from '$lib-backend/model/book/create';
-import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { getBookCover } from '$lib/utilities/book';
 import { type AvailableLanguageTags, languageAndNotSelect } from '$lib/utilities/language';
 import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
-import { schema } from '$lib/validation/schema/book-update';
+import { schema } from '$lib/validation/schema/book/update';
 import { isExistBookKeyName } from '$lib-backend/functions/service/write/edit-action';
 import { editLoad } from '$lib-backend/functions/service/write/edit-load';
+import { dbBookCreate } from '$lib-backend/model/book/create';
+import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 
 export const load = async ({ url, locals }) => {
 	const userId = locals.session?.user?.id;

@@ -4,7 +4,7 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import IconDelete from '~icons/mdi/trash-can-outline';
 	import { page } from '$app/stores';
-	import { schema } from '$lib/validation/schema/book-update';
+	import { schema } from '$lib/validation/schema/book/update';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
