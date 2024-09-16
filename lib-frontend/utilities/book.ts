@@ -42,16 +42,6 @@ export interface BookDetail extends BookItem {
 	isBookDeleted: boolean;
 }
 
-// font-size: ***;
-export const bookFontSizeSelect: SelectItem[] = [
-	{ value: 32, label: 'Tiny' },
-	{ value: 48, label: 'Smaller' },
-	{ value: 64, label: 'Small' },
-	{ value: 96, label: 'Medium' },
-	{ value: 128, label: 'Big' },
-	{ value: 160, label: 'Impact' }
-];
-
 // text-align: ***;
 export const bookTextAlignSelect: SelectItem[] = [
 	{ value: 0, text: 'start', label: 'Left' },
