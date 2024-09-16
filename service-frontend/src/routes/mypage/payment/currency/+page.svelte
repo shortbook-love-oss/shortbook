@@ -49,7 +49,7 @@
 >
 	<div class="mb-8 flex flex-wrap items-end gap-3">
 		<Select
-			bind:value={$form.currencyKey}
+			bind:value={$form.currencyKey as string}
 			name="currencyKey"
 			list={data.currencyList}
 			label="Payment currency"

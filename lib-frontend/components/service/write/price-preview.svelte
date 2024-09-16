@@ -84,7 +84,7 @@
 					Sell for <span class="text-2xl font-semibold">{buyPrice}</span>
 				</p>
 				<Select
-					bind:value={buyCurrencySelected}
+					bind:value={buyCurrencySelected as string}
 					name="buyCurrency"
 					list={currencySelect}
 					className="w-28 text-lg shrink-0"
@@ -101,7 +101,7 @@
 					<span class="text-2xl font-semibold">{earnPrice}</span>
 				</p>
 				<Select
-					bind:value={earnCurrencySelected}
+					bind:value={earnCurrencySelected as string}
 					name="buyCurrency"
 					list={currencySelect}
 					className="w-28 text-lg shrink-0"

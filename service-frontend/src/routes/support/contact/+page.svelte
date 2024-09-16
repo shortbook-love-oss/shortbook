@@ -50,7 +50,7 @@
 	class="mx-auto max-w-xl"
 >
 	<Select
-		bind:value={$form.categoryKeyName}
+		bind:value={$form.categoryKeyName as string}
 		name="categoryKeyName"
 		list={data.contactCategories}
 		required={true}
