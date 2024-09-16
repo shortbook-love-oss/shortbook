@@ -35,7 +35,7 @@
 			<p class="mb-2">
 				<a
 					href={bookUrl}
-					class="line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] font-title text-lg hover:underline"
+					class="line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] text-xl text-stone-600 hover:underline"
 					>{book.subtitle}</a
 				>
 			</p>

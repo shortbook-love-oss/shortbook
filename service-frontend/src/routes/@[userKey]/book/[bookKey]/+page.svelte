@@ -57,7 +57,7 @@
 				{data.bookDetail.title}
 			</h1>
 			{#if data.bookDetail.subtitle}
-				<p class="mb-8 whitespace-pre-wrap font-serif text-2xl leading-snug">
+				<p class="mb-8 whitespace-pre-wrap text-2xl leading-snug text-stone-500">
 					{data.bookDetail.subtitle}
 				</p>
 			{/if}
@@ -109,12 +109,12 @@
 		{/if}
 		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.prologue}
-			<section class="article_content mb-8 font-serif text-xl">
+			<section class="article_content mb-8 text-xl">
 				{@html data.bookDetail.prologue}
 			</section>
 		{/if}
 		{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
-			<section class="article_content font-serif text-xl">
+			<section class="article_content text-xl">
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
