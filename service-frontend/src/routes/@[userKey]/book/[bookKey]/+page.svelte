@@ -37,7 +37,7 @@
 			</a>
 			<a
 				href="/@{data.bookDetail.userKeyName}"
-				class="mb-2 block whitespace-pre-wrap text-xl leading-snug hover:underline peer-hover:underline"
+				class="mb-2 block whitespace-pre-wrap text-[1.25rem] leading-tight hover:underline peer-hover:underline"
 			>
 				{data.bookDetail.penName}
 			</a>
@@ -49,7 +49,7 @@
 	<div class="w-full min-w-0 max-w-2xl break-words">
 		<div class="-mx-4 mb-8 px-4">
 			<h1
-				class="whitespace-pre-wrap font-title text-[2.25rem] font-semibold leading-tight xs:text-[3rem] {data
+				class="whitespace-pre-wrap text-[2.25rem] font-semibold leading-tight xs:text-[3.25rem] {data
 					.bookDetail.subtitle
 					? 'mb-2'
 					: 'mb-6'}"
@@ -140,7 +140,7 @@
 			</SalesMessage>
 		{/if}
 	</div>
-	<div class="hidden shrink-0 pt-1 lg:block lg:w-48">
+	<div class="hidden shrink-0 pt-1.5 lg:block lg:w-48">
 		<BookCover
 			book={data.bookDetail}
 			penName={data.bookDetail.penName}

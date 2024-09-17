@@ -26,7 +26,7 @@
 		<h2 class={book.subtitle ? '' : 'mb-2'}>
 			<a
 				href={bookUrl}
-				class="line-clamp-4 whitespace-pre-wrap break-words pb-[0.1em] font-title text-[2.25rem] font-semibold leading-tight hover:underline xs:text-[3rem]"
+				class="line-clamp-4 whitespace-pre-wrap break-words pb-[0.1em] text-[2.25rem] font-semibold leading-[1.25] hover:underline xs:text-[3rem]"
 			>
 				{book.title}
 			</a>
