@@ -12,9 +12,6 @@ mkcert localhost
 ### Make directory and file
 
 ```bash
-chmod 755 ./fix_dirname_error.sh
-mkdir ./database/.data
-mkdir ./cache/.data
 mkdir ./cache/dynamodb
 ```
 
