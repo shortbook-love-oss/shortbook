@@ -1,4 +1,3 @@
-export const signInEmailLinkMethod = 'emaillink';
 export const signInProviders = [
 	{ key: 'google', label: 'Google' }
 ] as const;

@@ -4,7 +4,6 @@ import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash'
 import { dbUserProvideDataUpdate } from '$lib-backend/model/user/update-provide-data';
 import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token/delete';
 import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
-import { signInEmailLinkMethod } from '$lib/utilities/signin';
 import { emailChangeTokenParam, setLanguageTagToPath } from '$lib/utilities/url';
 import { dbUserPaymentContractGet } from '$lib-backend/model/user/payment-contract/get';
 import { decryptFromFlat, encryptAndFlat } from '$lib-backend/utilities/crypto';
@@ -39,7 +38,7 @@ export const load = async ({ url, locals }) => {
 
 	// If already use email by another user, cancel process
 	const emailEncrypt = encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
-	const emailHash = toHashUserEmail(userEmail, signInEmailLinkMethod);
+	const emailHash = toHashUserEmail(userEmail);
 	const { user, dbError: dbUserGetError } = await dbUserGetByEmailHash({ emailHash });
 	if (dbUserGetError) {
 		return error(500, { message: dbUserGetError.message });

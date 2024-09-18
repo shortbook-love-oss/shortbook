@@ -7,7 +7,7 @@ import { dbLogActionList } from '$lib-backend/model/log/action-list';
 import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib-backend/model/verification-token/create';
-import { matchSigninProvider, signInEmailLinkMethod } from '$lib/utilities/signin';
+import { matchSigninProvider } from '$lib/utilities/signin';
 import {
 	emailChangeTokenParam,
 	getLanguageTagFromUrl,
@@ -75,7 +75,7 @@ export const actions = {
 		}
 		if (form.valid) {
 			// If already use email by another user, show error message near the input
-			const emailHash = toHashUserEmail(form.data.email, signInEmailLinkMethod);
+			const emailHash = toHashUserEmail(form.data.email);
 			const { user, dbError } = await dbUserGetByEmailHash({ emailHash });
 			if (dbError) {
 				return error(500, { message: dbError.message });

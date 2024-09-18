@@ -8,7 +8,6 @@ import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token
 import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
 import { getRandom } from '$lib/utilities/crypto';
 import { setSessionToken } from '$lib/utilities/cookie';
-import { signInEmailLinkMethod } from '$lib/utilities/signin';
 import { signConfirmTokenParam } from '$lib/utilities/url';
 import { dbUserRestore } from '$lib-backend/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
@@ -68,7 +67,7 @@ export async function finalizeSign(
 		// If email exist, fail to user create
 		const { user, dbError: dbUserGetError } = await dbUserCreate({
 			emailEncrypt: encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT),
-			emailHash: toHashUserEmail(userEmail, signInEmailLinkMethod),
+			emailHash: toHashUserEmail(userEmail),
 			emailVerified: new Date(),
 			keyName: getRandom(16),
 			penName: `User ${getRandom(6).toUpperCase()}`,
@@ -100,7 +99,7 @@ export async function finalizeSign(
 	} else {
 		// Get user
 		const { user, dbError: dbUserGetError } = await dbUserGetByEmailHash({
-			emailHash: toHashUserEmail(userEmail, signInEmailLinkMethod),
+			emailHash: toHashUserEmail(userEmail),
 			isIncludeDelete: true
 		});
 		if (!user || dbUserGetError) {

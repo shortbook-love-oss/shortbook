@@ -72,16 +72,10 @@ async function onSignedUp(user: User, profile: Profile | undefined, account: Acc
 		}
 		emailVerified = !!profile?.email_verified;
 	}
-	if (providerName === 'github') {
-		if (typeof profile?.bio === 'string') {
-			selfIntroduction = profile.bio;
-		}
-		// @todo save "twitter_username" and "twitter_username" to user_urls table
-	}
 
 	if (user.id && user.email) {
 		const emailEncrypt = encryptAndFlat(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
-		const emailHash = toHashUserEmail(user.email, providerName);
+		const emailHash = toHashUserEmail(user.email);
 		// By default, AuthJS save plain email
 		// But we think it should be encrypt
 		await dbUserProvideDataUpdate({
@@ -160,7 +154,7 @@ async function onSignedIn(user: User, profile: Profile | undefined, account: Acc
 	if (user.id && profile?.email) {
 		// Sync with email address registered in external service
 		const emailEncrypt = encryptAndFlat(profile.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
-		const emailHash = toHashUserEmail(profile.email, providerName);
+		const emailHash = toHashUserEmail(profile.email);
 		const { user: savedUser } = await dbUserProvideDataUpdate({
 			userId: user.id,
 			emailEncrypt,
