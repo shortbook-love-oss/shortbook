@@ -25,9 +25,6 @@ services:
       - type: volume
         source: service-frontend-output
         target: /home/node/.svelte-kit
-      - type: volume
-        source: service-frontend-build
-        target: /home/node/build
       - type: bind
         source: ../lib-frontend
         target: /home/node/lib-frontend
@@ -94,7 +91,6 @@ networks:
 volumes:
   service-frontend-module:
   service-frontend-output:
-  service-frontend-build:
   database-data:
   cache-data:
   infra-image-cdn-module:
