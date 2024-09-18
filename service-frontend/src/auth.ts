@@ -7,8 +7,6 @@ import {
 	type User
 } from '@auth/sveltekit';
 import Google from '@auth/sveltekit/providers/google';
-import LinkedIn from '@auth/sveltekit/providers/linkedin';
-import GitHub from '@auth/sveltekit/providers/github';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
 import { matchSigninProvider } from '$lib/utilities/signin';
@@ -30,14 +28,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		Google({
 			clientId: env.AUTH_GOOGLE_ID,
 			clientSecret: env.AUTH_GOOGLE_SECRET
-		}),
-		LinkedIn({
-			clientId: env.AUTH_LINKEDIN_ID,
-			clientSecret: env.AUTH_LINKEDIN_SECRET
-		}),
-		GitHub({
-			clientId: env.AUTH_GITHUB_ID,
-			clientSecret: env.AUTH_GITHUB_SECRET
 		})
 	],
 	pages: {

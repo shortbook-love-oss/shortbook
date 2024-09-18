@@ -1,8 +1,6 @@
 export const signInEmailLinkMethod = 'emaillink';
 export const signInProviders = [
-	{ key: 'google', label: 'Google' },
-	{ key: 'linkedin', label: 'LinkedIn' },
-	{ key: 'github', label: 'GitHub' }
+	{ key: 'google', label: 'Google' }
 ] as const;
 
 export function matchSigninProvider(key: string) {
