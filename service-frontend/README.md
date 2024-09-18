@@ -4,6 +4,8 @@
 
 ```bash
 npm i
+npm run schema-generate-dev
+npm run migrate-dev --name="init"
 ```
 
 ### Developing
