@@ -45,9 +45,11 @@
 >
 	<TextField
 		bind:value={$form.email as string}
+		type="email"
 		name="email"
-		label={m.sign_form_email_label()}
+		autocomplete="email"
 		required={true}
+		label={m.sign_form_email_label()}
 		placeholder="your-address@email.example"
 		errorMessages={$errors.email}
 		className="mb-4"
