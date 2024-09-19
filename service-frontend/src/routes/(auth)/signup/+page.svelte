@@ -23,10 +23,10 @@
 	</div>
 	<SigninByEmail formData={data.form} submitLabel={m.signup_label()} />
 	<div>
-		<p class="mb-2 text-center">{m.signup_with_label()}</p>
-		<div class="flex flex-wrap items-center justify-center gap-2">
+		<p class="mb-1 text-center">{m.signup_with_label()}</p>
+		<div class="flex flex-wrap justify-center">
 			{#each signInProviders as provider}
-				<SignInByOAuth callbackUrl={data.callbackUrl} {provider} />
+				<SignInByOAuth {provider} callbackUrl={data.callbackUrl} />
 			{/each}
 		</div>
 	</div>

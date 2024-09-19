@@ -12,10 +12,10 @@
 	<h1 class="text-center text-4xl font-semibold">{m.signin_label()}</h1>
 	<SigninByEmail formData={data.form} submitLabel={m.signin_label()} />
 	<div>
-		<p class="mb-2 text-center">{m.signin_with_label()}</p>
-		<div class="flex flex-wrap items-center justify-center gap-2">
+		<p class="mb-1 text-center">{m.signin_with_label()}</p>
+		<div class="flex flex-wrap justify-center">
 			{#each signInProviders as provider}
-				<SignInByOAuth callbackUrl={data.callbackUrl} {provider} />
+				<SignInByOAuth {provider} callbackUrl={data.callbackUrl} />
 			{/each}
 		</div>
 	</div>

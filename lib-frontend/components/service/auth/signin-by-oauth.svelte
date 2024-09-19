@@ -14,13 +14,10 @@
 	provider={provider.key}
 	signInPage="signin-external"
 	options={{ redirectTo: callbackUrl }}
-	className="flex w-fit rounded-md bg-white text-xl hover:bg-stone-200 focus:bg-stone-200 {className}"
+	className="flex rounded-md bg-white text-xl hover:bg-stone-200 focus:bg-stone-200 {className}"
 >
-	<div slot="submitButton" class="flex h-16 w-16 items-center justify-center p-3">
-		<img
-			src="/assets/brands/{provider.key}-logo.png"
-			class="max-h-full max-w-full"
-			alt={provider.label}
-		/>
+	<div slot="submitButton" class="flex items-center justify-center gap-3 p-3">
+		<img src="/assets/brands/{provider.key}-logo.png" class="h-8 w-8" alt={provider.label} />
+		<p class="text-nowrap text-2xl">{provider.label}</p>
 	</div>
 </SignIn>
