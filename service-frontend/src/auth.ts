@@ -1,47 +1,17 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import {
-	SvelteKitAuth,
-	type Account,
-	type Profile,
-	type Session,
-	type User
-} from '@auth/sveltekit';
-import Google from '@auth/sveltekit/providers/google';
+import { SvelteKitAuth, type Session } from '@auth/sveltekit';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
-import { matchSigninProvider } from '$lib/utilities/signin';
-import { dbUserProfileCreate } from '$lib-backend/model/user/profile/create';
-import { dbUserRestore } from '$lib-backend/model/user/restore';
-import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
-import { dbUserProvideDataUpdate } from '$lib-backend/model/user/update-provide-data';
 import prisma from '$lib-backend/database/connect';
-import { encryptAndFlat } from '$lib-backend/utilities/crypto';
-import { uploadFile } from '$lib-backend/utilities/file';
-import { sendEmail, toHashUserEmail } from '$lib-backend/utilities/email';
-import { getActualImageData } from '$lib-backend/utilities/image';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
 	trustHost: true,
 	adapter: PrismaAdapter(prisma),
-	providers: [
-		Google({
-			clientId: env.AUTH_GOOGLE_ID,
-			clientSecret: env.AUTH_GOOGLE_SECRET
-		})
-	],
+	providers: [],
 	pages: {
 		signIn: '/signin',
 		newUser: '/signup'
-	},
-	events: {
-		async signIn({ user, profile, account, isNewUser }) {
-			if (isNewUser) {
-				await onSignedUp(user, profile, account);
-			} else {
-				await onSignedIn(user, profile, account);
-			}
-		}
 	},
 	callbacks: {
 		async session({ session, user }) {
@@ -60,139 +30,3 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		}
 	}
 });
-
-async function onSignedUp(user: User, profile: Profile | undefined, account: Account | null) {
-	const providerName = account?.provider ?? '';
-	let penName = user.name ?? '';
-	let selfIntroduction = '';
-	let emailVerified = false;
-	if (matchSigninProvider(providerName.toLowerCase())) {
-		if (profile?.name) {
-			penName = profile.name;
-		}
-		emailVerified = !!profile?.email_verified;
-	}
-
-	if (!user.id) {
-		return "Can't get user id.";
-	}
-	if (!user.email) {
-		return "Can't get user email.";
-	}
-
-	const emailEncrypt = encryptAndFlat(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
-	const emailHash = toHashUserEmail(user.email);
-	// By default, AuthJS save plain email
-	// But we think it should be encrypt
-	const { dbError: dbProvideUpdateError } = await dbUserProvideDataUpdate({
-		userId: user.id,
-		emailEncrypt,
-		emailHash,
-		emailVerified
-	});
-	if (dbProvideUpdateError) {
-		return dbProvideUpdateError.message;
-	}
-
-	// Create initialized user profile
-	const { dbError: dbProfileCreateError } = await dbUserProfileCreate({
-		userId: user.id,
-		keyName: crypto.randomUUID().replaceAll('-', '').slice(0, 16),
-		penName,
-		selfIntroduction
-	});
-	if (dbProfileCreateError) {
-		return dbProfileCreateError.message;
-	}
-
-	// Upload profile image using in external service CDN
-	if (user.image?.startsWith('https://')) {
-		// 1. Fetch from external service CDN
-		const profileImage = await fetch(user.image, { mode: 'no-cors' })
-			.then(async (res) => {
-				if (res.status === 200) {
-					return new Uint8Array(await res.arrayBuffer());
-				} else {
-					return null;
-				}
-			})
-			.catch(() => undefined);
-		if (!profileImage) {
-			return `Your ${providerName} account profile-image not found.`;
-		}
-
-		const { mimeType, errorMessage } = await getActualImageData(profileImage);
-		if (errorMessage != null) {
-			return `Your ${providerName} account profile-image could not be recognized as an image.`;
-		}
-
-		// 2. Upload image to Amazon S3
-		const savePath = `${user.id}/shortbook-profile`;
-		const { error } = await uploadFile(
-			profileImage,
-			mimeType,
-			env.AWS_DEFAULT_REGION,
-			env.AWS_BUCKET_IMAGE_PROFILE,
-			savePath
-		);
-		if (error) {
-			return "Can't upload profile image";
-		}
-
-		// 3. Save image URL to DB
-		const { dbError: dbImageUpdateError } = await dbUserProfileImageUpdate({
-			userId: user.id,
-			image: '/profile/' + savePath
-		});
-		if (dbImageUpdateError) {
-			return "Can't upload profile image";
-		}
-	}
-
-	// 4. Send welcome email
-	await sendEmail(
-		'ShortBook Service',
-		env.EMAIL_FROM,
-		[user.email],
-		'Welcome to ShortBook.',
-		'<p>Enjoy your writing journey!</p><p>Sincerely thank.</p><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>',
-		'Enjoy your writing journey!\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)'
-	);
-}
-
-async function onSignedIn(user: User, profile: Profile | undefined, account: Account | null) {
-	const providerName = account?.provider ?? '';
-	let emailVerified = false;
-	if (matchSigninProvider(providerName.toLowerCase())) {
-		emailVerified = !!profile?.email_verified;
-	}
-
-	if (!user.id) {
-		return "Can't get user id.";
-	}
-	if (!user.email) {
-		return "Can't get user email.";
-	}
-
-	// Sync with email address registered in external service
-	const emailEncrypt = encryptAndFlat(user.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
-	const emailHash = toHashUserEmail(user.email);
-	const { user: savedUser, dbError: dbProvideUpdateError } = await dbUserProvideDataUpdate({
-		userId: user.id,
-		emailEncrypt,
-		emailHash,
-		emailVerified,
-		isIncludeDelete: true
-	});
-	if (dbProvideUpdateError) {
-		return dbProvideUpdateError.message;
-	}
-
-	// Restore user if soft deleted
-	if (savedUser?.deleted_at) {
-		const { dbError: dbRestoreError } = await dbUserRestore({ userId: user.id });
-		if (dbRestoreError) {
-			return dbRestoreError.message;
-		}
-	}
-}

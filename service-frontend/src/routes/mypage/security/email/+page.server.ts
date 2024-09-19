@@ -7,7 +7,6 @@ import { dbLogActionList } from '$lib-backend/model/log/action-list';
 import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib-backend/model/verification-token/create';
-import { matchSigninProvider } from '$lib/utilities/signin';
 import {
 	emailChangeTokenParam,
 	getLanguageTagFromUrl,
@@ -31,7 +30,6 @@ export const load = async ({ locals }) => {
 	if (dbError) {
 		return error(500, { message: dbError.message });
 	}
-	const signInProvider = matchSigninProvider(account?.provider ?? '');
 	const penName = profile?.languages[0]?.pen_name ?? '';
 
 	const currentEmail = decryptFromFlat(
@@ -42,7 +40,7 @@ export const load = async ({ locals }) => {
 
 	form.data.email = '';
 
-	return { form, penName, currentEmail, signInProvider };
+	return { form, penName, currentEmail };
 };
 
 export const actions = {

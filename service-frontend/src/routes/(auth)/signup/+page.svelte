@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import * as m from '$lib/i18n/paraglide/messages';
-	import { signInProviders } from '$lib/utilities/signin';
 	import SigninByEmail from '$lib/components/service/auth/signin-by-email.svelte';
-	import SignInByOAuth from '$lib/components/service/auth/signin-by-oauth.svelte';
 
 	let { data } = $props();
 </script>
@@ -22,14 +20,6 @@
 		</div>
 	</div>
 	<SigninByEmail formData={data.form} submitLabel={m.signup_label()} />
-	<div>
-		<p class="mb-1 text-center">{m.signup_with_label()}</p>
-		<div class="flex flex-wrap justify-center">
-			{#each signInProviders as provider}
-				<SignInByOAuth {provider} callbackUrl={data.callbackUrl} />
-			{/each}
-		</div>
-	</div>
 	<hr class="border-stone-300" />
 	<p class="text-center">
 		<a href="/signin{$page.url.search}" class="break-keep underline">{m.signup_to_signin()}</a>
