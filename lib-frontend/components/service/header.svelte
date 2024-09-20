@@ -19,7 +19,11 @@
 	<nav
 		class="flex items-center rounded-ee-lg border-b border-e border-stone-300 bg-white pl-[env(safe-area-inset-left,0px)] pt-[env(safe-area-inset-top,0px)] rtl:pr-[env(safe-area-inset-right,0px)]"
 	>
-		<a href="/" class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200">
+		<a
+			href="/"
+			class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200"
+			aria-label="Back to top page"
+		>
 			<img
 				src="/assets/shortbook-logotype.svg"
 				class="aspect-logotype h-5 align-middle"
