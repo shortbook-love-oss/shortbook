@@ -14,10 +14,10 @@ datasource db {
 
 model users {
   id                      String              @id @db.VarChar(30) @default(cuid())
-  name                    String              @db.VarChar(210) // Length 1 - 50
+  key_handle              String              @unique @db.VarChar(30) // Length 1 - 30
+  pen_name                String              @db.VarChar(210) // Length 1 - 50
   email                   String              @db.VarChar(510) // Encrypted
   email_hash              String              @unique @db.VarChar(127)
-  key_handle              String              @unique @db.VarChar(30) // Length 1 - 30
   native_language         String              @db.VarChar(5)
   image_src               String              @db.VarChar(510)
   created_at              DateTime            @default(now())
@@ -34,7 +34,7 @@ model users {
   images                  user_images[]
   books                   books[]
 
-  @@index([name])
+  @@index([pen_name])
 }
 
 model sessions {
