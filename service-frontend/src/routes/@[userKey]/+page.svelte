@@ -18,7 +18,7 @@
 			class="flex min-h-[27rem] w-full flex-col items-center rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-4 pb-5 text-white md:min-h-[30rem]"
 		>
 			<h1 class="max-w-full whitespace-pre-wrap break-words text-3xl">
-				{data.profileLang?.pen_name}
+				{data.user.name}
 			</h1>
 			<p class="mb-6 max-w-full break-words">@{data.user.profiles?.key_name}</p>
 			{#if data.profileLang?.headline}

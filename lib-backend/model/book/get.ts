@@ -61,6 +61,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 				},
 				user: {
 					select: {
+						name: true,
 						image: true,
 						profiles: {
 							select: {
@@ -69,7 +70,6 @@ export async function dbBookGet(req: DbBookGetRequest) {
 									where: { ...whereCondDelete },
 									select: {
 										language_code: true,
-										pen_name: true,
 										headline: true
 									}
 								}

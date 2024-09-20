@@ -28,7 +28,6 @@ export async function dbUserCreate(req: DbUserCreateRequest) {
 						languages: {
 							create: {
 								language_code: '',
-								pen_name: req.penName,
 								headline: '',
 								self_introduction: ''
 							}

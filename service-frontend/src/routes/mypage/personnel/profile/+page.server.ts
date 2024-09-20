@@ -18,17 +18,17 @@ export const load = async ({ url, locals }) => {
 		return error(401, { message: 'Unauthorized' });
 	}
 
-	const { profile, dbError } = await dbUserProfileGet({ userId });
-	if (dbError) {
-		return error(500, { message: dbError.message });
+	const { user, profile, dbError } = await dbUserProfileGet({ userId });
+	if (!user || !profile || dbError) {
+		return error(500, { message: dbError?.message ?? '' });
 	}
-	const profileLangs = profile?.languages[0];
+	const profileLangs = profile.languages[0];
 
 	const langTags = languageAndNotSelect;
 
-	form.data.keyName = profile?.key_name ?? '';
-	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTag;
-	form.data.penName = profileLangs?.pen_name ?? '';
+	form.data.keyName = profile.key_name;
+	form.data.nativeLanguage = (profile.native_language || requestLang) as AvailableLanguageTag;
+	form.data.penName = user.name ?? '';
 	form.data.headline = profileLangs?.headline ?? '';
 	form.data.selfIntroduction = profileLangs?.self_introduction ?? '';
 	const initPenName = form.data.penName;

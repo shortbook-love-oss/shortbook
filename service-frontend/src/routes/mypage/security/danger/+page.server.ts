@@ -15,13 +15,13 @@ export const load = async ({ locals }) => {
 
 	const form = await superValidate(zod(schema));
 
-	const { profile, dbError } = await dbUserProfileGet({ userId });
-	if (dbError) {
-		return error(500, { message: dbError.message });
+	const { user, profile, dbError } = await dbUserProfileGet({ userId });
+	if (!user || !profile || dbError) {
+		return error(500, { message: dbError?.message ?? '' });
 	}
-	const penName = profile?.languages[0]?.pen_name ?? '';
+	const penName = user.name ?? '';
 
-	form.data.keyName = profile?.key_name ?? '';
+	form.data.keyName = profile.key_name;
 
 	return { form, penName };
 };

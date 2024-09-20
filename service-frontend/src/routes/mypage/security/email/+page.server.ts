@@ -26,11 +26,11 @@ export const load = async ({ locals }) => {
 
 	const form = await superValidate(zod(schema));
 
-	const { account, profile, dbError } = await dbUserProfileGet({ userId });
-	if (dbError) {
-		return error(500, { message: dbError.message });
+	const { user, dbError } = await dbUserProfileGet({ userId });
+	if (!user || dbError) {
+		return error(500, { message: dbError?.message ?? '' });
 	}
-	const penName = profile?.languages[0]?.pen_name ?? '';
+	const penName = user.name ?? '';
 
 	const currentEmail = decryptFromFlat(
 		locals.session?.user?.email ?? '',

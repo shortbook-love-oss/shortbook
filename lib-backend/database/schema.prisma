@@ -14,7 +14,7 @@ datasource db {
 
 model User {
   id                      String              @id @default(cuid())
-  name                    String?             // Only using on signed-up process, but required for Auth.js
+  name                    String?             @db.VarChar(210) // Length 1 - 50
   email                   String?             @unique @db.VarChar(510) // Encrypted
   email_hash              String?             @unique @db.VarChar(127) // Email + provider name
   emailVerified           DateTime?           @map("email_verified")
@@ -127,7 +127,6 @@ model user_profile_languages {
   id                      String              @id @default(cuid())
   profile_id              String
   language_code           String              @db.VarChar(5)
-  pen_name                String              @db.VarChar(210) // Length 1 - 50
   headline                String              @db.VarChar(210) // Length 1 - 50
   self_introduction       String              @db.MediumText
   created_at              DateTime            @default(now())

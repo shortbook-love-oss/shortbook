@@ -39,7 +39,7 @@ export async function prepareSignIn(
 	}
 
 	// 5. Send magic link by email
-	const penName = profileLang?.pen_name ?? '';
+	const penName = user?.name ?? '';
 	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
 	const signInConfirmUrl =
 		requestUrl.origin +

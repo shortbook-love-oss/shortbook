@@ -5,12 +5,12 @@ import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/curren
 import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
 
 export async function editLoad(userId: string) {
-	const { profile, dbError: dbProfileGetError } = await dbUserProfileGet({ userId });
-	if (!profile || dbProfileGetError) {
+	const { user, profile, dbError: dbProfileGetError } = await dbUserProfileGet({ userId });
+	if (!user || !profile || dbProfileGetError) {
 		error(500, { message: dbProfileGetError?.message ?? '' });
 	}
-	const userKeyName = profile.key_name;
-	const penName = profile.languages[0]?.pen_name ?? '';
+	const userKeyName = profile.key_name ?? '';
+	const penName = user.name ?? '';
 
 	const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
 	if (dbPayGetError) {

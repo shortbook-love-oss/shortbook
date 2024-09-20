@@ -19,11 +19,11 @@ export const load = async ({ url, locals }) => {
 	}
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { profile, dbError: profileDbError } = await dbUserProfileGet({ userId });
-	if (!profile || profileDbError) {
+	const { user, dbError: profileDbError } = await dbUserProfileGet({ userId });
+	if (!user || profileDbError) {
 		return error(500, { message: profileDbError?.message ?? '' });
 	}
-	const penName = profile.languages[0]?.pen_name ?? '';
+	const penName = user.name ?? '';
 
 	const bookList: MyBookItem[] = [];
 	if (books) {

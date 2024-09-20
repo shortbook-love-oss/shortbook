@@ -62,7 +62,7 @@ export const load = async ({ url, params }) => {
 			updatedAt: book.updated_at,
 			bookKeyName: book.key_name,
 			userKeyName: profile.key_name,
-			penName: profileLang.pen_name,
+			penName: user.name ?? '',
 			userImage: user.image ?? ''
 		});
 	}

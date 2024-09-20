@@ -91,5 +91,5 @@ export const load = async ({ url, locals }) => {
 		return pointItem;
 	});
 
-	return { pointList, currentPoint, userPointHistories };
+	return { pointList, currentPoint, userPointHistories, form: {} };
 };

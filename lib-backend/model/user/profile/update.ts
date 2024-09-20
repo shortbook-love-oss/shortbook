@@ -14,6 +14,16 @@ export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 
 	const profile = await prisma
 		.$transaction(async (tx) => {
+			await tx.user.update({
+				where: {
+					id: req.userId,
+					deleted_at: null
+				},
+				data: {
+					name: req.penName
+				}
+			});
+
 			const profile = await tx.user_profiles.update({
 				where: {
 					user_id: req.userId,
@@ -39,7 +49,6 @@ export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 					{
 						profile_id: profile.id,
 						language_code: req.nativeLanguage,
-						pen_name: req.penName,
 						headline: req.headline,
 						self_introduction: req.selfIntroduction
 					}
