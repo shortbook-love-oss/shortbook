@@ -48,7 +48,7 @@ services:
         target: /var/lib/mysql
   cache:
     container_name: cache
-    image: amazon/dynamodb-local:latest
+    image: amazon/dynamodb-local:2.5.2
     command: [ '-jar', 'DynamoDBLocal.jar', '-sharedDb', '-dbPath', './data' ]
     ports:
       - 55025:8000
