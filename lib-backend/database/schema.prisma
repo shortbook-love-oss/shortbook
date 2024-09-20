@@ -12,21 +12,20 @@ datasource db {
 // User
 // -----------------------------------------------------------------------
 
-model User {
+model users {
   id                      String              @id @default(cuid())
-  name                    String?             @db.VarChar(210) // Length 1 - 50
-  email                   String?             @unique @db.VarChar(510) // Encrypted
-  email_hash              String?             @unique @db.VarChar(127) // Email + provider name
-  emailVerified           DateTime?           @map("email_verified")
-  image                   String?             @db.VarChar(510)
+  name                    String              @db.VarChar(210) // Length 1 - 50
+  email                   String              @db.VarChar(510) // Encrypted
+  email_hash              String              @unique @db.VarChar(127)
+  key_handle              String              @unique @db.VarChar(30) // Length 1 - 30
+  native_language         String              @db.VarChar(5)
+  image_src               String              @db.VarChar(510)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
-  accounts                Account[]
-  authenticator           Authenticator[]
-  sessions                Session[]
-  profiles                user_profiles?
+  sessions                sessions[]
+  languages               user_languages[]
   points                  user_points[]
   fans                    user_fans[]
   payment_checkouts       user_payment_checkouts[]
@@ -34,110 +33,39 @@ model User {
   payment_contracts       user_payment_contracts[]
   images                  user_images[]
   books                   books[]
-  book_buys               book_buys[]
 
-  @@map("users")
+  @@index([name])
 }
 
-model Account {
-  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
+model sessions {
+  user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
-  userId                  String              @map("user_id")
-  type                    String
-  provider                String
-  providerAccountId       String              @map("provider_account_id")
-  refresh_token           String?             @db.Text
-  access_token            String?             @db.Text
-  expires_at              Int?
-  token_type              String?
-  scope                   String?
-  id_token                String?             @db.Text
-  session_state           String?
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              DateTime?
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
-}
-
-model Authenticator {
-  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
-
-  credentialID            String              @unique @map("credential_id")
-  userId                  String              @map("user_id")
-  providerAccountId       String              @map("provider_account_id")
-  credentialPublicKey     String              @map("credential_public_key")
-  counter                 Int
-  credentialDeviceType    String              @map("credential_device_type")
-  credentialBackedUp      Boolean             @map("credential_backed_up")
-  transports              String?
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              DateTime?
-
-  @@id([userId, credentialID])
-  @@map("authenticator")
-}
-
-model Session {
-  user                    User                @relation(fields: [userId], references: [id], onUpdate: Cascade)
-
-  id                      String              @id @default(cuid())
-  sessionToken            String              @unique @map("session_token")
-  userId                  String              @map("user_id")
+  user_id                 String
+  session_token           String              @unique
   expires                 DateTime
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
-
-  @@map("sessions")
 }
 
-model VerificationToken {
-  identifier              String
-  token                   String              @db.VarChar(510)
-  user_id                 String?
-  expires                 DateTime
-
-  @@unique([identifier, token])
-  @@map("verification_tokens")
-}
-
-model user_profiles {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+model user_languages {
+  user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
-  user_id                 String              @unique
-  key_name                String              @unique @db.VarChar(30) // Length 1 - 30
-  native_language         String              @db.VarChar(5)
-  location                String              @db.VarChar(1022)
-  birthday                DateTime?           @db.Date()
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              DateTime?
-
-  languages               user_profile_languages[]
-}
-
-model user_profile_languages {
-  user_profile            user_profiles       @relation(fields: [profile_id], references: [id], onUpdate: Cascade)
-
-  id                      String              @id @default(cuid())
-  profile_id              String
-  language_code           String              @db.VarChar(5)
+  user_id                 String
+  target_language         String              @db.VarChar(5)
   headline                String              @db.VarChar(210) // Length 1 - 50
   self_introduction       String              @db.MediumText
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
-  @@unique([profile_id, language_code])
+  @@unique([user_id, target_language])
 }
 
 model user_points {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+  user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String
@@ -153,7 +81,7 @@ model user_points {
 }
 
 model user_fans {
-  target_user             User                @relation(fields: [target_user_id], references: [id], onUpdate: Cascade)
+  target_user             users               @relation(fields: [target_user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   target_user_id          String
@@ -161,10 +89,12 @@ model user_fans {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
+
+  @@index([support_user_id])
 }
 
 model user_payment_checkouts {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+  user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String
@@ -179,7 +109,7 @@ model user_payment_checkouts {
 }
 
 model user_payment_settings {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+  user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String              @unique
@@ -190,7 +120,7 @@ model user_payment_settings {
 }
 
 model user_payment_contracts {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+  user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String
@@ -208,7 +138,7 @@ model user_payment_contracts {
 // -----------------------------------------------------------------------
 
 model user_images {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+  user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String
@@ -269,6 +199,8 @@ model user_image_tags {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
+
+  @@index([name])
 }
 
 // -----------------------------------------------------------------------
@@ -276,7 +208,7 @@ model user_image_tags {
 // -----------------------------------------------------------------------
 
 model books {
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
+  user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   user_id                 String
@@ -322,7 +254,7 @@ model book_languages {
 
   id                      String              @id @default(cuid())
   book_id                 String
-  language_code           String              @db.VarChar(5)
+  target_language         String              @db.VarChar(5)
   thumbnail_url           String              @db.VarChar(255)
   title                   String              @db.VarChar(1400) // Max length is 200
   subtitle                String              @db.VarChar(1400) // Max length is 200
@@ -332,6 +264,8 @@ model book_languages {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
+
+  @@unique([book_id, target_language])
 }
 
 model book_tags {
@@ -350,7 +284,6 @@ model book_tags {
 
 model book_buys {
   book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
-  user                    User                @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @default(cuid())
   book_id                 String
@@ -370,9 +303,9 @@ model book_buys {
 model tickets {
   id                      String              @id @default(cuid())
   category_key_name       String              @db.VarChar(31)
-  email                   String              @db.VarChar(510)
+  email                   String              @db.VarChar(510) // Encrypted
   description             String              @db.LongText
-  language_code           String              @db.VarChar(5)
+  from_language           String              @db.VarChar(5)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
@@ -389,6 +322,19 @@ model ticket_files {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
+}
+
+// -----------------------------------------------------------------------
+// Verification token
+// -----------------------------------------------------------------------
+
+model verification_tokens {
+  identifier              String
+  token                   String              @db.VarChar(510)
+  user_id                 String?
+  expires                 DateTime
+
+  @@unique([identifier, token])
 }
 
 // -----------------------------------------------------------------------
