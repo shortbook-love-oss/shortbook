@@ -13,7 +13,7 @@ datasource db {
 // -----------------------------------------------------------------------
 
 model users {
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   name                    String              @db.VarChar(210) // Length 1 - 50
   email                   String              @db.VarChar(510) // Encrypted
   email_hash              String              @unique @db.VarChar(127)
@@ -40,7 +40,7 @@ model users {
 model sessions {
   user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
   session_token           String              @unique
   expires                 DateTime
@@ -52,7 +52,7 @@ model sessions {
 model user_languages {
   user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
   target_language         String              @db.VarChar(5)
   headline                String              @db.VarChar(210) // Length 1 - 50
@@ -67,7 +67,7 @@ model user_languages {
 model user_points {
   user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
   payment_checkout_id     String              // For charge
   amount                  Int
@@ -83,7 +83,7 @@ model user_points {
 model user_fans {
   target_user             users               @relation(fields: [target_user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   target_user_id          String
   support_user_id         String
   created_at              DateTime            @default(now())
@@ -96,7 +96,7 @@ model user_fans {
 model user_payment_checkouts {
   user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
   provider_key            String              @db.VarChar(15)
   session_id              String              // Encrypted
@@ -111,7 +111,7 @@ model user_payment_checkouts {
 model user_payment_settings {
   user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String              @unique
   currency                String              @db.VarChar(3)
   created_at              DateTime            @default(now())
@@ -122,7 +122,7 @@ model user_payment_settings {
 model user_payment_contracts {
   user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
   provider_key            String              @db.VarChar(15)
   provider_customer_id    String              // Encrypted
@@ -140,7 +140,7 @@ model user_payment_contracts {
 model user_images {
   user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
   name                    String              @db.VarChar(1400) // Length 0 - 250
   alt                     String              @db.VarChar(1000) // Length 0 - 150
@@ -161,7 +161,7 @@ model user_images {
 model user_image_properties {
   image                   user_images         @relation(fields: [image_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   image_id                String              @unique
   file_path               String              @db.VarChar(31)
   byte_length             Int
@@ -177,7 +177,7 @@ model user_image_properties {
 model user_image_licenses {
   image                   user_images         @relation(fields: [image_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   image_id                String              @unique
   creator_type            Int                 @db.SmallInt // 1: Person 2: Organization
   creator_name            String              @db.VarChar(350) // Length 1 - 50
@@ -192,7 +192,7 @@ model user_image_licenses {
 model user_image_tags {
   image                   user_images         @relation(fields: [image_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   image_id                String
   name                    String              @db.VarChar(350) // Length 1 - 50
   sort                    Int                 @db.SmallInt
@@ -210,7 +210,7 @@ model user_image_tags {
 model books {
   user                    users               @relation(fields: [user_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
   key_name                String              @db.VarChar(100) // Length 1 - 100
   status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
@@ -231,7 +231,7 @@ model books {
 model book_covers {
   book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   book_id                 String              @unique
   base_color_start        String              @db.VarChar(15) // Hex code with "#"
   base_color_end          String              @db.VarChar(15)
@@ -252,7 +252,7 @@ model book_covers {
 model book_languages {
   book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   book_id                 String
   target_language         String              @db.VarChar(5)
   thumbnail_url           String              @db.VarChar(255)
@@ -271,7 +271,7 @@ model book_languages {
 model book_tags {
   book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   book_id                 String
   name                    String              @db.VarChar(350) // Max length is 50
   sort                    Int                 @db.SmallInt
@@ -285,7 +285,7 @@ model book_tags {
 model book_buys {
   book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   book_id                 String
   user_id                 String
   point_spend             Int                 // It won't change if writer change the price later
@@ -301,7 +301,7 @@ model book_buys {
 // -----------------------------------------------------------------------
 
 model tickets {
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   category_key_name       String              @db.VarChar(31)
   email                   String              @db.VarChar(510) // Encrypted
   description             String              @db.LongText
@@ -316,7 +316,7 @@ model tickets {
 model ticket_files {
   ticket                  tickets             @relation(fields: [ticket_id], references: [id], onUpdate: Cascade)
 
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   ticket_id               String
   file_url                String              @db.VarChar(510)
   created_at              DateTime            @default(now())
@@ -342,7 +342,7 @@ model verification_tokens {
 // -----------------------------------------------------------------------
 
 model log_actions {
-  id                      String              @id @default(cuid())
+  id                      String              @id @db.VarChar(30) @default(cuid())
   action_name             String              @db.VarChar(31)
   ip_address_hash         String              @db.VarChar(127)
   created_at              DateTime            @default(now())
