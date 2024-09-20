@@ -60,7 +60,9 @@
 	/>
 	<TextField
 		bind:value={$form.email}
+		type="email"
 		name="email"
+		autocomplete="email"
 		required={true}
 		label="Email"
 		placeholder="your-address@email.example"

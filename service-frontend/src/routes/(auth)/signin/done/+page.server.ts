@@ -15,6 +15,8 @@ export async function load({ cookies, url, locals, getClientAddress }) {
 		return error(404, { message: finalizeError.message });
 	}
 
-	const callbackUrl = getSafetyUrl(url.searchParams.get(callbackParam) ?? url.origin, url.origin);
+	const maybeCallbackUrl = url.searchParams.get(callbackParam) ?? '';
+	const callbackUrl = getSafetyUrl(maybeCallbackUrl, url.origin);
+
 	redirect(303, callbackUrl);
 }
