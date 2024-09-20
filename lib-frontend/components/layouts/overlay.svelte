@@ -55,9 +55,9 @@
 			{#if isEnableJS}
 				<button
 					type="button"
-					class="absolute start-0 top-0 h-full w-full appearance-none"
-					onclick={closeOverlay}
-				></button>
+					class="absolute start-0 top-0 h-full w-full appearance-none overflow-hidden text-transparent"
+					onclick={closeOverlay}>Close</button
+				>
 			{/if}
 			<label for="common_overlay_open_{name}" class="ms-auto block">
 				<IconClose width="44" height="44" class="p-1" aria-label="Cancel and close overlay" />

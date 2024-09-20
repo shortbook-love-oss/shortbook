@@ -67,6 +67,7 @@
 			<a
 				href="{imageData.filePath}?ext={imageData.toExtension}&q=100"
 				target="_blank"
+				aria-label="Show image by original size"
 				class="inline-block"
 			>
 				<img

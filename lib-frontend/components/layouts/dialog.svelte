@@ -84,9 +84,9 @@
 					{#if isEnableJS}
 						<button
 							type="button"
-							class="absolute start-0 top-0 h-full w-full appearance-none"
-							onclick={closeDialog}
-						></button>
+							class="absolute start-0 top-0 h-full w-full appearance-none overflow-hidden text-transparent"
+							onclick={closeDialog}>Close</button
+						>
 					{/if}
 					<label for="common_dialog_open_{name}" class="inline-block h-full">
 						<IconClose
