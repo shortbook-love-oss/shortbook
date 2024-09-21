@@ -54,5 +54,5 @@ export const load = async ({ url, locals }) => {
 		}
 	}
 
-	return { signInUser, bookList, requestLang };
+	return { bookList, requestLang };
 };

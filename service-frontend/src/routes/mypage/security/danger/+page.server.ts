@@ -16,7 +16,7 @@ export const load = async ({ locals }) => {
 
 	form.data.keyHandle = signInUser.keyHandle;
 
-	return { signInUser, form };
+	return { form };
 };
 
 export const actions = {

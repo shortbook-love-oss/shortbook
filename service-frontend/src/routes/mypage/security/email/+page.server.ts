@@ -28,7 +28,7 @@ export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
 	form.data.email = '';
 
-	return { signInUser, form, currentEmail };
+	return { form, currentEmail };
 };
 
 export const actions = {

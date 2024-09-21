@@ -72,7 +72,6 @@ export const load = async ({ locals, params }) => {
 	return {
 		form,
 		langTags,
-		signInUser,
 		status,
 		initTitle,
 		isBoughtByOther,

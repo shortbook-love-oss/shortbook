@@ -1,5 +1,6 @@
 <script lang="ts">
 	import IconPlus from '~icons/mdi/plus';
+	import { page } from '$app/stores';
 	import BookItem from '$lib/components/service/write/book-item.svelte';
 
 	let { data } = $props();
@@ -24,7 +25,7 @@
 		<ul class="flex flex-col">
 			{#each data.bookList as book (book.id)}
 				<li class="-mx-4">
-					<BookItem {book} penName={data.signInUser.penName} requestLang={data.requestLang} />
+					<BookItem {book} penName={$page.data.signInUser.penName} requestLang={data.requestLang} />
 				</li>
 			{/each}
 		</ul>

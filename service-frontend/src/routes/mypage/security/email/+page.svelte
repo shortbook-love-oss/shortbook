@@ -30,7 +30,11 @@
 </svelte:head>
 
 <h1 class="mb-4 text-2xl font-semibold">Email</h1>
-<ProfileCard name={data.signInUser.penName} imageSrc={data.signInUser.imageSrc} className="mb-8" />
+<ProfileCard
+	name={$page.data.signInUser.penName}
+	imageSrc={$page.data.signInUser.imageSrc}
+	className="mb-8"
+/>
 <p class="mb-1 text-lg">Your current email</p>
 <p class="mb-8 break-words text-2xl">{data.currentEmail}</p>
 <Form

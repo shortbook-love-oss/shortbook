@@ -32,7 +32,7 @@ export const load = async ({ locals }) => {
 	form.data.urlSlug = '';
 	form.data.buyPoint = 200;
 
-	return { signInUser, form, langTags, selectedCurrencyKey, currencyRateIndex };
+	return { form, langTags, selectedCurrencyKey, currencyRateIndex };
 };
 
 export const actions = {

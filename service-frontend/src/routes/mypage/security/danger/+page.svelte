@@ -33,7 +33,11 @@
 </svelte:head>
 
 <h1 class="mb-4 text-2xl font-semibold">Danger action — Delete user</h1>
-<ProfileCard name={data.signInUser.penName} imageSrc={data.signInUser.imageSrc} className="mb-8" />
+<ProfileCard
+	name={$page.data.signInUser.penName}
+	imageSrc={$page.data.signInUser.imageSrc}
+	className="mb-8"
+/>
 <Form
 	method="POST"
 	action={$page.url.pathname}
