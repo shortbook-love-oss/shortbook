@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { categories } from '$lib/components/service/footer/menu';
-	import * as m from '$lib/i18n/paraglide/messages';
-	import { languageTag } from '$lib/i18n/paraglide/runtime';
+	import * as m from '$i18n/output/messages';
+	import { languageTag } from '$i18n/output/runtime';
 	import LanguageSelect from '$lib/components/modules/language-select.svelte';
 
 	type Props = {

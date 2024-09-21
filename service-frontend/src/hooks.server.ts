@@ -1,7 +1,7 @@
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { env as envPublic } from '$env/dynamic/public';
-import { i18n } from '$lib/i18n/i18n';
+import { i18n } from '$i18n/init';
 import { getSessionToken } from '$lib/utilities/cookie';
 import { dbUserGetBySessionToken } from '$lib-backend/model/user/get-by-session-token';
 

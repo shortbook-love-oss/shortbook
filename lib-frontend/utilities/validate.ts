@@ -1,4 +1,4 @@
-import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
+import { isAvailableLanguageTag } from '$i18n/output/runtime';
 
 // Invisible ... Zero-width space (\u{200B}・\u{2060})
 // Invisible ... Unicode control (\u{0000}-\u{001F}・\u{007F})

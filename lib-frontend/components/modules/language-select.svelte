@@ -1,7 +1,7 @@
 <script lang="ts">
 	import IconArrow from '~icons/mdi/chevron-down';
 	import { page } from '$app/stores';
-	import { languageTag } from '$lib/i18n/paraglide/runtime';
+	import { languageTag } from '$i18n/output/runtime';
 	import { languageSelect } from '$lib/utilities/language';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';

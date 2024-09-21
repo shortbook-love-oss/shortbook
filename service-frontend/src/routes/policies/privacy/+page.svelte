@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { env as envPublic } from '$env/dynamic/public';
-	import * as m from '$lib/i18n/paraglide/messages';
+	import * as m from '$i18n/output/messages';
 </script>
 
 <svelte:head>

@@ -15,6 +15,7 @@ const config = {
 		},
 
 		alias: {
+			$i18n: 'i18n',
 			'$lib-backend': 'lib-backend'
 		},
 

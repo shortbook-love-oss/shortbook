@@ -4,7 +4,7 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import IconCheck from '~icons/mdi/check';
 	import { page } from '$app/stores';
-	import * as m from '$lib/i18n/paraglide/messages';
+	import * as m from '$i18n/output/messages';
 	import { schema } from '$lib/validation/schema/user/signin-by-email';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';

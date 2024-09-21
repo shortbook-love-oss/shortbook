@@ -1,7 +1,7 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
+import type { AvailableLanguageTag } from '$i18n/output/runtime';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user/profile/update';

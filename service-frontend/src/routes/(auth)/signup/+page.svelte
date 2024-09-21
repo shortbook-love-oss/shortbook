@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import * as m from '$lib/i18n/paraglide/messages';
+	import * as m from '$i18n/output/messages';
 	import SigninByEmail from '$lib/components/service/auth/signin-by-email.svelte';
 
 	let { data } = $props();

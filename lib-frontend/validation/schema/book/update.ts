@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
+import { isAvailableLanguageTag } from '$i18n/output/runtime';
 import { validateOnlyVisibleChar } from '$lib/utilities/validate';
 
 export const schema = z.object({

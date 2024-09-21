@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CompanyInfoItem from '$lib/components/service/about/company-info-item.svelte';
-	import * as m from '$lib/i18n/paraglide/messages';
+	import * as m from '$i18n/output/messages';
 </script>
 
 <svelte:head>

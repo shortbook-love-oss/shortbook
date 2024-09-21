@@ -14,6 +14,7 @@ COPY ./service-frontend/package.json .
 RUN npm i
 
 COPY ./service-frontend .
+COPY ./i18n/service ./i18n
 COPY ./lib-frontend ./lib-frontend
 COPY ./lib-backend ./lib-backend
 
@@ -49,6 +50,7 @@ FROM prd-process AS prd-build
 RUN npm ci --include=dev
 
 COPY ./service-frontend .
+COPY ./i18n/service ./i18n
 COPY ./lib-frontend ./lib-frontend
 COPY ./lib-backend ./lib-backend
 

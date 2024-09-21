@@ -6,7 +6,7 @@
 	import IconSignin from '~icons/mdi/user-check-outline';
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
-	import * as m from '$lib/i18n/paraglide/messages';
+	import * as m from '$i18n/output/messages';
 	import { callbackParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
