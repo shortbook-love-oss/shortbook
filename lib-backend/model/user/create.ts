@@ -1,43 +1,38 @@
 import prisma from '$lib-backend/database/connect';
 
 export interface DbUserCreateRequest {
+	keyHandle: string;
+	penName: string;
 	emailEncrypt: string;
 	emailHash: string;
-	emailVerified: Date;
-	keyName: string;
-	penName: string;
-	profileImage: string;
+	imageSrc: string;
 }
 
 export async function dbUserCreate(req: DbUserCreateRequest) {
 	let dbError: Error | undefined;
 
-	const user = await prisma.user
+	const user = await prisma.users
 		.create({
 			data: {
-				name: req.penName,
+				key_handle: req.keyHandle,
+				pen_name: req.penName,
 				email: req.emailEncrypt,
 				email_hash: req.emailHash,
-				emailVerified: req.emailVerified,
-				image: req.profileImage,
-				profiles: {
+				native_language: '',
+				image_src: req.imageSrc,
+				languages: {
 					create: {
-						key_name: req.keyName,
-						native_language: '',
-						location: '',
-						languages: {
-							create: {
-								language_code: '',
-								headline: '',
-								self_introduction: ''
-							}
-						}
+						target_language: '',
+						headline: '',
+						self_introduction: ''
 					}
 				}
 			}
 		})
 		.catch(() => {
-			dbError ??= new Error(`Failed to create user. User key-name=${req.keyName}`);
+			dbError ??= new Error(
+				`Failed to create user. User handle=${req.keyHandle}, Pen name=${req.penName}`
+			);
 			return undefined;
 		});
 

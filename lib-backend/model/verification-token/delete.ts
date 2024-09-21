@@ -8,7 +8,7 @@ export interface DbVerificationTokenDeleteRequest {
 export async function dbVerificationTokenDelete(req: DbVerificationTokenDeleteRequest) {
 	let dbError: Error | undefined;
 
-	await prisma.verificationToken
+	await prisma.verification_tokens
 		.deleteMany({
 			where: {
 				identifier: req.identifier,

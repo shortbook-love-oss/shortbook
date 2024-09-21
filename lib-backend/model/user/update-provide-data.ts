@@ -5,28 +5,24 @@ export interface DbUserProvideDataRequest {
 	userId: string;
 	emailEncrypt: string;
 	emailHash: string;
-	emailVerified: boolean;
 	isIncludeDelete?: boolean;
 }
 
 export async function dbUserProvideDataUpdate(req: DbUserProvideDataRequest) {
 	let dbError: Error | undefined;
 
-	const whereByCond: Prisma.UserWhereUniqueInput = {
+	const whereByCond: Prisma.usersWhereUniqueInput = {
 		id: req.userId
 	};
 	if (!req.isIncludeDelete) {
 		whereByCond.deleted_at = null;
 	}
-	const saveByCond: Prisma.UserUpdateInput = {
+	const saveByCond: Prisma.usersUpdateInput = {
 		email: req.emailEncrypt,
 		email_hash: req.emailHash
 	};
-	if (req.emailVerified) {
-		saveByCond.emailVerified = new Date();
-	}
 
-	const user = await prisma.user
+	const user = await prisma.users
 		.update({
 			where: whereByCond,
 			data: saveByCond

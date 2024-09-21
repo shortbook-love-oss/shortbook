@@ -1,17 +1,17 @@
 <script lang="ts">
 	type Props = {
 		name: string;
-		keyName?: string;
+		keyHandle?: string;
 		imageSrc?: string;
 		className?: string;
 	};
-	let { name, keyName = '', imageSrc = '', className = '' }: Props = $props();
+	let { name, keyHandle = '', imageSrc = '', className = '' }: Props = $props();
 </script>
 
 <svelte:element
-	this={keyName ? 'a' : 'p'}
-	href={keyName ? `/@${keyName}` : undefined}
-	class="flex items-center gap-2 {keyName ? 'hover:underline' : ''} {className}"
+	this={keyHandle ? 'a' : 'p'}
+	href={keyHandle ? `/@${keyHandle}` : undefined}
+	class="flex items-center gap-2 {keyHandle ? 'hover:underline' : ''} {className}"
 >
 	<picture>
 		<source srcset="{imageSrc}?ext=avif&w=24&h=24&q=80" type="image/avif" />

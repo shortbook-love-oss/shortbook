@@ -7,7 +7,5 @@ export const load = async ({ cookies, locals }) => {
 		secure: false
 	});
 
-	return {
-		session: locals.session
-	};
+	return { signInUser: locals.signInUser };
 };

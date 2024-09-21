@@ -7,15 +7,15 @@ import { dbUserAlbumImageGet } from '$lib-backend/model/user/album/image-get';
 
 export const actions = {
 	default: async ({ url, params, locals }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
 		const requestLang = getLanguageTagFromUrl(url);
 
 		const { dbError: dbDeleteError } = await dbUserAlbumImageDelete({
-			userId: userId,
+			userId: signInUser.id,
 			imageId: params.imageId
 		});
 		if (dbDeleteError) {
@@ -33,7 +33,7 @@ export const actions = {
 		const { error: deleteFileError } = await deleteFiles(
 			env.AWS_DEFAULT_REGION,
 			`${env.AWS_BUCKET_IMAGE_USER_ALBUM}`,
-			`${userId}/${albumImage.property.file_path}`
+			`${signInUser.id}/${albumImage.property.file_path}`
 		);
 		if (deleteFileError) {
 			return error(500, { message: "Can't delete album image. Please contact us." });
@@ -43,7 +43,7 @@ export const actions = {
 		const { error: deleteFileCdnError } = await deleteFiles(
 			env.AWS_DEFAULT_REGION,
 			`${env.AWS_BUCKET_IMAGE_USER_ALBUM}-cdn`,
-			`${userId}/${albumImage.property.file_path}`
+			`${signInUser.id}/${albumImage.property.file_path}`
 		);
 		if (deleteFileCdnError) {
 			return error(500, { message: "Can't delete album image. Please contact us." });

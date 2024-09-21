@@ -16,39 +16,40 @@ import type { SelectItem } from '$lib/utilities/select';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, locals, params }) => {
-	const userId = locals.session?.user?.id;
+	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
 	const { book, dbError: dbBookGetError } = await dbBookGet({
 		bookKeyName: params.bookKey,
-		userKeyName: params.userKey,
+		userKeyHandle: params.userKey,
 		isIncludeDraft: true,
 		isIncludeDelete: true
 	});
 	if (!book || !book.cover || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
+	let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
 	if (!bookLang && book.languages.length) {
 		bookLang = book.languages[0];
 	}
 	if (!bookLang) {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
 	}
-	const profile = book.user.profiles;
-	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
-	if (!profileLang && profile?.languages.length) {
-		profileLang = profile.languages[0];
+	let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
+	if (!userLang && book.user.languages.length) {
+		userLang = book.user.languages[0];
 	}
-	if (!profile || !profileLang) {
+	if (!userLang) {
 		return error(500, {
 			message: `Failed to get profile contents. User Key-name=${params.userKey}`
 		});
 	}
 
 	let primaryCurrency: CurrencySupportKeys = defaultCurrency.key;
-	if (userId) {
-		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
+	if (signInUser) {
+		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
+			userId: signInUser.id
+		});
 		if (dbPayGetError) {
 			return error(500, { message: dbPayGetError.message });
 		}
@@ -63,21 +64,23 @@ export const load = async ({ url, locals, params }) => {
 
 	// Check buy book if it's paid and written by another
 	const buyPoint = book.buy_point;
-	const isOwn = userId === book.user_id;
+	const isOwn = signInUser?.id === book.user_id;
 	let isBoughtBook = false;
 	// Can user buy books using only the points have
 	let hasEnoughPoint = false;
 	let userPoint = 0;
-	if (userId && !isBoughtBook && buyPoint > 0 && !isOwn) {
+	if (signInUser && !isBoughtBook && buyPoint > 0 && !isOwn) {
 		const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({
-			userId,
+			userId: signInUser.id,
 			bookId: book.id
 		});
 		if (dbBookBuyError) {
 			return error(500, { message: dbBookBuyError?.message ?? '' });
 		}
 		isBoughtBook = !!bookBuy;
-		const { currentPoint, dbError: dbPointListError } = await dbUserPointList({ userId });
+		const { currentPoint, dbError: dbPointListError } = await dbUserPointList({
+			userId: signInUser.id
+		});
 		if (dbPointListError) {
 			return error(500, { message: dbPointListError?.message ?? '' });
 		}
@@ -131,9 +134,9 @@ export const load = async ({ url, locals, params }) => {
 		publishedAt: book.published_at,
 		updatedAt: book.updated_at,
 		bookKeyName: book.key_name,
-		userKeyName: profile.key_name,
-		penName: book.user.name ?? '',
-		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + (book.user.image ?? ''),
+		userKeyHandle: book.user.key_handle,
+		penName: book.user.pen_name,
+		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src,
 		prologue: await contentsToMarkdown(bookLang.prologue),
 		content: '',
 		salesMessage: '',
@@ -149,7 +152,7 @@ export const load = async ({ url, locals, params }) => {
 	return {
 		bookDetail,
 		requestLang,
-		profileLang,
+		userLang,
 		isOwn,
 		isBoughtBook,
 		hasEnoughPoint,

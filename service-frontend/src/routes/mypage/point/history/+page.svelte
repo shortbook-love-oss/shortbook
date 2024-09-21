@@ -62,7 +62,7 @@
 						<p class="truncate text-lg">
 							{getStatus(point).text}
 							<a
-								href="/@{point.writeKeyName}/book/{point.bookKeyName}"
+								href="/@{point.writeKeyHandle}/book/{point.bookKeyName}"
 								class="font-semibold underline">{point.bookTitle}</a
 							>
 						</p>

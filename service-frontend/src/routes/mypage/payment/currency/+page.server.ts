@@ -12,15 +12,15 @@ import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user/currency-update';
 
 export const load = async ({ url, locals }) => {
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
 
 	const requestLang = getLanguageTagFromUrl(url);
 	const form = await superValidate(zod(schema));
 
-	const { paymentSetting, dbError } = await dbUserPaymentSettingGet({ userId });
+	const { paymentSetting, dbError } = await dbUserPaymentSettingGet({ userId: signInUser.id });
 	if (dbError) {
 		return error(500, { message: dbError.message });
 	}
@@ -38,8 +38,8 @@ export const load = async ({ url, locals }) => {
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
@@ -50,7 +50,7 @@ export const actions = {
 		}
 
 		const { dbError } = await dbUserPaymentSettingUpsert({
-			userId,
+			userId: signInUser.id,
 			currencyKey: form.data.currencyKey as CurrencySupportKeys
 		});
 		if (dbError) {

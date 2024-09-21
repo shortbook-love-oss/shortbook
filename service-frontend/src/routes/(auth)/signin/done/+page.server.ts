@@ -3,8 +3,7 @@ import { finalizeSign } from '$lib-backend/functions/service/auth/finalize-sign'
 import { callbackParam, getSafetyUrl } from '$lib/utilities/url';
 
 export async function load({ cookies, url, locals, getClientAddress }) {
-	const session = await locals.auth();
-	if (session?.user) {
+	if (locals.signInUser) {
 		// This page will not be displayed even if a signed-in user goes back in history
 		return error(404, { message: 'Not found' });
 	}

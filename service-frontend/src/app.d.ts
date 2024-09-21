@@ -1,4 +1,3 @@
-import type { ParaglideLocals } from '@inlang/paraglide-sveltekit';
 import 'unplugin-icons/types/svelte';
 import type { AvailableLanguageTag } from '$lib/paraglide/runtime';
 
@@ -11,7 +10,7 @@ declare global {
 			signInUser: {
 				id: string;
 				keyHandle: string;
-				name: string;
+				penName: string;
 				email: string;
 				imageSrc: string;
 				nativeLanguage: AvailableLanguageTag;

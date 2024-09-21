@@ -25,7 +25,11 @@
 		class="hidden w-full max-w-2xl shrink-0 gap-8 break-words pt-2 lg:flex lg:w-48 lg:justify-end"
 	>
 		<div class="max-w-full">
-			<a href="/@{data.bookDetail.userKeyName}" class="peer mb-2 inline-block">
+			<a
+				href="/@{data.bookDetail.userKeyHandle}"
+				class="peer mb-2 inline-block"
+				aria-label="{data.bookDetail.penName} profile icon"
+			>
 				<picture>
 					<source srcset="{data.bookDetail.userImage}?ext=avif&w=64&h=64&q=80" type="image/avif" />
 					<img
@@ -36,13 +40,13 @@
 				</picture>
 			</a>
 			<a
-				href="/@{data.bookDetail.userKeyName}"
+				href="/@{data.bookDetail.userKeyHandle}"
 				class="mb-2 block whitespace-pre-wrap text-[1.25rem] leading-tight hover:underline peer-hover:underline"
 			>
 				{data.bookDetail.penName}
 			</a>
-			{#if data.profileLang?.headline}
-				<p class="whitespace-pre-wrap">{data.profileLang.headline}</p>
+			{#if data.userLang?.headline}
+				<p class="whitespace-pre-wrap">{data.userLang.headline}</p>
 			{/if}
 		</div>
 	</div>
@@ -64,11 +68,11 @@
 			<div class="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
 				<ProfileCard
 					name={data.bookDetail.penName}
-					keyName={data.bookDetail.userKeyName}
+					keyHandle={data.bookDetail.userKeyHandle}
 					imageSrc={data.bookDetail.userImage}
 				>
-					{#if data.profileLang?.headline}
-						<p class="mt-1">{data.profileLang.headline}</p>
+					{#if data.userLang?.headline}
+						<p class="mt-1">{data.userLang.headline}</p>
 					{/if}
 				</ProfileCard>
 			</div>

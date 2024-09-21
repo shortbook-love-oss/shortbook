@@ -24,7 +24,6 @@
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
 
-	const user = $page.data.session?.user;
 	const warnMessage =
 		'If you delete a user, you can restore them for 30 days by simply signing in. However, after 30 days, user data will be permanently deleted.';
 </script>
@@ -34,7 +33,7 @@
 </svelte:head>
 
 <h1 class="mb-4 text-2xl font-semibold">Danger action — Delete user</h1>
-<ProfileCard name={data.penName} imageSrc={user?.image ?? ''} className="mb-8" />
+<ProfileCard name={data.signInUser.penName} imageSrc={data.signInUser.imageSrc} className="mb-8" />
 <Form
 	method="POST"
 	action={$page.url.pathname}
@@ -45,12 +44,11 @@
 	{warnMessage}
 	errorMessage={$page.status === 400 ? $message : ''}
 >
-	<input type="hidden" name="keyName" value={$form.keyName} />
 	<TextField
-		bind:value={$form.deleteKey}
-		name="deleteKey"
-		label="Type &quot;{$form.keyName}&quot; to delete user data."
-		errorMessages={$errors.deleteKey}
+		bind:value={$form.keyHandle}
+		name="keyHandle"
+		label="Type &quot;{$form.keyHandle}&quot; to delete user data."
+		errorMessages={$errors.keyHandle}
 		className="mb-8"
 	/>
 </Form>

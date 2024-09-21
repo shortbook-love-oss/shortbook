@@ -7,10 +7,10 @@ export interface DbUserSessionDeleteRequest {
 export async function dbUserSessionDelete(req: DbUserSessionDeleteRequest) {
 	let dbError: Error | undefined;
 
-	await prisma.session
+	await prisma.sessions
 		.delete({
 			where: {
-				sessionToken: req.sessionToken
+				session_token: req.sessionToken
 			}
 		})
 		.catch(() => {

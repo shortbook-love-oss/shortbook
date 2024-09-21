@@ -1,5 +1,11 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import {
+	getLanguageTagFromUrl,
+	paymentBookInfoParam,
+	paymentSessionIdParam,
+	setLanguageTagToPath
+} from '$lib/utilities/url';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib-backend/model/book-buy/create';
 import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
@@ -9,12 +15,6 @@ import {
 } from '$lib-backend/model/user/point/create';
 import { dbUserPaymentContractCreate } from '$lib-backend/model/user/payment-contract/create';
 import { dbUserPaymentSettingUpsert } from '$lib-backend/model/user/payment-setting/upsert';
-import {
-	getLanguageTagFromUrl,
-	paymentBookInfoParam,
-	paymentSessionIdParam,
-	setLanguageTagToPath
-} from '$lib/utilities/url';
 import { decryptFromFlat, encryptAndFlat } from '$lib-backend/utilities/crypto';
 import { checkPaymentStatus } from '$lib-backend/utilities/payment';
 
@@ -57,13 +57,13 @@ export const load = async ({ url }) => {
 		isIncludeDraft: true,
 		isIncludeDelete: true
 	});
-	if (!book?.user.profiles || dbBookGetError) {
+	if (!book?.user || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 
 	const afterUrl = new URL(
 		url.origin +
-			setLanguageTagToPath(`/@${book.user.profiles.key_name}/book/${book.key_name}`, requestLang)
+			setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.key_name}`, requestLang)
 	);
 	const paymentCheckoutRequest: DbUserPaymentCheckoutCreateRequest = {
 		provider: 'stripe',

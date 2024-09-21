@@ -1,11 +1,5 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { dbBookGet } from '$lib-backend/model/book/get';
-import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib-backend/model/book-buy/create';
-import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
-import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
-import { dbUserPaymentContractGet } from '$lib-backend/model/user/payment-contract/get';
-import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
 import { chargeFee } from '$lib/utilities/payment';
 import {
@@ -14,33 +8,37 @@ import {
 	paymentCurrencyParam,
 	setLanguageTagToPath
 } from '$lib/utilities/url';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib-backend/model/book-buy/create';
+import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
+import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
+import { dbUserPaymentContractGet } from '$lib-backend/model/user/payment-contract/get';
+import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import { decryptFromFlat, encryptAndFlat } from '$lib-backend/utilities/crypto';
 import { createPaymentSession } from '$lib-backend/utilities/payment';
 import { redirectToSignInPage } from '$lib-backend/utilities/url';
 
 export const load = async ({ url, params, locals }) => {
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return redirectToSignInPage(url);
 	}
 	const requestLang = getLanguageTagFromUrl(url);
 	const bookId = params.bookId;
 
-	const userEmail = decryptFromFlat(
-		locals.session?.user?.email ?? '',
-		env.ENCRYPT_EMAIL_USER,
-		env.ENCRYPT_SALT
-	);
+	const userEmail = decryptFromFlat(signInUser.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
 	if (!userEmail) {
 		return error(401, { message: 'Unauthorized' });
 	}
-	const { currentPoint, dbError: dbUserPointError } = await dbUserPointList({ userId });
+	const { currentPoint, dbError: dbUserPointError } = await dbUserPointList({
+		userId: signInUser.id
+	});
 	if (dbUserPointError) {
 		return error(500, { message: dbUserPointError?.message ?? '' });
 	}
 
 	const { book, dbError: dbBookGetError } = await dbBookGet({ bookId });
-	if (!book?.user.profiles || dbBookGetError) {
+	if (!book?.user || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 	const afterPaymentUrl = new URL(
@@ -48,13 +46,16 @@ export const load = async ({ url, params, locals }) => {
 	);
 	const cancelUrl =
 		url.origin +
-		setLanguageTagToPath(`/@${book.user.profiles.key_name}/book/${book.key_name}`, requestLang);
-	if (book.user_id === userId) {
+		setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.key_name}`, requestLang);
+	if (book.user_id === signInUser.id) {
 		// Prevent buy own book
 		return redirect(303, cancelUrl);
 	}
 
-	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({ userId, bookId });
+	const { bookBuy, dbError: dbBookBuyError } = await dbBookBuyGet({
+		userId: signInUser.id,
+		bookId
+	});
 	if (dbBookBuyError) {
 		return error(500, { message: dbBookBuyError?.message ?? '' });
 	} else if (bookBuy) {
@@ -66,7 +67,7 @@ export const load = async ({ url, params, locals }) => {
 	const dbBookBuyCreateReq: DbBookBuyCreateRequest = {
 		bookId,
 		writeUserId: book.user_id,
-		userId,
+		userId: signInUser.id,
 		pointSpend: book.buy_point,
 		beforePointChargeAmount: 0
 	};
@@ -99,7 +100,7 @@ export const load = async ({ url, params, locals }) => {
 	}
 
 	const { paymentContracts, dbError: dbContractGetError } = await dbUserPaymentContractGet({
-		userId,
+		userId: signInUser.id,
 		providerKey: 'stripe'
 	});
 	if (!paymentContracts || dbContractGetError) {

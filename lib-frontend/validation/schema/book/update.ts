@@ -9,7 +9,7 @@ export const schema = z.object({
 	subtitle: z.string().max(200).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),
-	nativeLanguage: z.string().max(5).refine(isAvailableLanguageTag, {
+	targetLanguage: z.string().max(5).refine(isAvailableLanguageTag, {
 		message: 'Please select language'
 	}),
 	prologue: z.string().max(5e8).refine(validateOnlyVisibleChar, {

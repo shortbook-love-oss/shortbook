@@ -31,7 +31,7 @@
 			/>
 		</a>
 		<ul class="flex items-center">
-			{#if $page.data.session?.user}
+			{#if $page.data.signInUser}
 				<li>
 					<NavLink name={m.header_write()} href="/write" />
 				</li>

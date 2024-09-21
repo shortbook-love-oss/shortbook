@@ -13,7 +13,7 @@
 	};
 	let { book, penName, requestLang, className = '' }: Props = $props();
 
-	const bookUrl = $state(`/@${book.userKeyName}/book/${book.bookKeyName}`);
+	const bookUrl = $state(`/@${book.userKeyHandle}/book/${book.bookKeyName}`);
 </script>
 
 <article class="flex items-start gap-4 {className}">
@@ -43,7 +43,7 @@
 		<div class="flex items-center gap-5">
 			<ProfileCardSmall
 				name={book.penName}
-				keyName={book.userKeyName}
+				keyHandle={book.userKeyHandle}
 				imageSrc={book.userImage}
 				className="min-w-0"
 			/>

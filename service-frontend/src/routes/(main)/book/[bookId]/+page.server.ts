@@ -8,11 +8,12 @@ export const load = async ({ url, params }) => {
 		isIncludeDelete: true,
 		isIncludeDraft: true
 	});
-	if (dbError || !book?.user?.profiles) {
+	if (dbError || !book?.user) {
 		return error(404, { message: 'Not found' });
 	}
 
-	const userKeyName = book.user.profiles.key_name;
-
-	redirect(301, setLanguageTagToPath(`/@${userKeyName}/book/${book.key_name}${url.search}`, url));
+	redirect(
+		301,
+		setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.key_name}${url.search}`, url)
+	);
 };

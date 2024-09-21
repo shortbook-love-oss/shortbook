@@ -5,12 +5,12 @@ type IdExclusiveProps =
 	| {
 			bookId: string;
 			bookKeyName?: never;
-			userKeyName?: never;
+			userKeyHandle?: never;
 	  }
 	| {
 			bookId?: never;
 			bookKeyName: string;
-			userKeyName: string;
+			userKeyHandle: string;
 	  };
 
 type DbBookGetRequest = IdExclusiveProps & {
@@ -42,10 +42,8 @@ export async function dbBookGet(req: DbBookGetRequest) {
 				...whereByCond,
 				...whereCondDelete,
 				user: {
-					profiles: {
-						key_name: req.userKeyName,
-						...whereCondDelete
-					}
+					key_handle: req.userKeyHandle,
+					...whereCondDelete
 				}
 			},
 			include: {
@@ -61,18 +59,14 @@ export async function dbBookGet(req: DbBookGetRequest) {
 				},
 				user: {
 					select: {
-						name: true,
-						image: true,
-						profiles: {
+						key_handle: true,
+						pen_name: true,
+						image_src: true,
+						languages: {
+							where: { ...whereCondDelete },
 							select: {
-								key_name: true,
-								languages: {
-									where: { ...whereCondDelete },
-									select: {
-										language_code: true,
-										headline: true
-									}
-								}
+								target_language: true,
+								headline: true
 							}
 						}
 					}

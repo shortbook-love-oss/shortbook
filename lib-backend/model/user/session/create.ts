@@ -9,11 +9,11 @@ export interface DbUserSessionCreateRequest {
 export async function dbUserSessionCreate(req: DbUserSessionCreateRequest) {
 	let dbError: Error | undefined;
 
-	const userSession = await prisma.session
+	const userSession = await prisma.sessions
 		.create({
 			data: {
-				sessionToken: req.sessionToken,
-				userId: req.userId,
+				session_token: req.sessionToken,
+				user_id: req.userId,
 				expires: req.expires
 			}
 		})

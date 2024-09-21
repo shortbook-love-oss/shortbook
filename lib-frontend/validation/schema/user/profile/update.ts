@@ -3,7 +3,7 @@ import { isAvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
 import { validateOnlyVisibleChar } from '$lib/utilities/validate';
 
 export const schema = z.object({
-	keyName: z
+	keyHandle: z
 		.string()
 		.max(30)
 		.regex(/[a-zA-Z0-9]/, {

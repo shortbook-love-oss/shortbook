@@ -5,7 +5,7 @@ export interface PointListItem {
 	createdAt: Date;
 	bookTitle: string;
 	bookKeyName: string;
-	writeKeyName: string;
+	writeKeyHandle: string;
 	isSell: boolean;
 	payment?: {
 		provider: string;

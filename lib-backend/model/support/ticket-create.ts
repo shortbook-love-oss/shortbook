@@ -4,7 +4,7 @@ export interface DbTicketCreateRequest {
 	categoryKeyName: string;
 	emailEncrypt: string;
 	description: string;
-	languageCode: string;
+	fromLanguage: string;
 	fileUrls: string[];
 }
 
@@ -17,7 +17,14 @@ export async function dbTicketCreate(req: DbTicketCreateRequest) {
 				category_key_name: req.categoryKeyName,
 				email: req.emailEncrypt,
 				description: req.description,
-				language_code: req.languageCode
+				from_language: req.fromLanguage,
+				files: {
+					createMany: {
+						data: req.fileUrls.map((fileUrl) => ({
+							file_url: fileUrl
+						}))
+					}
+				}
 			}
 		})
 		.catch(() => {

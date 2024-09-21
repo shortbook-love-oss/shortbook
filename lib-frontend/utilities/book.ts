@@ -29,7 +29,7 @@ export interface MyBookItem extends BookCover {
 
 export interface BookItem extends MyBookItem {
 	bookKeyName: string;
-	userKeyName: string;
+	userKeyHandle: string;
 	penName: string;
 	userImage: string;
 }

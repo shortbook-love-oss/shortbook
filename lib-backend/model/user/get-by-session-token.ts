@@ -12,7 +12,7 @@ export async function dbUserGetBySessionToken(req: DbUserGetBySessionTokenReques
 		.findFirst({
 			where: {
 				sessions: {
-					every: {
+					some: {
 						session_token: req.sessionToken,
 						expires: {
 							gte: now

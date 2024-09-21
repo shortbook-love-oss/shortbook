@@ -2,7 +2,7 @@ import prisma from '$lib-backend/database/connect';
 
 export interface DbUserProfileUpdateRequest {
 	userId: string;
-	keyName: string;
+	keyHandle: string;
 	nativeLanguage: string;
 	penName: string;
 	headline: string;
@@ -12,55 +12,42 @@ export interface DbUserProfileUpdateRequest {
 export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 	let dbError: Error | undefined;
 
-	const profile = await prisma
+	const user = await prisma
 		.$transaction(async (tx) => {
-			await tx.user.update({
+			const user = await tx.users.update({
 				where: {
 					id: req.userId,
 					deleted_at: null
 				},
 				data: {
-					name: req.penName
-				}
-			});
-
-			const profile = await tx.user_profiles.update({
-				where: {
-					user_id: req.userId,
-					deleted_at: null
-				},
-				data: {
-					key_name: req.keyName,
+					key_handle: req.keyHandle,
+					pen_name: req.penName,
 					native_language: req.nativeLanguage
 				}
 			});
-			if (!profile?.id) {
-				dbError ??= new Error(`Can't find user profile. User ID=${req.userId}`);
-				throw dbError;
-			}
 
-			await tx.user_profile_languages.deleteMany({
+			await tx.user_languages.deleteMany({
 				where: {
-					profile_id: profile.id
+					user_id: req.userId
 				}
 			});
-			await tx.user_profile_languages.createMany({
+			await tx.user_languages.createMany({
 				data: [
 					{
-						profile_id: profile.id,
-						language_code: req.nativeLanguage,
+						user_id: req.userId,
+						target_language: req.nativeLanguage,
 						headline: req.headline,
 						self_introduction: req.selfIntroduction
 					}
 				]
 			});
 
-			return profile;
+			return user;
 		})
 		.catch(() => {
-			dbError ??= new Error(`Failed to get user profile. User ID=${req.userId}`);
+			dbError ??= new Error(`Failed to update user profile. User ID=${req.userId}`);
 			return undefined;
 		});
 
-	return { profile, dbError };
+	return { user, dbError };
 }

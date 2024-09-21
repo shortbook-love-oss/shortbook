@@ -26,7 +26,7 @@
 					<IconHome width="30" height="30" />
 				</NavLinkSp>
 			</li>
-			{#if $page.data.session?.user}
+			{#if $page.data.signInUser}
 				<li>
 					<NavLinkSp name={m.header_sp_write()} href="/write">
 						<IconWrite width="30" height="30" />
@@ -49,7 +49,7 @@
 					</NavLinkSp>
 				</li>
 			{/if}
-			{#if $page.data.session?.user}
+			{#if $page.data.signInUser}
 				<li class="relative">
 					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-0 min-w-40">
 						{#snippet opener()}

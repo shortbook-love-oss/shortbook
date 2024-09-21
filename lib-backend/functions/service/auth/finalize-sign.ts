@@ -66,12 +66,11 @@ export async function finalizeSign(
 		// Create user with random profile
 		// If email exist, fail to user create
 		const { user, dbError: dbUserGetError } = await dbUserCreate({
+			keyHandle: getRandom(16),
+			penName: `User ${getRandom(6).toUpperCase()}`,
 			emailEncrypt: encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT),
 			emailHash: toHashUserEmail(userEmail),
-			emailVerified: new Date(),
-			keyName: getRandom(16),
-			penName: `User ${getRandom(6).toUpperCase()}`,
-			profileImage: ''
+			imageSrc: ''
 		});
 		if (!user || dbUserGetError) {
 			return { error: new Error(dbUserGetError?.message ?? '') };
@@ -91,7 +90,7 @@ export async function finalizeSign(
 		}
 		const { dbError: dbImageUpdateError } = await dbUserProfileImageUpdate({
 			userId,
-			image: `/profile/${profileImagePath}`
+			imageSrc: `/profile/${profileImagePath}`
 		});
 		if (dbImageUpdateError) {
 			return { error: new Error(dbImageUpdateError.message) };
@@ -127,7 +126,7 @@ export async function finalizeSign(
 	}
 
 	// Set session token to cookie
-	setSessionToken(cookies, userSession.sessionToken);
+	setSessionToken(cookies, userSession.session_token);
 
 	return { error: null };
 }

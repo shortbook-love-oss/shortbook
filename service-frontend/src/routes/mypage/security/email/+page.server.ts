@@ -4,7 +4,6 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
 import { dbLogActionCreate } from '$lib-backend/model/log/action-create';
 import { dbLogActionList } from '$lib-backend/model/log/action-list';
-import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash';
 import { dbVerificationTokenCreate } from '$lib-backend/model/verification-token/create';
 import {
@@ -19,34 +18,23 @@ import { changeEmailLogActionName, changeEmailRateLimit } from '$lib-backend/uti
 import { emailChangeTokenName } from '$lib-backend/utilities/verification-token';
 
 export const load = async ({ locals }) => {
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
 
+	const currentEmail = decryptFromFlat(signInUser.email, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT);
+
 	const form = await superValidate(zod(schema));
-
-	const { user, dbError } = await dbUserProfileGet({ userId });
-	if (!user || dbError) {
-		return error(500, { message: dbError?.message ?? '' });
-	}
-	const penName = user.name ?? '';
-
-	const currentEmail = decryptFromFlat(
-		locals.session?.user?.email ?? '',
-		env.ENCRYPT_EMAIL_USER,
-		env.ENCRYPT_SALT
-	);
-
 	form.data.email = '';
 
-	return { form, penName, currentEmail };
+	return { signInUser, form, currentEmail };
 };
 
 export const actions = {
 	default: async ({ request, url, locals, getClientAddress }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 		const requestLang = getLanguageTagFromUrl(url);
@@ -81,7 +69,7 @@ export const actions = {
 			if (user) {
 				form.valid = false;
 				form.errors.email = form.errors.email ?? [];
-				if (user.id === userId) {
+				if (user.id === signInUser.id) {
 					form.errors.email.push('You are using this email address');
 				} else {
 					form.errors.email.push('This email is in use by another user');
@@ -112,7 +100,7 @@ export const actions = {
 		const { dbError: dbVerifyError } = await dbVerificationTokenCreate({
 			identifier: emailChangeTokenName,
 			token: emailChangeToken,
-			userId,
+			userId: signInUser.id,
 			expires: after1Hour
 		});
 		if (dbVerifyError) {

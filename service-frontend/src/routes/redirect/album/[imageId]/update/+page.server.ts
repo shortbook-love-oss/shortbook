@@ -8,8 +8,8 @@ import { dbUserAlbumImageUpdate } from '$lib-backend/model/user/album/image-upda
 
 export const actions = {
 	default: async ({ request, url, params, locals }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
@@ -22,7 +22,7 @@ export const actions = {
 		}
 
 		const { dbError } = await dbUserAlbumImageUpdate({
-			userId: userId,
+			userId: signInUser.id,
 			imageId: params.imageId,
 			name: form.data.name,
 			alt: form.data.alt,

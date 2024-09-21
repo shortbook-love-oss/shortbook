@@ -78,7 +78,7 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				data: [
 					{
 						book_id: book.id,
-						language_code: req.nativeLanguage,
+						target_language: req.targetLanguage,
 						thumbnail_url: '',
 						title: req.title,
 						subtitle: req.subtitle,

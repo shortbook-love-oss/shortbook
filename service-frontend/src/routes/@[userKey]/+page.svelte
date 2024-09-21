@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Profile and books | {data.user.profiles?.key_name}</title>
+	<title>Profile and books | {data.user.key_handle}</title>
 </svelte:head>
 
 <div
@@ -18,19 +18,19 @@
 			class="flex min-h-[27rem] w-full flex-col items-center rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-4 pb-5 text-white md:min-h-[30rem]"
 		>
 			<h1 class="max-w-full whitespace-pre-wrap break-words text-3xl">
-				{data.user.name}
+				{data.user.pen_name}
 			</h1>
-			<p class="mb-6 max-w-full break-words">@{data.user.profiles?.key_name}</p>
-			{#if data.profileLang?.headline}
+			<p class="mb-6 max-w-full break-words">@{data.user.key_handle}</p>
+			{#if data.userLang?.headline}
 				<p class="mb-8 max-w-full whitespace-pre-wrap break-words text-lg">
-					{data.profileLang.headline}
+					{data.userLang.headline}
 				</p>
 			{/if}
 			<picture>
-				<source srcset="{data.user.image}?ext=avif&w=128&h=128&q=80" type="image/avif" />
+				<source srcset="{data.user.image_src}?ext=avif&w=128&h=128&q=80" type="image/avif" />
 				<img
-					src="{data.user.image}?ext=png&w=128&h=128&q=80"
-					alt="{data.profileLang?.headline} profile icon"
+					src="{data.user.image_src}?ext=png&w=128&h=128&q=80"
+					alt="{data.userLang?.headline} profile icon"
 					class="mb-4 h-32 w-32 rounded-md bg-white"
 				/>
 			</picture>
@@ -47,7 +47,7 @@
 	</div>
 	<div
 		class="w-full flex-1 overflow-x-hidden rounded-lg bg-gradient-to-b from-primary-800 to-primary-600 p-1 text-xl {data
-			.profileLang?.self_introduction
+			.userLang?.self_introduction
 			? ''
 			: 'hidden'}"
 	>

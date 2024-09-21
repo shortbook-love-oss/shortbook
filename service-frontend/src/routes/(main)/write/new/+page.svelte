@@ -85,12 +85,12 @@
 				className="mb-8"
 			/>
 			<Select
-				bind:value={$form.nativeLanguage as string}
-				name="nativeLanguage"
+				bind:value={$form.targetLanguage as string}
+				name="targetLanguage"
 				list={data.langTags}
 				required={true}
 				label="Native language"
-				errorMessages={$errors.nativeLanguage}
+				errorMessages={$errors.targetLanguage}
 				className="mb-8 max-w-72"
 			/>
 			<TextArea
@@ -123,7 +123,9 @@
 				errorMessages={$errors.keyName}
 				className="mb-1"
 			/>
-			<p class="mb-8 break-words">{$page.url.origin}/@{data.userKeyName}/book/{$form.keyName}</p>
+			<p class="mb-8 break-words">
+				{$page.url.origin}/@{data.signInUser.keyHandle}/book/{$form.keyName}
+			</p>
 			<InputPoint bind:point={$form.buyPoint} errorMessages={$errors.buyPoint} className="mb-8" />
 			<PricePreview
 				point={$form.buyPoint}
@@ -135,7 +137,7 @@
 			<div class="w-fit lg:-mx-4 lg:-mt-3">
 				<BookCoverEdit
 					book={$form}
-					penName={data.penName}
+					penName={data.signInUser.penName}
 					errors={$errors}
 					oninput={applyChildChange}
 				/>

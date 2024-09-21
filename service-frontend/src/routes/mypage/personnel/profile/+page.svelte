@@ -32,8 +32,6 @@
 	const formObserver = form.subscribe(() => validateBackground());
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
-
-	const user = $page.data.session?.user;
 </script>
 
 <svelte:head>
@@ -43,8 +41,8 @@
 <h1 class="mb-4 text-2xl font-semibold">Public profile</h1>
 <ProfileCard
 	name={initForm.penName}
-	keyName={initForm.keyName}
-	imageSrc={user?.image ?? ''}
+	keyHandle={initForm.keyHandle}
+	imageSrc={$page.data.signInUser.imageSrc}
 	className="mb-8"
 >
 	{#if initForm.headline}
@@ -62,11 +60,11 @@
 	errorMessage={$page.status === 400 ? $message : ''}
 >
 	<TextField
-		bind:value={$form.keyName}
-		name="keyName"
+		bind:value={$form.keyHandle}
+		name="keyHandle"
 		required={true}
 		label="User ID"
-		errorMessages={$errors.keyName}
+		errorMessages={$errors.keyHandle}
 		className="mb-8"
 	/>
 	<Select

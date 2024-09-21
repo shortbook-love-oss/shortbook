@@ -21,8 +21,8 @@ import { uploadFile } from '$lib-backend/utilities/file';
 import { getActualImageData, type ActualImageDataSuccess } from '$lib-backend/utilities/image';
 
 export const load = async ({ url, locals }) => {
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
 
@@ -30,7 +30,7 @@ export const load = async ({ url, locals }) => {
 	const form = await superValidate(zod(schema));
 
 	const { albumImages, dbError } = await dbUserAlbumImageList({
-		userId,
+		userId: signInUser.id,
 		languageCode: requestLang
 	});
 	if (!albumImages || dbError) {
@@ -57,7 +57,7 @@ export const load = async ({ url, locals }) => {
 				name: image.name,
 				alt: image.alt,
 				languageInImage: image.language_in_image as AvailableLanguageTags | '',
-				filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${userId}/${image.property?.file_path}`,
+				filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${signInUser.id}/${image.property?.file_path}`,
 				byteLength: image.property?.byte_length ?? 0,
 				width: image.property?.width ?? 0,
 				height: image.property?.height ?? 0,
@@ -71,8 +71,8 @@ export const load = async ({ url, locals }) => {
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
@@ -126,14 +126,14 @@ export const actions = {
 						imageResult.value.mimeType,
 						env.AWS_DEFAULT_REGION,
 						env.AWS_BUCKET_IMAGE_USER_ALBUM,
-						`${userId}/${saveFilePath}`
+						`${signInUser.id}/${saveFilePath}`
 					);
 					if (uploadFileError || !isSuccessUpload) {
 						throw new Error('Error when upload new image.');
 					}
 
 					const { dbError } = await dbUserAlbumImageCreate({
-						userId: userId,
+						userId: signInUser.id,
 						name: fileName,
 						filePath: saveFilePath,
 						byteLength: imageResult.value.byteLength,

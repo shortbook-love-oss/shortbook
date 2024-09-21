@@ -1,18 +1,13 @@
 import { error } from '@sveltejs/kit';
-import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
-import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { defaultCurrency, type CurrencySupportKeys } from '$lib/utilities/currency';
+import type { SignInUser } from '$lib/utilities/signin';
 import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
+import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 
-export async function editLoad(userId: string) {
-	const { user, profile, dbError: dbProfileGetError } = await dbUserProfileGet({ userId });
-	if (!user || !profile || dbProfileGetError) {
-		error(500, { message: dbProfileGetError?.message ?? '' });
-	}
-	const userKeyName = profile.key_name ?? '';
-	const penName = user.name ?? '';
-
-	const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({ userId });
+export async function editLoad(signInUser: SignInUser) {
+	const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
+		userId: signInUser.id
+	});
 	if (dbPayGetError) {
 		error(500, { message: dbPayGetError.message });
 	}
@@ -25,5 +20,5 @@ export async function editLoad(userId: string) {
 		error(500, { message: dbRateGetError.message });
 	}
 
-	return { profile, userKeyName, penName, selectedCurrencyKey, currencyRateIndex };
+	return { selectedCurrencyKey, currencyRateIndex };
 }
