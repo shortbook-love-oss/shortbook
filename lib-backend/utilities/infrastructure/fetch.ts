@@ -9,7 +9,7 @@ interface FechJsonError {
 	errorMessage: string;
 }
 
-export async function fetchByJson<T extends unknown>(
+export async function fetchByJson<T>(
 	url: string,
 	body: Record<string, any>
 ): Promise<FechJsonSuccess<T> | FechJsonError> {

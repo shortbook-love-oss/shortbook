@@ -3,13 +3,14 @@
 	import IconCheck from '~icons/mdi/check';
 	import IconWarning from '~icons/mdi/warning';
 	import IconError from '~icons/mdi/warning-circle';
+	import { enhance as kitEnhance } from '$app/forms';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import SubmitButton from './submit-button.svelte';
 
 	type Props = {
 		children: Snippet;
 		submit?: Snippet;
-		enhance: Function;
+		enhance: (el: HTMLFormElement) => ReturnType<typeof kitEnhance>;
 		action: string;
 		hasInvalid?: boolean;
 		isLoading?: boolean;

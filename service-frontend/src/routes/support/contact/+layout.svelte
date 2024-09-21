@@ -12,7 +12,11 @@
 <LayoutRule>
 	{#snippet header()}
 		<div class="flex justify-center border-b border-stone-300 px-8 py-1">
-			<a href="/" class="rounded-md px-3 py-2 hover:bg-stone-200 focus:bg-stone-200">
+			<a
+				href="/"
+				class="rounded-md px-3 py-2 hover:bg-stone-200 focus:bg-stone-200"
+				aria-label="Go to top page"
+			>
 				<img
 					src="/assets/shortbook-logotype.svg"
 					class="aspect-logotype w-48"

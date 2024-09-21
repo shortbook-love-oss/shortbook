@@ -158,13 +158,14 @@ export async function convertAndDeliver(
 	} else {
 		let image;
 		switch (contentType) {
-			case 'image/vnd.microsoft.icon':
+			case 'image/vnd.microsoft.icon': {
 				const pngImages = sharpsFromIco(Buffer.from(file), undefined, true) as ImageDataIco[];
 				const pngImage = getLargestImageFromIco(pngImages ?? []);
 				if (pngImage?.image) {
 					image = pngImage.image;
 				}
 				break;
+			}
 			case 'image/bmp':
 				image = sharpFromBmp(Buffer.from(file)) as sharp.Sharp;
 				break;

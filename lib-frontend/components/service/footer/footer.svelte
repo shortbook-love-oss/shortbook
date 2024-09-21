@@ -18,7 +18,7 @@
 >
 	<nav class="flex w-full flex-wrap gap-x-16 gap-y-8 px-4 py-12 sm:mx-auto sm:w-fit sm:px-8">
 		<div class="relative w-full sm:w-auto sm:pt-1.5">
-			<a href="/" class="mb-2 inline-block">
+			<a href="/" class="mb-2 inline-block" aria-label="Go to top page">
 				<img
 					src="/assets/shortbook-logotype.svg"
 					class="aspect-logotype w-48"
