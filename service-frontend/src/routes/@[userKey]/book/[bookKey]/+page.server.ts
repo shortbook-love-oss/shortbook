@@ -20,7 +20,7 @@ export const load = async ({ url, locals, params }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 
 	const { book, dbError: dbBookGetError } = await dbBookGet({
-		bookKeyName: params.bookKey,
+		bookUrlSlug: params.bookKey,
 		userKeyHandle: params.userKey,
 		isIncludeDraft: true,
 		isIncludeDelete: true
@@ -133,7 +133,7 @@ export const load = async ({ url, locals, params }) => {
 		subtitle: bookLang.subtitle,
 		publishedAt: book.published_at,
 		updatedAt: book.updated_at,
-		bookKeyName: book.key_name,
+		bookUrlSlug: book.url_slug,
 		userKeyHandle: book.user.key_handle,
 		penName: book.user.pen_name,
 		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src,

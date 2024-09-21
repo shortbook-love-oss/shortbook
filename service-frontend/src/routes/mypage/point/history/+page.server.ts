@@ -76,7 +76,7 @@ export const load = async ({ url, locals }) => {
 			amount: point.amount,
 			createdAt: point.created_at,
 			bookTitle,
-			bookKeyName: book?.key_name ?? '',
+			bookUrlSlug: book?.url_slug ?? '',
 			writeKeyHandle: book?.user.key_handle,
 			isSell: point.is_sell > 0
 		};

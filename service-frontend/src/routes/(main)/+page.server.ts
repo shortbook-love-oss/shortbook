@@ -49,7 +49,7 @@ export const load = async ({ url }) => {
 				subtitle: bookLang.subtitle,
 				publishedAt: book.published_at,
 				updatedAt: book.updated_at,
-				bookKeyName: book.key_name,
+				bookUrlSlug: book.url_slug,
 				userKeyHandle: book.user.key_handle,
 				penName: book.user.pen_name,
 				userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src

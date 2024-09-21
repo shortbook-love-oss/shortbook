@@ -4,7 +4,7 @@ export interface PointListItem {
 	amount: number;
 	createdAt: Date;
 	bookTitle: string;
-	bookKeyName: string;
+	bookUrlSlug: string;
 	writeKeyHandle: string;
 	isSell: boolean;
 	payment?: {

@@ -21,7 +21,7 @@ export const schema = z.object({
 	salesMessage: z.string().max(1000).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),
-	keyName: z
+	urlSlug: z
 		.string()
 		.max(100)
 		.regex(/[a-zA-Z0-9]/, {

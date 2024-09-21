@@ -14,6 +14,6 @@ export const load = async ({ url, params }) => {
 
 	redirect(
 		301,
-		setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.key_name}${url.search}`, url)
+		setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.url_slug}${url.search}`, url)
 	);
 };

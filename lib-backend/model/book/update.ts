@@ -39,7 +39,7 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 					deleted_at: null
 				},
 				data: {
-					key_name: req.keyName,
+					url_slug: req.urlSlug,
 					status: req.status,
 					buy_point: req.buyPoint,
 					published_at: publishedAt

@@ -118,15 +118,15 @@
 				className="mb-8"
 			/>
 			<TextField
-				bind:value={$form.keyName}
-				name="keyName"
+				bind:value={$form.urlSlug}
+				name="urlSlug"
 				required={true}
 				label="URL string"
-				errorMessages={$errors.keyName}
+				errorMessages={$errors.urlSlug}
 				className="mb-1"
 			/>
 			<p class="mb-8 break-words">
-				{$page.url.origin}/@{data.signInUser.keyHandle}/book/{$form.keyName}
+				{$page.url.origin}/@{data.signInUser.keyHandle}/book/{$form.urlSlug}
 			</p>
 			<InputPoint bind:point={$form.buyPoint} errorMessages={$errors.buyPoint} className="mb-8" />
 			<PricePreview

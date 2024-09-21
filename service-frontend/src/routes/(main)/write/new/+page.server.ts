@@ -5,7 +5,7 @@ import { getBookCover } from '$lib/utilities/book';
 import { languageAndNotSelect } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
-import { isExistBookKeyName } from '$lib-backend/functions/service/write/edit-action';
+import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
 import { editLoad } from '$lib-backend/functions/service/write/edit-load';
 import { dbBookCreate } from '$lib-backend/model/book/create';
 
@@ -29,7 +29,7 @@ export const load = async ({ locals }) => {
 	form.data.prologue = '';
 	form.data.content = '';
 	form.data.salesMessage = '';
-	form.data.keyName = '';
+	form.data.urlSlug = '';
 	form.data.buyPoint = 200;
 
 	return { signInUser, form, langTags, selectedCurrencyKey, currencyRateIndex };
@@ -44,11 +44,11 @@ export const actions = {
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
-			const isExist = await isExistBookKeyName(signInUser.id, form.data.keyName, '');
+			const isExist = await isExistBookUrlSlug(signInUser.id, form.data.urlSlug, '');
 			if (isExist) {
 				form.valid = false;
-				form.errors.keyName = form.errors.keyName ?? [];
-				form.errors.keyName.push('There is a book with the same URL.');
+				form.errors.urlSlug = form.errors.urlSlug ?? [];
+				form.errors.urlSlug.push('There is a book with the same URL.');
 			}
 		}
 		if (!form.valid) {
@@ -65,7 +65,7 @@ export const actions = {
 			return error(500, { message: dbBookCreateError?.message ?? '' });
 		}
 
-		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${book.key_name}`, url));
+		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${book.url_slug}`, url));
 	},
 
 	draft: async ({ request, url, locals }) => {
@@ -76,11 +76,11 @@ export const actions = {
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
-			const isExist = await isExistBookKeyName(signInUser.id, form.data.keyName, '');
+			const isExist = await isExistBookUrlSlug(signInUser.id, form.data.urlSlug, '');
 			if (isExist) {
 				form.valid = false;
-				form.errors.keyName = form.errors.keyName ?? [];
-				form.errors.keyName.push('There is a book with the same URL.');
+				form.errors.urlSlug = form.errors.urlSlug ?? [];
+				form.errors.urlSlug.push('There is a book with the same URL.');
 			}
 		}
 		if (!form.valid) {

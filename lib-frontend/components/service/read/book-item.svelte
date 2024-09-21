@@ -13,7 +13,7 @@
 	};
 	let { book, penName, requestLang, className = '' }: Props = $props();
 
-	const bookUrl = $state(`/@${book.userKeyHandle}/book/${book.bookKeyName}`);
+	const bookUrl = $state(`/@${book.userKeyHandle}/book/${book.bookUrlSlug}`);
 </script>
 
 <article class="flex items-start gap-4 {className}">

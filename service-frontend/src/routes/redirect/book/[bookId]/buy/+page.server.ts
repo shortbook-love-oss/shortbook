@@ -46,7 +46,7 @@ export const load = async ({ url, params, locals }) => {
 	);
 	const cancelUrl =
 		url.origin +
-		setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.key_name}`, requestLang);
+		setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.url_slug}`, requestLang);
 	if (book.user_id === signInUser.id) {
 		// Prevent buy own book
 		return redirect(303, cancelUrl);

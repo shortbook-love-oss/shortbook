@@ -9,7 +9,7 @@ export interface DbBookCreateRequest {
 	prologue: string;
 	content: string;
 	salesMessage: string;
-	keyName: string;
+	urlSlug: string;
 	buyPoint: number;
 	baseColorStart: string;
 	baseColorEnd: string;
@@ -32,7 +32,7 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 			const book = await tx.books.create({
 				data: {
 					user_id: req.userId,
-					key_name: req.keyName,
+					url_slug: req.urlSlug,
 					status: req.status,
 					buy_point: req.buyPoint,
 					cover: {

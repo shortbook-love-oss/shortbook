@@ -4,12 +4,12 @@ import prisma from '$lib-backend/database/connect';
 type IdExclusiveProps =
 	| {
 			bookId: string;
-			bookKeyName?: never;
+			bookUrlSlug?: never;
 			userKeyHandle?: never;
 	  }
 	| {
 			bookId?: never;
-			bookKeyName: string;
+			bookUrlSlug: string;
 			userKeyHandle: string;
 	  };
 
@@ -38,7 +38,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		.findFirst({
 			where: {
 				id: req.bookId,
-				key_name: req.bookKeyName,
+				url_slug: req.bookUrlSlug,
 				...whereByCond,
 				...whereCondDelete,
 				user: {
@@ -76,12 +76,12 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		.then((book) => {
 			if (!book) {
 				dbError ??= new Error(
-					`Can't find book. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+					`Can't find book. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
 				);
 				return undefined;
 			} else if (req.userId && book.user_id !== req.userId) {
 				dbError ??= new Error(
-					`Can't edit book written by other writer. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+					`Can't edit book written by other writer. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
 				);
 				return undefined;
 			}
@@ -89,7 +89,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		})
 		.catch(() => {
 			dbError ??= new Error(
-				`Failed to get book. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+				`Failed to get book. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
 			);
 			return undefined;
 		});
