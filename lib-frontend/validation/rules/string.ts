@@ -7,3 +7,7 @@ export function validateOnlyVisibleChar(value: string) {
 	const visibleChars = value.match(/[^\s\u{200B}\u{2060}\u{0000}-\u{001F}\u{007F}]/gu);
 	return !!visibleChars;
 }
+
+export function validateColor(value: string) {
+	return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(value);
+}

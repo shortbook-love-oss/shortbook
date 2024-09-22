@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { isAvailableLanguageTag } from '$i18n/output/runtime';
-import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
+import { validateBookTextAlign } from '$lib/validation/rules/book';
+import { validateColor, validateOnlyVisibleChar } from '$lib/validation/rules/string';
 
 export const schema = z.object({
 	title: z.string().min(1).max(200).refine(validateOnlyVisibleChar, {
@@ -32,15 +33,31 @@ export const schema = z.object({
 		}),
 	buyPoint: z.coerce.number().min(70).max(1_000_000),
 	// For book cover design
-	baseColorStart: z.string().max(15),
-	baseColorEnd: z.string().max(15),
-	baseColorDirection: z.number().min(0).max(360),
-	titleFontSize: z.number().min(10).max(256),
-	titleAlign: z.string().min(1).max(7),
-	titleColor: z.string().max(15),
-	subtitleFontSize: z.number().min(10).max(128),
-	subtitleAlign: z.string().min(1).max(7),
-	subtitleColor: z.string().max(15),
-	writerAlign: z.string().min(1).max(7),
-	writerColor: z.string().max(15)
+	baseColorStart: z.string().max(15).refine(validateColor, {
+		message: 'Please specify valid color (e.g. #01FC78)'
+	}),
+	baseColorEnd: z.string().max(15).refine(validateColor, {
+		message: 'Please specify valid color (e.g. #01FC78)'
+	}),
+	baseColorDirection: z.number().min(0).max(360).step(3),
+	titleFontSize: z.number().min(10).max(256).step(1),
+	titleAlign: z.string().min(1).max(7).refine(validateBookTextAlign, {
+		message: 'Please select text position'
+	}),
+	titleColor: z.string().max(15).refine(validateColor, {
+		message: 'Please specify valid color (e.g. #01FC78)'
+	}),
+	subtitleFontSize: z.number().min(10).max(128).step(1),
+	subtitleAlign: z.string().min(1).max(7).refine(validateBookTextAlign, {
+		message: 'Please select text position'
+	}),
+	subtitleColor: z.string().max(15).refine(validateColor, {
+		message: 'Please specify valid color (e.g. #01FC78)'
+	}),
+	writerAlign: z.string().min(1).max(7).refine(validateBookTextAlign, {
+		message: 'Please select text position'
+	}),
+	writerColor: z.string().max(15).refine(validateColor, {
+		message: 'Please specify valid color (e.g. #01FC78)'
+	})
 });
