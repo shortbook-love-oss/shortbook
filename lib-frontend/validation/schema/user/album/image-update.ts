@@ -1,9 +1,7 @@
 import { z } from 'zod';
-import {
-	validateOnlyVisibleChar,
-	validateOptionalLanguageTag,
-	validateOptionalUrl
-} from '$lib/utilities/validate';
+import { validateOptionalLanguageTag } from '$lib/validation/rules/language';
+import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
+import { validateOptionalUrl } from '$lib/validation/rules/url';
 
 export const schema = z.object({
 	name: z.string().min(1).max(250).refine(validateOnlyVisibleChar, {

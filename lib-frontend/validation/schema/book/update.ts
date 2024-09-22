@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { isAvailableLanguageTag } from '$i18n/output/runtime';
-import { validateOnlyVisibleChar } from '$lib/utilities/validate';
+import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 
 export const schema = z.object({
 	title: z.string().min(1).max(200).refine(validateOnlyVisibleChar, {
