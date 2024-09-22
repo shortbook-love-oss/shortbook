@@ -2,7 +2,7 @@
 	import type { CurrencySupportKeys } from '$lib/utilities/currency';
 	import type { SelectItem } from '$lib/utilities/select';
 	import { paymentCurrencyParam } from '$lib/utilities/url';
-	import Dropdown from '$lib/components/layouts/dropdown.svelte';
+	import Dialog from '$lib/components/layouts/dialog.svelte';
 
 	type Props = {
 		bookId: string;
@@ -16,40 +16,33 @@
 			return currency.value === primaryCurrency;
 		})
 	);
-
-	const secondaryCurrencies = $state(
-		currencyList.filter((currency) => {
-			return currency.value !== primaryCurrency;
-		})
-	);
 </script>
 
-<div>
+<div class="flex flex-col items-start gap-4">
 	{#each primaryCurrencies as currency}
 		<a
 			href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-			class="mb-2 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
+			class="mb-2 block rounded-md bg-primary-700 px-4 py-3 text-3xl font-semibold text-white hover:bg-primary-500 focus:bg-primary-500"
 			data-sveltekit-reload>Buy for {currency.label}</a
 		>
 	{/each}
-	<div class="relative">
-		<Dropdown
-			name="lang_select"
-			openerColorClass=""
-			dropdownClass="-start-[1.0625rem] top-8 min-w-72 max-md:max-w-[28rem] md:w-[30rem]"
-		>
-			{#snippet opener()}
-				<p class="inline-block px-1 text-lg underline">Use other currency</p>
-			{/snippet}
-			<div class="flex flex-wrap items-center gap-3 p-2">
-				{#each secondaryCurrencies as currency}
-					<a
-						href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-						class="inline-block rounded bg-primary-200 px-3 py-2 text-lg hover:bg-primary-200 focus:bg-primary-200"
-						data-sveltekit-reload>{currency.label}</a
-					>
-				{/each}
-			</div>
-		</Dropdown>
-	</div>
+	<Dialog
+		name="lang_select"
+		title="Buy in your currency"
+		openerColorClass=""
+		dialogSizeClass="max-w-3xl"
+	>
+		{#snippet opener()}
+			<p class="inline-block text-lg underline">Use other currency</p>
+		{/snippet}
+		<div class="flex flex-wrap items-center gap-3">
+			{#each currencyList as currency}
+				<a
+					href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
+					class="inline-block rounded bg-primary-200 px-3 py-2 text-lg hover:bg-primary-200 focus:bg-primary-200"
+					data-sveltekit-reload>{currency.label}</a
+				>
+			{/each}
+		</div>
+	</Dialog>
 </div>
