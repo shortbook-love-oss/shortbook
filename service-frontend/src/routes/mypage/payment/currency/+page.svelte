@@ -6,7 +6,7 @@
 	import { schema } from '$lib/validation/schema/user/currency-update';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
-	import { getCurrencyData, type CurrencySupportValues } from '$lib/utilities/currency';
+	import { getCurrencyData, type CurrencySupportCodes } from '$lib/utilities/currency';
 
 	let { data } = $props();
 
@@ -27,8 +27,8 @@
 	onMount(() => (isEnableJS = true));
 
 	const currencyData = getCurrencyData(data.suggestCurrency);
-	function setCurrency(currencyKey: CurrencySupportValues) {
-		$form.currencyKey = currencyKey;
+	function setCurrency(currencyCode: CurrencySupportCodes) {
+		$form.currencyCode = currencyCode;
 	}
 </script>
 
@@ -49,11 +49,11 @@
 >
 	<div class="mb-8 flex flex-wrap items-end gap-3">
 		<Select
-			bind:value={$form.currencyKey as string}
-			name="currencyKey"
+			bind:value={$form.currencyCode as string}
+			name="currencyCode"
 			list={data.currencyList}
 			label="Payment currency"
-			errorMessages={$errors.currencyKey}
+			errorMessages={$errors.currencyCode}
 			className="max-w-64"
 		/>
 		{#if isEnableJS && currencyData}

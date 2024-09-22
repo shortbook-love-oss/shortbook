@@ -9,7 +9,7 @@ import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilitie
 import {
 	defaultCurrency,
 	guessCurrencyByLang,
-	type CurrencySupportValues
+	type CurrencySupportCodes
 } from '$lib/utilities/currency';
 import { calcPriceByPoint } from '$lib/utilities/payment';
 import type { SelectItem } from '$lib/utilities/select';
@@ -45,7 +45,7 @@ export const load = async ({ url, locals, params }) => {
 		});
 	}
 
-	let primaryCurrency: CurrencySupportValues = defaultCurrency.value;
+	let primaryCurrency: CurrencySupportCodes = defaultCurrency.value;
 	if (signInUser) {
 		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
 			userId: signInUser.id
@@ -54,7 +54,7 @@ export const load = async ({ url, locals, params }) => {
 			return error(500, { message: dbPayGetError.message });
 		}
 		if (paymentSetting?.currency) {
-			primaryCurrency = paymentSetting.currency as CurrencySupportValues;
+			primaryCurrency = paymentSetting.currency as CurrencySupportCodes;
 		} else {
 			primaryCurrency = guessCurrencyByLang(requestLang);
 		}
@@ -95,7 +95,7 @@ export const load = async ({ url, locals, params }) => {
 		return error(404, { message: 'Not found' });
 	}
 
-	let currencyPreviews: SelectItem<CurrencySupportValues>[] = [];
+	let currencyPreviews: SelectItem<CurrencySupportCodes>[] = [];
 	// Skip check if buy with points only
 	if (!isBoughtBook && buyPoint > 0 && !isOwn && !hasEnoughPoint) {
 		// Show book price by all supported currencies

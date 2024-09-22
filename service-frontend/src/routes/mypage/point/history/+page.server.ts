@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib-backend/model/book/list';
 import { dbUserPaymentCheckoutList } from '$lib-backend/model/user/payment-checkout/list';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
-import type { CurrencySupportValues } from '$lib/utilities/currency';
+import type { CurrencySupportCodes } from '$lib/utilities/currency';
 import type { PointListItem } from '$lib/utilities/point';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
@@ -83,7 +83,7 @@ export const load = async ({ url, locals }) => {
 		if (checkout) {
 			pointItem.payment = {
 				provider: checkout.provider_key,
-				currency: checkout.currency.toLowerCase() as CurrencySupportValues,
+				currency: checkout.currency.toLowerCase() as CurrencySupportCodes,
 				amount: checkout.amount.toNumber()
 			};
 		}

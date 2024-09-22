@@ -1,9 +1,9 @@
 import prisma from '$lib-backend/database/connect';
-import type { CurrencySupportValues } from '$lib/utilities/currency';
+import type { CurrencySupportCodes } from '$lib/utilities/currency';
 
 export interface DbCurrencyRateUpsertRequest {
 	rates: {
-		currency: CurrencySupportValues;
+		currency: CurrencySupportCodes;
 		rate: number;
 	}[];
 }

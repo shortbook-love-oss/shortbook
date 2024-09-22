@@ -106,7 +106,7 @@ export const load = async ({ url }) => {
 	if (currency) {
 		const { dbError } = await dbUserPaymentSettingUpsert({
 			userId: bookPaymentInfo.userId,
-			currencyKey: currency
+			currencyCode: currency
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });

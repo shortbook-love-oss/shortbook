@@ -6,7 +6,7 @@ import { dbUserPaymentSettingUpsert } from '$lib-backend/model/user/payment-sett
 import {
 	currencyAndNoSelect,
 	guessCurrencyByLang,
-	type CurrencySupportValues
+	type CurrencySupportCodes
 } from '$lib/utilities/currency';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user/currency-update';
@@ -25,9 +25,9 @@ export const load = async ({ url, locals }) => {
 		return error(500, { message: dbError.message });
 	}
 	if (paymentSetting) {
-		form.data.currencyKey = paymentSetting.currency;
+		form.data.currencyCode = paymentSetting.currency;
 	} else {
-		form.data.currencyKey = '';
+		form.data.currencyCode = '';
 	}
 
 	const currencyList = currencyAndNoSelect;
@@ -51,7 +51,7 @@ export const actions = {
 
 		const { dbError } = await dbUserPaymentSettingUpsert({
 			userId: signInUser.id,
-			currencyKey: form.data.currencyKey as CurrencySupportValues
+			currencyCode: form.data.currencyCode as CurrencySupportCodes
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });

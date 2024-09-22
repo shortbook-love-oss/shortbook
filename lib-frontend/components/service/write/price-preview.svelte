@@ -6,7 +6,7 @@
 		formatPrice,
 		getCurrencyData,
 		getLocalizedPrice,
-		type CurrencySupportValues
+		type CurrencySupportCodes
 	} from '$lib/utilities/currency';
 	import { chargeFee } from '$lib/utilities/payment';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
@@ -14,8 +14,8 @@
 
 	type Props = {
 		point: number;
-		selectedCurrencyKey: CurrencySupportValues;
-		currencyRates: Partial<Record<CurrencySupportValues, number>>;
+		selectedCurrencyKey: CurrencySupportCodes;
+		currencyRates: Partial<Record<CurrencySupportCodes, number>>;
 	};
 	let { point, selectedCurrencyKey, currencyRates }: Props = $props();
 
@@ -23,15 +23,15 @@
 	onMount(() => (isEnableJS = true));
 
 	const requestLang = getLanguageTagFromUrl($page.url);
-	let buyCurrencySelected = $state('' as CurrencySupportValues);
+	let buyCurrencySelected = $state('' as CurrencySupportCodes);
 	buyCurrencySelected = selectedCurrencyKey;
-	let earnCurrencySelected = $state('' as CurrencySupportValues);
+	let earnCurrencySelected = $state('' as CurrencySupportCodes);
 	earnCurrencySelected = selectedCurrencyKey;
 
 	const pointToPriceRates = $derived.by(() => {
-		const localRates: Partial<Record<CurrencySupportValues, number>> = {};
+		const localRates: Partial<Record<CurrencySupportCodes, number>> = {};
 		for (const key in currencyRates) {
-			const localKey = key as CurrencySupportValues;
+			const localKey = key as CurrencySupportCodes;
 			const rate = currencyRates[localKey];
 			if (rate) {
 				localRates[localKey] = rate * point;

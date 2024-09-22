@@ -1,4 +1,4 @@
-import type { CurrencySupportValues } from '$lib/utilities/currency';
+import type { CurrencySupportCodes } from '$lib/utilities/currency';
 
 export interface PointListItem {
 	amount: number;
@@ -9,7 +9,7 @@ export interface PointListItem {
 	isSell: boolean;
 	payment?: {
 		provider: string;
-		currency: CurrencySupportValues;
+		currency: CurrencySupportCodes;
 		amount: number;
 	};
 }

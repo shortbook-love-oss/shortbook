@@ -1,6 +1,6 @@
-import { currencySupportValues, type CurrencySupportValues } from '$lib/utilities/currency';
+import { currencySupportCodes, type CurrencySupportCodes } from '$lib/utilities/currency';
 
-export async function fetchCurrencyRates(fromCurrency: CurrencySupportValues) {
+export async function fetchCurrencyRates(fromCurrency: CurrencySupportCodes) {
 	// Convert to other currencies by https://github.com/fawazahmed0/exchange-api
 	// Currency rates updated daily at 12:00 UTC
 	// {
@@ -26,10 +26,10 @@ export async function fetchCurrencyRates(fromCurrency: CurrencySupportValues) {
 		return {};
 	}
 
-	const matchCurrencies: Partial<Record<CurrencySupportValues, number>> = {};
+	const matchCurrencies: Partial<Record<CurrencySupportCodes, number>> = {};
 	if (result?.usd) {
 		const resultFrom: Record<string, number> = result.usd;
-		for (const wantCurrency of currencySupportValues) {
+		for (const wantCurrency of currencySupportCodes) {
 			if (Object.hasOwn(resultFrom, wantCurrency)) {
 				matchCurrencies[wantCurrency] = resultFrom[wantCurrency];
 			}

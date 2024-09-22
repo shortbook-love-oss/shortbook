@@ -31,18 +31,18 @@ export const currencySupports = [
 
 export const defaultCurrency = currencySupports[0];
 
-export const currencySupportValues = currencySupports.map((currency) => currency.value);
+export const currencySupportCodes = currencySupports.map((currency) => currency.value);
 
-export type CurrencySupportValues = (typeof currencySupports)[number]['value'];
+export type CurrencySupportCodes = (typeof currencySupports)[number]['value'];
 
-export const currencySelect: SelectItem<CurrencySupportValues>[] = currencySupports.map(
+export const currencySelect: SelectItem<CurrencySupportCodes>[] = currencySupports.map(
 	(currency) => ({
 		value: currency.value,
 		label: currency.label
 	})
 );
 
-export const currencyAndNoSelect: SelectItem<CurrencySupportValues | ''>[] = [
+export const currencyAndNoSelect: SelectItem<CurrencySupportCodes | ''>[] = [
 	{ value: '', label: 'Select at each payment' },
 	...currencySelect
 ];
@@ -57,7 +57,7 @@ export function getCurrencyData(key: string) {
 }
 
 export function guessCurrencyByLang(langTag: AvailableLanguageTags) {
-	let suggestCurrency: CurrencySupportValues = defaultCurrency.value;
+	let suggestCurrency: CurrencySupportCodes = defaultCurrency.value;
 	switch (langTag) {
 		case 'en':
 			suggestCurrency = 'usd';
@@ -108,7 +108,7 @@ export function getLocalizedPrice(originPrice: number, isAllowDecimal: boolean) 
 // 20.25 → €20.25
 export function formatPrice(
 	amount: number,
-	currency: CurrencySupportValues,
+	currency: CurrencySupportCodes,
 	requestLang: AvailableLanguageTags
 ) {
 	return new Intl.NumberFormat(requestLang, {

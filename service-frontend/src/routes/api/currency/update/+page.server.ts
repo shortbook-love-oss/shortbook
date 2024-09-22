@@ -5,9 +5,9 @@ import {
 } from '$lib-backend/model/currency/upsert';
 import { fetchCurrencyRates } from '$lib-backend/utilities/currency';
 import {
-	currencySupportValues,
+	currencySupportCodes,
 	defaultCurrency,
-	type CurrencySupportValues
+	type CurrencySupportCodes
 } from '$lib/utilities/currency';
 
 export const load = async () => {
@@ -15,8 +15,8 @@ export const load = async () => {
 	const currencyRates = await fetchCurrencyRates(defaultCurrency.value);
 	const rates: DbCurrencyRateUpsertRequest['rates'] = [];
 	for (const currency in currencyRates) {
-		const cur = currency as CurrencySupportValues;
-		if (!currencySupportValues.includes(cur)) {
+		const cur = currency as CurrencySupportCodes;
+		if (!currencySupportCodes.includes(cur)) {
 			continue;
 		}
 		if (currencyRates[cur]) {
