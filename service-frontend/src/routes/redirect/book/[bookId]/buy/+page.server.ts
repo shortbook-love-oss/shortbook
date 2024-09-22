@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
+import { getCurrencyData, type CurrencySupportValues } from '$lib/utilities/currency';
 import { chargeFee } from '$lib/utilities/payment';
 import {
 	getLanguageTagFromUrl,
@@ -80,7 +80,9 @@ export const load = async ({ url, params, locals }) => {
 	}
 
 	// Currency specification is required for payment process
-	const requestCurrency = url.searchParams.get(paymentCurrencyParam) as CurrencySupportKeys | null;
+	const requestCurrency = url.searchParams.get(
+		paymentCurrencyParam
+	) as CurrencySupportValues | null;
 	if (!requestCurrency || !getCurrencyData(requestCurrency)) {
 		return error(400, { message: 'Currency must be specified.' });
 	}
@@ -127,7 +129,7 @@ export const load = async ({ url, params, locals }) => {
 		'ShortBook point charge',
 		`Charge ${dbBookBuyCreateReq.beforePointChargeAmount} points for ShortBook`,
 		'txcd_10103000', // SaaS for personnel (If business, use txcd_10103001)
-		requestCurrency as CurrencySupportKeys,
+		requestCurrency as CurrencySupportValues,
 		paymentAmount,
 		paymentCustomerId,
 		userEmail,

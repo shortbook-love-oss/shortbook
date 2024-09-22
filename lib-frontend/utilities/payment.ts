@@ -3,7 +3,7 @@ import {
 	formatPrice,
 	getCurrencyData,
 	getLocalizedPrice,
-	type CurrencySupportKeys
+	type CurrencySupportValues
 } from '$lib/utilities/currency';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SelectItem } from '$lib/utilities/select';
@@ -28,10 +28,10 @@ export function getPaymentProvider(key: string) {
 //   ...
 // ]
 export function calcPriceByPoint(
-	currencyConverted: Partial<Record<CurrencySupportKeys, number>>,
+	currencyConverted: Partial<Record<CurrencySupportValues, number>>,
 	requestLang: AvailableLanguageTags
 ) {
-	const currencyPreviews: SelectItem<CurrencySupportKeys>[] = [];
+	const currencyPreviews: SelectItem<CurrencySupportValues>[] = [];
 	for (const currencyData of currencySupports) {
 		const convertedPrice = currencyConverted[currencyData.value];
 		if (convertedPrice) {
@@ -49,7 +49,7 @@ export function calcPriceByPoint(
 	return currencyPreviews;
 }
 
-export function toPaymentAmountOfStripe(currency: CurrencySupportKeys, originAmount: number) {
+export function toPaymentAmountOfStripe(currency: CurrencySupportValues, originAmount: number) {
 	const currencyData = getCurrencyData(currency);
 	if (!currencyData) {
 		return null;
@@ -75,7 +75,7 @@ export function toPaymentAmountOfStripe(currency: CurrencySupportKeys, originAmo
 }
 
 // Stripe's return amount value to actually amount
-export function reversePaymentAmountOfStripe(currency: CurrencySupportKeys, savedAmount: number) {
+export function reversePaymentAmountOfStripe(currency: CurrencySupportValues, savedAmount: number) {
 	const currencyData = getCurrencyData(currency);
 	if (!currencyData || Number.isNaN(Number(savedAmount))) {
 		return undefined;

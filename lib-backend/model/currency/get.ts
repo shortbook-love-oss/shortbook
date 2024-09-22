@@ -1,5 +1,5 @@
 import prisma from '$lib-backend/database/connect';
-import { currencySupportKeys, type CurrencySupportKeys } from '$lib/utilities/currency';
+import { currencySupportValues, type CurrencySupportValues } from '$lib/utilities/currency';
 
 export interface DbCurrencyRateGetRequest {
 	amount: number;
@@ -13,11 +13,11 @@ export async function dbCurrencyRateGet(req: DbCurrencyRateGetRequest) {
 		return undefined;
 	});
 
-	const currencyRateIndex: Partial<Record<CurrencySupportKeys, number>> = {};
+	const currencyRateIndex: Partial<Record<CurrencySupportValues, number>> = {};
 	if (currencyRates) {
 		for (const currency of currencyRates) {
-			const currencyKey = currency.currency as CurrencySupportKeys;
-			if (currencySupportKeys.includes(currencyKey)) {
+			const currencyKey = currency.currency as CurrencySupportValues;
+			if (currencySupportValues.includes(currencyKey)) {
 				currencyRateIndex[currencyKey] = req.amount * currency.rate.toNumber();
 			}
 		}

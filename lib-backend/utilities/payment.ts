@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
-import type { CurrencySupportKeys } from '$lib/utilities/currency';
+import type { CurrencySupportValues } from '$lib/utilities/currency';
 import { reversePaymentAmountOfStripe, toPaymentAmountOfStripe } from '$lib/utilities/payment';
 import { paymentSessionIdParam } from '$lib/utilities/url';
 
@@ -17,7 +17,7 @@ export async function createPaymentSession(
 	paymentName: string,
 	paymentDescription: string,
 	paymentTaxCode: string,
-	currency: CurrencySupportKeys,
+	currency: CurrencySupportValues,
 	paymentAmount: number,
 	customerId: string,
 	customerEmail: string,
@@ -83,7 +83,7 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 	if (checkoutSession.currency) {
 		actuallyAmount =
 			reversePaymentAmountOfStripe(
-				checkoutSession.currency as CurrencySupportKeys,
+				checkoutSession.currency as CurrencySupportValues,
 				checkoutSession.amount_total ?? 0
 			) ?? actuallyAmount;
 	}
@@ -103,7 +103,7 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 	// The payment funds are not yet available in your account.
 	return {
 		paymentSessionId: checkoutSession.id,
-		currency: (checkoutSession.currency ?? '') as CurrencySupportKeys | '',
+		currency: (checkoutSession.currency ?? '') as CurrencySupportValues | '',
 		amount: actuallyAmount,
 		customerId,
 		isCreateCustomer: checkoutSession.customer_creation != null,

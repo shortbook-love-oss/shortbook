@@ -6,7 +6,7 @@
 	import { schema } from '$lib/validation/schema/user/currency-update';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
-	import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
+	import { getCurrencyData, type CurrencySupportValues } from '$lib/utilities/currency';
 
 	let { data } = $props();
 
@@ -27,7 +27,7 @@
 	onMount(() => (isEnableJS = true));
 
 	const currencyData = getCurrencyData(data.suggestCurrency);
-	function setCurrency(currencyKey: CurrencySupportKeys) {
+	function setCurrency(currencyKey: CurrencySupportValues) {
 		$form.currencyKey = currencyKey;
 	}
 </script>
@@ -60,7 +60,7 @@
 			<button
 				type="button"
 				class="rounded border border-primary-700 bg-primary-100 px-3 py-1.5 text-lg hover:bg-primary-200 focus:bg-primary-200"
-				onclick={() => setCurrency(currencyData.key)}
+				onclick={() => setCurrency(currencyData.value)}
 			>
 				Set to {currencyData.label}
 			</button>

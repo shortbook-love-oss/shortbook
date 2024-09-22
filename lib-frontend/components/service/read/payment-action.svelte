@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { CurrencySupportKeys } from '$lib/utilities/currency';
+	import type { CurrencySupportValues } from '$lib/utilities/currency';
 	import type { SelectItem } from '$lib/utilities/select';
 	import { paymentCurrencyParam } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 
 	type Props = {
 		bookId: string;
-		currencyList: SelectItem<CurrencySupportKeys>[];
-		primaryCurrency: CurrencySupportKeys;
+		currencyList: SelectItem<CurrencySupportValues>[];
+		primaryCurrency: CurrencySupportValues;
 	};
 	let { bookId, currencyList, primaryCurrency }: Props = $props();
 

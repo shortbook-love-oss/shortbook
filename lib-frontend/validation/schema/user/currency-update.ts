@@ -7,7 +7,7 @@ export const schema = z.object({
 			if (value === '') {
 				return true;
 			}
-			return currencySupports.find((c) => c.key === value);
+			return currencySupports.find((c) => c.value === value);
 		},
 		{
 			message: 'Please select one of supported currency'
