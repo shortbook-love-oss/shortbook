@@ -10,12 +10,12 @@ export interface BookCover {
 	baseColorEnd: string;
 	baseColorDirection: number;
 	titleFontSize: number;
-	titleAlign: number;
+	titleAlign: string;
 	titleColor: string;
 	subtitleFontSize: number;
-	subtitleAlign: number;
+	subtitleAlign: string;
 	subtitleColor: string;
-	writerAlign: number;
+	writerAlign: string;
 	writerColor: string;
 }
 
@@ -43,11 +43,13 @@ export interface BookDetail extends BookItem {
 }
 
 // text-align: ***;
-export const bookTextAlignSelect: SelectItem[] = [
-	{ value: 0, label: 'Left', text: 'start' },
-	{ value: 1, label: 'Center', text: 'center' },
-	{ value: 2, label: 'Right', text: 'end' }
-];
+export const bookTextAlignSelect = [
+	{ value: 'start', label: 'Left' },
+	{ value: 'center', label: 'Center' },
+	{ value: 'end', label: 'Right' }
+] as const satisfies SelectItem<string>[];
+
+export type BookTextAlignSelectValues = (typeof bookTextAlignSelect)[number]['value'];
 
 export const bookPointSelect: SelectItem[] = [
 	{ value: 200, label: '200' },
@@ -65,12 +67,12 @@ export function getBookCover(editCover: Partial<BookCover>): BookCover {
 		baseColorEnd: '#c7706e',
 		baseColorDirection: 135,
 		titleFontSize: 96,
-		titleAlign: 0,
+		titleAlign: bookTextAlignSelect[0].value,
 		titleColor: '#ffffff',
 		subtitleFontSize: 64,
-		subtitleAlign: 0,
+		subtitleAlign: bookTextAlignSelect[0].value,
 		subtitleColor: '#ffffff',
-		writerAlign: 0,
+		writerAlign: bookTextAlignSelect[0].value,
 		writerColor: '#ffffff'
 	};
 	return { ...defaultCover, ...editCover };

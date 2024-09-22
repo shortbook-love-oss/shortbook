@@ -237,12 +237,12 @@ model book_covers {
   base_color_end          String              @db.VarChar(15)
   base_color_direction    Int                 @db.SmallInt // 0: bottom→top 90: left→right
   title_font_size         Int                 @db.SmallInt // Font size unit is "px"
-  title_align             Int                 @db.SmallInt // 0: left 1: center 2:right
+  title_align             String              @db.VarChar(7)
   title_color             String              @db.VarChar(15)
   subtitle_font_size      Int                 @db.SmallInt
-  subtitle_align          Int                 @db.SmallInt
+  subtitle_align          String              @db.VarChar(7)
   subtitle_color          String              @db.VarChar(15)
-  writer_align            Int                 @db.SmallInt
+  writer_align            String              @db.VarChar(7)
   writer_color            String              @db.VarChar(15)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt

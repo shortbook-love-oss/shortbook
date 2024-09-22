@@ -36,11 +36,11 @@ export const schema = z.object({
 	baseColorEnd: z.string().max(15),
 	baseColorDirection: z.number().min(0).max(360),
 	titleFontSize: z.number().min(10).max(256),
-	titleAlign: z.number().min(0).max(2),
+	titleAlign: z.string().min(1).max(7),
 	titleColor: z.string().max(15),
 	subtitleFontSize: z.number().min(10).max(128),
-	subtitleAlign: z.number().min(0).max(2),
+	subtitleAlign: z.string().min(1).max(7),
 	subtitleColor: z.string().max(15),
-	writerAlign: z.number().min(0).max(2),
+	writerAlign: z.string().min(1).max(7),
 	writerColor: z.string().max(15)
 });

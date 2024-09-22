@@ -5,6 +5,13 @@ import type { SelectItem } from '$lib/utilities/select';
 // In those cases, the specification is not to multiply by 100
 // https://docs.stripe.com/currencies#zero-decimal
 // Note rule00: see https://docs.stripe.com/currencies#special-cases
+interface CurrencySupportItem extends SelectItem<string> {
+	value: string;
+	label: string;
+	allowDecimal: boolean;
+	rule00: boolean;
+}
+
 export const currencySupports = [
 	{ value: 'usd', label: 'USD', allowDecimal: true, rule00: false },
 	{ value: 'eur', label: 'EUR', allowDecimal: true, rule00: false },
@@ -20,7 +27,7 @@ export const currencySupports = [
 	{ value: 'isk', label: 'ISK', allowDecimal: true, rule00: true },
 	{ value: 'huf', label: 'HUF', allowDecimal: true, rule00: false },
 	{ value: 'ugx', label: 'UGX', allowDecimal: false, rule00: true }
-] as const;
+] as const satisfies CurrencySupportItem[];
 
 export const defaultCurrency = currencySupports[0];
 

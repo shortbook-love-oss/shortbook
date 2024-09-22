@@ -15,12 +15,12 @@ export interface DbBookCreateRequest {
 	baseColorEnd: string;
 	baseColorDirection: number;
 	titleFontSize: number;
-	titleAlign: number;
+	titleAlign: string;
 	titleColor: string;
 	subtitleFontSize: number;
-	subtitleAlign: number;
+	subtitleAlign: string;
 	subtitleColor: string;
-	writerAlign: number;
+	writerAlign: string;
 	writerColor: string;
 }
 
