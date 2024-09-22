@@ -47,18 +47,22 @@
 	name="album-image-edit-{imageData.id}"
 	title="Edit image data"
 	openerClass="rounded-md"
-	openerCoverClass="rounded-md hover:bg-stone-500/30 focus:bg-stone-500/30"
 	dialogSizeClass="max-w-3xl"
 >
 	{#snippet opener()}
-		<img
-			src="{imageData.filePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
-			alt={imageData.alt}
-			width="144"
-			height="144"
-			decoding="async"
-			class="rounded-md bg-white"
-		/>
+		<div class="relative">
+			<img
+				src="{imageData.filePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
+				alt={imageData.alt}
+				width="144"
+				height="144"
+				decoding="async"
+				class="rounded-md bg-white"
+			/>
+			<div
+				class="absolute start-0 top-0 h-full w-full cursor-pointer rounded-md hover:bg-stone-500/30"
+			></div>
+		</div>
 	{/snippet}
 	<div class="flex flex-col items-start gap-x-8 gap-y-4 sm:flex-row">
 		<div
@@ -68,7 +72,7 @@
 				href="{imageData.filePath}?ext={imageData.toExtension}&q=100"
 				target="_blank"
 				aria-label="Show image by original size"
-				class="inline-block"
+				class="relative inline-block"
 			>
 				<img
 					src="{imageData.filePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
@@ -77,6 +81,9 @@
 					height="144"
 					class="h-28 w-28 rounded-md bg-white xs:h-36 xs:w-36"
 				/>
+				<div
+					class="absolute start-0 top-0 h-full w-full cursor-pointer rounded-md hover:bg-stone-500/30"
+				></div>
 			</a>
 			<dl class="-mt-1 leading-tight xs:text-[1.125rem]">
 				<dt>File size</dt>
