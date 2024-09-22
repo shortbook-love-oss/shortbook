@@ -1,5 +1,6 @@
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
+import type { SelectItem } from '$lib/utilities/select';
 
 export interface AlbumImageItem {
 	editForm: SuperValidated<Record<string, unknown>>;
@@ -14,12 +15,7 @@ export interface AlbumImageItem {
 	toExtension: string;
 }
 
-interface Select {
-	value: number;
-	label: string;
-}
-
-export const albumImageSensitiveSelect: Select[] = [
+export const albumImageSensitiveSelect: SelectItem[] = [
 	{ value: 0, label: 'No — Content for all' },
 	{ value: 1, label: 'Yes — Erotica as art' },
 	{ value: 2, label: 'Yes — Medical operation, Vivisection' },
@@ -31,7 +27,7 @@ export const albumImageSensitiveSelect: Select[] = [
 	{ value: 8, label: 'Yes — Other sensitive (R18+)' }
 ];
 
-export const albumImageAiSelect: Select[] = [
+export const albumImageAiSelect: SelectItem[] = [
 	{ value: 0, label: 'No' },
 	{ value: 1, label: 'Yes — Use AI for correction / super scale / object remove / etc.' },
 	{ value: 2, label: 'Yes — Use generative AI' }

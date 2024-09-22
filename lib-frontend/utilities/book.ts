@@ -1,6 +1,6 @@
 import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
-import type { SelectItem } from './select';
+import type { SelectItem } from '$lib/utilities/select';
 
 export interface BookCover {
 	title: string;
@@ -44,9 +44,9 @@ export interface BookDetail extends BookItem {
 
 // text-align: ***;
 export const bookTextAlignSelect: SelectItem[] = [
-	{ value: 0, text: 'start', label: 'Left' },
-	{ value: 1, text: 'center', label: 'Center' },
-	{ value: 2, text: 'end', label: 'Right' }
+	{ value: 0, label: 'Left', text: 'start' },
+	{ value: 1, label: 'Center', text: 'center' },
+	{ value: 2, label: 'Right', text: 'end' }
 ];
 
 export const bookPointSelect: SelectItem[] = [

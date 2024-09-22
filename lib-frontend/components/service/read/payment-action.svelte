@@ -30,7 +30,7 @@
 		name="lang_select"
 		title="Buy in your currency"
 		openerColorClass=""
-		dialogSizeClass="max-w-3xl"
+		dialogSizeClass="max-w-xl"
 	>
 		{#snippet opener()}
 			<p class="inline-block text-lg underline">Use other currency</p>

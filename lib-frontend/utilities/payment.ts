@@ -33,15 +33,15 @@ export function calcPriceByPoint(
 ) {
 	const currencyPreviews: SelectItem<CurrencySupportKeys>[] = [];
 	for (const currencyData of currencySupports) {
-		const convertedPrice = currencyConverted[currencyData.key];
+		const convertedPrice = currencyConverted[currencyData.value];
 		if (convertedPrice) {
 			const priceWithFee = getLocalizedPrice(
 				convertedPrice * (100 / (100 - chargeFee)),
 				currencyData.allowDecimal && !currencyData.rule00
 			);
 			currencyPreviews.push({
-				value: currencyData.key,
-				label: formatPrice(priceWithFee, currencyData.key, requestLang)
+				value: currencyData.value,
+				label: formatPrice(priceWithFee, currencyData.value, requestLang)
 			});
 		}
 	}
