@@ -5,6 +5,7 @@ export interface DbUserCreateRequest {
 	penName: string;
 	emailEncrypt: string;
 	emailHash: string;
+	nativeLanguage: string;
 	imageSrc: string;
 }
 
@@ -18,7 +19,7 @@ export async function dbUserCreate(req: DbUserCreateRequest) {
 				pen_name: req.penName,
 				email: req.emailEncrypt,
 				email_hash: req.emailHash,
-				native_language: '',
+				native_language: req.nativeLanguage,
 				image_src: req.imageSrc,
 				languages: {
 					create: {

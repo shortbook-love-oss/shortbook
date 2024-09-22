@@ -8,7 +8,7 @@ import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token
 import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
 import { getRandom } from '$lib/utilities/crypto';
 import { setSessionToken } from '$lib/utilities/cookie';
-import { signConfirmTokenParam } from '$lib/utilities/url';
+import { getLanguageTagFromUrl, signConfirmTokenParam } from '$lib/utilities/url';
 import { dbUserRestore } from '$lib-backend/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
 import { decryptFromFlat, encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
@@ -70,15 +70,16 @@ export async function finalizeSign(
 			penName: `User ${getRandom(6).toUpperCase()}`,
 			emailEncrypt: encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT),
 			emailHash: toHashUserEmail(userEmail),
+			nativeLanguage: getLanguageTagFromUrl(requestUrl),
 			imageSrc: ''
 		});
 		if (!user || dbUserGetError) {
 			return { error: new Error(dbUserGetError?.message ?? '') };
 		}
 		userId = user.id;
+		const profileImagePath = `${userId}/shortbook-profile`;
 
 		// Copy profile image to user's directory
-		const profileImagePath = `${userId}/shortbook-profile`;
 		const { error: copyFileError } = await copyFile(
 			env.AWS_DEFAULT_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,
@@ -88,6 +89,7 @@ export async function finalizeSign(
 		if (copyFileError) {
 			return { error: new Error(copyFileError.message) };
 		}
+
 		const { dbError: dbImageUpdateError } = await dbUserProfileImageUpdate({
 			userId,
 			imageSrc: `/profile/${profileImagePath}`
