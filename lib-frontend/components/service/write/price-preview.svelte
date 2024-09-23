@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import {
+		currencyDisallowDecimalList,
 		currencySelect,
 		formatPrice,
 		getCurrencyData,
@@ -70,7 +71,8 @@
 		if (!currencyData || price == undefined) {
 			return undefined;
 		}
-		const l10nPrice = getLocalizedPrice(price * quantity, currencyData.allowDecimal);
+		const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(currencyData.value);
+		const l10nPrice = getLocalizedPrice(price * quantity, isAllowDecimal);
 
 		return formatPrice(l10nPrice, currencyData.value, requestLang);
 	}

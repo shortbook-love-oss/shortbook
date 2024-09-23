@@ -1,4 +1,6 @@
 import {
+	currencyDisallowDecimalList,
+	currencyMultiple100List,
 	currencySupports,
 	formatPrice,
 	getCurrencyData,
@@ -35,9 +37,13 @@ export function calcPriceByPoint(
 	for (const currencyData of currencySupports) {
 		const convertedPrice = currencyConverted[currencyData.value];
 		if (convertedPrice) {
+			const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(
+				currencyData.value
+			);
+			const isMultiple100 = (currencyMultiple100List as string[]).includes(currencyData.value);
 			const priceWithFee = getLocalizedPrice(
 				convertedPrice * (100 / (100 - chargeFee)),
-				currencyData.allowDecimal && !currencyData.rule00
+				isAllowDecimal && !isMultiple100
 			);
 			currencyPreviews.push({
 				value: currencyData.value,
@@ -54,8 +60,10 @@ export function toPaymentAmountOfStripe(currency: CurrencySupportCodes, originAm
 	if (!currencyData) {
 		return null;
 	}
-	if (currencyData.rule00) {
-		if (currencyData.allowDecimal) {
+	const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(currencyData.value);
+	const isMultiple100 = (currencyMultiple100List as string[]).includes(currencyData.value);
+	if (isMultiple100) {
+		if (isAllowDecimal) {
 			// "45600" Only used by ISK (Island)
 			return String(Math.floor(originAmount) * 100);
 		} else {
@@ -64,7 +72,7 @@ export function toPaymentAmountOfStripe(currency: CurrencySupportCodes, originAm
 			return String(Math.floor(originAmount) * 100);
 		}
 	} else {
-		if (currencyData.allowDecimal) {
+		if (isAllowDecimal) {
 			// "45678"
 			return String(Math.floor(originAmount * 100));
 		} else {
@@ -80,14 +88,16 @@ export function reversePaymentAmountOfStripe(currency: CurrencySupportCodes, sav
 	if (!currencyData || Number.isNaN(Number(savedAmount))) {
 		return undefined;
 	}
-	if (currencyData.rule00) {
-		if (currencyData.allowDecimal) {
+	const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(currencyData.value);
+	const isMultiple100 = (currencyMultiple100List as string[]).includes(currencyData.value);
+	if (isMultiple100) {
+		if (isAllowDecimal) {
 			return savedAmount / 100;
 		} else {
 			return savedAmount / 100;
 		}
 	} else {
-		if (currencyData.allowDecimal) {
+		if (isAllowDecimal) {
 			return savedAmount / 100;
 		} else {
 			return savedAmount;

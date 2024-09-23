@@ -1,19 +1,19 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbBookGet } from '$lib-backend/model/book/get';
-import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
-import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
-import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
-import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import {
-	defaultCurrency,
+	defaultCurrencyCode,
 	guessCurrencyByLang,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
 import { calcPriceByPoint } from '$lib/utilities/payment';
 import type { SelectItem } from '$lib/utilities/select';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
+import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
+import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
+import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
+import { dbUserPointList } from '$lib-backend/model/user/point/list';
 
 export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
@@ -45,7 +45,7 @@ export const load = async ({ url, locals, params }) => {
 		});
 	}
 
-	let primaryCurrency: CurrencySupportCodes = defaultCurrency.value;
+	let primaryCurrency: CurrencySupportCodes = defaultCurrencyCode;
 	if (signInUser) {
 		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
 			userId: signInUser.id

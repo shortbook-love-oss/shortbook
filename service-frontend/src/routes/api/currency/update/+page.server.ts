@@ -1,18 +1,18 @@
 import { error, redirect } from '@sveltejs/kit';
 import {
+	currencySupportCodes,
+	defaultCurrencyCode,
+	type CurrencySupportCodes
+} from '$lib/utilities/currency';
+import {
 	dbCurrencyRateUpsert,
 	type DbCurrencyRateUpsertRequest
 } from '$lib-backend/model/currency/upsert';
 import { fetchCurrencyRates } from '$lib-backend/utilities/currency';
-import {
-	currencySupportCodes,
-	defaultCurrency,
-	type CurrencySupportCodes
-} from '$lib/utilities/currency';
 
 export const load = async () => {
 	// Show book price by all supported currencies
-	const currencyRates = await fetchCurrencyRates(defaultCurrency.value);
+	const currencyRates = await fetchCurrencyRates(defaultCurrencyCode);
 	const rates: DbCurrencyRateUpsertRequest['rates'] = [];
 	for (const currency in currencyRates) {
 		const cur = currency as CurrencySupportCodes;
