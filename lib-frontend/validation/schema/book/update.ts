@@ -31,7 +31,7 @@ export const schema = z.object({
 		.regex(/^[\w-.]*$/, {
 			message: 'Use only alphanumeric, hyphens, underscore, and periods'
 		}),
-	buyPoint: z.coerce.number().min(70).max(1_000_000),
+	buyPoint: z.number().min(70).max(1_000_000),
 	// For book cover design
 	baseColorStart: z.string().max(15).refine(validateColor, {
 		message: 'Please specify valid color (e.g. #01FC78)'
