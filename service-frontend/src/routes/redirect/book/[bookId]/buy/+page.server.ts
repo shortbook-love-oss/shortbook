@@ -80,9 +80,7 @@ export const load = async ({ url, params, locals }) => {
 	}
 
 	// Currency specification is required for payment process
-	const requestCurrency = url.searchParams.get(
-		paymentCurrencyParam
-	) as CurrencySupportCodes | null;
+	const requestCurrency = url.searchParams.get(paymentCurrencyParam) as CurrencySupportCodes | null;
 	if (!requestCurrency || !getCurrencyData(requestCurrency)) {
 		return error(400, { message: 'Currency must be specified.' });
 	}

@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { validateOptionalCurrencyCode } from '$lib/validation/rules/currency';
+import { validateCurrencyCode } from '$lib/validation/rules/currency';
 
 export const schema = z.object({
-	currencyCode: z.string().refine(validateOptionalCurrencyCode, {
+	currencyCode: z.string().refine(validateCurrencyCode, {
 		message: 'Please select one of supported currency'
 	})
 });

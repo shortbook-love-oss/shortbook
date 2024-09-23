@@ -50,14 +50,10 @@ export const load = async ({ url, locals, params }) => {
 		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
 			userId: signInUser.id
 		});
-		if (dbPayGetError) {
-			return error(500, { message: dbPayGetError.message });
+		if (!paymentSetting || dbPayGetError) {
+			return error(500, { message: dbPayGetError?.message ?? '' });
 		}
-		if (paymentSetting?.currency) {
-			primaryCurrency = paymentSetting.currency as CurrencySupportCodes;
-		} else {
-			primaryCurrency = guessCurrencyByLang(requestLang);
-		}
+		primaryCurrency = paymentSetting.currency as CurrencySupportCodes;
 	} else {
 		primaryCurrency = guessCurrencyByLang(requestLang);
 	}

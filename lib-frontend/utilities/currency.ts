@@ -26,11 +26,6 @@ export const currencySelect: SelectItem<CurrencySupportCodes>[] = currencySuppor
 	})
 );
 
-export const currencyAndNoSelect: SelectItem<CurrencySupportCodes | ''>[] = [
-	{ value: '', label: 'Select at each payment' },
-	...currencySelect
-];
-
 export function getCurrencyData(key: string) {
 	for (const currency of currencySupports) {
 		if (currency.value === key) {
