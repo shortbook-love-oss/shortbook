@@ -2,8 +2,7 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { AvailableLanguageTag } from '$i18n/output/runtime';
-import { languageAndNotSelect } from '$lib/utilities/language';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
+import { languageSelect } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/user/profile/update';
 import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib-backend/model/user/profile/update';
@@ -15,7 +14,6 @@ export const load = async ({ url, locals }) => {
 		return error(401, { message: 'Unauthorized' });
 	}
 
-	const requestLang = getLanguageTagFromUrl(url);
 	const form = await superValidate(zod(schema));
 
 	const { user, dbError } = await dbUserProfileGet({ userId: signInUser.id });
@@ -24,16 +22,14 @@ export const load = async ({ url, locals }) => {
 	}
 	const userLangs = user.languages[0];
 
-	const langTags = languageAndNotSelect;
-
 	form.data.keyHandle = user.key_handle;
-	form.data.nativeLanguage = (user.native_language || requestLang) as AvailableLanguageTag;
+	form.data.nativeLanguage = user.native_language as AvailableLanguageTag;
 	form.data.penName = user.pen_name;
 	form.data.headline = userLangs?.headline ?? '';
 	form.data.selfIntroduction = userLangs?.self_introduction ?? '';
 	const initPenName = form.data.penName;
 
-	return { form, langTags, initPenName };
+	return { form, languageSelect, initPenName };
 };
 
 export const actions = {
