@@ -1,12 +1,11 @@
 import type { AvailableLanguageTags } from '$lib/utilities/language';
-import type { SelectItem } from '$lib/utilities/select';
 import { currencyListByGroup } from './currency-list';
 
 // All support currency code / name / payment rules
-export const currencySupportsByGroup = currencyListByGroup;
-export const currencySupports = currencySupportsByGroup.map((group) => group.currencies).flat();
+export const currencySupports = currencyListByGroup;
+export const currencySupportsFlat = currencySupports.map((group) => group.childs).flat();
 
-export const currencySupportCodes = currencySupports.map((currency) => currency.value);
+export const currencySupportCodes = currencySupportsFlat.map((currency) => currency.value);
 export type CurrencySupportCodes = (typeof currencySupportCodes)[number];
 
 // Some currencies do not support decimal points
@@ -19,15 +18,8 @@ export const currencyMultiple100List = ['isk', 'ugx'] as const satisfies Currenc
 
 export const defaultCurrencyCode = 'usd' as const satisfies CurrencySupportCodes;
 
-export const currencySelect: SelectItem<CurrencySupportCodes>[] = currencySupports.map(
-	(currency) => ({
-		value: currency.value,
-		label: currency.label
-	})
-);
-
 export function getCurrencyData(key: string) {
-	for (const currency of currencySupports) {
+	for (const currency of currencySupportsFlat) {
 		if (currency.value === key) {
 			return currency;
 		}

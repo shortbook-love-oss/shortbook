@@ -1,7 +1,7 @@
 import {
 	currencyDisallowDecimalList,
 	currencyMultiple100List,
-	currencySupports,
+	currencySupportsFlat,
 	formatPrice,
 	getCurrencyData,
 	getLocalizedPrice,
@@ -34,7 +34,7 @@ export function calcPriceByPoint(
 	requestLang: AvailableLanguageTags
 ) {
 	const currencyPreviews: SelectItem<CurrencySupportCodes>[] = [];
-	for (const currencyData of currencySupports) {
+	for (const currencyData of currencySupportsFlat) {
 		const convertedPrice = currencyConverted[currencyData.value];
 		if (convertedPrice) {
 			const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(

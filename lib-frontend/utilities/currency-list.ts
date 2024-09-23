@@ -1,14 +1,9 @@
-import type { SelectItem } from '$lib/utilities/select';
-
-interface CurrencyRegionGroup {
-	name: string;
-	currencies: SelectItem<string>[];
-}
+import type { SelectListGroup } from '$lib/utilities/select';
 
 export const currencyListByGroup = [
 	{
-		name: 'Western European and Others',
-		currencies: [
+		label: 'Western European and Others',
+		childs: [
 			{ value: 'ang', label: 'Netherlands Antillean Guilder' },
 			{ value: 'aud', label: 'Australian Dollar' },
 			{ value: 'awg', label: 'Aruban Florin' },
@@ -35,8 +30,8 @@ export const currencyListByGroup = [
 		]
 	},
 	{
-		name: 'Eastern European',
-		currencies: [
+		label: 'Eastern European',
+		childs: [
 			{ value: 'all', label: 'Albanian Lek' },
 			{ value: 'amd', label: 'Armenian Dram' },
 			{ value: 'azn', label: 'Azerbaijani Manat' },
@@ -56,8 +51,8 @@ export const currencyListByGroup = [
 		]
 	},
 	{
-		name: 'Asia and the Pacific Small Island',
-		currencies: [
+		label: 'Asia and the Pacific Small Island',
+		childs: [
 			{ value: 'aed', label: 'UAE Dirham' },
 			{ value: 'afn', label: 'Afghan Afghani' },
 			{ value: 'bdt', label: 'Bangladeshi Taka' },
@@ -100,8 +95,8 @@ export const currencyListByGroup = [
 		]
 	},
 	{
-		name: 'African',
-		currencies: [
+		label: 'African',
+		childs: [
 			{ value: 'aoa', label: 'Angolan Kwanza' },
 			{ value: 'bif', label: 'Burundian Franc' },
 			{ value: 'bwp', label: 'Botswana Pula' },
@@ -137,8 +132,8 @@ export const currencyListByGroup = [
 		]
 	},
 	{
-		name: 'Western European and Others',
-		currencies: [
+		label: 'Latin American and Caribbean',
+		childs: [
 			{ value: 'ars', label: 'Argentine Peso' },
 			{ value: 'bbd', label: 'Barbados Dollar' },
 			{ value: 'bob', label: 'Boliviano' },
@@ -165,4 +160,4 @@ export const currencyListByGroup = [
 			{ value: 'xcd', label: 'East Caribbean Dollar' }
 		]
 	}
-] as const satisfies CurrencyRegionGroup[];
+] as const satisfies SelectListGroup<string>[];
