@@ -17,7 +17,7 @@
 		<a
 			href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={primaryCurrency.value}"
 			class="block rounded-md bg-primary-700 px-4 py-3 text-3xl font-semibold text-white hover:bg-primary-500 focus:bg-primary-500"
-			data-sveltekit-reload>Buy for {primaryCurrency.text}</a
+			data-sveltekit-reload>Buy for <span translate="no">{primaryCurrency.text}</span></a
 		>
 	{/if}
 	<Dialog
@@ -37,10 +37,13 @@
 				<div class="mb-6 flex flex-col gap-x-4 gap-y-2 xs:flex-row xs:items-center">
 					<a
 						href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
+						translate="no"
 						data-sveltekit-reload
 						class="text-3xl font-semibold hover:underline">{currency.text}</a
 					>
-					<p class="text-lg">{currency.label} ({currency.value.toUpperCase()})</p>
+					<p class="text-lg">
+						{currency.label} <span translate="no">({currency.value.toUpperCase()})</span>
+					</p>
 				</div>
 			{/each}
 		{/each}
