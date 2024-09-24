@@ -29,17 +29,20 @@
 		{#snippet opener()}
 			<p class="inline-block text-lg underline">Use other currency</p>
 		{/snippet}
-		<div class="flex flex-wrap items-center gap-3">
-			{#each currencyList as group (group.label)}
-				<p class="mt-2 text-2xl">{group.label}</p>
-				{#each group.childs as currency (currency.value)}
+		{#each currencyList as group, i (group.label)}
+			<p class="mb-6 border-b-2 border-primary-700 py-1 text-2xl {i ? 'mt-12' : ''}">
+				{group.label}
+			</p>
+			{#each group.childs as currency (currency.value)}
+				<div class="mb-6 flex flex-col gap-x-4 gap-y-2 xs:flex-row xs:items-center">
 					<a
 						href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-						class="inline-block rounded bg-primary-200 px-3 py-2 text-lg hover:bg-primary-200 focus:bg-primary-200"
-						data-sveltekit-reload>{currency.text}</a
+						data-sveltekit-reload
+						class="text-3xl font-semibold hover:underline">{currency.text}</a
 					>
-				{/each}
+					<p class="text-lg">{currency.label} ({currency.value.toUpperCase()})</p>
+				</div>
 			{/each}
-		</div>
+		{/each}
 	</Dialog>
 </div>
