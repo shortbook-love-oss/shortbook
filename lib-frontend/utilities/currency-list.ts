@@ -123,7 +123,8 @@ export const currencyListByGroup = [
 			{ value: 'scr', label: 'Seychelles Rupee' },
 			{ value: 'sle', label: 'Sierra Leonean Leone' },
 			{ value: 'sos', label: 'Somali Shilling' },
-			{ value: 'std', label: 'Sao Tome and Principe Dobras' },
+			// Redenomination STD to STN, but not supported yet
+			// { value: 'std', label: 'Sao Tome and Principe Dobras' },
 			{ value: 'szl', label: 'Swazi Lilangeni' },
 			{ value: 'tzs', label: 'Tanzanian Shilling' },
 			{ value: 'ugx', label: 'Ugandan Shilling' },
