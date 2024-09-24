@@ -4,6 +4,8 @@ export const currencyListByGroup = [
 	{
 		label: 'Western European and Others',
 		childs: [
+			{ value: 'usd', label: 'US Dollar' },
+			{ value: 'eur', label: 'Euro' },
 			{ value: 'ang', label: 'Netherlands Antillean Guilder' },
 			{ value: 'aud', label: 'Australian Dollar' },
 			{ value: 'awg', label: 'Aruban Florin' },
@@ -11,7 +13,6 @@ export const currencyListByGroup = [
 			{ value: 'cad', label: 'Canadian Dollar' },
 			{ value: 'chf', label: 'Swiss Franc' },
 			{ value: 'dkk', label: 'Danish Krone' },
-			{ value: 'eur', label: 'Euro' },
 			{ value: 'fkp', label: 'Falkland Islands Pound' },
 			{ value: 'gbp', label: 'Pound Sterling' },
 			{ value: 'gip', label: 'Gibraltar Pound' },
@@ -23,7 +24,6 @@ export const currencyListByGroup = [
 			{ value: 'sek', label: 'Swedish Krona' },
 			{ value: 'shp', label: 'Saint Helena Pound' },
 			{ value: 'try', label: 'Turkish Lira' },
-			{ value: 'usd', label: 'US Dollar' },
 			{ value: 'xaf', label: 'CFA Franc BEAC' },
 			{ value: 'xof', label: 'CFA Franc BCEAO' },
 			{ value: 'xpf', label: 'CFP Franc' }
@@ -53,6 +53,9 @@ export const currencyListByGroup = [
 	{
 		label: 'Asia and the Pacific Small Island',
 		childs: [
+			{ value: 'inr', label: 'Indian Rupee' },
+			{ value: 'jpy', label: 'Japanese Yen' },
+			{ value: 'pkr', label: 'Pakistani Rupee' },
 			{ value: 'aed', label: 'UAE Dirham' },
 			{ value: 'afn', label: 'Afghan Afghani' },
 			{ value: 'bdt', label: 'Bangladeshi Taka' },
@@ -61,8 +64,6 @@ export const currencyListByGroup = [
 			{ value: 'fjd', label: 'Fiji Dollar' },
 			{ value: 'hkd', label: 'Hong Kong Dollar' },
 			{ value: 'idr', label: 'Indonesian Rupiah' },
-			{ value: 'inr', label: 'Indian Rupee' },
-			{ value: 'jpy', label: 'Japanese Yen' },
 			{ value: 'kgs', label: 'Kyrgyzstani Som' },
 			{ value: 'khr', label: 'Cambodian Riel' },
 			{ value: 'krw', label: 'South Korean Won' },
@@ -78,7 +79,6 @@ export const currencyListByGroup = [
 			{ value: 'npr', label: 'Nepalese Rupee' },
 			{ value: 'pgk', label: 'Papua New Guinean Kina' },
 			{ value: 'php', label: 'Philippine Peso' },
-			{ value: 'pkr', label: 'Pakistani Rupee' },
 			{ value: 'qar', label: 'Qatari Rial' },
 			{ value: 'sar', label: 'Saudi Riyal' },
 			{ value: 'sbd', label: 'Solomon Islands Dollar' },
