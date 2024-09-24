@@ -136,7 +136,7 @@
 					{:else}
 						<PaymentAction
 							bookId={data.bookDetail.id}
-							currencyList={data.currencyPreviews}
+							currencyList={data.currencyList}
 							primaryCurrency={data.primaryCurrency}
 						/>
 					{/if}

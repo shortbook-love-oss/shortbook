@@ -1,14 +1,12 @@
 import {
 	currencyDisallowDecimalList,
 	currencyMultiple100List,
-	currencySupportsFlat,
 	formatPrice,
 	getCurrencyData,
 	getLocalizedPrice,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
-import type { SelectItem } from '$lib/utilities/select';
 
 // Service fee is 8%
 export const chargeFee = 8;
@@ -24,35 +22,27 @@ export function getPaymentProvider(key: string) {
 	return null;
 }
 
-// return [
-// 	 { value: 'usd', label: '$1.09' },
-// 	 { value: 'eur', label: '€1.00' },
-//   ...
-// ]
-export function calcPriceByPoint(
-	currencyConverted: Partial<Record<CurrencySupportCodes, number>>,
-	requestLang: AvailableLanguageTags
+export function getAccuratePaymentPrice(
+	basePrice: number | undefined,
+	currencyCode: CurrencySupportCodes,
+	formatLang: AvailableLanguageTags
 ) {
-	const currencyPreviews: SelectItem<CurrencySupportCodes>[] = [];
-	for (const currencyData of currencySupportsFlat) {
-		const convertedPrice = currencyConverted[currencyData.value];
-		if (convertedPrice) {
-			const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(
-				currencyData.value
-			);
-			const isMultiple100 = (currencyMultiple100List as string[]).includes(currencyData.value);
-			const priceWithFee = getLocalizedPrice(
-				convertedPrice * (100 / (100 - chargeFee)),
-				isAllowDecimal && !isMultiple100
-			);
-			currencyPreviews.push({
-				value: currencyData.value,
-				label: formatPrice(priceWithFee, currencyData.value, requestLang)
-			});
-		}
+	const currencyData = getCurrencyData(currencyCode);
+	if (!basePrice || !currencyData) {
+		return null;
 	}
 
-	return currencyPreviews;
+	const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(currencyCode);
+	const isMultiple100 = (currencyMultiple100List as string[]).includes(currencyCode);
+	const priceWithFee = getLocalizedPrice(basePrice, isAllowDecimal && !isMultiple100);
+	// e.g. $3.26 , €2.91 , KES 419.45
+	const formattedPrice = formatPrice(priceWithFee, currencyData.value, formatLang);
+
+	return {
+		value: currencyData.value,
+		label: currencyData.label,
+		text: formattedPrice
+	};
 }
 
 export function toPaymentAmountOfStripe(currency: CurrencySupportCodes, originAmount: number) {

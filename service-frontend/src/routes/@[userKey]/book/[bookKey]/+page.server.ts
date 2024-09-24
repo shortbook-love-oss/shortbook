@@ -2,12 +2,12 @@ import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import {
-	defaultCurrencyCode,
+	currencySupports,
 	guessCurrencyByLang,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
-import { calcPriceByPoint } from '$lib/utilities/payment';
-import type { SelectItem } from '$lib/utilities/select';
+import { chargeFee, getAccuratePaymentPrice } from '$lib/utilities/payment';
+import type { SelectItem, SelectListGroup } from '$lib/utilities/select';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
@@ -45,19 +45,6 @@ export const load = async ({ url, locals, params }) => {
 		});
 	}
 
-	let primaryCurrency: CurrencySupportCodes = defaultCurrencyCode;
-	if (signInUser) {
-		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
-			userId: signInUser.id
-		});
-		if (!paymentSetting || dbPayGetError) {
-			return error(500, { message: dbPayGetError?.message ?? '' });
-		}
-		primaryCurrency = paymentSetting.currency as CurrencySupportCodes;
-	} else {
-		primaryCurrency = guessCurrencyByLang(requestLang);
-	}
-
 	// Check buy book if it's paid and written by another
 	const buyPoint = book.buy_point;
 	const isOwn = signInUser?.id === book.user_id;
@@ -91,7 +78,8 @@ export const load = async ({ url, locals, params }) => {
 		return error(404, { message: 'Not found' });
 	}
 
-	let currencyPreviews: SelectItem<CurrencySupportCodes>[] = [];
+	const currencyList: SelectListGroup<CurrencySupportCodes>[] = currencySupports;
+	let primaryCurrency: SelectItem<CurrencySupportCodes> | null = null;
 	// Skip check if buy with points only
 	if (!isBoughtBook && buyPoint > 0 && !isOwn && !hasEnoughPoint) {
 		// Show book price by all supported currencies
@@ -101,7 +89,41 @@ export const load = async ({ url, locals, params }) => {
 		if (dbRateGetError) {
 			error(500, { message: dbRateGetError.message });
 		}
-		currencyPreviews = calcPriceByPoint(currencyRateIndex, requestLang);
+
+		let primaryCurrencyCode: CurrencySupportCodes;
+		if (signInUser) {
+			const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
+				userId: signInUser.id
+			});
+			if (!paymentSetting || dbPayGetError) {
+				return error(500, { message: dbPayGetError?.message ?? '' });
+			}
+			primaryCurrencyCode = paymentSetting.currency as CurrencySupportCodes;
+		} else {
+			primaryCurrencyCode = guessCurrencyByLang(requestLang);
+		}
+
+		// Add price into item of supported currency list
+		for (const group of currencyList) {
+			for (const item of group.childs) {
+				const basePrice = currencyRateIndex[item.value];
+				if (!basePrice) {
+					continue;
+				}
+				const priceText = getAccuratePaymentPrice(
+					basePrice * (100 / (100 - chargeFee)),
+					item.value,
+					requestLang
+				);
+				if (priceText != null) {
+					item.text = priceText.text;
+				}
+
+				if (item.value === primaryCurrencyCode) {
+					primaryCurrency = item;
+				}
+			}
+		}
 	}
 
 	const bookCover = getBookCover({
@@ -153,7 +175,7 @@ export const load = async ({ url, locals, params }) => {
 		isBoughtBook,
 		hasEnoughPoint,
 		userPoint,
-		currencyPreviews,
+		currencyList,
 		primaryCurrency
 	};
 };
