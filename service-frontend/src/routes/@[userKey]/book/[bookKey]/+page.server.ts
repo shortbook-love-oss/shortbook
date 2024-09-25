@@ -3,10 +3,16 @@ import { env as envPublic } from '$env/dynamic/public';
 import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
 import {
 	currencySupports,
+	defaultCurrencyCode,
+	formatPrice,
 	guessCurrencyByLang,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
-import { chargeFee, getAccuratePaymentPrice } from '$lib/utilities/payment';
+import {
+	chargeFee,
+	getAccuratePaymentPrice,
+	toPaymentAmountOfStripe
+} from '$lib/utilities/payment';
 import type { SelectItem, SelectListGroup } from '$lib/utilities/select';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookGet } from '$lib-backend/model/book/get';
@@ -80,9 +86,8 @@ export const load = async ({ url, locals, params }) => {
 
 	const currencyList: SelectListGroup<CurrencySupportCodes>[] = currencySupports;
 	let primaryCurrency: SelectItem<CurrencySupportCodes> | null = null;
-	// Skip check if buy with points only
 	if (!isBoughtBook && buyPoint > 0 && !isOwn && !hasEnoughPoint) {
-		// Show book price by all supported currencies
+		// If haven't bought book yet and haven't enough point to buy, calc price and show
 		const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
 			amount: buyPoint / 100
 		});
@@ -103,26 +108,46 @@ export const load = async ({ url, locals, params }) => {
 			primaryCurrencyCode = guessCurrencyByLang(requestLang);
 		}
 
-		// Add price into item of supported currency list
+		// Show book price by all supported currencies
 		for (const group of currencyList) {
 			for (const item of group.childs) {
 				const basePrice = currencyRateIndex[item.value];
 				if (!basePrice) {
 					continue;
 				}
-				const priceText = getAccuratePaymentPrice(
-					basePrice * (100 / (100 - chargeFee)),
-					item.value,
-					requestLang
-				);
-				if (priceText != null) {
-					item.text = priceText.text;
+
+				const priceWithFee = basePrice * (100 / (100 - chargeFee));
+				// e.g. (USD) 2.17 , (ISK) 296 , (UGX) 8038
+				const accuratePrice = getAccuratePaymentPrice(priceWithFee, item.value);
+				// e.g. (USD) "217" , (ISK) "29600" , (UGX) "803800"
+				const paymentAmount = toPaymentAmountOfStripe(accuratePrice, item.value);
+				if (item.value === 'inr' ? paymentAmount.length <= 9 : paymentAmount.length <= 8) {
+					// e.g. "$2.17" , "ISK 296" , "UGX 8,038"
+					const formattedPrice = formatPrice(accuratePrice, item.value, requestLang);
+					item.text = formattedPrice;
+				} else {
+					// If the amount exceeds 8 digits (INR is 9 digits), an error occurs in Stripe and payment cannot be made
+					// Do not display prices in the currency that matches the criteria
+					item.text = undefined;
 				}
 
 				if (item.value === primaryCurrencyCode) {
 					primaryCurrency = item;
 				}
 			}
+		}
+
+		if (primaryCurrency && !primaryCurrency.text) {
+			primaryCurrency = (() => {
+				for (const group of currencyList) {
+					for (const item of group.childs) {
+						if (item.value === defaultCurrencyCode && item.text) {
+							return item;
+						}
+					}
+				}
+				return null;
+			})();
 		}
 	}
 

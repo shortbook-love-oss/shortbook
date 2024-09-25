@@ -17,17 +17,14 @@ export async function createPaymentSession(
 	paymentName: string,
 	paymentDescription: string,
 	paymentTaxCode: string,
-	currency: CurrencySupportCodes,
+	currencyCode: CurrencySupportCodes,
 	paymentAmount: number,
 	customerId: string,
 	customerEmail: string,
 	successUrl: string,
 	cancelUrl: string
 ) {
-	const amountForStripe = toPaymentAmountOfStripe(currency, paymentAmount);
-	if (!amountForStripe) {
-		return { url: null };
-	}
+	const amountForStripe = toPaymentAmountOfStripe(paymentAmount, currencyCode);
 
 	let successUrlWithSession = successUrl;
 	// See about {CHECKOUT_SESSION_ID} https://docs.stripe.com/payments/checkout/custom-success-page
@@ -41,7 +38,7 @@ export async function createPaymentSession(
 		line_items: [
 			{
 				price_data: {
-					currency,
+					currency: currencyCode,
 					unit_amount_decimal: amountForStripe,
 					tax_behavior: 'inclusive',
 					product_data: {
@@ -79,14 +76,10 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 		expand: ['line_items']
 	});
 
-	let actuallyAmount = 0;
-	if (checkoutSession.currency) {
-		actuallyAmount =
-			reversePaymentAmountOfStripe(
-				checkoutSession.currency as CurrencySupportCodes,
-				checkoutSession.amount_total ?? 0
-			) ?? actuallyAmount;
-	}
+	const actuallyAmount = reversePaymentAmountOfStripe(
+		checkoutSession.amount_total ?? 0,
+		checkoutSession.currency as CurrencySupportCodes
+	);
 
 	let customerId = '';
 	if (typeof checkoutSession.customer === 'string') {
