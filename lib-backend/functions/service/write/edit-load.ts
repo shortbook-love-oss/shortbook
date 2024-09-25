@@ -11,7 +11,7 @@ export async function editLoad(signInUser: SignInUser) {
 	if (dbPayGetError) {
 		error(500, { message: dbPayGetError.message });
 	}
-	const selectedCurrencyKey =
+	const userCurrencyCode =
 		(paymentSetting?.currency as CurrencySupportCodes) ?? defaultCurrencyCode;
 
 	// Show book price by all supported currencies
@@ -20,5 +20,5 @@ export async function editLoad(signInUser: SignInUser) {
 		error(500, { message: dbRateGetError.message });
 	}
 
-	return { selectedCurrencyKey, currencyRateIndex };
+	return { userCurrencyCode, currencyRateIndex };
 }

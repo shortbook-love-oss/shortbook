@@ -38,7 +38,7 @@ export const load = async ({ locals, params }) => {
 	}
 	const isBoughtByOther = bookBuys.length > 0;
 
-	const { selectedCurrencyKey, currencyRateIndex } = await editLoad(signInUser);
+	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
@@ -75,7 +75,7 @@ export const load = async ({ locals, params }) => {
 		status,
 		initTitle,
 		isBoughtByOther,
-		selectedCurrencyKey,
+		userCurrencyCode,
 		currencyRateIndex
 	};
 };

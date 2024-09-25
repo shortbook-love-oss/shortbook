@@ -18,7 +18,7 @@ export const load = async ({ locals }) => {
 	const form = await superValidate(zod(schema));
 	const langTags = languageAndNotSelect;
 
-	const { selectedCurrencyKey, currencyRateIndex } = await editLoad(signInUser);
+	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
 	const bookCover = getBookCover({});
 	for (const coverProp in bookCover) {
@@ -32,7 +32,7 @@ export const load = async ({ locals }) => {
 	form.data.urlSlug = '';
 	form.data.buyPoint = 200;
 
-	return { form, langTags, selectedCurrencyKey, currencyRateIndex };
+	return { form, langTags, userCurrencyCode, currencyRateIndex };
 };
 
 export const actions = {

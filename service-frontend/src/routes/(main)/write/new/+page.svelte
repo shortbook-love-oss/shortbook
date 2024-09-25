@@ -129,7 +129,7 @@
 			<InputPoint bind:point={$form.buyPoint} errorMessages={$errors.buyPoint} className="mb-8" />
 			<PricePreview
 				point={$form.buyPoint}
-				selectedCurrencyKey={data.selectedCurrencyKey}
+				userCurrencyCode={data.userCurrencyCode}
 				currencyRates={data.currencyRateIndex}
 			/>
 		</div>
