@@ -4,7 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 import { dbUserPaymentSettingUpsert } from '$lib-backend/model/user/payment-setting/upsert';
 import {
-	currencySupports,
+	currencySupportsWithCode,
 	guessCurrencyByLang,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
@@ -19,7 +19,7 @@ export const load = async ({ url, locals }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(zod(schema));
-	const currencyList = currencySupports;
+	const currencyList = currencySupportsWithCode;
 	const suggestCurrency = guessCurrencyByLang(requestLang);
 
 	const { paymentSetting, dbError } = await dbUserPaymentSettingGet({ userId: signInUser.id });

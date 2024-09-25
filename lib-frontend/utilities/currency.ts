@@ -1,9 +1,20 @@
+import { currencyListByGroup } from '$lib/utilities/currency-list';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
-import { currencyListByGroup } from './currency-list';
+import type { SelectListGroup } from '$lib/utilities/select';
 
 // All support currency code / name / payment rules
 export const currencySupports = currencyListByGroup;
 export const currencySupportsFlat = currencySupports.map((group) => group.childs).flat();
+export const currencySupportsWithCode: SelectListGroup<CurrencySupportCodes>[] =
+	currencySupports.map((group) => {
+		return {
+			...group,
+			childs: group.childs.map((item) => ({
+				...item,
+				label: `${item.value.toUpperCase()} — ${item.label}`
+			}))
+		};
+	});
 
 export const currencySupportCodes = currencySupportsFlat.map((currency) => currency.value);
 export type CurrencySupportCodes = (typeof currencySupportCodes)[number];

@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import {
 		currencyDisallowDecimalList,
-		currencySupports,
+		currencySupportsWithCode,
 		formatPrice,
 		getCurrencyData,
 		getLocalizedPrice,
@@ -88,7 +88,7 @@
 				<Select
 					bind:value={buyCurrencySelected as string}
 					name="buyCurrency"
-					list={currencySupports}
+					list={currencySupportsWithCode}
 					className="w-52 text-lg shrink-0"
 				/>
 			</div>
@@ -105,7 +105,7 @@
 				<Select
 					bind:value={earnCurrencySelected as string}
 					name="buyCurrency"
-					list={currencySupports}
+					list={currencySupportsWithCode}
 					className="w-52 text-lg shrink-0"
 				/>
 			</div>
