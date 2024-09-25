@@ -1,16 +1,17 @@
 import type { Cookies } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { setSessionToken } from '$lib/utilities/cookie';
+import { getRandom } from '$lib/utilities/crypto';
+import { guessCurrencyByLang } from '$lib/utilities/currency';
+import { getLanguageTagFromUrl, signConfirmTokenParam } from '$lib/utilities/url';
 import { dbLogActionDelete } from '$lib-backend/model/log/action-delete';
 import { dbUserSessionCreate } from '$lib-backend/model/user/session/create';
 import { dbUserCreate } from '$lib-backend/model/user/create';
 import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash';
-import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token/delete';
-import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
-import { getRandom } from '$lib/utilities/crypto';
-import { setSessionToken } from '$lib/utilities/cookie';
-import { getLanguageTagFromUrl, signConfirmTokenParam } from '$lib/utilities/url';
 import { dbUserRestore } from '$lib-backend/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
+import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token/delete';
+import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
 import { decryptFromFlat, encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
 import { copyFile } from '$lib-backend/utilities/file';
 import { toHashUserEmail } from '$lib-backend/utilities/email';
@@ -63,6 +64,7 @@ export async function finalizeSign(
 
 	let userId = '';
 	if (isSignUp) {
+		const nativeLanguage = getLanguageTagFromUrl(requestUrl);
 		// Create user with random profile
 		// If email exist, fail to user create
 		const { user, dbError: dbUserGetError } = await dbUserCreate({
@@ -70,8 +72,9 @@ export async function finalizeSign(
 			penName: `User ${getRandom(6).toUpperCase()}`,
 			emailEncrypt: encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT),
 			emailHash: toHashUserEmail(userEmail),
-			nativeLanguage: getLanguageTagFromUrl(requestUrl),
-			imageSrc: ''
+			imageSrc: '',
+			nativeLanguage,
+			currency: guessCurrencyByLang(nativeLanguage)
 		});
 		if (!user || dbUserGetError) {
 			return { error: new Error(dbUserGetError?.message ?? '') };

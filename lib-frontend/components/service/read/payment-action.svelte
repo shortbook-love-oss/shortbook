@@ -1,31 +1,25 @@
 <script lang="ts">
 	import type { CurrencySupportCodes } from '$lib/utilities/currency';
-	import type { SelectItem } from '$lib/utilities/select';
+	import type { SelectItem, SelectListGroup } from '$lib/utilities/select';
 	import { paymentCurrencyParam } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 
 	type Props = {
 		bookId: string;
-		currencyList: SelectItem<CurrencySupportCodes>[];
-		primaryCurrency: CurrencySupportCodes;
+		currencyList: SelectListGroup<CurrencySupportCodes>[];
+		primaryCurrency: SelectItem<CurrencySupportCodes> | null;
 	};
 	let { bookId, currencyList, primaryCurrency }: Props = $props();
-
-	const primaryCurrencies = $state(
-		currencyList.filter((currency) => {
-			return currency.value === primaryCurrency;
-		})
-	);
 </script>
 
 <div class="flex flex-col items-start gap-4">
-	{#each primaryCurrencies as currency}
+	{#if primaryCurrency}
 		<a
-			href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-			class="mb-2 block rounded-md bg-primary-700 px-4 py-3 text-3xl font-semibold text-white hover:bg-primary-500 focus:bg-primary-500"
-			data-sveltekit-reload>Buy for {currency.label}</a
+			href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={primaryCurrency.value}"
+			class="block rounded-md bg-primary-700 px-4 py-3 text-2xl font-semibold text-white hover:bg-primary-500 focus:bg-primary-500"
+			data-sveltekit-reload>Buy for <span translate="no">{primaryCurrency.text}</span></a
 		>
-	{/each}
+	{/if}
 	<Dialog
 		name="lang_select"
 		title="Buy in your currency"
@@ -35,14 +29,25 @@
 		{#snippet opener()}
 			<p class="inline-block text-lg underline">Use other currency</p>
 		{/snippet}
-		<div class="flex flex-wrap items-center gap-3">
-			{#each currencyList as currency}
-				<a
-					href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-					class="inline-block rounded bg-primary-200 px-3 py-2 text-lg hover:bg-primary-200 focus:bg-primary-200"
-					data-sveltekit-reload>{currency.label}</a
-				>
+		{#each currencyList as group, i (group.label)}
+			<p class="mb-6 border-b-2 border-primary-700 py-1 text-2xl {i ? 'mt-12' : ''}">
+				{group.label}
+			</p>
+			{#each group.childs as currency (currency.value)}
+				{#if currency.text}
+					<div class="mb-6 flex flex-col gap-x-4 gap-y-2 xs:flex-row xs:items-center">
+						<a
+							href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
+							translate="no"
+							data-sveltekit-reload
+							class="text-3xl font-semibold hover:underline">{currency.text}</a
+						>
+						<p class="text-lg">
+							{currency.label} <span translate="no">({currency.value.toUpperCase()})</span>
+						</p>
+					</div>
+				{/if}
 			{/each}
-		</div>
+		{/each}
 	</Dialog>
 </div>

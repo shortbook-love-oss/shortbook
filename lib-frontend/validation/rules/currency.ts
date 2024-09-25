@@ -1,8 +1,5 @@
-import { currencySupports } from '$lib/utilities/currency';
+import { currencySupportsFlat } from '$lib/utilities/currency';
 
-export function validateOptionalCurrencyCode(value: string) {
-	if (!value) {
-		return true;
-	}
-	return currencySupports.some((c) => c.value === value);
+export function validateCurrencyCode(value: string) {
+	return currencySupportsFlat.some((c) => c.value === value);
 }

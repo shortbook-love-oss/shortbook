@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { ValidationErrors } from 'sveltekit-superforms';
-	import type { SelectItem } from '$lib/utilities/select';
+	import { isSelectGroup, type SelectItem, type SelectListGroup } from '$lib/utilities/select';
 
 	type Props = {
 		value: string | number;
-		list: SelectItem<string | number>[];
+		list: (SelectItem<string | number> | SelectListGroup<string | number>)[];
 		name: string;
 		label?: string;
 		required?: boolean;
@@ -24,17 +24,6 @@
 		inputClass = '',
 		...restProps
 	}: Props = $props();
-
-	// When value changed by outside, reselect value-match item
-	const displayList = $state(
-		list.map((item) => {
-			const displayItem: SelectItem<string | number> = {
-				...item,
-				selected: item.value === value
-			};
-			return displayItem;
-		})
-	);
 </script>
 
 <label class="block {className}">
@@ -59,8 +48,18 @@
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
 		>
-			{#each displayList as item}
-				<option value={item.value} selected={item.selected}>{item.label}</option>
+			{#each list as groupOrItem (groupOrItem.label)}
+				{#if isSelectGroup(groupOrItem)}
+					<optgroup label={groupOrItem.label}>
+						{#each groupOrItem.childs as item (item.value)}
+							<option value={item.value} selected={item.value === value}>{item.label}</option>
+						{/each}
+					</optgroup>
+				{:else}
+					<option value={groupOrItem.value} selected={groupOrItem.value === value}
+						>{groupOrItem.label}</option
+					>
+				{/if}
 			{/each}
 		</select>
 	</div>

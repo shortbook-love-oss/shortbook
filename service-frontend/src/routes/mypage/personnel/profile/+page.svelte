@@ -70,7 +70,7 @@
 	<Select
 		bind:value={$form.nativeLanguage as string}
 		name="nativeLanguage"
-		list={data.langTags}
+		list={data.languageSelect}
 		required={true}
 		label="Native language"
 		errorMessages={$errors.nativeLanguage}

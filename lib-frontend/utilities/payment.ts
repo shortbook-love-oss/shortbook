@@ -1,12 +1,9 @@
 import {
-	currencySupports,
-	formatPrice,
-	getCurrencyData,
+	currencyDisallowDecimalList,
+	currencyMultiple100List,
 	getLocalizedPrice,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
-import type { AvailableLanguageTags } from '$lib/utilities/language';
-import type { SelectItem } from '$lib/utilities/select';
 
 // Service fee is 8%
 export const chargeFee = 8;
@@ -22,40 +19,19 @@ export function getPaymentProvider(key: string) {
 	return null;
 }
 
-// return [
-// 	 { value: 'usd', label: '$1.09' },
-// 	 { value: 'eur', label: '€1.00' },
-//   ...
-// ]
-export function calcPriceByPoint(
-	currencyConverted: Partial<Record<CurrencySupportCodes, number>>,
-	requestLang: AvailableLanguageTags
-) {
-	const currencyPreviews: SelectItem<CurrencySupportCodes>[] = [];
-	for (const currencyData of currencySupports) {
-		const convertedPrice = currencyConverted[currencyData.value];
-		if (convertedPrice) {
-			const priceWithFee = getLocalizedPrice(
-				convertedPrice * (100 / (100 - chargeFee)),
-				currencyData.allowDecimal && !currencyData.rule00
-			);
-			currencyPreviews.push({
-				value: currencyData.value,
-				label: formatPrice(priceWithFee, currencyData.value, requestLang)
-			});
-		}
-	}
+export function getAccuratePaymentPrice(basePrice: number, currencyCode: CurrencySupportCodes) {
+	const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(currencyCode);
+	const isMultiple100 = (currencyMultiple100List as string[]).includes(currencyCode);
+	const localizedPrice = getLocalizedPrice(basePrice, isAllowDecimal && !isMultiple100);
 
-	return currencyPreviews;
+	return localizedPrice;
 }
 
-export function toPaymentAmountOfStripe(currency: CurrencySupportCodes, originAmount: number) {
-	const currencyData = getCurrencyData(currency);
-	if (!currencyData) {
-		return null;
-	}
-	if (currencyData.rule00) {
-		if (currencyData.allowDecimal) {
+export function toPaymentAmountOfStripe(originAmount: number, currencyCode: CurrencySupportCodes) {
+	const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(currencyCode);
+	const isMultiple100 = (currencyMultiple100List as string[]).includes(currencyCode);
+	if (isMultiple100) {
+		if (isAllowDecimal) {
 			// "45600" Only used by ISK (Island)
 			return String(Math.floor(originAmount) * 100);
 		} else {
@@ -64,7 +40,7 @@ export function toPaymentAmountOfStripe(currency: CurrencySupportCodes, originAm
 			return String(Math.floor(originAmount) * 100);
 		}
 	} else {
-		if (currencyData.allowDecimal) {
+		if (isAllowDecimal) {
 			// "45678"
 			return String(Math.floor(originAmount * 100));
 		} else {
@@ -75,19 +51,20 @@ export function toPaymentAmountOfStripe(currency: CurrencySupportCodes, originAm
 }
 
 // Stripe's return amount value to actually amount
-export function reversePaymentAmountOfStripe(currency: CurrencySupportCodes, savedAmount: number) {
-	const currencyData = getCurrencyData(currency);
-	if (!currencyData || Number.isNaN(Number(savedAmount))) {
-		return undefined;
-	}
-	if (currencyData.rule00) {
-		if (currencyData.allowDecimal) {
+export function reversePaymentAmountOfStripe(
+	savedAmount: number,
+	currencyCode: CurrencySupportCodes
+) {
+	const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(currencyCode);
+	const isMultiple100 = (currencyMultiple100List as string[]).includes(currencyCode);
+	if (isMultiple100) {
+		if (isAllowDecimal) {
 			return savedAmount / 100;
 		} else {
 			return savedAmount / 100;
 		}
 	} else {
-		if (currencyData.allowDecimal) {
+		if (isAllowDecimal) {
 			return savedAmount / 100;
 		} else {
 			return savedAmount;

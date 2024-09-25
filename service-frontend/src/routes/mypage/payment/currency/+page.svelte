@@ -47,22 +47,22 @@
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={$page.status === 400 ? $message : ''}
 >
-	<div class="mb-8 flex flex-wrap items-end gap-3">
+	<div class="mb-8 flex flex-col items-start gap-4">
 		<Select
 			bind:value={$form.currencyCode as string}
 			name="currencyCode"
 			list={data.currencyList}
 			label="Payment currency"
 			errorMessages={$errors.currencyCode}
-			className="max-w-64"
+			className="max-w-96"
 		/>
 		{#if isEnableJS && currencyData}
 			<button
 				type="button"
-				class="rounded border border-primary-700 bg-primary-100 px-3 py-1.5 text-lg hover:bg-primary-200 focus:bg-primary-200"
+				class="text-lg underline"
 				onclick={() => setCurrency(currencyData.value)}
 			>
-				Set to {currencyData.label}
+				Suggest: set to {currencyData.label}
 			</button>
 		{/if}
 	</div>

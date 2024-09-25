@@ -1,19 +1,25 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
+import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
+import {
+	currencySupports,
+	defaultCurrencyCode,
+	formatPrice,
+	guessCurrencyByLang,
+	type CurrencySupportCodes
+} from '$lib/utilities/currency';
+import {
+	chargeFee,
+	getAccuratePaymentPrice,
+	toPaymentAmountOfStripe
+} from '$lib/utilities/payment';
+import type { SelectItem, SelectListGroup } from '$lib/utilities/select';
+import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
 import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
 import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
-import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
-import {
-	defaultCurrency,
-	guessCurrencyByLang,
-	type CurrencySupportCodes
-} from '$lib/utilities/currency';
-import { calcPriceByPoint } from '$lib/utilities/payment';
-import type { SelectItem } from '$lib/utilities/select';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
@@ -43,23 +49,6 @@ export const load = async ({ url, locals, params }) => {
 		return error(500, {
 			message: `Failed to get profile contents. User Key-name=${params.userKey}`
 		});
-	}
-
-	let primaryCurrency: CurrencySupportCodes = defaultCurrency.value;
-	if (signInUser) {
-		const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
-			userId: signInUser.id
-		});
-		if (dbPayGetError) {
-			return error(500, { message: dbPayGetError.message });
-		}
-		if (paymentSetting?.currency) {
-			primaryCurrency = paymentSetting.currency as CurrencySupportCodes;
-		} else {
-			primaryCurrency = guessCurrencyByLang(requestLang);
-		}
-	} else {
-		primaryCurrency = guessCurrencyByLang(requestLang);
 	}
 
 	// Check buy book if it's paid and written by another
@@ -95,17 +84,71 @@ export const load = async ({ url, locals, params }) => {
 		return error(404, { message: 'Not found' });
 	}
 
-	let currencyPreviews: SelectItem<CurrencySupportCodes>[] = [];
-	// Skip check if buy with points only
+	const currencyList: SelectListGroup<CurrencySupportCodes>[] = currencySupports;
+	let primaryCurrency: SelectItem<CurrencySupportCodes> | null = null;
 	if (!isBoughtBook && buyPoint > 0 && !isOwn && !hasEnoughPoint) {
-		// Show book price by all supported currencies
+		// If haven't bought book yet and haven't enough point to buy, calc price and show
 		const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
 			amount: buyPoint / 100
 		});
 		if (dbRateGetError) {
 			error(500, { message: dbRateGetError.message });
 		}
-		currencyPreviews = calcPriceByPoint(currencyRateIndex, requestLang);
+
+		let primaryCurrencyCode: CurrencySupportCodes;
+		if (signInUser) {
+			const { paymentSetting, dbError: dbPayGetError } = await dbUserPaymentSettingGet({
+				userId: signInUser.id
+			});
+			if (!paymentSetting || dbPayGetError) {
+				return error(500, { message: dbPayGetError?.message ?? '' });
+			}
+			primaryCurrencyCode = paymentSetting.currency as CurrencySupportCodes;
+		} else {
+			primaryCurrencyCode = guessCurrencyByLang(requestLang);
+		}
+
+		// Show book price by all supported currencies
+		for (const group of currencyList) {
+			for (const item of group.childs) {
+				const basePrice = currencyRateIndex[item.value];
+				if (!basePrice) {
+					continue;
+				}
+
+				const priceWithFee = basePrice * (100 / (100 - chargeFee));
+				// e.g. (USD) 2.17 , (ISK) 296 , (UGX) 8038
+				const accuratePrice = getAccuratePaymentPrice(priceWithFee, item.value);
+				// e.g. (USD) "217" , (ISK) "29600" , (UGX) "803800"
+				const paymentAmount = toPaymentAmountOfStripe(accuratePrice, item.value);
+				if (item.value === 'inr' ? paymentAmount.length <= 9 : paymentAmount.length <= 8) {
+					// e.g. "$2.17" , "ISK 296" , "UGX 8,038"
+					const formattedPrice = formatPrice(accuratePrice, item.value, requestLang);
+					item.text = formattedPrice;
+				} else {
+					// If the amount exceeds 8 digits (INR is 9 digits), an error occurs in Stripe and payment cannot be made
+					// Do not display prices in the currency that matches the criteria
+					item.text = undefined;
+				}
+
+				if (item.value === primaryCurrencyCode) {
+					primaryCurrency = item;
+				}
+			}
+		}
+
+		if (primaryCurrency && !primaryCurrency.text) {
+			primaryCurrency = (() => {
+				for (const group of currencyList) {
+					for (const item of group.childs) {
+						if (item.value === defaultCurrencyCode && item.text) {
+							return item;
+						}
+					}
+				}
+				return null;
+			})();
+		}
 	}
 
 	const bookCover = getBookCover({
@@ -157,7 +200,7 @@ export const load = async ({ url, locals, params }) => {
 		isBoughtBook,
 		hasEnoughPoint,
 		userPoint,
-		currencyPreviews,
+		currencyList,
 		primaryCurrency
 	};
 };
