@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { CurrencySupportCodes } from '$lib/utilities/currency';
-	import type { SelectItem, SelectListGroup } from '$lib/utilities/select';
+	import { type SelectItemSingle, type SelectItem, isSelectGroup } from '$lib/utilities/select';
 	import { paymentCurrencyParam } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 
 	type Props = {
 		bookId: string;
-		currencyList: SelectListGroup<CurrencySupportCodes>[];
-		primaryCurrency: SelectItem<CurrencySupportCodes> | null;
+		currencyList: SelectItem<CurrencySupportCodes>[];
+		primaryCurrency: SelectItemSingle<CurrencySupportCodes> | null;
 	};
 	let { bookId, currencyList, primaryCurrency }: Props = $props();
 </script>
@@ -33,21 +33,23 @@
 			<p class="mb-6 border-b-2 border-primary-700 py-1 text-2xl {i ? 'mt-12' : ''}">
 				{group.label}
 			</p>
-			{#each group.childs as currency (currency.value)}
-				{#if currency.text}
-					<div class="mb-6 flex flex-col gap-x-4 gap-y-2 xs:flex-row xs:items-center">
-						<a
-							href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
-							translate="no"
-							data-sveltekit-reload
-							class="text-3xl font-semibold hover:underline">{currency.text}</a
-						>
-						<p class="text-lg">
-							{currency.label} <span translate="no">({currency.value.toUpperCase()})</span>
-						</p>
-					</div>
-				{/if}
-			{/each}
+			{#if isSelectGroup(group)}
+				{#each group.childs as currency (currency.value)}
+					{#if currency.text}
+						<div class="mb-6 flex flex-col gap-x-4 gap-y-2 xs:flex-row xs:items-center">
+							<a
+								href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
+								translate="no"
+								data-sveltekit-reload
+								class="text-3xl font-semibold hover:underline">{currency.text}</a
+							>
+							<p class="text-lg">
+								{currency.label} <span translate="no">({currency.value.toUpperCase()})</span>
+							</p>
+						</div>
+					{/if}
+				{/each}
+			{/if}
 		{/each}
 	</Dialog>
 </div>

@@ -1,9 +1,9 @@
 import { availableLanguageTags } from '$i18n/output/runtime';
-import type { SelectItem } from '$lib/utilities/select';
+import type { SelectItemSingle } from '$lib/utilities/select';
 
 export type AvailableLanguageTags = (typeof availableLanguageTags)[number];
 
-export interface LanguageSelect extends SelectItem<AvailableLanguageTags | ''> {
+export interface LanguageSelect extends SelectItemSingle<AvailableLanguageTags | ''> {
 	english: string;
 }
 

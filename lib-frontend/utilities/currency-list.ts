@@ -1,4 +1,4 @@
-import type { SelectListGroup } from '$lib/utilities/select';
+import type { SelectItemGroup } from '$lib/utilities/select';
 
 export const currencyListByGroup = [
 	{
@@ -161,4 +161,4 @@ export const currencyListByGroup = [
 			{ value: 'xcd', label: 'East Caribbean Dollar' }
 		]
 	}
-] as const satisfies SelectListGroup<string>[];
+] as const satisfies SelectItemGroup<string>[];

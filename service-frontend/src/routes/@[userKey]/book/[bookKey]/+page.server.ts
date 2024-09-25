@@ -13,7 +13,7 @@ import {
 	getAccuratePaymentPrice,
 	toPaymentAmountOfStripe
 } from '$lib/utilities/payment';
-import type { SelectItem, SelectListGroup } from '$lib/utilities/select';
+import { isSelectGroup, type SelectItem, type SelectItemSingle } from '$lib/utilities/select';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
@@ -84,8 +84,8 @@ export const load = async ({ url, locals, params }) => {
 		return error(404, { message: 'Not found' });
 	}
 
-	const currencyList: SelectListGroup<CurrencySupportCodes>[] = currencySupports;
-	let primaryCurrency: SelectItem<CurrencySupportCodes> | null = null;
+	const currencyList: SelectItem<CurrencySupportCodes>[] = currencySupports;
+	let primaryCurrency: SelectItemSingle<CurrencySupportCodes> | null = null;
 	if (!isBoughtBook && buyPoint > 0 && !isOwn && !hasEnoughPoint) {
 		// If haven't bought book yet and haven't enough point to buy, calc price and show
 		const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
@@ -110,12 +110,15 @@ export const load = async ({ url, locals, params }) => {
 
 		// Show book price by all supported currencies
 		for (const group of currencyList) {
+			if (!isSelectGroup(group)) {
+				continue;
+			}
+
 			for (const item of group.childs) {
 				const basePrice = currencyRateIndex[item.value];
 				if (!basePrice) {
 					continue;
 				}
-
 				const priceWithFee = basePrice * (100 / (100 - chargeFee));
 				// e.g. (USD) 2.17 , (ISK) 296 , (UGX) 8038
 				const accuratePrice = getAccuratePaymentPrice(priceWithFee, item.value);
@@ -140,6 +143,9 @@ export const load = async ({ url, locals, params }) => {
 		if (primaryCurrency && !primaryCurrency.text) {
 			primaryCurrency = (() => {
 				for (const group of currencyList) {
+					if (!isSelectGroup(group)) {
+						continue;
+					}
 					for (const item of group.childs) {
 						if (item.value === defaultCurrencyCode && item.text) {
 							return item;

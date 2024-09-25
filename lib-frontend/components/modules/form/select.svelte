@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { ValidationErrors } from 'sveltekit-superforms';
-	import { isSelectGroup, type SelectItem, type SelectListGroup } from '$lib/utilities/select';
+	import { isSelectGroup, type SelectItem } from '$lib/utilities/select';
 
 	type Props = {
 		value: string | number;
-		list: (SelectItem<string | number> | SelectListGroup<string | number>)[];
+		list: SelectItem<string | number>[];
 		name: string;
 		label?: string;
 		required?: boolean;
