@@ -3,7 +3,7 @@ import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { AvailableLanguageTag } from '$i18n/output/runtime';
 import { getBookCover } from '$lib/utilities/book';
-import { languageAndNotSelect } from '$lib/utilities/language';
+import { languageSelect } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
@@ -20,7 +20,7 @@ export const load = async ({ locals, params }) => {
 	}
 
 	const form = await superValidate(zod(schema));
-	const langTags = languageAndNotSelect;
+	const langTags = languageSelect;
 
 	const { book, dbError } = await dbBookGet({
 		bookId: params.bookId,

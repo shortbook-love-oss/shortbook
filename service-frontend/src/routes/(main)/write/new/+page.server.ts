@@ -2,7 +2,7 @@ import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { getBookCover } from '$lib/utilities/book';
-import { languageAndNotSelect } from '$lib/utilities/language';
+import { languageSelect } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
@@ -16,7 +16,7 @@ export const load = async ({ locals }) => {
 	}
 
 	const form = await superValidate(zod(schema));
-	const langTags = languageAndNotSelect;
+	const langTags = languageSelect;
 
 	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
