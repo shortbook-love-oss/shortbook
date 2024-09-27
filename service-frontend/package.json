@@ -23,7 +23,7 @@
 	"dependencies": {
 		"@inlang/paraglide-js": "1.11.2",
 		"@inlang/paraglide-sveltekit": "0.11.0",
-		"@prisma/client": "^5.19.1",
+		"@prisma/client": "^5.20.0",
 		"file-type": "^19.5.0",
 		"isomorphic-dompurify": "^2.15.0",
 		"libmime": "^5.3.5",
@@ -33,12 +33,12 @@
 		"stripe": "^16.12.0"
 	},
 	"devDependencies": {
-		"@aws-sdk/client-cloudfront": "^3.654.0",
-		"@aws-sdk/client-s3": "^3.654.0",
-		"@aws-sdk/client-ses": "^3.654.0",
+		"@aws-sdk/client-cloudfront": "^3.658.1",
+		"@aws-sdk/client-s3": "^3.658.1",
+		"@aws-sdk/client-ses": "^3.658.1",
 		"@iconify-json/mdi": "^1.2.0",
 		"@playwright/test": "^1.47.2",
-		"@sveltejs/adapter-node": "^5.2.4",
+		"@sveltejs/adapter-node": "^5.2.5",
 		"@sveltejs/kit": "^2.5.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.7",
 		"@types/eslint": "^9.6.1",
@@ -50,14 +50,14 @@
 		"globals": "^15.0.0",
 		"marked": "^14.1.2",
 		"postcss": "^8.4.47",
-		"prettier": "^3.1.1",
-		"prettier-plugin-svelte": "^3.1.2",
-		"prettier-plugin-tailwindcss": "^0.6.6",
-		"prisma": "^5.19.1",
-		"svelte": "5.0.0-next.257",
-		"svelte-check": "^4.0.2",
+		"prettier": "^3.3.3",
+		"prettier-plugin-svelte": "^3.2.7",
+		"prettier-plugin-tailwindcss": "^0.6.8",
+		"prisma": "^5.20.0",
+		"svelte": "5.0.0-next.259",
+		"svelte-check": "^4.0.3",
 		"sveltekit-superforms": "^2.19.0",
-		"tailwindcss": "^3.4.12",
+		"tailwindcss": "^3.4.13",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.0.0",
 		"unplugin-icons": "^0.19.3",
@@ -66,8 +66,8 @@
 		"zod": "^3.23.8"
 	},
 	"optionalDependencies": {
-		"@esbuild/linux-x64": "0.23.1",
-		"@rollup/rollup-darwin-x64": "4.22.2",
-		"@rollup/rollup-linux-arm64-gnu": "4.22.2"
+		"@esbuild/linux-x64": "0.24.0",
+		"@rollup/rollup-darwin-x64": "4.22.5",
+		"@rollup/rollup-linux-arm64-gnu": "4.22.5"
 	}
 }
