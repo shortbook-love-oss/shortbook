@@ -1,11 +1,12 @@
 # Ubuntu Node.js
-FROM node:22.7.0
+FROM node:22.9.0
 
 WORKDIR /home/node
 
 ENV NODE_ENV=development
 
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+RUN apt-get update -y && apt-get install -y less \
+  && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
   && unzip awscliv2.zip \
   && ./aws/install -i /usr/local/aws-cli -b /usr/local/bin \
   && rm -rf aws \
