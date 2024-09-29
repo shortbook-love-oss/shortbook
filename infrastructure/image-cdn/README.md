@@ -22,7 +22,6 @@ aws configure --profile shortbook
 npm i
 npx cdk bootstrap aws://{AWS_ACCOUNT_ID}/us-east-1 --profile shortbook
 npx cdk bootstrap aws://{AWS_ACCOUNT_ID}/eu-west-1 --profile shortbook
-npx cdk bootstrap aws://{AWS_ACCOUNT_ID}/eu-north-1 --profile shortbook
 npx cdk deploy {{replace to ${prefix}}}-image-cdn-cloudfront --profile shortbook
 ```
 
