@@ -57,7 +57,7 @@ COPY ./lib-backend ./lib-backend
 # Production-setting build
 RUN npm run build
 
-FROM node:22.9.0-bookworm-slim AS prd
+FROM --platform=linux/amd64 node:22.9.0-bookworm-slim AS prd
 
 RUN apt-get update -y \
   && apt-get install -y openssl \

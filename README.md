@@ -25,7 +25,7 @@ docker compose -f docker/compose.yaml up -d --build
 
 ### Check IAM policy to send email
 
-Here is IAM policy for SES.
+Set this IAM policy for SES.
 
 ```json
 {
@@ -41,12 +41,26 @@ Here is IAM policy for SES.
 }
 ```
 
-### Push repository
+### Push docker image to remote repository
 
-TODO: Use GitHub Action in the future.
+On first time:
 
 ```bash
-docker build -f ./service-frontend/Dockerfile --target prd -t shortbook-service-frontend:(((version-tag))) . --progress=plain
-docker tag shortbook-service-frontend:(((version-tag))) us-west1-docker.pkg.dev/(((project-id)))/shortbook-service-frontend/shortbook-service-frontend:(((version-tag)))
-docker push us-west1-docker.pkg.dev/(((project-id)))/shortbook-service-frontend/shortbook-service-frontend:(((version-tag)))
+brew install awscli
+aws configure --profile shortbook
+# AWS Access Key ID [None]: xxxxxxxxxxxxxxxxx
+# AWS Secret Access Key [None]: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Default region name [None]: eu-west-1
+# Default output format [None]: json
+```
+
+On every time:
+
+```bash
+docker buildx build --platform=linux/amd64 -f ./service-frontend/Dockerfile --target prd -t shortbook/service-frontend:(((VERSION_TAG))) . --progress=plain
+aws ecr get-login-password --region eu-west-1 --profile shortbook | docker login --username AWS --password-stdin (((ACCOUNT_ID))).dkr.ecr.eu-west-1.amazonaws.com
+docker tag shortbook/service-frontend:(((VERSION_TAG))) (((ACCOUNT_ID))).dkr.ecr.eu-west-1.amazonaws.com/shortbook/service-frontend:(((VERSION_TAG)))
+docker tag shortbook/service-frontend:(((VERSION_TAG))) (((ACCOUNT_ID))).dkr.ecr.eu-west-1.amazonaws.com/shortbook/service-frontend:latest
+docker push (((ACCOUNT_ID))).dkr.ecr.eu-west-1.amazonaws.com/shortbook/service-frontend:(((VERSION_TAG)))
+docker push (((ACCOUNT_ID))).dkr.ecr.eu-west-1.amazonaws.com/shortbook/service-frontend:latest
 ```
