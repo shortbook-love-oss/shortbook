@@ -46,7 +46,7 @@
 	isLoading={$submitting}
 	submitLabel="Send message"
 	successMessage={$page.status === 200 ? $message : ''}
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 	class="mx-auto max-w-xl"
 >
 	<Select

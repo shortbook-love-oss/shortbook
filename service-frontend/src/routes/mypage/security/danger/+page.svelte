@@ -46,7 +46,7 @@
 	isLoading={$submitting}
 	submitLabel="Delete user"
 	{warnMessage}
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 >
 	<TextField
 		bind:value={$form.keyHandle}

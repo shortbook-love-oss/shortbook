@@ -45,7 +45,7 @@
 	isLoading={$submitting}
 	submitLabel="Confirm and change"
 	successMessage={$page.status === 200 ? $message : ''}
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 >
 	<TextField
 		bind:value={$form.email}

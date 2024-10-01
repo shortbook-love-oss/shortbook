@@ -45,7 +45,7 @@
 	isLoading={$submitting}
 	submitLabel="Save currency"
 	successMessage={$page.status === 200 ? $message : ''}
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 >
 	<div class="mb-8 flex flex-col items-start gap-4">
 		<Select

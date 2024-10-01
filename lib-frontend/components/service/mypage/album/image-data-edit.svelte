@@ -101,7 +101,7 @@
 			hasInvalid={!hasVaild}
 			isLoading={$submitting}
 			submitLabel="Update image data"
-			errorMessage={$page.status === 400 ? $message : ''}
+			errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 			class="w-full"
 		>
 			<TextField

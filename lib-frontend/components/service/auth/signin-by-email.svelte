@@ -41,7 +41,7 @@
 	isLoading={$submitting}
 	{submitLabel}
 	submitClass="w-full"
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 >
 	<TextField
 		bind:value={$form.email as string}
