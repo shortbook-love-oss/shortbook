@@ -13,13 +13,9 @@
 	let { opener, children, name }: Props = $props();
 
 	let isEnableJS = $state(false);
-	onMount(() => {
-		isEnableJS = true;
-	});
+	onMount(() => (isEnableJS = true));
 
-	onNavigate(() => {
-		closeOverlay();
-	});
+	onNavigate(() => closeOverlay());
 
 	function closeOverlay(event?: Event) {
 		if (!event || event.target === event.currentTarget) {

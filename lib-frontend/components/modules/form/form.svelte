@@ -37,9 +37,7 @@
 	}: Props = $props();
 
 	let isEnableJS = $state(false);
-	onMount(() => {
-		isEnableJS = true;
-	});
+	onMount(() => (isEnableJS = true));
 </script>
 
 <form use:enhance action={removeLanguageTagFromPath(action)} {...restProps}>

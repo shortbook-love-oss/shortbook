@@ -8,7 +8,7 @@ import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib-backend/model/user/profile/update';
 import { dbUserGetByKeyHandle } from '$lib-backend/model/user/get-by-key-handle';
 
-export const load = async ({ url, locals }) => {
+export const load = async ({ locals }) => {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
