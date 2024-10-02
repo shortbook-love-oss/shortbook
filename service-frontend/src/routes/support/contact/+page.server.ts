@@ -118,7 +118,7 @@ export const actions = {
 			categoryKeyName: form.data.categoryKeyName,
 			emailEncrypt: encryptAndFlat(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT),
 			description: form.data.description,
-			languageCode: requestLang,
+			fromLanguage: requestLang,
 			fileUrls: savedFileUrls
 		});
 		if (dbTicketCreateError) {

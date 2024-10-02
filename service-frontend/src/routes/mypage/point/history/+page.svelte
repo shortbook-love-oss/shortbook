@@ -40,7 +40,7 @@
 		<NavLinkSmall
 			name="Redeem points for cash"
 			colorClass="border-stone-600 bg-stone-200"
-			className="border cursor-not-allowed mb-1"
+			className="border cursor-no-drop mb-1"
 		>
 			<IconCash width="24" height="24" class="-mx-1" />
 		</NavLinkSmall>
@@ -62,7 +62,7 @@
 						<p class="truncate text-lg">
 							{getStatus(point).text}
 							<a
-								href="/@{point.writeKeyName}/book/{point.bookKeyName}"
+								href="/@{point.writeKeyHandle}/book/{point.bookUrlSlug}"
 								class="font-semibold underline">{point.bookTitle}</a
 							>
 						</p>

@@ -13,20 +13,15 @@ export async function dbUserGetByEmailHash(req: DbUserGetByEmailHashRequest) {
 		whereCondDelete.deleted_at = null;
 	}
 
-	const user = await prisma.user
+	const user = await prisma.users
 		.findFirst({
 			where: {
 				email_hash: req.emailHash,
 				...whereCondDelete
 			},
 			include: {
-				profiles: {
-					where: { ...whereCondDelete },
-					include: {
-						languages: {
-							where: { ...whereCondDelete }
-						}
-					}
+				languages: {
+					where: { ...whereCondDelete }
 				}
 			}
 		})

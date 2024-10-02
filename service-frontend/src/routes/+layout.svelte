@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	import { page, updated } from '$app/stores';
-	import { i18n } from '$lib/i18n/i18n';
+	import { i18n } from '$i18n/init';
 	import '../app.css';
 
 	let { children } = $props();

@@ -11,7 +11,7 @@ export async function dbVerificationTokenGet(req: DbVerificationTokenGetRequest)
 	let dbError: Error | undefined;
 	const now = new Date();
 
-	const verificationToken = await prisma.verificationToken
+	const verificationToken = await prisma.verification_tokens
 		.findUnique({
 			where: {
 				identifier_token: {

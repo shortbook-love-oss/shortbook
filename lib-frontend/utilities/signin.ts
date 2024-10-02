@@ -1,16 +1,14 @@
-export const signInEmailLinkMethod = 'emaillink';
-export const signInProviders = [
-	{ key: 'google', label: 'Google' },
-	{ key: 'linkedin', label: 'LinkedIn' },
-	{ key: 'github', label: 'GitHub' }
-] as const;
-
-export function matchSigninProvider(key: string) {
-	return signInProviders.find((provider) => {
-		return provider.key === key.toLowerCase();
-	});
-}
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 // for sign-in and sign-up
 export const sendRateLimitCount = 10;
 export const logActionName = 'SignInUpRequest';
+
+export interface SignInUser {
+	id: string;
+	keyHandle: string;
+	penName: string;
+	email: string;
+	imageSrc: string;
+	nativeLanguage: AvailableLanguageTags;
+}

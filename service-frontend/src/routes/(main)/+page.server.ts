@@ -14,16 +14,15 @@ export const load = async ({ url }) => {
 	const bookList: BookItem[] = [];
 	if (books) {
 		for (const book of books) {
-			const profile = book.user?.profiles;
-			let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
-			if (!profileLang && profile?.languages.length) {
-				profileLang = profile.languages[0];
+			let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
+			if (!userLang && book.user.languages.length) {
+				userLang = book.user.languages[0];
 			}
-			let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
+			let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
 			if (!bookLang && book.languages.length) {
 				bookLang = book.languages[0];
 			}
-			if (!book.user || !profile || !profileLang || !book.cover || !bookLang) {
+			if (!userLang || !book.cover || !bookLang) {
 				continue;
 			}
 			const bookCover = getBookCover({
@@ -50,10 +49,10 @@ export const load = async ({ url }) => {
 				subtitle: bookLang.subtitle,
 				publishedAt: book.published_at,
 				updatedAt: book.updated_at,
-				bookKeyName: book.key_name,
-				userKeyName: profile.key_name,
-				penName: profileLang.pen_name,
-				userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + (book.user.image ?? '')
+				bookUrlSlug: book.url_slug,
+				userKeyHandle: book.user.key_handle,
+				penName: book.user.pen_name,
+				userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src
 			});
 		}
 	}

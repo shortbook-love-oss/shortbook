@@ -6,7 +6,7 @@
 	import { schema } from '$lib/validation/schema/user/currency-update';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
-	import { getCurrencyData, type CurrencySupportKeys } from '$lib/utilities/currency';
+	import { getCurrencyData, type CurrencySupportCodes } from '$lib/utilities/currency';
 
 	let { data } = $props();
 
@@ -27,8 +27,8 @@
 	onMount(() => (isEnableJS = true));
 
 	const currencyData = getCurrencyData(data.suggestCurrency);
-	function setCurrency(currencyKey: CurrencySupportKeys) {
-		$form.currencyKey = currencyKey;
+	function setCurrency(currencyCode: CurrencySupportCodes) {
+		$form.currencyCode = currencyCode;
 	}
 </script>
 
@@ -45,24 +45,24 @@
 	isLoading={$submitting}
 	submitLabel="Save currency"
 	successMessage={$page.status === 200 ? $message : ''}
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 >
-	<div class="mb-8 flex flex-wrap items-end gap-3">
+	<div class="mb-8 flex flex-col items-start gap-4">
 		<Select
-			bind:value={$form.currencyKey}
-			name="currencyKey"
+			bind:value={$form.currencyCode as string}
+			name="currencyCode"
 			list={data.currencyList}
 			label="Payment currency"
-			errorMessages={$errors.currencyKey}
-			className="max-w-64"
+			errorMessages={$errors.currencyCode}
+			className="max-w-96"
 		/>
 		{#if isEnableJS && currencyData}
 			<button
 				type="button"
-				class="rounded border border-primary-700 bg-primary-100 px-3 py-1.5 text-lg hover:bg-primary-200 focus:bg-primary-200"
-				onclick={() => setCurrency(currencyData.key)}
+				class="text-lg underline"
+				onclick={() => setCurrency(currencyData.value)}
 			>
-				Set to {currencyData.label}
+				Suggest: set to {currencyData.label}
 			</button>
 		{/if}
 	</div>

@@ -53,18 +53,13 @@ export async function dbBookList(req: DbBookListRequest) {
 				},
 				user: {
 					select: {
-						image: true,
-						profiles: {
+						key_handle: true,
+						pen_name: true,
+						image_src: true,
+						languages: {
 							where: { ...whereCondDelete },
 							select: {
-								key_name: true,
-								languages: {
-									where: { ...whereCondDelete },
-									select: {
-										language_code: true,
-										pen_name: true
-									}
-								}
+								target_language: true
 							}
 						}
 					}

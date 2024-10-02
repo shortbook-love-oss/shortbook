@@ -8,7 +8,6 @@ export const PREFIX: string = 'shortbook-image-cdn-v____';
 
 export const AWS_ACCOUNT_ID = '1234567890';
 export const AWS_DEFAULT_REGION = 'some-region';
-export const AWS_CLOUDFRONT_REGION = 'some-region';
 
 export const env = {
 	PUBLIC_ORIGIN: 'https://shortbook.life',
@@ -56,7 +55,7 @@ export const assetsLambdaEdgeParams: IAssetsLambdaEdgeStack = {
 
 export const envCloudFront: Environment = {
 	account: AWS_ACCOUNT_ID,
-	region: 'some-region'
+	region: AWS_DEFAULT_REGION
 };
 
 export const envLambda: Environment = {

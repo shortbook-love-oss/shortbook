@@ -1,6 +1,6 @@
 import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
-import type { SelectItem } from './select';
+import type { SelectItemSingle } from '$lib/utilities/select';
 
 export interface BookCover {
 	title: string;
@@ -10,12 +10,12 @@ export interface BookCover {
 	baseColorEnd: string;
 	baseColorDirection: number;
 	titleFontSize: number;
-	titleAlign: number;
+	titleAlign: string;
 	titleColor: string;
 	subtitleFontSize: number;
-	subtitleAlign: number;
+	subtitleAlign: string;
 	subtitleColor: string;
-	writerAlign: number;
+	writerAlign: string;
 	writerColor: string;
 }
 
@@ -28,8 +28,8 @@ export interface MyBookItem extends BookCover {
 }
 
 export interface BookItem extends MyBookItem {
-	bookKeyName: string;
-	userKeyName: string;
+	bookUrlSlug: string;
+	userKeyHandle: string;
 	penName: string;
 	userImage: string;
 }
@@ -42,24 +42,16 @@ export interface BookDetail extends BookItem {
 	isBookDeleted: boolean;
 }
 
-// font-size: ***;
-export const bookFontSizeSelect: SelectItem[] = [
-	{ value: 32, label: 'Tiny' },
-	{ value: 48, label: 'Smaller' },
-	{ value: 64, label: 'Small' },
-	{ value: 96, label: 'Medium' },
-	{ value: 128, label: 'Big' },
-	{ value: 160, label: 'Impact' }
-];
-
 // text-align: ***;
-export const bookTextAlignSelect: SelectItem[] = [
-	{ value: 0, text: 'start', label: 'Left' },
-	{ value: 1, text: 'center', label: 'Center' },
-	{ value: 2, text: 'end', label: 'Right' }
-];
+export const bookTextAlignSelect = [
+	{ value: 'start', label: 'Left' },
+	{ value: 'center', label: 'Center' },
+	{ value: 'end', label: 'Right' }
+] as const satisfies SelectItemSingle<string>[];
 
-export const bookPointSelect: SelectItem[] = [
+export type BookTextAlignSelectValues = (typeof bookTextAlignSelect)[number]['value'];
+
+export const bookPointSelect: SelectItemSingle[] = [
 	{ value: 200, label: '200' },
 	{ value: 300, label: '300' },
 	{ value: 500, label: '500' },
@@ -75,12 +67,12 @@ export function getBookCover(editCover: Partial<BookCover>): BookCover {
 		baseColorEnd: '#c7706e',
 		baseColorDirection: 135,
 		titleFontSize: 96,
-		titleAlign: 0,
+		titleAlign: bookTextAlignSelect[0].value,
 		titleColor: '#ffffff',
 		subtitleFontSize: 64,
-		subtitleAlign: 0,
+		subtitleAlign: bookTextAlignSelect[0].value,
 		subtitleColor: '#ffffff',
-		writerAlign: 0,
+		writerAlign: bookTextAlignSelect[0].value,
 		writerColor: '#ffffff'
 	};
 	return { ...defaultCover, ...editCover };

@@ -6,7 +6,6 @@ import { dbLogActionList } from '$lib-backend/model/log/action-list';
 import { toHash } from '$lib-backend/utilities/crypto';
 import { toHashUserEmail } from '$lib-backend/utilities/email';
 import { signMagicLogActionName, signMagicRateLimit } from '$lib-backend/utilities/log-action';
-import { signInEmailLinkMethod } from '$lib/utilities/signin';
 
 export interface SignResult {
 	user?: Awaited<ReturnType<typeof dbUserGetByEmailHash>>['user'] | null;
@@ -18,7 +17,7 @@ export async function beforeSign(
 	form: Awaited<ReturnType<typeof superValidate<{ email: string }>>>,
 	ipAddress: string
 ): Promise<SignResult> {
-	const emailHash = toHashUserEmail(form.data.email, signInEmailLinkMethod);
+	const emailHash = toHashUserEmail(form.data.email);
 	if (!form.valid) {
 		return { error: null, fail: 'There was an error. please check your input and resubmit.' };
 	}

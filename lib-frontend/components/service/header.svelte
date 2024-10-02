@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import * as m from '$lib/i18n/paraglide/messages';
+	import * as m from '$i18n/output/messages';
 	import { callbackParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
@@ -19,7 +19,11 @@
 	<nav
 		class="flex items-center rounded-ee-lg border-b border-e border-stone-300 bg-white pl-[env(safe-area-inset-left,0px)] pt-[env(safe-area-inset-top,0px)] rtl:pr-[env(safe-area-inset-right,0px)]"
 	>
-		<a href="/" class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200">
+		<a
+			href="/"
+			class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200"
+			aria-label="Back to top page"
+		>
 			<img
 				src="/assets/shortbook-logotype.svg"
 				class="aspect-logotype h-5 align-middle"
@@ -27,7 +31,7 @@
 			/>
 		</a>
 		<ul class="flex items-center">
-			{#if $page.data.session?.user}
+			{#if $page.data.signInUser}
 				<li>
 					<NavLink name={m.header_write()} href="/write" />
 				</li>

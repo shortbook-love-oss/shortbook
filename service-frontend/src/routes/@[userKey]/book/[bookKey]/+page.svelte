@@ -25,28 +25,35 @@
 		class="hidden w-full max-w-2xl shrink-0 gap-8 break-words pt-2 lg:flex lg:w-48 lg:justify-end"
 	>
 		<div class="max-w-full">
-			<a href="/@{data.bookDetail.userKeyName}" class="peer mb-2 inline-block">
-				<img
-					src="{data.bookDetail.userImage}?ext=jpg&w=64&h=64&q=80"
-					alt="{data.bookDetail.penName} profile icon"
-					class="h-16 w-16 rounded bg-white align-middle"
-				/>
+			<a
+				href="/@{data.bookDetail.userKeyHandle}"
+				class="peer mb-2 inline-block"
+				aria-label="{data.bookDetail.penName} profile icon"
+			>
+				<picture>
+					<source srcset="{data.bookDetail.userImage}?ext=avif&w=64&h=64&q=80" type="image/avif" />
+					<img
+						src="{data.bookDetail.userImage}?ext=png&w=64&h=64&q=80"
+						alt="{data.bookDetail.penName} profile icon"
+						class="h-16 w-16 rounded bg-white align-middle"
+					/>
+				</picture>
 			</a>
 			<a
-				href="/@{data.bookDetail.userKeyName}"
-				class="mb-2 block whitespace-pre-wrap text-xl leading-snug hover:underline peer-hover:underline"
+				href="/@{data.bookDetail.userKeyHandle}"
+				class="mb-2 block whitespace-pre-wrap text-[1.25rem] leading-tight hover:underline peer-hover:underline"
 			>
 				{data.bookDetail.penName}
 			</a>
-			{#if data.profileLang?.headline}
-				<p class="whitespace-pre-wrap">{data.profileLang.headline}</p>
+			{#if data.userLang?.headline}
+				<p class="whitespace-pre-wrap">{data.userLang.headline}</p>
 			{/if}
 		</div>
 	</div>
 	<div class="w-full min-w-0 max-w-2xl break-words">
 		<div class="-mx-4 mb-8 px-4">
 			<h1
-				class="whitespace-pre-wrap font-title text-[2.25rem] font-semibold leading-tight xs:text-[3rem] {data
+				class="whitespace-pre-wrap text-[2.25rem] font-semibold leading-tight xs:text-[3.25rem] {data
 					.bookDetail.subtitle
 					? 'mb-2'
 					: 'mb-6'}"
@@ -54,23 +61,25 @@
 				{data.bookDetail.title}
 			</h1>
 			{#if data.bookDetail.subtitle}
-				<p class="mb-8 whitespace-pre-wrap font-serif text-2xl leading-snug">
+				<p class="mb-8 whitespace-pre-wrap text-2xl leading-snug text-stone-500">
 					{data.bookDetail.subtitle}
 				</p>
 			{/if}
 			<div class="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
 				<ProfileCard
 					name={data.bookDetail.penName}
-					keyName={data.bookDetail.userKeyName}
+					keyHandle={data.bookDetail.userKeyHandle}
 					imageSrc={data.bookDetail.userImage}
 				>
-					{#if data.profileLang?.headline}
-						<p class="mt-1">{data.profileLang.headline}</p>
+					{#if data.userLang?.headline}
+						<p class="mt-1">{data.userLang.headline}</p>
 					{/if}
 				</ProfileCard>
 			</div>
 			<div class="flex items-center gap-4">
-				<time datetime={data.bookDetail.publishedAt.toISOString()}>{publishedAt}</time>
+				<time datetime={data.bookDetail.publishedAt.toISOString()} class="text-stone-600"
+					>{publishedAt}</time
+				>
 				{#if data.isOwn && !data.bookDetail.isBookDeleted}
 					<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">
 						<IconWrite width="20" height="20" className="-me-1" />
@@ -106,16 +115,16 @@
 		{/if}
 		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.prologue}
-			<section class="article_content mb-8 font-serif text-xl">
+			<section class="article_content mb-8 text-xl">
 				{@html data.bookDetail.prologue}
 			</section>
 		{/if}
 		{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
-			<section class="article_content font-serif text-xl">
+			<section class="article_content text-xl">
 				{@html data.bookDetail.content}
 			</section>
 		{:else}
-			<SalesMessage image={data.bookDetail.userImage} message={data.bookDetail.salesMessage}>
+			<SalesMessage imageSrc={data.bookDetail.userImage} message={data.bookDetail.salesMessage}>
 				{#snippet action()}
 					{#if data.hasEnoughPoint}
 						<a
@@ -127,7 +136,7 @@
 					{:else}
 						<PaymentAction
 							bookId={data.bookDetail.id}
-							currencyList={data.currencyPreviews}
+							currencyList={data.currencyList}
 							primaryCurrency={data.primaryCurrency}
 						/>
 					{/if}
@@ -135,7 +144,7 @@
 			</SalesMessage>
 		{/if}
 	</div>
-	<div class="hidden shrink-0 pt-1 lg:block lg:w-48">
+	<div class="hidden shrink-0 pt-1.5 lg:block lg:w-48">
 		<BookCover
 			book={data.bookDetail}
 			penName={data.bookDetail.penName}

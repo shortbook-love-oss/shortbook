@@ -4,8 +4,8 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import IconCheck from '~icons/mdi/check';
 	import { page } from '$app/stores';
-	import * as m from '$lib/i18n/paraglide/messages';
-	import { schema } from '$lib/validation/schema/signin-by-email';
+	import * as m from '$i18n/output/messages';
+	import { schema } from '$lib/validation/schema/user/signin-by-email';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
@@ -41,13 +41,15 @@
 	isLoading={$submitting}
 	{submitLabel}
 	submitClass="w-full"
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 >
 	<TextField
-		bind:value={$form.email}
+		bind:value={$form.email as string}
+		type="email"
 		name="email"
-		label={m.sign_form_email_label()}
+		autocomplete="email"
 		required={true}
+		label={m.sign_form_email_label()}
 		placeholder="your-address@email.example"
 		errorMessages={$errors.email}
 		className="mb-4"

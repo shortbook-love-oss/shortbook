@@ -1,9 +1,9 @@
 import prisma from '$lib-backend/database/connect';
-import type { CurrencySupportKeys } from '$lib/utilities/currency';
+import type { CurrencySupportCodes } from '$lib/utilities/currency';
 
 export interface DbUserPaymentSettingUpsertRequest {
 	userId: string;
-	currencyKey: CurrencySupportKeys;
+	currencyCode: CurrencySupportCodes;
 }
 
 export async function dbUserPaymentSettingUpsert(req: DbUserPaymentSettingUpsertRequest) {
@@ -17,10 +17,10 @@ export async function dbUserPaymentSettingUpsert(req: DbUserPaymentSettingUpsert
 			},
 			create: {
 				user_id: req.userId,
-				currency: req.currencyKey
+				currency: req.currencyCode
 			},
 			update: {
-				currency: req.currencyKey
+				currency: req.currencyCode
 			}
 		})
 		.catch(() => {

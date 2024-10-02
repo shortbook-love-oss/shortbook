@@ -13,7 +13,7 @@
 	};
 	let { book, penName, requestLang, className = '' }: Props = $props();
 
-	const bookUrl = $state(`/@${book.userKeyName}/book/${book.bookKeyName}`);
+	const bookUrl = $state(`/@${book.userKeyHandle}/book/${book.bookUrlSlug}`);
 </script>
 
 <article class="flex items-start gap-4 {className}">
@@ -26,7 +26,7 @@
 		<h2 class={book.subtitle ? '' : 'mb-2'}>
 			<a
 				href={bookUrl}
-				class="line-clamp-4 whitespace-pre-wrap break-words pb-[0.1em] font-title text-[2.25rem] font-semibold leading-tight hover:underline xs:text-[3rem]"
+				class="line-clamp-4 whitespace-pre-wrap break-words pb-[0.1em] text-[2.25rem] font-semibold leading-[1.25] hover:underline xs:text-[3rem]"
 			>
 				{book.title}
 			</a>
@@ -35,7 +35,7 @@
 			<p class="mb-2">
 				<a
 					href={bookUrl}
-					class="line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] font-title text-lg hover:underline"
+					class="line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] text-xl text-stone-600 hover:underline"
 					>{book.subtitle}</a
 				>
 			</p>
@@ -43,11 +43,11 @@
 		<div class="flex items-center gap-5">
 			<ProfileCardSmall
 				name={book.penName}
-				keyName={book.userKeyName}
+				keyHandle={book.userKeyHandle}
 				imageSrc={book.userImage}
 				className="min-w-0"
 			/>
-			<time datetime={book.publishedAt.toISOString()} class="text-nowrap pb-0.5"
+			<time datetime={book.publishedAt.toISOString()} class="text-nowrap pb-0.5 text-stone-600"
 				>{toLocaleDate(book.publishedAt, requestLang)}</time
 			>
 		</div>

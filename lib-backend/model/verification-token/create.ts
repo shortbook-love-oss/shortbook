@@ -11,7 +11,7 @@ export interface DbVerificationTokenCreateRequest {
 export async function dbVerificationTokenCreate(req: DbVerificationTokenCreateRequest) {
 	let dbError: Error | undefined;
 
-	const user = await prisma.verificationToken
+	const user = await prisma.verification_tokens
 		.create({
 			data: {
 				identifier: req.identifier,

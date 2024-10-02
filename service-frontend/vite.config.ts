@@ -6,13 +6,19 @@ import Icons from 'unplugin-icons/vite';
 
 export default defineConfig({
 	plugins: [
-		paraglide({ project: './lib-frontend/i18n/project.inlang', outdir: './lib-frontend/i18n/paraglide' }),
+		paraglide({
+			project: './i18n/service.inlang',
+			outdir: './i18n/output'
+		}),
 		sveltekit(),
 		Icons({ compiler: 'svelte' })
 	],
 	server: {
 		host: true, // Access inside container
 		proxy: {},
+		fs: {
+			allow: ['./i18n']
+		},
 		https: {
 			key: fs.readFileSync('./localhost-key.pem'),
 			cert: fs.readFileSync('./localhost.pem')

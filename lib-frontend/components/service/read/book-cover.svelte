@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { type BookCover, bookTextAlignSelect } from '$lib/utilities/book';
-	import { getSelectedText } from '$lib/utilities/select';
+	import type { BookCover } from '$lib/utilities/book';
 
 	type Props = {
 		book: BookCover;
@@ -21,7 +20,7 @@
 		class="flex h-[1200px] w-[800px] origin-top-left flex-col gap-8 p-8 tracking-wide rtl:origin-top-right"
 		style="scale: {width / 800};"
 	>
-		<div style="text-align: {getSelectedText(bookTextAlignSelect, book.titleAlign)};">
+		<div style="text-align: {book.titleAlign};">
 			<p
 				class="whitespace-pre-wrap break-words rounded-md p-6 font-title font-semibold leading-snug"
 				style="color: {book.titleColor}; font-size: {book.titleFontSize}px; line-height: {book.titleFontSize +
@@ -30,10 +29,7 @@
 				{book.title}
 			</p>
 		</div>
-		<div
-			class="flex-1"
-			style="text-align: {getSelectedText(bookTextAlignSelect, book.subtitleAlign)};"
-		>
+		<div class="flex-1" style="text-align: {book.subtitleAlign};">
 			<p
 				class="whitespace-pre-wrap break-words rounded-md p-6 font-title leading-snug"
 				style="color: {book.subtitleColor}; font-size: {book.subtitleFontSize}px; line-height: {book.subtitleFontSize +
@@ -42,9 +38,9 @@
 				{book.subtitle}
 			</p>
 		</div>
-		<div style="text-align: {getSelectedText(bookTextAlignSelect, book.writerAlign)};">
+		<div style="text-align: {book.writerAlign};">
 			<p
-				class="whitespace-pre-wrap break-words rounded-md p-6 font-serif text-[3rem] leading-snug"
+				class="whitespace-pre-wrap break-words rounded-md p-6 font-title text-[3rem] leading-snug"
 				style="color: {book.writerColor};"
 			>
 				{penName}

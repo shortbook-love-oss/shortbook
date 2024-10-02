@@ -1,17 +1,17 @@
 import type { Cookies } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { setSessionToken } from '$lib/utilities/cookie';
+import { getRandom } from '$lib/utilities/crypto';
+import { guessCurrencyByLang } from '$lib/utilities/currency';
+import { getLanguageTagFromUrl, signConfirmTokenParam } from '$lib/utilities/url';
 import { dbLogActionDelete } from '$lib-backend/model/log/action-delete';
 import { dbUserSessionCreate } from '$lib-backend/model/user/session/create';
 import { dbUserCreate } from '$lib-backend/model/user/create';
 import { dbUserGetByEmailHash } from '$lib-backend/model/user/get-by-email-hash';
-import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token/delete';
-import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
-import { getRandom } from '$lib/utilities/crypto';
-import { setSessionToken } from '$lib/utilities/cookie';
-import { signInEmailLinkMethod } from '$lib/utilities/signin';
-import { signConfirmTokenParam } from '$lib/utilities/url';
 import { dbUserRestore } from '$lib-backend/model/user/restore';
 import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
+import { dbVerificationTokenDelete } from '$lib-backend/model/verification-token/delete';
+import { dbVerificationTokenGet } from '$lib-backend/model/verification-token/get';
 import { decryptFromFlat, encryptAndFlat, toHash } from '$lib-backend/utilities/crypto';
 import { copyFile } from '$lib-backend/utilities/file';
 import { toHashUserEmail } from '$lib-backend/utilities/email';
@@ -64,23 +64,25 @@ export async function finalizeSign(
 
 	let userId = '';
 	if (isSignUp) {
+		const nativeLanguage = getLanguageTagFromUrl(requestUrl);
 		// Create user with random profile
 		// If email exist, fail to user create
 		const { user, dbError: dbUserGetError } = await dbUserCreate({
-			emailEncrypt: encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT),
-			emailHash: toHashUserEmail(userEmail, signInEmailLinkMethod),
-			emailVerified: new Date(),
-			keyName: getRandom(16),
+			keyHandle: getRandom(16),
 			penName: `User ${getRandom(6).toUpperCase()}`,
-			profileImage: ''
+			emailEncrypt: encryptAndFlat(userEmail, env.ENCRYPT_EMAIL_USER, env.ENCRYPT_SALT),
+			emailHash: toHashUserEmail(userEmail),
+			imageSrc: '',
+			nativeLanguage,
+			currency: guessCurrencyByLang(nativeLanguage)
 		});
 		if (!user || dbUserGetError) {
 			return { error: new Error(dbUserGetError?.message ?? '') };
 		}
 		userId = user.id;
+		const profileImagePath = `${userId}/shortbook-profile`;
 
 		// Copy profile image to user's directory
-		const profileImagePath = `${userId}/shortbook-profile`;
 		const { error: copyFileError } = await copyFile(
 			env.AWS_DEFAULT_REGION,
 			env.AWS_BUCKET_IMAGE_PROFILE,
@@ -90,18 +92,18 @@ export async function finalizeSign(
 		if (copyFileError) {
 			return { error: new Error(copyFileError.message) };
 		}
+
 		const { dbError: dbImageUpdateError } = await dbUserProfileImageUpdate({
 			userId,
-			image: `/profile/${profileImagePath}`
+			imageSrc: `/profile/${profileImagePath}`
 		});
 		if (dbImageUpdateError) {
 			return { error: new Error(dbImageUpdateError.message) };
 		}
-
 	} else {
 		// Get user
 		const { user, dbError: dbUserGetError } = await dbUserGetByEmailHash({
-			emailHash: toHashUserEmail(userEmail, signInEmailLinkMethod),
+			emailHash: toHashUserEmail(userEmail),
 			isIncludeDelete: true
 		});
 		if (!user || dbUserGetError) {
@@ -129,7 +131,7 @@ export async function finalizeSign(
 	}
 
 	// Set session token to cookie
-	setSessionToken(cookies, userSession.sessionToken);
+	setSessionToken(cookies, userSession.session_token);
 
 	return { error: null };
 }

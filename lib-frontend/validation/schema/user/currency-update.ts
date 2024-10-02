@@ -1,16 +1,8 @@
 import { z } from 'zod';
-import { currencySupports } from '$lib/utilities/currency';
+import { validateCurrencyCode } from '$lib/validation/rules/currency';
 
 export const schema = z.object({
-	currencyKey: z.string().refine(
-		(value) => {
-			if (value === '') {
-				return true;
-			}
-			return currencySupports.find((c) => c.key === value);
-		},
-		{
-			message: 'Please select one of supported currency'
-		}
-	)
+	currencyCode: z.string().refine(validateCurrencyCode, {
+		message: 'Please select one of supported currency'
+	})
 });

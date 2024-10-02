@@ -1,48 +1,37 @@
+import { currencyListByGroup } from '$lib/utilities/currency-list';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
-import type { SelectItem } from '$lib/utilities/select';
+import type { SelectItemGroup } from '$lib/utilities/select';
 
-// Note allowDecimal: Some currencies do not support decimal points
+// All support currency code / name / payment rules
+export const currencySupports = currencyListByGroup;
+export const currencySupportsFlat = currencySupports.map((group) => group.childs).flat();
+export const currencySupportsWithCode: SelectItemGroup<CurrencySupportCodes>[] =
+	currencySupports.map((group) => {
+		return {
+			...group,
+			childs: group.childs.map((item) => ({
+				...item,
+				label: `${item.value.toUpperCase()} — ${item.label}`
+			}))
+		};
+	});
+
+export const currencySupportCodes = currencySupportsFlat.map((currency) => currency.value);
+export type CurrencySupportCodes = (typeof currencySupportCodes)[number];
+
+// Some currencies do not support decimal points
 // In those cases, the specification is not to multiply by 100
-// https://docs.stripe.com/currencies#zero-decimal
-// Note rule00: see https://docs.stripe.com/currencies#special-cases
-export const currencySupports = [
-	{ key: 'usd', label: 'USD', allowDecimal: true, rule00: false },
-	{ key: 'eur', label: 'EUR', allowDecimal: true, rule00: false },
-	{ key: 'aed', label: 'AED', allowDecimal: true, rule00: false },
-	{ key: 'inr', label: 'INR', allowDecimal: true, rule00: false },
-	{ key: 'cny', label: 'CNY', allowDecimal: true, rule00: false },
-	{ key: 'twd', label: 'TWD', allowDecimal: true, rule00: false },
-	{ key: 'jpy', label: 'JPY', allowDecimal: false, rule00: false },
-	{ key: 'aud', label: 'AUD', allowDecimal: true, rule00: false },
-	{ key: 'rub', label: 'RUB', allowDecimal: true, rule00: false },
-	{ key: 'brl', label: 'BRL', allowDecimal: true, rule00: false },
-	{ key: 'bam', label: 'BAM', allowDecimal: true, rule00: false },
-	{ key: 'isk', label: 'ISK', allowDecimal: true, rule00: true },
-	{ key: 'huf', label: 'HUF', allowDecimal: true, rule00: false },
-	{ key: 'ugx', label: 'UGX', allowDecimal: false, rule00: true }
-] as const;
+// See https://docs.stripe.com/currencies#zero-decimal
+export const currencyDisallowDecimalList = ['jpy', 'ugx'] as const satisfies CurrencySupportCodes[];
 
-export const defaultCurrency = currencySupports[0];
+// See https://docs.stripe.com/currencies#special-cases
+export const currencyMultiple100List = ['isk', 'ugx'] as const satisfies CurrencySupportCodes[];
 
-export const currencySupportKeys = currencySupports.map((currency) => currency.key);
-
-export type CurrencySupportKeys = (typeof currencySupports)[number]['key'];
-
-export const currencySelect: SelectItem<CurrencySupportKeys>[] = currencySupports.map(
-	(currency) => ({
-		value: currency.key,
-		label: currency.label
-	})
-);
-
-export const currencyAndNoSelect: SelectItem<CurrencySupportKeys | ''>[] = [
-	{ value: '', label: 'Select at each payment' },
-	...currencySelect
-];
+export const defaultCurrencyCode = 'usd' as const satisfies CurrencySupportCodes;
 
 export function getCurrencyData(key: string) {
-	for (const currency of currencySupports) {
-		if (currency.key === key) {
+	for (const currency of currencySupportsFlat) {
+		if (currency.value === key) {
 			return currency;
 		}
 	}
@@ -50,7 +39,7 @@ export function getCurrencyData(key: string) {
 }
 
 export function guessCurrencyByLang(langTag: AvailableLanguageTags) {
-	let suggestCurrency: CurrencySupportKeys = defaultCurrency.key;
+	let suggestCurrency: CurrencySupportCodes = defaultCurrencyCode;
 	switch (langTag) {
 		case 'en':
 			suggestCurrency = 'usd';
@@ -101,7 +90,7 @@ export function getLocalizedPrice(originPrice: number, isAllowDecimal: boolean) 
 // 20.25 → €20.25
 export function formatPrice(
 	amount: number,
-	currency: CurrencySupportKeys,
+	currency: CurrencySupportCodes,
 	requestLang: AvailableLanguageTags
 ) {
 	return new Intl.NumberFormat(requestLang, {

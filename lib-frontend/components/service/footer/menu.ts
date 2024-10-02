@@ -1,4 +1,4 @@
-import * as m from '$lib/i18n/paraglide/messages';
+import * as m from '$i18n/output/messages';
 
 type FooterItem = {
 	name: string;

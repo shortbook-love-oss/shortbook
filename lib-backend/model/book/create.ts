@@ -3,24 +3,24 @@ import prisma from '$lib-backend/database/connect';
 export interface DbBookCreateRequest {
 	userId: string;
 	status: number; // 0: Draft 1: Public 2: Fan club only
-	nativeLanguage: string;
+	targetLanguage: string;
 	title: string;
 	subtitle: string;
 	prologue: string;
 	content: string;
 	salesMessage: string;
-	keyName: string;
+	urlSlug: string;
 	buyPoint: number;
 	baseColorStart: string;
 	baseColorEnd: string;
 	baseColorDirection: number;
 	titleFontSize: number;
-	titleAlign: number;
+	titleAlign: string;
 	titleColor: string;
 	subtitleFontSize: number;
-	subtitleAlign: number;
+	subtitleAlign: string;
 	subtitleColor: string;
-	writerAlign: number;
+	writerAlign: string;
 	writerColor: string;
 }
 
@@ -32,7 +32,7 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 			const book = await tx.books.create({
 				data: {
 					user_id: req.userId,
-					key_name: req.keyName,
+					url_slug: req.urlSlug,
 					status: req.status,
 					buy_point: req.buyPoint,
 					cover: {
@@ -52,7 +52,7 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 					},
 					languages: {
 						create: {
-							language_code: req.nativeLanguage,
+							target_language: req.targetLanguage,
 							thumbnail_url: '',
 							title: req.title,
 							subtitle: req.subtitle,

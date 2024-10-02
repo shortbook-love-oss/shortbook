@@ -1,59 +1,55 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
+import type { AvailableLanguageTag } from '$i18n/output/runtime';
+import { languageSelect } from '$lib/utilities/language';
+import { schema } from '$lib/validation/schema/user/profile/update';
 import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib-backend/model/user/profile/update';
-import { dbUserGetByKeyName } from '$lib-backend/model/user/get-by-key-name';
-import { languageAndNotSelect } from '$lib/utilities/language';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
-import { schema } from '$lib/validation/schema/profile-update';
+import { dbUserGetByKeyHandle } from '$lib-backend/model/user/get-by-key-handle';
 
-export const load = async ({ url, locals }) => {
-	const requestLang = getLanguageTagFromUrl(url);
-	const form = await superValidate(zod(schema));
-
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+export const load = async ({ locals }) => {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
 
-	const { profile, dbError } = await dbUserProfileGet({ userId });
-	if (dbError) {
-		return error(500, { message: dbError.message });
+	const form = await superValidate(zod(schema));
+
+	const { user, dbError } = await dbUserProfileGet({ userId: signInUser.id });
+	if (!user || dbError) {
+		return error(500, { message: dbError?.message ?? '' });
 	}
-	const profileLangs = profile?.languages[0];
+	const userLangs = user.languages[0];
 
-	const langTags = languageAndNotSelect;
-
-	form.data.keyName = profile?.key_name ?? '';
-	form.data.nativeLanguage = (profile?.native_language || requestLang) as AvailableLanguageTag;
-	form.data.penName = profileLangs?.pen_name ?? '';
-	form.data.headline = profileLangs?.headline ?? '';
-	form.data.selfIntroduction = profileLangs?.self_introduction ?? '';
+	form.data.keyHandle = user.key_handle;
+	form.data.nativeLanguage = user.native_language as AvailableLanguageTag;
+	form.data.penName = user.pen_name;
+	form.data.headline = userLangs?.headline ?? '';
+	form.data.selfIntroduction = userLangs?.self_introduction ?? '';
 	const initPenName = form.data.penName;
 
-	return { form, langTags, initPenName };
+	return { form, languageSelect, initPenName };
 };
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
 			// If already use key-name, show error message near the input
-			const { user, dbError } = await dbUserGetByKeyName({ keyName: form.data.keyName });
+			const { user, dbError } = await dbUserGetByKeyHandle({ keyHandle: form.data.keyHandle });
 			if (dbError) {
 				return error(500, { message: dbError.message });
 			}
-			if (user && user.id !== userId) {
+			if (user && user.id !== signInUser.id) {
 				form.valid = false;
-				form.errors.keyName = form.errors.keyName ?? [];
-				form.errors.keyName.push('This ID is in use by another user');
+				form.errors.keyHandle = form.errors.keyHandle ?? [];
+				form.errors.keyHandle.push('This ID is in use by another user');
 			}
 		}
 		if (!form.valid) {
@@ -62,8 +58,8 @@ export const actions = {
 		}
 
 		const { dbError } = await dbUserProfileUpdate({
-			userId,
-			...form.data
+			...form.data,
+			userId: signInUser.id
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });

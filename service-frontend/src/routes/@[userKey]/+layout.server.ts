@@ -1,26 +1,26 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbUserGetByKeyName } from '$lib-backend/model/user/get-by-key-name';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
+import { dbUserGetByKeyHandle } from '$lib-backend/model/user/get-by-key-handle';
 
 export const load = async ({ url, params, locals }) => {
-	const signInUserId = locals.session?.user?.id;
+	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.userKey });
-	if (!user || !user.profiles || dbError) {
+	const { user, dbError } = await dbUserGetByKeyHandle({ keyHandle: params.userKey });
+	if (!user || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	if (user.image) {
-		user.image = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image;
+	if (user.image_src) {
+		user.image_src = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image_src;
 	}
 
-	let profileLang = user.profiles.languages.find((lang) => lang.language_code === requestLang);
-	if (!profileLang && user.profiles.languages.length) {
-		profileLang = user.profiles.languages[0];
+	let userLang = user.languages.find((lang) => lang.target_language === requestLang);
+	if (!userLang && user.languages.length) {
+		userLang = user.languages[0];
 	}
 
-	const isOwn = user.id === signInUserId;
+	const isOwn = user.id === signInUser?.id;
 
-	return { user, profileLang, isOwn };
+	return { user, userLang, isOwn };
 };

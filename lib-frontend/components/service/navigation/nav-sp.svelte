@@ -6,7 +6,7 @@
 	import IconSignin from '~icons/mdi/user-check-outline';
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
-	import * as m from '$lib/i18n/paraglide/messages';
+	import * as m from '$i18n/output/messages';
 	import { callbackParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
@@ -26,7 +26,7 @@
 					<IconHome width="30" height="30" />
 				</NavLinkSp>
 			</li>
-			{#if $page.data.session?.user}
+			{#if $page.data.signInUser}
 				<li>
 					<NavLinkSp name={m.header_sp_write()} href="/write">
 						<IconWrite width="30" height="30" />
@@ -49,7 +49,7 @@
 					</NavLinkSp>
 				</li>
 			{/if}
-			{#if $page.data.session?.user}
+			{#if $page.data.signInUser}
 				<li class="relative">
 					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-0 min-w-40">
 						{#snippet opener()}

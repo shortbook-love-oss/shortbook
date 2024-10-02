@@ -1,14 +1,16 @@
-export interface SelectItem<T = number> {
+export type SelectItemGroup<T = number> = {
+	label: string;
+	childs: SelectItemSingle<T>[];
+};
+
+export type SelectItemSingle<T = number> = {
 	value: T;
 	label: string;
 	text?: string;
-	selected?: boolean;
-}
+};
 
-export function getSelectedText<T = number>(items: SelectItem<T>[], value: T) {
-	const match = items.find((item) => item.value === value);
-	if (match) {
-		return match.text;
-	}
-	return items[0]?.text ?? '';
+export type SelectItem<T = number> = SelectItemGroup<T> | SelectItemSingle<T>;
+
+export function isSelectGroup<T = number>(group: SelectItem<T>): group is SelectItemGroup<T> {
+	return Object.hasOwn(group, 'childs');
 }

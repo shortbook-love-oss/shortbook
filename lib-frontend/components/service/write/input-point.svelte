@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { ValidationErrors } from 'sveltekit-superforms';
 	import { bookPointSelect } from '$lib/utilities/book';
-	import TextField from '$lib/components/modules/form/text-field.svelte';
+	import Number from '$lib/components/modules/form/number.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
 	type Props = {
@@ -22,7 +22,7 @@
 </script>
 
 <div class="flex flex-wrap items-end gap-2 {className}">
-	<TextField
+	<Number
 		{...restProps}
 		min="70"
 		max="1000000"

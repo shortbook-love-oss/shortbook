@@ -1,5 +1,5 @@
 # Debian 12 Node.js
-FROM node:22.7.0-bookworm-slim AS base
+FROM node:22.9.0-bookworm-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl
 
@@ -14,6 +14,7 @@ COPY ./service-frontend/package.json .
 RUN npm i
 
 COPY ./service-frontend .
+COPY ./i18n/service ./i18n
 COPY ./lib-frontend ./lib-frontend
 COPY ./lib-backend ./lib-backend
 
@@ -49,13 +50,14 @@ FROM prd-process AS prd-build
 RUN npm ci --include=dev
 
 COPY ./service-frontend .
+COPY ./i18n/service ./i18n
 COPY ./lib-frontend ./lib-frontend
 COPY ./lib-backend ./lib-backend
 
 # Production-setting build
 RUN npm run build
 
-FROM --platform=linux/arm64 node:22.7.0-bookworm-slim AS prd
+FROM --platform=linux/amd64 node:22.9.0-bookworm-slim AS prd
 
 RUN apt-get update -y \
   && apt-get install -y openssl \

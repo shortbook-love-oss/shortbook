@@ -7,3 +7,6 @@
 .DS_Store
 desktop.ini
 Thumbs.db
+
+# I18n files are managed in separate repositories.
+i18n

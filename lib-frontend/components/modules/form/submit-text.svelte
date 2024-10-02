@@ -19,7 +19,7 @@
 	const cursorClass = $state(
 		(() => {
 			if (hasInvalid) {
-				return 'cursor-not-allowed';
+				return 'cursor-no-drop';
 			} else if (isLoading) {
 				return 'cursor-wait';
 			}

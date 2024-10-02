@@ -2,11 +2,12 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import {
-		currencySelect,
+		currencyDisallowDecimalList,
+		currencySupportsWithCode,
 		formatPrice,
 		getCurrencyData,
 		getLocalizedPrice,
-		type CurrencySupportKeys
+		type CurrencySupportCodes
 	} from '$lib/utilities/currency';
 	import { chargeFee } from '$lib/utilities/payment';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
@@ -14,24 +15,24 @@
 
 	type Props = {
 		point: number;
-		selectedCurrencyKey: CurrencySupportKeys;
-		currencyRates: Partial<Record<CurrencySupportKeys, number>>;
+		userCurrencyCode: CurrencySupportCodes;
+		currencyRates: Partial<Record<CurrencySupportCodes, number>>;
 	};
-	let { point, selectedCurrencyKey, currencyRates }: Props = $props();
+	let { point, userCurrencyCode, currencyRates }: Props = $props();
 
 	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
 	const requestLang = getLanguageTagFromUrl($page.url);
-	let buyCurrencySelected = $state('' as CurrencySupportKeys);
-	buyCurrencySelected = selectedCurrencyKey;
-	let earnCurrencySelected = $state('' as CurrencySupportKeys);
-	earnCurrencySelected = selectedCurrencyKey;
+	let buyCurrencySelected = $state('' as CurrencySupportCodes);
+	buyCurrencySelected = userCurrencyCode;
+	let earnCurrencySelected = $state('' as CurrencySupportCodes);
+	earnCurrencySelected = userCurrencyCode;
 
 	const pointToPriceRates = $derived.by(() => {
-		const localRates: Partial<Record<CurrencySupportKeys, number>> = {};
+		const localRates: Partial<Record<CurrencySupportCodes, number>> = {};
 		for (const key in currencyRates) {
-			const localKey = key as CurrencySupportKeys;
+			const localKey = key as CurrencySupportCodes;
 			const rate = currencyRates[localKey];
 			if (rate) {
 				localRates[localKey] = rate * point;
@@ -70,9 +71,10 @@
 		if (!currencyData || price == undefined) {
 			return undefined;
 		}
-		const l10nPrice = getLocalizedPrice(price * quantity, currencyData.allowDecimal);
+		const isAllowDecimal = !(currencyDisallowDecimalList as string[]).includes(currencyData.value);
+		const l10nPrice = getLocalizedPrice(price * quantity, isAllowDecimal);
 
-		return formatPrice(l10nPrice, currencyData.key, requestLang);
+		return formatPrice(l10nPrice, currencyData.value, requestLang);
 	}
 </script>
 
@@ -81,13 +83,13 @@
 		{#if buyPrice != undefined}
 			<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1">
 				<p>
-					Sell for <span class="text-2xl font-semibold">{buyPrice}</span>
+					Sell for <span translate="no" class="text-2xl font-semibold">{buyPrice}</span>
 				</p>
 				<Select
-					bind:value={buyCurrencySelected}
+					bind:value={buyCurrencySelected as string}
 					name="buyCurrency"
-					list={currencySelect}
-					className="w-28 text-lg shrink-0"
+					list={currencySupportsWithCode}
+					className="w-64 text-lg shrink-0"
 				/>
 			</div>
 		{/if}
@@ -95,22 +97,16 @@
 			Total service fee and transaction fee is <span class="font-semibold">{chargeFee}%</span>
 		</div>
 		{#if earnPrice != undefined}
-			<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1">
-				<p>
-					You get {point} points =
-					<span class="text-2xl font-semibold">{earnPrice}</span>
-				</p>
-				<Select
-					bind:value={earnCurrencySelected}
-					name="buyCurrency"
-					list={currencySelect}
-					className="w-28 text-lg shrink-0"
-				/>
-			</div>
+			<p class="mb-4">
+				You get {point} points =
+				<span translate="no" class="text-2xl font-semibold">{earnPrice}</span>
+			</p>
 		{/if}
 		{#if earnPrice100Sold != undefined}
 			<p>
-				If sell 100 books, get <span class="text-2xl font-semibold">{earnPrice100Sold}</span>
+				If sell 100 books, get <span translate="no" class="text-2xl font-semibold"
+					>{earnPrice100Sold}</span
+				>
 			</p>
 		{/if}
 	</div>

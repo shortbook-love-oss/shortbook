@@ -3,13 +3,13 @@ import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib-backend/model/book/list';
 import { dbUserPaymentCheckoutList } from '$lib-backend/model/user/payment-checkout/list';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
-import type { CurrencySupportKeys } from '$lib/utilities/currency';
+import type { CurrencySupportCodes } from '$lib/utilities/currency';
 import type { PointListItem } from '$lib/utilities/point';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, locals }) => {
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
 	const requestLang = getLanguageTagFromUrl(url);
@@ -18,7 +18,7 @@ export const load = async ({ url, locals }) => {
 		userPointHistories,
 		currentPoint,
 		dbError: dbPointListError
-	} = await dbUserPointList({ userId });
+	} = await dbUserPointList({ userId: signInUser.id });
 	if (!userPointHistories || dbPointListError) {
 		return error(500, { message: dbPointListError?.message ?? '' });
 	}
@@ -26,10 +26,10 @@ export const load = async ({ url, locals }) => {
 	const checkoutIds = userPointHistories
 		.map((history) => history.payment_checkout_id)
 		.filter(Boolean);
-	let paymentCheckoutMap: Record<string, user_payment_checkouts> = {};
+	const paymentCheckoutMap: Record<string, user_payment_checkouts> = {};
 	if (checkoutIds.length) {
 		const { paymentCheckouts, dbError } = await dbUserPaymentCheckoutList({
-			userId,
+			userId: signInUser.id,
 			checkoutIds: checkoutIds
 		});
 		if (!paymentCheckouts || dbError) {
@@ -65,7 +65,7 @@ export const load = async ({ url, locals }) => {
 		let bookTitle = '';
 		const book = pointBooksMap[point.book_id];
 		if (point.book_id && book) {
-			let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
+			let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
 			if (!bookLang && book.languages.length) {
 				bookLang = book.languages[0];
 			}
@@ -76,14 +76,14 @@ export const load = async ({ url, locals }) => {
 			amount: point.amount,
 			createdAt: point.created_at,
 			bookTitle,
-			bookKeyName: book?.key_name ?? '',
-			writeKeyName: book?.user.profiles?.key_name ?? '',
+			bookUrlSlug: book?.url_slug ?? '',
+			writeKeyHandle: book?.user.key_handle,
 			isSell: point.is_sell > 0
 		};
 		if (checkout) {
 			pointItem.payment = {
 				provider: checkout.provider_key,
-				currency: checkout.currency.toLowerCase() as CurrencySupportKeys,
+				currency: checkout.currency.toLowerCase() as CurrencySupportCodes,
 				amount: checkout.amount.toNumber()
 			};
 		}
@@ -91,5 +91,5 @@ export const load = async ({ url, locals }) => {
 		return pointItem;
 	});
 
-	return { pointList, currentPoint, userPointHistories };
+	return { pointList, currentPoint, userPointHistories, form: {} };
 };

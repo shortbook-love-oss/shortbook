@@ -9,7 +9,7 @@ export async function dbUserRestore(req: DbUserRestoreRequest) {
 
 	await prisma
 		.$transaction(async (tx) => {
-			const user = await tx.user.update({
+			const user = await tx.users.update({
 				where: {
 					id: req.userId
 				},
@@ -19,26 +19,10 @@ export async function dbUserRestore(req: DbUserRestoreRequest) {
 				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
 				throw dbError;
 			}
-			const deletedProfile = await tx.user_profiles.update({
-				where: {
-					user_id: req.userId
-				},
-				data: { deleted_at: null }
-			});
-			if (!deletedProfile?.id) {
-				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
-				throw dbError;
-			}
 
-			await tx.account.updateMany({
+			await tx.user_languages.updateMany({
 				where: {
-					userId: req.userId
-				},
-				data: { deleted_at: null }
-			});
-			await tx.user_profile_languages.updateMany({
-				where: {
-					profile_id: deletedProfile.id
+					user_id: user.id
 				},
 				data: { deleted_at: null }
 			});

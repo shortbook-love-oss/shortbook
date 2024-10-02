@@ -64,7 +64,7 @@ export async function copyFile(
 		Bucket: bucketName,
 		CopySource: `${bucketName}/${filePathFrom}`,
 		Key: filePathTo
-	})
+	});
 	await s3
 		.send(command)
 		.then((response) => {
@@ -90,6 +90,7 @@ export async function uploadFile(
 	const s3 = createStorageClient(region);
 
 	let isSuccessUpload = false;
+	let checksum = '';
 	let error: Error | undefined;
 
 	const command = new PutObjectCommand({
@@ -106,12 +107,15 @@ export async function uploadFile(
 			if (statusCode) {
 				isSuccessUpload = 200 <= statusCode && statusCode < 300;
 			}
+			if (response.ChecksumSHA256) {
+				checksum = response.ChecksumSHA256;
+			}
 		})
 		.catch((e: Error) => {
 			error = e;
 		});
 
-	return { isSuccessUpload, error };
+	return { isSuccessUpload, checksum, error };
 }
 
 export async function deleteFiles(region: string, bucketName: string, filePrefix: string) {
@@ -124,43 +128,47 @@ export async function deleteFiles(region: string, bucketName: string, filePrefix
 	// Search by prefix and delete matched objects
 	const listCommand = new ListObjectsV2Command({
 		Bucket: bucketName,
-		Prefix: filePrefix,
-	})
-	const list = await s3.send(listCommand)
-		.catch((e: Error) => {
-			error = e;
-			return undefined;
-		});
+		Prefix: filePrefix
+	});
+	const list = await s3.send(listCommand).catch((e: Error) => {
+		error = e;
+		return undefined;
+	});
 	if (!list || error) {
 		return { isSuccessDelete: false, error };
 	}
 
-	if (list.Contents?.length) {
-		const objectKeys: string[] = [];
-		list.Contents.forEach((object) => {
-			if (object.Key) {
-				objectKeys.push(object.Key);
-			}
-		});
-
-		const deleteCommand = new DeleteObjectsCommand({
-			Bucket: bucketName,
-			Delete: {
-				Objects: objectKeys.map(key => ({ Key: key }))
-			}
-		});
-		await s3
-			.send(deleteCommand)
-			.then((response) => {
-				const statusCode = response.$metadata.httpStatusCode;
-				if (statusCode) {
-					isSuccessDelete = 200 <= statusCode && statusCode < 300;
-				}
-			})
-			.catch((e: Error) => {
-				error = e;
-			});
+	const deleteTargetKeys: string[] = [];
+	list.Contents?.forEach((object) => {
+		if (!object.Key) {
+			return;
+		}
+		const afterPrefix = object.Key.split(filePrefix)[1];
+		if (afterPrefix === '' || afterPrefix.startsWith('/')) {
+			deleteTargetKeys.push(object.Key);
+		}
+	});
+	if (!deleteTargetKeys.length) {
+		return { isSuccessDelete: true, error: undefined };
 	}
+
+	const deleteCommand = new DeleteObjectsCommand({
+		Bucket: bucketName,
+		Delete: {
+			Objects: deleteTargetKeys.map((key) => ({ Key: key }))
+		}
+	});
+	await s3
+		.send(deleteCommand)
+		.then((response) => {
+			const statusCode = response.$metadata.httpStatusCode;
+			if (statusCode) {
+				isSuccessDelete = 200 <= statusCode && statusCode < 300;
+			}
+		})
+		.catch((e: Error) => {
+			error = e;
+		});
 
 	return { isSuccessDelete, error };
 }

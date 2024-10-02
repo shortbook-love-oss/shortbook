@@ -1,11 +1,9 @@
-import { i18n } from '$lib/i18n/i18n';
-import { availableLanguageTags } from '$lib/i18n/paraglide/runtime';
+import { availableLanguageTags } from '$i18n/output/runtime';
+import type { SelectItemSingle } from '$lib/utilities/select';
 
 export type AvailableLanguageTags = (typeof availableLanguageTags)[number];
 
-export interface LanguageSelect {
-	value: AvailableLanguageTags | '';
-	label: string;
+export interface LanguageSelect extends SelectItemSingle<AvailableLanguageTags | ''> {
 	english: string;
 }
 
@@ -26,6 +24,6 @@ export const languageSelect: LanguageSelect[] = [
 ];
 
 export const languageAndNotSelect: LanguageSelect[] = [
-	{ value: '', label: 'Select your language', english: 'Select your language' },
+	{ value: '', label: 'Select language', english: 'Select language' },
 	...languageSelect
 ];

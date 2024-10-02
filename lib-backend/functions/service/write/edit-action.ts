@@ -1,11 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib-backend/model/book/list';
 
-export async function isExistBookKeyName(
-	userId: string,
-	inputKeyName: string,
-	editingBookId: string
-) {
+export async function isExistBookUrlSlug(userId: string, inputSlug: string, editingBookId: string) {
 	const { books, dbError: dbBookListError } = await dbBookList({
 		userId,
 		isIncludeDraft: true
@@ -17,7 +13,7 @@ export async function isExistBookKeyName(
 		if (editingBookId && editingBookId === book.id) {
 			continue;
 		}
-		if (book.key_name === inputKeyName) {
+		if (book.url_slug === inputSlug) {
 			return true;
 		}
 	}

@@ -2,27 +2,27 @@ import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
-import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
-import { schema } from '$lib/validation/schema/profile-image-update';
+import { schema } from '$lib/validation/schema/user/profile/image-update';
 import { deleteImageCache } from '$lib-backend/utilities/cache';
 import { deleteFiles, uploadFile } from '$lib-backend/utilities/file';
-import { imageSecureCheck } from '$lib-backend/utilities/image';
+import { dbUserProfileImageUpdate } from '$lib-backend/model/user/update-profile-image';
+import { getActualImageData } from '$lib-backend/utilities/image';
 
 export const load = async ({ locals }) => {
-	const form = await superValidate(zod(schema));
-
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
 
-	return { form };
+	const form = await superValidate(zod(schema));
+
+	return { signInUser, form };
 };
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
@@ -33,14 +33,17 @@ export const actions = {
 		}
 
 		const profileImage = new Uint8Array(await form.data.profileImage[0].arrayBuffer());
-		const { mimeType, errorMessage } = await imageSecureCheck(profileImage);
+		const { mimeType, errorMessage } = await getActualImageData(profileImage);
 		if (!profileImage || !mimeType || errorMessage) {
 			message(form, errorMessage ?? '');
 			return fail(400, { form });
 		}
 
 		// Delete image cache
-		await deleteImageCache(env.AWS_CONTENT_DISTRIBUTION_ID_IMAGE_CDN, `/profile/${userId}/*`);
+		await deleteImageCache(
+			env.AWS_CONTENT_DISTRIBUTION_ID_IMAGE_CDN,
+			`/profile/${signInUser.id}/*`
+		);
 
 		// Delete image file in CDN
 		// Path format is /profile/${userId}/profile.${extension}/${someoption-w-h-q...}/profile.${extension}
@@ -48,7 +51,7 @@ export const actions = {
 		const { error: cdnDeleteError } = await deleteFiles(
 			env.AWS_DEFAULT_REGION,
 			`${env.AWS_BUCKET_IMAGE_PROFILE}-cdn`,
-			`${userId}/`
+			signInUser.id
 		);
 		if (cdnDeleteError) {
 			console.error('Error when delete old converted profile-image.');
@@ -56,7 +59,7 @@ export const actions = {
 		}
 
 		// Upload image to Amazon S3
-		const savePath = `${userId}/shortbook-profile`;
+		const savePath = `${signInUser.id}/shortbook-profile`;
 		const { isSuccessUpload, error: uploadFileError } = await uploadFile(
 			profileImage,
 			mimeType,
@@ -71,8 +74,8 @@ export const actions = {
 
 		// Save image URL to DB
 		const { dbError } = await dbUserProfileImageUpdate({
-			userId: userId,
-			image: '/profile/' + savePath
+			userId: signInUser.id,
+			imageSrc: '/profile/' + savePath
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });

@@ -4,7 +4,7 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import IconDelete from '~icons/mdi/trash-can-outline';
 	import { page } from '$app/stores';
-	import { schema } from '$lib/validation/schema/book-update';
+	import { schema } from '$lib/validation/schema/book/update';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
@@ -58,7 +58,7 @@
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}
 	successMessage={$page.status === 200 ? $message : ''}
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 	className="contents"
 >
 	<div
@@ -87,12 +87,12 @@
 				className="mb-8"
 			/>
 			<Select
-				bind:value={$form.nativeLanguage}
-				name="nativeLanguage"
+				bind:value={$form.targetLanguage as string}
+				name="targetLanguage"
 				list={data.langTags}
 				required={true}
 				label="Native language"
-				errorMessages={$errors.nativeLanguage}
+				errorMessages={$errors.targetLanguage}
 				className="mb-8 max-w-72"
 			/>
 			<TextArea
@@ -118,18 +118,20 @@
 				className="mb-8"
 			/>
 			<TextField
-				bind:value={$form.keyName}
-				name="keyName"
+				bind:value={$form.urlSlug}
+				name="urlSlug"
 				required={true}
 				label="URL string"
-				errorMessages={$errors.keyName}
+				errorMessages={$errors.urlSlug}
 				className="mb-1"
 			/>
-			<p class="mb-8 break-words">{$page.url.origin}/@{data.userKeyName}/book/{$form.keyName}</p>
+			<p class="mb-8 break-words">
+				{$page.url.origin}/@{$page.data.signInUser.keyHandle}/book/{$form.urlSlug}
+			</p>
 			<InputPoint bind:point={$form.buyPoint} errorMessages={$errors.buyPoint} className="mb-8" />
 			<PricePreview
 				point={$form.buyPoint}
-				selectedCurrencyKey={data.selectedCurrencyKey}
+				userCurrencyCode={data.userCurrencyCode}
 				currencyRates={data.currencyRateIndex}
 			/>
 		</div>
@@ -137,7 +139,7 @@
 			<div class="w-fit lg:-mx-4 lg:-mt-3">
 				<BookCoverEdit
 					book={$form}
-					penName={data.penName}
+					penName={$page.data.signInUser.penName}
 					errors={$errors}
 					oninput={applyChildChange}
 				/>

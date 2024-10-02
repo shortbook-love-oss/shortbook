@@ -57,7 +57,7 @@ export async function sendEmail(
 	return { result, sendEmailError };
 }
 
-// Unique email-hash make by email + providerName(e.g.linkedin) + random suffix
-export function toHashUserEmail(email: string, providerName: string) {
-	return toHash(email, providerName.toLowerCase() + env.HASH_EMAIL_USER);
+// Unique email-hash make by email + random suffix
+export function toHashUserEmail(email: string) {
+	return toHash(email, env.HASH_EMAIL_USER);
 }

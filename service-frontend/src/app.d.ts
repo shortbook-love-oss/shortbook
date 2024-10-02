@@ -1,5 +1,3 @@
-import type { DefaultSession } from '@auth/sveltekit';
-import type { ParaglideLocals } from '@inlang/paraglide-sveltekit';
 import 'unplugin-icons/types/svelte';
 import type { AvailableLanguageTag } from '$lib/paraglide/runtime';
 
@@ -9,8 +7,14 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			paraglide: ParaglideLocals<AvailableLanguageTag>;
-			session: DefaultSession | null;
+			signInUser: {
+				id: string;
+				keyHandle: string;
+				penName: string;
+				email: string;
+				imageSrc: string;
+				nativeLanguage: AvailableLanguageTag;
+			} | null;
 		}
 		// interface PageData {}
 		// interface PageState {}

@@ -10,6 +10,7 @@
 		name: string; // Need for unique attribute value
 		title?: string;
 		openerClass?: string;
+		openerColorClass?: string;
 		dialogSizeClass?: string;
 	};
 	let {
@@ -19,6 +20,7 @@
 		name,
 		title = '',
 		openerClass = '',
+		openerColorClass = 'focus-within:bg-stone-200 hover:bg-stone-200',
 		dialogSizeClass = 'max-w-xl'
 	}: Props = $props();
 
@@ -47,17 +49,15 @@
 
 <svelte:window onkeydown={onKeyDown} />
 
-<label class="peer/common_dialog_open relative block">
-	<div class="focus-within:bg-stone-200 hover:bg-stone-200 {openerClass}">
-		{@render opener()}
-		<input
-			type="checkbox"
-			name="common_dialog_{name}"
-			id="common_dialog_open_{name}"
-			class="absolute start-0 top-0 h-full w-full cursor-pointer appearance-none"
-			tabindex="0"
-		/>
-	</div>
+<label class="peer/common_dialog_open relative block {openerColorClass} {openerClass}">
+	<input
+		type="checkbox"
+		name="common_dialog_{name}"
+		id="common_dialog_open_{name}"
+		class="absolute start-0 top-0 h-full w-full cursor-pointer appearance-none"
+		tabindex="0"
+	/>
+	{@render opener()}
 </label>
 
 <!-- Dialog -->
@@ -74,7 +74,7 @@
 		>
 			<div class="flex shrink-0 items-center justify-end overflow-x-auto {title ? 'pb-1' : ''}">
 				{#if title}
-					<p class="flex-1 px-4 py-1 text-2xl md:pl-6">{title}</p>
+					<p class="flex-1 px-4 py-1 text-xl md:pl-6">{title}</p>
 				{/if}
 				<div
 					class="relative mb-auto inline-block shrink-0 rounded-es rounded-se-[0.625rem] leading-none focus-within:bg-stone-200 hover:bg-stone-200"
@@ -82,9 +82,9 @@
 					{#if isEnableJS}
 						<button
 							type="button"
-							class="absolute start-0 top-0 h-full w-full appearance-none"
-							onclick={closeDialog}
-						></button>
+							class="absolute start-0 top-0 h-full w-full appearance-none overflow-hidden text-transparent"
+							onclick={closeDialog}>Close</button
+						>
 					{/if}
 					<label for="common_dialog_open_{name}" class="inline-block h-full">
 						<IconClose

@@ -1,9 +1,6 @@
-export interface ContactCategorySelect {
-	value: string;
-	label: string;
-}
+import type { SelectItemSingle } from '$lib/utilities/select';
 
-export const contactCategorySelect: ContactCategorySelect[] = [
+export const contactCategorySelect: SelectItemSingle<string>[] = [
 	{ value: 'shortbookNeedHelp', label: 'How to use "ShortBook"' },
 	{ value: 'shortbookReportIllegal', label: 'Report illegal book or user' },
 	{ value: 'shortbookBug', label: 'Issues report' },
@@ -18,7 +15,7 @@ export const contactCategorySelect: ContactCategorySelect[] = [
 	{ value: 'other', label: 'Other' }
 ];
 
-export const contactCategoryAndNoSelect: ContactCategorySelect[] = [
+export const contactCategoryAndNoSelect: SelectItemSingle<string>[] = [
 	{ value: '', label: 'Select category' },
 	...contactCategorySelect
 ];

@@ -4,13 +4,13 @@ import prisma from '$lib-backend/database/connect';
 type IdExclusiveProps =
 	| {
 			bookId: string;
-			bookKeyName?: never;
-			userKeyName?: never;
+			bookUrlSlug?: never;
+			userKeyHandle?: never;
 	  }
 	| {
 			bookId?: never;
-			bookKeyName: string;
-			userKeyName: string;
+			bookUrlSlug: string;
+			userKeyHandle: string;
 	  };
 
 type DbBookGetRequest = IdExclusiveProps & {
@@ -38,14 +38,12 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		.findFirst({
 			where: {
 				id: req.bookId,
-				key_name: req.bookKeyName,
+				url_slug: req.bookUrlSlug,
 				...whereByCond,
 				...whereCondDelete,
 				user: {
-					profiles: {
-						key_name: req.userKeyName,
-						...whereCondDelete
-					}
+					key_handle: req.userKeyHandle,
+					...whereCondDelete
 				}
 			},
 			include: {
@@ -61,18 +59,14 @@ export async function dbBookGet(req: DbBookGetRequest) {
 				},
 				user: {
 					select: {
-						image: true,
-						profiles: {
+						key_handle: true,
+						pen_name: true,
+						image_src: true,
+						languages: {
+							where: { ...whereCondDelete },
 							select: {
-								key_name: true,
-								languages: {
-									where: { ...whereCondDelete },
-									select: {
-										language_code: true,
-										pen_name: true,
-										headline: true
-									}
-								}
+								target_language: true,
+								headline: true
 							}
 						}
 					}
@@ -82,12 +76,12 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		.then((book) => {
 			if (!book) {
 				dbError ??= new Error(
-					`Can't find book. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+					`Can't find book. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
 				);
 				return undefined;
 			} else if (req.userId && book.user_id !== req.userId) {
 				dbError ??= new Error(
-					`Can't edit book written by other writer. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+					`Can't edit book written by other writer. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
 				);
 				return undefined;
 			}
@@ -95,7 +89,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		})
 		.catch(() => {
 			dbError ??= new Error(
-				`Failed to get book. Book ID=${req.bookId} or Key-name=${req.bookKeyName}`
+				`Failed to get book. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
 			);
 			return undefined;
 		});

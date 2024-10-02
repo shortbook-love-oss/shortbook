@@ -4,32 +4,35 @@
 	type Props = {
 		children?: Snippet;
 		name: string;
-		keyName?: string;
+		keyHandle?: string;
 		imageSrc?: string;
 		className?: string;
 	};
-	let { children, name, keyName = '', imageSrc = '', className = '' }: Props = $props();
+	let { children, name, keyHandle = '', imageSrc = '', className = '' }: Props = $props();
 </script>
 
 <div class="flex w-full items-center gap-3 {className}">
 	{#if imageSrc}
 		<svelte:element
-			this={keyName ? 'a' : 'div'}
-			href={keyName ? `/@${keyName}` : undefined}
+			this={keyHandle ? 'a' : 'div'}
+			href={keyHandle ? `/@${keyHandle}` : undefined}
 			class="peer shrink-0"
 		>
-			<img
-				src="{imageSrc}?ext=jpg&w=64&h=64&q=80"
-				alt="Profile icon"
-				class="h-16 w-16 rounded-md bg-white"
-			/>
+			<picture>
+				<source srcset="{imageSrc}?ext=avif&w=64&h=64&q=80" type="image/avif" />
+				<img
+					src="{imageSrc}?ext=png&w=64&h=64&q=80"
+					alt="Profile icon"
+					class="h-16 w-16 rounded-md bg-white"
+				/>
+			</picture>
 		</svelte:element>
 	{/if}
 	<div class="-m-2 flex flex-col overflow-x-hidden break-words p-2 peer-hover:[&>a]:underline">
 		<svelte:element
-			this={keyName ? 'a' : 'p'}
-			href={keyName ? `/@${keyName}` : undefined}
-			class="whitespace-pre-wrap text-xl leading-snug {keyName ? 'hover:underline' : ''}"
+			this={keyHandle ? 'a' : 'p'}
+			href={keyHandle ? `/@${keyHandle}` : undefined}
+			class="whitespace-pre-wrap text-xl leading-snug {keyHandle ? 'hover:underline' : ''}"
 			>{name}</svelte:element
 		>
 		{#if children}

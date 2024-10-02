@@ -1,37 +1,36 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { AvailableLanguageTag } from '$lib/i18n/paraglide/runtime';
+import type { AvailableLanguageTag } from '$i18n/output/runtime';
+import { getBookCover } from '$lib/utilities/book';
+import { languageSelect } from '$lib/utilities/language';
+import { setLanguageTagToPath } from '$lib/utilities/url';
+import { schema } from '$lib/validation/schema/book/update';
+import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
+import { editLoad } from '$lib-backend/functions/service/write/edit-load';
 import { dbBookDelete } from '$lib-backend/model/book/delete';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
-import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
-import { getBookCover } from '$lib/utilities/book';
-import { languageAndNotSelect } from '$lib/utilities/language';
-import { setLanguageTagToPath } from '$lib/utilities/url';
-import { schema } from '$lib/validation/schema/book-update';
-import { isExistBookKeyName } from '$lib-backend/functions/service/write/edit-action';
-import { editLoad } from '$lib-backend/functions/service/write/edit-load';
 
 export const load = async ({ locals, params }) => {
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
 
 	const form = await superValidate(zod(schema));
-	const langTags = languageAndNotSelect;
+	const langTags = languageSelect;
 
 	const { book, dbError } = await dbBookGet({
 		bookId: params.bookId,
-		userId,
+		userId: signInUser.id,
 		isIncludeDraft: true
 	});
 	if (!book || !book.cover || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	let bookLang = book?.languages[0];
+	const bookLang = book?.languages[0];
 
 	const { bookBuys, dbError: dbBuyListError } = await dbBookBuyList({ bookId: params.bookId });
 	if (!bookBuys || dbBuyListError) {
@@ -39,7 +38,7 @@ export const load = async ({ locals, params }) => {
 	}
 	const isBoughtByOther = bookBuys.length > 0;
 
-	const { userKeyName, penName, selectedCurrencyKey, currencyRateIndex } = await editLoad(userId);
+	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
@@ -60,43 +59,41 @@ export const load = async ({ locals, params }) => {
 		const prop = coverProp as keyof typeof bookCover;
 		form.data[prop] = bookCover[prop] as never;
 	}
-	form.data.nativeLanguage = (bookLang?.language_code ?? '') as AvailableLanguageTag;
+	form.data.targetLanguage = (bookLang?.target_language ?? '') as AvailableLanguageTag;
 	form.data.prologue = bookLang?.prologue ?? '';
 	form.data.content = bookLang?.content ?? '';
 	form.data.salesMessage = bookLang?.sales_message ?? '';
-	form.data.keyName = book.key_name;
+	form.data.urlSlug = book.url_slug;
 	form.data.buyPoint = book.buy_point;
 
-	const initTitle = form.data.title;
 	const status = book?.status ?? 0;
+	const initTitle = form.data.title;
 
 	return {
 		form,
-		userKeyName,
-		penName,
 		langTags,
 		status,
 		initTitle,
 		isBoughtByOther,
-		selectedCurrencyKey,
+		userCurrencyCode,
 		currencyRateIndex
 	};
 };
 
 export const actions = {
 	update: async ({ request, url, locals, params }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
-			const isExist = await isExistBookKeyName(userId, form.data.keyName, params.bookId);
+			const isExist = await isExistBookUrlSlug(signInUser.id, form.data.urlSlug, params.bookId);
 			if (isExist) {
 				form.valid = false;
-				form.errors.keyName = form.errors.keyName ?? [];
-				form.errors.keyName.push('There is a book with the same URL.');
+				form.errors.urlSlug = form.errors.urlSlug ?? [];
+				form.errors.urlSlug.push('There is a book with the same URL.');
 			}
 		}
 		if (!form.valid) {
@@ -106,7 +103,7 @@ export const actions = {
 
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
-			userId,
+			userId: signInUser.id,
 			status: 1,
 			...form.data
 		});
@@ -114,17 +111,12 @@ export const actions = {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
 		}
 
-		const { profile, dbError: dbProfileGetError } = await dbUserProfileGet({ userId });
-		if (!profile || dbProfileGetError) {
-			return error(500, { message: dbProfileGetError?.message ?? '' });
-		}
-
-		redirect(303, setLanguageTagToPath(`/@${profile.key_name}/book/${book.key_name}`, url));
+		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${book.url_slug}`, url));
 	},
 
 	draft: async ({ request, url, locals, params }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
@@ -140,11 +132,11 @@ export const actions = {
 			}
 		}
 		if (form.valid) {
-			const isExist = await isExistBookKeyName(userId, form.data.keyName, params.bookId);
+			const isExist = await isExistBookUrlSlug(signInUser.id, form.data.urlSlug, params.bookId);
 			if (isExist) {
 				form.valid = false;
-				form.errors.keyName = form.errors.keyName ?? [];
-				form.errors.keyName.push('There is a book with the same URL.');
+				form.errors.urlSlug = form.errors.urlSlug ?? [];
+				form.errors.urlSlug.push('There is a book with the same URL.');
 			}
 		}
 		if (!form.valid) {
@@ -154,7 +146,7 @@ export const actions = {
 
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
-			userId,
+			userId: signInUser.id,
 			status: 0,
 			...form.data
 		});
@@ -166,14 +158,14 @@ export const actions = {
 	},
 
 	delete: async ({ url, locals, params }) => {
-		const userId = locals.session?.user?.id;
-		if (!userId) {
+		const signInUser = locals.signInUser;
+		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
 
 		const { dbError } = await dbBookDelete({
 			bookId: params.bookId,
-			userId
+			userId: signInUser.id
 		});
 		if (dbError) {
 			return error(500, { message: dbError.message });

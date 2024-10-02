@@ -14,7 +14,7 @@ import {
 
 export async function prepareSignIn(
 	requestUrl: URL,
-	user: Awaited<ReturnType<typeof dbUserGetByEmailHash>>['user'],
+	user: NonNullable<Awaited<ReturnType<typeof dbUserGetByEmailHash>>['user']>,
 	emailTo: string,
 	signInConfirmToken: string
 ): Promise<SignResult> {
@@ -32,14 +32,12 @@ export async function prepareSignIn(
 	}
 
 	const requestLang = getLanguageTagFromUrl(requestUrl);
-	const profile = user?.profiles;
-	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
-	if (!profileLang && profile?.languages.length) {
-		profileLang = profile.languages[0];
+	let profileLang = user.languages.find((lang) => lang.target_language === requestLang);
+	if (!profileLang && user.languages.length) {
+		profileLang = user.languages[0];
 	}
 
 	// 5. Send magic link by email
-	const penName = profileLang?.pen_name ?? '';
 	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
 	const signInConfirmUrl =
 		requestUrl.origin +
@@ -52,12 +50,12 @@ export async function prepareSignIn(
 		env.EMAIL_FROM,
 		[emailTo],
 		'Sign in confirm | ShortBook',
-		`<p>${escapeHTML(penName)}, thank you for your continued activity.</p>
+		`<p>${escapeHTML(user.pen_name)}, thank you for your continued activity.</p>
 		<p>Please click this button to confirm.</p>
 		<p style="margin-bottom: 2rem;"><a href="${signInConfirmUrl}" style="border-radius: 0.25em; background-color: #924240; color: #fff; display: inline-block; font-size: 2.5rem; font-weight: bold; padding: 0.5em;">Confirm Sign In</a></p>
 		<p>ShortBook LLC</p>
 		<p>Shunsuke Kurachi (KurachiWeb)</p>`,
-		`${penName}, thank you for your continued activity.\nPlease click this button to confirm.\n${signInConfirmUrl}\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
+		`${user.pen_name}, thank you for your continued activity.\nPlease click this button to confirm.\n${signInConfirmUrl}\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
 	);
 	if (sendEmailError instanceof Error) {
 		return { error: null, fail: "Can't sent email." };

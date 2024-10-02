@@ -3,7 +3,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
-	import { schema } from '$lib/validation/schema/profile-update';
+	import { schema } from '$lib/validation/schema/user/profile/update.js';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
@@ -32,8 +32,6 @@
 	const formObserver = form.subscribe(() => validateBackground());
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
-
-	const user = $page.data.session?.user;
 </script>
 
 <svelte:head>
@@ -43,8 +41,8 @@
 <h1 class="mb-4 text-2xl font-semibold">Public profile</h1>
 <ProfileCard
 	name={initForm.penName}
-	keyName={initForm.keyName}
-	imageSrc={user?.image ?? ''}
+	keyHandle={initForm.keyHandle}
+	imageSrc={$page.data.signInUser.imageSrc}
 	className="mb-8"
 >
 	{#if initForm.headline}
@@ -59,20 +57,20 @@
 	isLoading={$submitting}
 	submitLabel="Save profile"
 	successMessage={$page.status === 200 ? $message : ''}
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 >
 	<TextField
-		bind:value={$form.keyName}
-		name="keyName"
+		bind:value={$form.keyHandle}
+		name="keyHandle"
 		required={true}
 		label="User ID"
-		errorMessages={$errors.keyName}
+		errorMessages={$errors.keyHandle}
 		className="mb-8"
 	/>
 	<Select
-		bind:value={$form.nativeLanguage}
+		bind:value={$form.nativeLanguage as string}
 		name="nativeLanguage"
-		list={data.langTags}
+		list={data.languageSelect}
 		required={true}
 		label="Native language"
 		errorMessages={$errors.nativeLanguage}

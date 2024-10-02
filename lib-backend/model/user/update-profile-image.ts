@@ -2,20 +2,20 @@ import prisma from '$lib-backend/database/connect';
 
 export interface DbUserProfileImageRequest {
 	userId: string;
-	image: string;
+	imageSrc: string;
 }
 
 export async function dbUserProfileImageUpdate(req: DbUserProfileImageRequest) {
 	let dbError: Error | undefined;
 
-	const user = await prisma.user
+	const user = await prisma.users
 		.update({
 			where: {
 				id: req.userId,
 				deleted_at: null
 			},
 			data: {
-				image: req.image
+				image_src: req.imageSrc
 			}
 		})
 		.then((user) => {

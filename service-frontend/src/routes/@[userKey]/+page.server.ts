@@ -1,19 +1,19 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { dbBookList } from '$lib-backend/model/book/list';
-import { dbUserGetByKeyName } from '$lib-backend/model/user/get-by-key-name';
 import { type BookItem, contentsToMarkdown, getBookCover } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
+import { dbBookList } from '$lib-backend/model/book/list';
+import { dbUserGetByKeyHandle } from '$lib-backend/model/user/get-by-key-handle';
 
 export const load = async ({ url, params }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { user, dbError } = await dbUserGetByKeyName({ keyName: params.userKey });
-	if (!user || !user.profiles || dbError) {
+	const { user, dbError } = await dbUserGetByKeyHandle({ keyHandle: params.userKey });
+	if (!user || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	if (user.image) {
-		user.image = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image;
+	if (user.image_src) {
+		user.image_src = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image_src;
 	}
 
 	const { books, dbError: bookDbError } = await dbBookList({ userId: user.id });
@@ -21,19 +21,18 @@ export const load = async ({ url, params }) => {
 		return error(500, { message: bookDbError?.message ?? '' });
 	}
 
-	const profile = user.profiles;
-	let profileLang = profile?.languages.find((lang) => lang.language_code === requestLang);
-	if (!profileLang && profile?.languages.length) {
-		profileLang = profile.languages[0];
+	let userLang = user.languages.find((lang) => lang.target_language === requestLang);
+	if (!userLang && user.languages.length) {
+		userLang = user.languages[0];
 	}
 
 	const bookList: BookItem[] = [];
 	for (const book of books) {
-		let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
+		let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
 		if (!bookLang && book.languages.length) {
 			bookLang = book.languages[0];
 		}
-		if (!book.user || !profile || !profileLang || !book.cover || !bookLang) {
+		if (!book.user || !userLang || !book.cover || !bookLang) {
 			continue;
 		}
 		const bookCover = getBookCover({
@@ -60,14 +59,14 @@ export const load = async ({ url, params }) => {
 			subtitle: bookLang.subtitle,
 			publishedAt: book.published_at,
 			updatedAt: book.updated_at,
-			bookKeyName: book.key_name,
-			userKeyName: profile.key_name,
-			penName: profileLang.pen_name,
-			userImage: user.image ?? ''
+			bookUrlSlug: book.url_slug,
+			userKeyHandle: user.key_handle,
+			penName: user.pen_name,
+			userImage: user.image_src
 		});
 	}
 
-	const userSelfIntro = await contentsToMarkdown(profileLang?.self_introduction ?? '');
+	const userSelfIntro = await contentsToMarkdown(userLang?.self_introduction ?? '');
 
 	return { bookList, requestLang, userSelfIntro };
 };

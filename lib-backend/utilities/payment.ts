@@ -1,15 +1,14 @@
 import Stripe from 'stripe';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
-import type { CurrencySupportKeys } from '$lib/utilities/currency';
+import type { CurrencySupportCodes } from '$lib/utilities/currency';
 import { reversePaymentAmountOfStripe, toPaymentAmountOfStripe } from '$lib/utilities/payment';
 import { paymentSessionIdParam } from '$lib/utilities/url';
 
 /** Don't call from client-side code */
 
 export const stripe = new Stripe(env.STRIPE_STANDARD_KEY_SECRET, {
-	apiVersion: '2024-06-20',
-	maxNetworkRetries: 2, // Challenge → Retry 1 → Retry 2 → Failed
+	apiVersion: '2024-09-30.acacia',
 	telemetry: false
 });
 
@@ -17,17 +16,14 @@ export async function createPaymentSession(
 	paymentName: string,
 	paymentDescription: string,
 	paymentTaxCode: string,
-	currency: CurrencySupportKeys,
+	currencyCode: CurrencySupportCodes,
 	paymentAmount: number,
 	customerId: string,
 	customerEmail: string,
 	successUrl: string,
 	cancelUrl: string
 ) {
-	const amountForStripe = toPaymentAmountOfStripe(currency, paymentAmount);
-	if (!amountForStripe) {
-		return { url: null };
-	}
+	const amountForStripe = toPaymentAmountOfStripe(paymentAmount, currencyCode);
 
 	let successUrlWithSession = successUrl;
 	// See about {CHECKOUT_SESSION_ID} https://docs.stripe.com/payments/checkout/custom-success-page
@@ -41,15 +37,13 @@ export async function createPaymentSession(
 		line_items: [
 			{
 				price_data: {
-					currency,
+					currency: currencyCode,
 					unit_amount_decimal: amountForStripe,
 					tax_behavior: 'inclusive',
 					product_data: {
 						name: paymentName,
 						description: paymentDescription,
-						images: [
-							`${envPublic.PUBLIC_ORIGIN}/assets/shortbook-logo-bg-white-wh512-margin64.png`
-						],
+						images: [`${envPublic.PUBLIC_ORIGIN}/assets/shortbook-logo-bg.png`],
 						tax_code: paymentTaxCode
 					}
 				},
@@ -81,14 +75,10 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 		expand: ['line_items']
 	});
 
-	let actuallyAmount = 0;
-	if (checkoutSession.currency) {
-		actuallyAmount =
-			reversePaymentAmountOfStripe(
-				checkoutSession.currency as CurrencySupportKeys,
-				checkoutSession.amount_total ?? 0
-			) ?? actuallyAmount;
-	}
+	const actuallyAmount = reversePaymentAmountOfStripe(
+		checkoutSession.amount_total ?? 0,
+		checkoutSession.currency as CurrencySupportCodes
+	);
 
 	let customerId = '';
 	if (typeof checkoutSession.customer === 'string') {
@@ -105,7 +95,7 @@ export async function checkPaymentStatus(paymentSessionId: string) {
 	// The payment funds are not yet available in your account.
 	return {
 		paymentSessionId: checkoutSession.id,
-		currency: (checkoutSession.currency ?? '') as CurrencySupportKeys | '',
+		currency: (checkoutSession.currency ?? '') as CurrencySupportCodes | '',
 		amount: actuallyAmount,
 		customerId,
 		isCreateCustomer: checkoutSession.customer_creation != null,

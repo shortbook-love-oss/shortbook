@@ -46,11 +46,11 @@
 	isLoading={$submitting}
 	submitLabel="Send message"
 	successMessage={$page.status === 200 ? $message : ''}
-	errorMessage={$page.status === 400 ? $message : ''}
+	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 	class="mx-auto max-w-xl"
 >
 	<Select
-		bind:value={$form.categoryKeyName}
+		bind:value={$form.categoryKeyName as string}
 		name="categoryKeyName"
 		list={data.contactCategories}
 		required={true}
@@ -60,7 +60,9 @@
 	/>
 	<TextField
 		bind:value={$form.email}
+		type="email"
 		name="email"
+		autocomplete="email"
 		required={true}
 		label="Email"
 		placeholder="your-address@email.example"

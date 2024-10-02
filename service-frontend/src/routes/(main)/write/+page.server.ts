@@ -1,17 +1,16 @@
 import { error } from '@sveltejs/kit';
 import { dbBookList } from '$lib-backend/model/book/list';
-import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { getBookCover, type MyBookItem } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 
 export const load = async ({ url, locals }) => {
-	const userId = locals.session?.user?.id;
-	if (!userId) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
 
 	const { books, dbError } = await dbBookList({
-		userId,
+		userId: signInUser.id,
 		isIncludeDraft: true
 	});
 	if (dbError) {
@@ -19,16 +18,10 @@ export const load = async ({ url, locals }) => {
 	}
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { profile, dbError: profileDbError } = await dbUserProfileGet({ userId });
-	if (!profile || profileDbError) {
-		return error(500, { message: profileDbError?.message ?? '' });
-	}
-	const penName = profile.languages[0]?.pen_name ?? '';
-
 	const bookList: MyBookItem[] = [];
 	if (books) {
 		for (const book of books) {
-			let bookLang = book.languages.find((lang) => lang.language_code === requestLang);
+			let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
 			if (!bookLang && book.languages.length) {
 				bookLang = book.languages[0];
 			}
@@ -61,5 +54,5 @@ export const load = async ({ url, locals }) => {
 		}
 	}
 
-	return { bookList, penName, requestLang };
+	return { bookList, requestLang };
 };

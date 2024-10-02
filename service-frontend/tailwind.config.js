@@ -31,7 +31,7 @@ export default {
 				}
 			},
 			aspectRatio: {
-				logotype: '3170 / 512',
+				logotype: '3240 / 512',
 				'book-cover': '2 / 3'
 			},
 			animation: {
@@ -57,10 +57,7 @@ export default {
 					'-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", Roboto, Arial, sans-serif, "Apple Color Emoji", "Noto Color Emoji"',
 					{ fontFeatureSettings: '"palt"' }
 				],
-				serif: [
-					'"Times New Roman", serif, "Noto Color Emoji"',
-					{ fontFeatureSettings: '"palt"' }
-				],
+				serif: ['"Times New Roman", serif, "Noto Color Emoji"', { fontFeatureSettings: '"palt"' }],
 				title: [
 					// "Cambria" ... Windows
 					// "Hiragino Mincho ProN" ... Mac・iOS

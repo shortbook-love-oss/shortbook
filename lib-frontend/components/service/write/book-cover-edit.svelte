@@ -1,13 +1,13 @@
 <script lang="ts">
 	import IconEdit from '~icons/mdi/edit-outline';
-	import { bookFontSizeSelect, bookTextAlignSelect } from '$lib/utilities/book';
+	import { bookTextAlignSelect } from '$lib/utilities/book';
 	import type { BookCover as BookCoverProp } from '$lib/utilities/book';
-	import Select from '$lib/components/modules/form/select.svelte';
-	import BookCover from '$lib/components/service/read/book-cover.svelte';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import Color from '$lib/components/modules/form/color.svelte';
 	import Range from '$lib/components/modules/form/range.svelte';
-	import NavLinkSmall from '../navigation/nav-link-small.svelte';
+	import Select from '$lib/components/modules/form/select.svelte';
+	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
+	import BookCover from '$lib/components/service/read/book-cover.svelte';
 
 	type PropErrors = { [P in keyof BookCoverProp]: string[] | undefined };
 	interface Errors extends Partial<PropErrors> {
@@ -89,18 +89,20 @@
 			/>
 			<!-- Title -->
 			<!-- svelte-ignore binding_property_non_reactive -->
-			<Select
+			<Range
+				min="32"
+				max="256"
 				bind:value={book.titleFontSize}
 				name="titleFontSize"
-				list={bookFontSizeSelect}
 				label="Title font size"
 				errorMessages={errors.titleFontSize}
 				className="mb-4"
+				inputClass="min-w-60"
 				oninput={applyChanges}
 			/>
 			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.titleAlign}
+				bind:value={book.titleAlign as string | number}
 				name="titleAlign"
 				list={bookTextAlignSelect}
 				label="Title align"
@@ -119,18 +121,20 @@
 			/>
 			<!-- Subtitle -->
 			<!-- svelte-ignore binding_property_non_reactive -->
-			<Select
+			<Range
+				min="32"
+				max="128"
 				bind:value={book.subtitleFontSize}
 				name="subtitleFontSize"
-				list={bookFontSizeSelect}
 				label="Subtitle font size"
 				errorMessages={errors.subtitleFontSize}
 				className="mb-4"
+				inputClass="min-w-60"
 				oninput={applyChanges}
 			/>
 			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.subtitleAlign}
+				bind:value={book.subtitleAlign as string | number}
 				name="subtitleAlign"
 				list={bookTextAlignSelect}
 				label="Subtitle align"
@@ -149,7 +153,7 @@
 			/>
 			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.writerAlign}
+				bind:value={book.writerAlign as string | number}
 				name="writerAlign"
 				list={bookTextAlignSelect}
 				label="Pen name align"

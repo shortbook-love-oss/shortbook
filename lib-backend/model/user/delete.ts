@@ -10,7 +10,7 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 	await prisma
 		.$transaction(async (tx) => {
 			const deletedAt = new Date();
-			const user = await tx.user.update({
+			const user = await tx.users.update({
 				where: {
 					id: req.userId,
 					deleted_at: null
@@ -21,28 +21,10 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
 				throw dbError;
 			}
-			const deletedProfile = await tx.user_profiles.update({
-				where: {
-					user_id: req.userId,
-					deleted_at: null
-				},
-				data: { deleted_at: deletedAt }
-			});
-			if (!deletedProfile?.id) {
-				dbError ??= new Error(`Can't find user. User ID=${req.userId}`);
-				throw dbError;
-			}
 
-			await tx.account.updateMany({
+			await tx.user_languages.updateMany({
 				where: {
-					userId: req.userId,
-					deleted_at: null
-				},
-				data: { deleted_at: deletedAt }
-			});
-			await tx.user_profile_languages.updateMany({
-				where: {
-					profile_id: deletedProfile.id,
+					user_id: user.id,
 					deleted_at: null
 				},
 				data: { deleted_at: deletedAt }
@@ -89,13 +71,10 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 				},
 				data: { deleted_at: deletedAt }
 			});
-			await tx.authenticator.deleteMany({
-				where: { userId: req.userId }
+			await tx.sessions.deleteMany({
+				where: { user_id: req.userId }
 			});
-			await tx.session.deleteMany({
-				where: { userId: req.userId }
-			});
-			await tx.verificationToken.deleteMany({
+			await tx.verification_tokens.deleteMany({
 				where: { user_id: req.userId }
 			});
 

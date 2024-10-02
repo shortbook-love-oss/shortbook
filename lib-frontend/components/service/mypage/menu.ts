@@ -6,7 +6,7 @@ type MypageItem = {
 
 export const categories: MypageItem[] = [
 	{
-		name: 'Personnel information',
+		name: 'Personnel data',
 		href: 'personnel',
 		childs: [
 			{ name: 'Public profile', href: 'profile' },
@@ -19,11 +19,15 @@ export const categories: MypageItem[] = [
 		childs: [{ name: 'Point history', href: 'history' }]
 	},
 	{
+		name: 'Assets',
+		href: 'asset',
+		childs: [{ name: 'Album', href: 'album' }]
+	},
+	{
 		name: 'Sign in & security',
 		href: 'security',
 		childs: [
 			{ name: 'Email', href: 'email' },
-			{ name: 'Sign in method', href: 'method' },
 			{ name: 'Danger action', href: 'danger' }
 		]
 	},
