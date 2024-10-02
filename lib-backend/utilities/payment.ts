@@ -8,8 +8,7 @@ import { paymentSessionIdParam } from '$lib/utilities/url';
 /** Don't call from client-side code */
 
 export const stripe = new Stripe(env.STRIPE_STANDARD_KEY_SECRET, {
-	apiVersion: '2024-06-20',
-	maxNetworkRetries: 2, // Challenge → Retry 1 → Retry 2 → Failed
+	apiVersion: '2024-09-30.acacia',
 	telemetry: false
 });
 
