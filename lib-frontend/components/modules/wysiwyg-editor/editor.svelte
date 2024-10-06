@@ -2,12 +2,13 @@
 	import { CodeHighlightNode, CodeNode, registerCodeHighlighting } from '@lexical/code';
 	import { registerDragonSupport } from '@lexical/dragon';
 	import { createEmptyHistoryState, registerHistory } from '@lexical/history';
-	import { HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
 	import { LinkNode } from '@lexical/link';
 	import { ListItemNode, ListNode } from '@lexical/list';
+	import { HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
 	import { mergeRegister } from '@lexical/utils';
 	import { createEditor, type CreateEditorArgs } from 'lexical';
 	import { onMount } from 'svelte';
+	import Toolbar from './plugins/toolbar.svelte';
 	import type { EditorState } from './editor';
 
 	type Props = {
@@ -26,7 +27,7 @@
 		},
 		theme: {
 			root: 'h-full font-sans text-[1.375rem] leading-[1.625] tracking-wider text-stone-950 underline-offset-[0.15em] outline-none',
-			code: '-mx-3 my-4 block bg-slate-100 px-3 py-2 text-[0.875em]',
+			code: 'my-4 block bg-slate-100 px-3 py-2 text-[0.875em]',
 			heading: {
 				h1: '[&:not(:first-child)]:mt-8 mb-4 text-[3.5em] font-semibold leading-[1.25]',
 				h2: '[&:not(:first-child)]:mt-8 mb-4 text-[2.5em] font-semibold leading-[1.25]',
@@ -40,18 +41,18 @@
 				ol: 'my-4 list-decimal ps-8',
 				ul: 'my-4 list-disc ps-6'
 			},
-			quote: '-mx-8 my-4 rounded-2xl bg-stone-200/80 px-8 py-6 text-[1.25em]',
+			quote: 'my-4 rounded-2xl bg-stone-200/80 p-6 text-[1.25em]',
 			text: {
 				code: 'bg-slate-100 p-1 text-[0.875em]'
 			}
 		}
 	};
+	const editor = createEditor(initialConfig);
 
 	onMount(() => {
-		const editor = createEditor(initialConfig);
 		editor.setRootElement(editorRootElem);
 
-		// Registring Plugins
+		// Registring editor plugins
 		mergeRegister(
 			registerRichText(editor),
 			registerCodeHighlighting(editor),
@@ -70,4 +71,9 @@
 	});
 </script>
 
-<div bind:this={editorRootElem} contenteditable></div>
+<div class="flex flex-col items-center">
+	<div class="pb-12">
+		<div bind:this={editorRootElem} contenteditable></div>
+	</div>
+	<Toolbar {editor} />
+</div>
