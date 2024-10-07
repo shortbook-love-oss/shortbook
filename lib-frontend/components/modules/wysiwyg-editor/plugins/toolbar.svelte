@@ -9,8 +9,10 @@
 		type TextFormatType
 	} from 'lexical';
 	import { onMount } from 'svelte';
+	import FormatCode from '~icons/mdi/code';
 	import FormatBold from '~icons/mdi/format-bold';
 	import FormatItalic from '~icons/mdi/format-italic';
+	import FormatStrikethrough from '~icons/mdi/format-strikethrough';
 
 	type Props = {
 		editor: LexicalEditor;
@@ -27,6 +29,8 @@
 	// Selection states
 	let isBold = $state(false);
 	let isItalic = $state(false);
+	let isStrikethrough = $state(false);
+	let isCode = $state(false);
 
 	editor.registerCommand(
 		SELECTION_CHANGE_COMMAND,
@@ -44,6 +48,8 @@
 		if (isRangeSelection(selection)) {
 			isBold = selection.hasFormat('bold');
 			isItalic = selection.hasFormat('italic');
+			isStrikethrough = selection.hasFormat('strikethrough');
+			isCode = selection.hasFormat('code');
 		}
 	}
 
@@ -103,7 +109,7 @@
 			class="rounded-md {isBold ? 'bg-stone-300' : 'hover:bg-stone-200'}"
 			onclick={() => dispatchTextCommand('bold')}
 		>
-			<FormatBold width="40" height="40" class="p-1" />
+			<FormatBold width="44" height="44" class="p-1" />
 		</button>
 		<button
 			type="button"
@@ -111,7 +117,23 @@
 			class="rounded-md {isItalic ? 'bg-stone-300' : 'hover:bg-stone-200'}"
 			onclick={() => dispatchTextCommand('italic')}
 		>
-			<FormatItalic width="40" height="40" class="p-1" />
+			<FormatItalic width="44" height="44" class="p-1" />
+		</button>
+		<button
+			type="button"
+			title="Strikethrough"
+			class="rounded-md {isStrikethrough ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+			onclick={() => dispatchTextCommand('strikethrough')}
+		>
+			<FormatStrikethrough width="44" height="44" class="p-1" />
+		</button>
+		<button
+			type="button"
+			title="Code"
+			class="rounded-md {isCode ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+			onclick={() => dispatchTextCommand('code')}
+		>
+			<FormatCode width="44" height="44" class="p-1" />
 		</button>
 	</div>
 </div>

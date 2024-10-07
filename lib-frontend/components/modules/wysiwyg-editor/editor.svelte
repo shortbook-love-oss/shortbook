@@ -43,7 +43,8 @@
 			},
 			quote: 'my-4 rounded-2xl bg-stone-200/80 p-6 text-[1.25em]',
 			text: {
-				code: 'bg-slate-100 p-1 text-[0.875em]'
+				code: 'bg-slate-100 p-1 text-[0.875em]',
+				strikethrough: 'line-through'
 			}
 		}
 	};
