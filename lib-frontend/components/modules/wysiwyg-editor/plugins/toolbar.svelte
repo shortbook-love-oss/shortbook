@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { $createListNode as createListNode, ListNode } from '@lexical/list';
 	import { $createHeadingNode as createHeadingNode, HeadingNode } from '@lexical/rich-text';
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
 	import {
@@ -10,6 +11,7 @@
 		ParagraphNode,
 		SELECTION_CHANGE_COMMAND,
 		type LexicalEditor,
+		type RangeSelection,
 		type TextFormatType
 	} from 'lexical';
 	import { onMount } from 'svelte';
@@ -22,24 +24,39 @@
 	import IconFormatHeading5 from '~icons/mdi/format-heading-5';
 	import IconFormatHeading6 from '~icons/mdi/format-heading-6';
 	import IconFormatItalic from '~icons/mdi/format-italic';
+	import IconFormatUnorderedList from '~icons/mdi/format-list-bulleted-square';
+	import IconFormatOrderedList from '~icons/mdi/123';
 	import IconFormatParagraph from '~icons/mdi/format-paragraph';
 	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
 	import {
 		headingSelect,
 		headingTypeValues,
+		orderedListSelect,
 		paragraphSelect,
+		unorderedListSelect,
 		type HeadingTypes
 	} from '$lib/utilities/html';
-	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import type { SelectItemSingle } from '$lib/utilities/select';
+	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 
 	type Props = {
 		editor: LexicalEditor;
 	};
 	let { editor }: Props = $props();
 
-	const elementSelect = [paragraphSelect, ...headingSelect];
+	const elementSelect = [paragraphSelect, ...headingSelect, unorderedListSelect, orderedListSelect];
 	type BlockElementSelect = (typeof elementSelect)[number]['value'];
+
+	const elementIndex = {
+		p: IconFormatParagraph,
+		h2: IconFormatHeading2,
+		h3: IconFormatHeading3,
+		h4: IconFormatHeading4,
+		h5: IconFormatHeading5,
+		h6: IconFormatHeading6,
+		ul: IconFormatUnorderedList,
+		ol: IconFormatOrderedList
+	} satisfies Record<BlockElementSelect, unknown>;
 
 	// Keep state opening the iOS/Android virtual keyboard
 	let isOpenKeyboard = $state(false);
@@ -55,14 +72,6 @@
 	let isCode = $state(false);
 
 	let selectedBlockType = $state<SelectItemSingle<BlockElementSelect>>(paragraphSelect);
-	const elementIndex = {
-		p: IconFormatParagraph,
-		h2: IconFormatHeading2,
-		h3: IconFormatHeading3,
-		h4: IconFormatHeading4,
-		h5: IconFormatHeading5,
-		h6: IconFormatHeading6
-	} satisfies Record<BlockElementSelect, unknown>;
 
 	editor.registerCommand(
 		SELECTION_CHANGE_COMMAND,
@@ -75,6 +84,21 @@
 		COMMAND_PRIORITY_CRITICAL
 	);
 
+	function getSelectedStartBlock(selection: RangeSelection) {
+		// Find block node of lexical editor state, not text node in the block node
+		let selectedStartNode = selection.anchor.getNode();
+		for (let circuitBreaker = 0; circuitBreaker < 5; circuitBreaker++) {
+			const selectStartNodeParent = selectedStartNode.getParent();
+			if (selectStartNodeParent?.getKey() === 'root') {
+				return selectedStartNode;
+			} else if (selectStartNodeParent) {
+				selectedStartNode = selectStartNodeParent;
+			}
+		}
+
+		return null;
+	}
+
 	function setControllerState() {
 		const selection = getSelection();
 		if (isRangeSelection(selection)) {
@@ -83,24 +107,22 @@
 			isStrikethrough = selection.hasFormat('strikethrough');
 			isCode = selection.hasFormat('code');
 
-			// Find block node of lexical editor state, not text node in the block node
-			let selectStartBlock;
-			const selectStartNode = selection.anchor.getNode();
-			const selectStartNodeParent = selectStartNode.getParent();
-			if (selectStartNodeParent && selectStartNodeParent.getKey() !== 'root') {
-				selectStartBlock = selectStartNodeParent;
-			} else {
-				selectStartBlock = selectStartNode;
-			}
-
 			// Change state of block type controller
-			if (selectStartBlock instanceof ParagraphNode) {
+			const selectedStartBlock = getSelectedStartBlock(selection);
+			if (selectedStartBlock instanceof ParagraphNode) {
 				selectedBlockType = paragraphSelect;
-			} else if (selectStartBlock instanceof HeadingNode) {
-				const headingTag = selectStartBlock.getTag();
-				const matchHeadingItem = headingSelect.find((item) => item.value === headingTag);
-				if (matchHeadingItem) {
-					selectedBlockType = matchHeadingItem;
+			} else if (selectedStartBlock instanceof HeadingNode) {
+				const tag = selectedStartBlock.getTag();
+				const matchNodeItem = headingSelect.find((item) => item.value === tag);
+				if (matchNodeItem) {
+					selectedBlockType = matchNodeItem;
+				}
+			} else if (selectedStartBlock instanceof ListNode) {
+				const tag = selectedStartBlock.getTag();
+				if (unorderedListSelect.value === tag) {
+					selectedBlockType = unorderedListSelect;
+				} else if (orderedListSelect.value === tag) {
+					selectedBlockType = orderedListSelect;
 				}
 			}
 		}
@@ -118,6 +140,10 @@
 					setBlocksType(selection, () => createParagraphNode());
 				} else if (headingTypeValues.includes(element.value as HeadingTypes)) {
 					setBlocksType(selection, () => createHeadingNode(element.value as HeadingTypes));
+				} else if (unorderedListSelect.value === element.value) {
+					setBlocksType(selection, () => createListNode('bullet'));
+				} else if (orderedListSelect.value === element.value) {
+					setBlocksType(selection, () => createListNode('number'));
 				}
 				selectedBlockType = element;
 			}
@@ -182,10 +208,9 @@
 						<SelectedBlockComponent
 							width="44"
 							height="44"
-							class="-mr-2 p-1 xs:hidden"
-							aria-label="Change this line to {selectedBlockType.text}"
+							class="-mr-2 p-1"
+							aria-label="This line is {selectedBlockType.label}"
 						/>
-						<p class="pl-2 text-2xl max-xs:hidden">{selectedBlockType.text}</p>
 						<IconArrow width="32" height="32" />
 					</div>
 				{/snippet}
@@ -202,9 +227,9 @@
 							>
 								{#if elementIndex[heading.value]}
 									{@const Component = elementIndex[heading.value]}
-									<Component width="32" height="32" />
+									<Component width="28" height="28" />
 								{/if}
-								<p class="text-nowrap text-xl">{heading.label}</p>
+								<p class="text-nowrap text-lg">{heading.label}</p>
 							</button>
 						</li>
 					{/each}
