@@ -19,16 +19,18 @@
 	}: Props = $props();
 </script>
 
-<div class="peer/common_dropdown_open">
-	<button type="button" class="inline-block {openerColorClass} {openerClass}" tabindex="0">
-		{@render opener()}
-	</button>
-</div>
+<button
+	type="button"
+	class="peer/common_dropdown_open inline-block {openerColorClass} {openerClass}"
+	tabindex="0"
+>
+	{@render opener()}
+</button>
 
 <!-- Dropdown -->
 <div
 	id="common_dropdown_{name}"
-	class="max-w-screen absolute z-40 mx-[999rem] flex max-h-dvh flex-col rounded-lg border border-stone-400 bg-white focus-within:mx-0 hover:mx-0 peer-has-[:focus-within]/common_dropdown_open:mx-0 {dropdownClass}"
+	class="max-w-screen absolute z-40 mx-[999rem] flex max-h-dvh flex-col rounded-lg border border-stone-400 bg-white hover:mx-0 focus:mx-0 peer-focus/common_dropdown_open:mx-0 {dropdownClass}"
 >
 	<div class="flex-1 overflow-x-auto p-2">
 		{@render children()}
