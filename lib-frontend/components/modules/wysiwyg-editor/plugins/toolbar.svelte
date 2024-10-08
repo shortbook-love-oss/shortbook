@@ -1,23 +1,45 @@
 <script lang="ts">
+	import { $createHeadingNode as createHeadingNode, HeadingNode } from '@lexical/rich-text';
+	import { $setBlocksType as setBlocksType } from '@lexical/selection';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
+		$createParagraphNode as createParagraphNode,
 		FORMAT_TEXT_COMMAND,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
-		type LexicalEditor,
+		ParagraphNode,
 		SELECTION_CHANGE_COMMAND,
+		type LexicalEditor,
 		type TextFormatType
 	} from 'lexical';
 	import { onMount } from 'svelte';
-	import FormatCode from '~icons/mdi/code';
-	import FormatBold from '~icons/mdi/format-bold';
-	import FormatItalic from '~icons/mdi/format-italic';
-	import FormatStrikethrough from '~icons/mdi/format-strikethrough';
+	import IconArrow from '~icons/mdi/chevron-up';
+	import IconFormatCode from '~icons/mdi/code';
+	import IconFormatBold from '~icons/mdi/format-bold';
+	import IconFormatHeading2 from '~icons/mdi/format-heading-2';
+	import IconFormatHeading3 from '~icons/mdi/format-heading-3';
+	import IconFormatHeading4 from '~icons/mdi/format-heading-4';
+	import IconFormatHeading5 from '~icons/mdi/format-heading-5';
+	import IconFormatHeading6 from '~icons/mdi/format-heading-6';
+	import IconFormatItalic from '~icons/mdi/format-italic';
+	import IconFormatParagraph from '~icons/mdi/format-paragraph';
+	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
+	import {
+		headingSelect,
+		headingTypeValues,
+		paragraphSelect,
+		type HeadingTypes
+	} from '$lib/utilities/html';
+	import Dropdown from '$lib/components/layouts/dropdown.svelte';
+	import type { SelectItemSingle } from '$lib/utilities/select';
 
 	type Props = {
 		editor: LexicalEditor;
 	};
 	let { editor }: Props = $props();
+
+	const elementSelect = [paragraphSelect, ...headingSelect];
+	type BlockElementSelect = (typeof elementSelect)[number]['value'];
 
 	// Keep state opening the iOS/Android virtual keyboard
 	let isOpenKeyboard = $state(false);
@@ -31,6 +53,16 @@
 	let isItalic = $state(false);
 	let isStrikethrough = $state(false);
 	let isCode = $state(false);
+
+	let selectedBlockType = $state<SelectItemSingle<BlockElementSelect>>(paragraphSelect);
+	const elementIndex = {
+		p: IconFormatParagraph,
+		h2: IconFormatHeading2,
+		h3: IconFormatHeading3,
+		h4: IconFormatHeading4,
+		h5: IconFormatHeading5,
+		h6: IconFormatHeading6
+	} satisfies Record<BlockElementSelect, unknown>;
 
 	editor.registerCommand(
 		SELECTION_CHANGE_COMMAND,
@@ -50,11 +82,46 @@
 			isItalic = selection.hasFormat('italic');
 			isStrikethrough = selection.hasFormat('strikethrough');
 			isCode = selection.hasFormat('code');
+
+			// Find block node of lexical editor state, not text node in the block node
+			let selectStartBlock;
+			const selectStartNode = selection.anchor.getNode();
+			const selectStartNodeParent = selectStartNode.getParent();
+			if (selectStartNodeParent && selectStartNodeParent.getKey() !== 'root') {
+				selectStartBlock = selectStartNodeParent;
+			} else {
+				selectStartBlock = selectStartNode;
+			}
+
+			// Change state of block type controller
+			if (selectStartBlock instanceof ParagraphNode) {
+				selectedBlockType = paragraphSelect;
+			} else if (selectStartBlock instanceof HeadingNode) {
+				const headingTag = selectStartBlock.getTag();
+				const matchHeadingItem = headingSelect.find((item) => item.value === headingTag);
+				if (matchHeadingItem) {
+					selectedBlockType = matchHeadingItem;
+				}
+			}
 		}
 	}
 
 	function dispatchTextCommand(command: TextFormatType) {
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, command);
+	}
+
+	function dispatchBlockCommand(element: SelectItemSingle<BlockElementSelect>) {
+		editor.update(() => {
+			const selection = getSelection();
+			if (isRangeSelection(selection)) {
+				if (paragraphSelect.value === element.value) {
+					setBlocksType(selection, () => createParagraphNode());
+				} else if (headingTypeValues.includes(element.value as HeadingTypes)) {
+					setBlocksType(selection, () => createHeadingNode(element.value as HeadingTypes));
+				}
+				selectedBlockType = element;
+			}
+		});
 	}
 
 	onMount(() => {
@@ -101,15 +168,56 @@
 	style:bottom={isOpenKeyboard ? undefined : '0'}
 >
 	<div
-		class="flex gap-1 rounded-t-md border-x border-t border-stone-300 bg-stone-50/95 p-1 sm:mb-4 sm:rounded-b-md sm:border-b"
+		class="flex rounded-t-lg border-x border-t border-stone-300 bg-stone-50/95 p-1 sm:mb-4 sm:rounded-b-lg sm:border-b"
 	>
+		<div class="relative">
+			<Dropdown
+				name="editor_control_heading_select"
+				openerClass="h-full rounded-md"
+				dropdownClass="bottom-14"
+			>
+				{#snippet opener()}
+					{@const SelectedBlockComponent = elementIndex[selectedBlockType.value]}
+					<div class="flex items-center">
+						<SelectedBlockComponent
+							width="44"
+							height="44"
+							class="-mr-2 p-1 xs:hidden"
+							aria-label="Change this line to {selectedBlockType.text}"
+						/>
+						<p class="pl-2 text-2xl max-xs:hidden">{selectedBlockType.text}</p>
+						<IconArrow width="32" height="32" />
+					</div>
+				{/snippet}
+				<ul>
+					{#each elementSelect as heading}
+						<li>
+							<button
+								type="button"
+								class="flex w-full items-center gap-2 rounded-md p-2 {selectedBlockType.value ===
+								heading.value
+									? 'bg-stone-300'
+									: 'hover:bg-stone-200'}"
+								onclick={() => dispatchBlockCommand(heading)}
+							>
+								{#if elementIndex[heading.value]}
+									{@const Component = elementIndex[heading.value]}
+									<Component width="32" height="32" />
+								{/if}
+								<p class="text-nowrap text-xl">{heading.label}</p>
+							</button>
+						</li>
+					{/each}
+				</ul>
+			</Dropdown>
+		</div>
 		<button
 			type="button"
 			title="Bold"
 			class="rounded-md {isBold ? 'bg-stone-300' : 'hover:bg-stone-200'}"
 			onclick={() => dispatchTextCommand('bold')}
 		>
-			<FormatBold width="44" height="44" class="p-1" />
+			<IconFormatBold width="44" height="44" class="p-1" />
 		</button>
 		<button
 			type="button"
@@ -117,7 +225,7 @@
 			class="rounded-md {isItalic ? 'bg-stone-300' : 'hover:bg-stone-200'}"
 			onclick={() => dispatchTextCommand('italic')}
 		>
-			<FormatItalic width="44" height="44" class="p-1" />
+			<IconFormatItalic width="44" height="44" class="p-1" />
 		</button>
 		<button
 			type="button"
@@ -125,7 +233,7 @@
 			class="rounded-md {isStrikethrough ? 'bg-stone-300' : 'hover:bg-stone-200'}"
 			onclick={() => dispatchTextCommand('strikethrough')}
 		>
-			<FormatStrikethrough width="44" height="44" class="p-1" />
+			<IconFormatStrikethrough width="44" height="44" class="p-1" />
 		</button>
 		<button
 			type="button"
@@ -133,7 +241,7 @@
 			class="rounded-md {isCode ? 'bg-stone-300' : 'hover:bg-stone-200'}"
 			onclick={() => dispatchTextCommand('code')}
 		>
-			<FormatCode width="44" height="44" class="p-1" />
+			<IconFormatCode width="44" height="44" class="p-1" />
 		</button>
 	</div>
 </div>
