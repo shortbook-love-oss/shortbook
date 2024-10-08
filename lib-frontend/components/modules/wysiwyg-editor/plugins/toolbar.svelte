@@ -1,6 +1,12 @@
 <script lang="ts">
+	import { CodeNode, $createCodeNode as createCodeNode } from '@lexical/code';
 	import { $createListNode as createListNode, ListNode } from '@lexical/list';
-	import { $createHeadingNode as createHeadingNode, HeadingNode } from '@lexical/rich-text';
+	import {
+		$createHeadingNode as createHeadingNode,
+		$createQuoteNode as createQuoteNode,
+		HeadingNode,
+		QuoteNode
+	} from '@lexical/rich-text';
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
@@ -16,7 +22,9 @@
 	} from 'lexical';
 	import { onMount } from 'svelte';
 	import IconArrow from '~icons/mdi/chevron-up';
+	import IconFormatOrderedList from '~icons/mdi/123';
 	import IconFormatCode from '~icons/mdi/code';
+	import IconFormatCodeBlock from '~icons/mdi/code-block-tags';
 	import IconFormatBold from '~icons/mdi/format-bold';
 	import IconFormatHeading2 from '~icons/mdi/format-heading-2';
 	import IconFormatHeading3 from '~icons/mdi/format-heading-3';
@@ -25,10 +33,12 @@
 	import IconFormatHeading6 from '~icons/mdi/format-heading-6';
 	import IconFormatItalic from '~icons/mdi/format-italic';
 	import IconFormatUnorderedList from '~icons/mdi/format-list-bulleted-square';
-	import IconFormatOrderedList from '~icons/mdi/123';
 	import IconFormatParagraph from '~icons/mdi/format-paragraph';
+	import IconFormatBlockquote from '~icons/mdi/format-quote-open';
 	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
 	import {
+		blockquoteSelect,
+		codeBlockSelect,
 		headingSelect,
 		headingTypeValues,
 		orderedListSelect,
@@ -44,7 +54,14 @@
 	};
 	let { editor }: Props = $props();
 
-	const elementSelect = [paragraphSelect, ...headingSelect, unorderedListSelect, orderedListSelect];
+	const elementSelect = [
+		unorderedListSelect,
+		orderedListSelect,
+		codeBlockSelect,
+		blockquoteSelect,
+		...headingSelect,
+		paragraphSelect
+	];
 	type BlockElementSelect = (typeof elementSelect)[number]['value'];
 
 	const elementIndex = {
@@ -55,7 +72,9 @@
 		h5: IconFormatHeading5,
 		h6: IconFormatHeading6,
 		ul: IconFormatUnorderedList,
-		ol: IconFormatOrderedList
+		ol: IconFormatOrderedList,
+		blockquote: IconFormatBlockquote,
+		codeblock: IconFormatCodeBlock
 	} satisfies Record<BlockElementSelect, unknown>;
 
 	// Keep state opening the iOS/Android virtual keyboard
@@ -124,6 +143,10 @@
 				} else if (orderedListSelect.value === tag) {
 					selectedBlockType = orderedListSelect;
 				}
+			} else if (selectedStartBlock instanceof QuoteNode) {
+				selectedBlockType = blockquoteSelect;
+			} else if (selectedStartBlock instanceof CodeNode) {
+				selectedBlockType = codeBlockSelect;
 			}
 		}
 	}
@@ -144,6 +167,10 @@
 					setBlocksType(selection, () => createListNode('bullet'));
 				} else if (orderedListSelect.value === element.value) {
 					setBlocksType(selection, () => createListNode('number'));
+				} else if (blockquoteSelect.value === element.value) {
+					setBlocksType(selection, () => createQuoteNode());
+				} else if (codeBlockSelect.value === element.value) {
+					setBlocksType(selection, () => createCodeNode());
 				}
 				selectedBlockType = element;
 			}

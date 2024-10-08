@@ -15,6 +15,10 @@ export type HeadingTypes = (typeof headingTypeValues)[number];
 export const unorderedListSelect = { value: 'ul', label: 'Unordered List' } as const;
 export const orderedListSelect = { value: 'ol', label: 'Numbered List' } as const;
 
+export const blockquoteSelect = { value: 'blockquote', label: 'Quote' } as const;
+
+export const codeBlockSelect = { value: 'codeblock', label: 'Code Block' } as const;
+
 export function escapeHTML(original: string) {
 	return original
 		.replace(/&/g, '&amp;')
