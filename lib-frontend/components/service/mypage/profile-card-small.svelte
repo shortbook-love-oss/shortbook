@@ -13,7 +13,7 @@
 	href={keyHandle ? `/@${keyHandle}` : undefined}
 	class="flex items-center gap-2 {keyHandle ? 'hover:underline' : ''} {className}"
 >
-	<picture>
+	<picture class="shrink-0">
 		<source srcset="{imageSrc}?ext=avif&w=24&h=24&q=80" type="image/avif" />
 		<img
 			src="{imageSrc}?ext=png&w=24&h=24&q=80"
