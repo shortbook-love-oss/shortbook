@@ -2,14 +2,15 @@
 	import { CodeHighlightNode, CodeNode, registerCodeHighlighting } from '@lexical/code';
 	import { registerDragonSupport } from '@lexical/dragon';
 	import { createEmptyHistoryState, registerHistory } from '@lexical/history';
-	import { LinkNode } from '@lexical/link';
+	import { AutoLinkNode, LinkNode } from '@lexical/link';
 	import { ListItemNode, ListNode } from '@lexical/list';
 	import { HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
 	import { mergeRegister } from '@lexical/utils';
 	import { createEditor, type CreateEditorArgs } from 'lexical';
 	import { onMount } from 'svelte';
-	import Toolbar from './plugins/toolbar.svelte';
+	import { registerPluginPasteLinkReplacer } from './plugins/paste-link-replacer';
 	import type { EditorState } from './editor';
+	import Toolbar from './plugins/toolbar.svelte';
 
 	type Props = {
 		value: EditorState;
@@ -21,7 +22,16 @@
 
 	const initialConfig: CreateEditorArgs = {
 		namespace,
-		nodes: [CodeHighlightNode, CodeNode, HeadingNode, LinkNode, ListNode, ListItemNode, QuoteNode],
+		nodes: [
+			CodeHighlightNode,
+			CodeNode,
+			HeadingNode,
+			LinkNode,
+			AutoLinkNode,
+			ListNode,
+			ListItemNode,
+			QuoteNode
+		],
 		onError: (error: Error) => {
 			throw error;
 		},
@@ -58,7 +68,8 @@
 			registerRichText(editor),
 			registerCodeHighlighting(editor),
 			registerDragonSupport(editor),
-			registerHistory(editor, createEmptyHistoryState(), 300)
+			registerHistory(editor, createEmptyHistoryState(), 300),
+			registerPluginPasteLinkReplacer(editor)
 		);
 
 		if (value) {
