@@ -3,6 +3,7 @@ import type { SerializedLinkNode } from '@lexical/link';
 import type { SerializedListNode } from '@lexical/list';
 import type { SerializedHeadingNode, SerializedQuoteNode } from '@lexical/rich-text';
 import type {
+	RangeSelection,
 	SerializedEditorState,
 	SerializedElementNode,
 	SerializedParagraphNode,
@@ -44,3 +45,8 @@ export const initEditorState: EditorState = {
 		version: 1
 	}
 };
+
+// Find block node of lexical editor state, not text node in the block node
+export function findSelectedStartBlock(selection: RangeSelection) {
+	return selection.anchor.getNode().getTopLevelElement();
+}

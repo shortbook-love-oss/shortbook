@@ -17,7 +17,6 @@
 		ParagraphNode,
 		SELECTION_CHANGE_COMMAND,
 		type LexicalEditor,
-		type RangeSelection,
 		type TextFormatType
 	} from 'lexical';
 	import { onMount } from 'svelte';
@@ -36,6 +35,7 @@
 	import IconFormatParagraph from '~icons/mdi/format-paragraph';
 	import IconFormatBlockquote from '~icons/mdi/format-quote-open';
 	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
+	import { findSelectedStartBlock } from '$lib/components/modules/wysiwyg-editor/editor';
 	import {
 		blockquoteSelect,
 		codeBlockSelect,
@@ -103,21 +103,6 @@
 		COMMAND_PRIORITY_CRITICAL
 	);
 
-	function getSelectedStartBlock(selection: RangeSelection) {
-		// Find block node of lexical editor state, not text node in the block node
-		let selectedStartNode = selection.anchor.getNode();
-		for (let circuitBreaker = 0; circuitBreaker < 5; circuitBreaker++) {
-			const selectStartNodeParent = selectedStartNode.getParent();
-			if (selectStartNodeParent?.getKey() === 'root') {
-				return selectedStartNode;
-			} else if (selectStartNodeParent) {
-				selectedStartNode = selectStartNodeParent;
-			}
-		}
-
-		return null;
-	}
-
 	function setControllerState() {
 		const selection = getSelection();
 		if (isRangeSelection(selection)) {
@@ -127,7 +112,7 @@
 			isCode = selection.hasFormat('code');
 
 			// Change state of block type controller
-			const selectedStartBlock = getSelectedStartBlock(selection);
+			const selectedStartBlock = findSelectedStartBlock(selection);
 			if (selectedStartBlock instanceof ParagraphNode) {
 				selectedBlockType = paragraphSelect;
 			} else if (selectedStartBlock instanceof HeadingNode) {
