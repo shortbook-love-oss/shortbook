@@ -8,9 +8,10 @@
 	import { mergeRegister } from '@lexical/utils';
 	import { createEditor, type CreateEditorArgs } from 'lexical';
 	import { onMount } from 'svelte';
-	import { registerPluginPasteLinkReplacer } from './plugins/paste-link-replacer';
-	import type { EditorState } from './editor';
-	import Toolbar from './plugins/toolbar.svelte';
+	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
+	import type { EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
+	import LinkEditor from '$lib/components/modules/wysiwyg-editor/plugins/link-editor.svelte';
+	import Toolbar from '$lib/components/modules/wysiwyg-editor/plugins/toolbar.svelte';
 
 	type Props = {
 		value: EditorState;
@@ -88,4 +89,5 @@
 		<div bind:this={editorRootElem} contenteditable></div>
 	</div>
 	<Toolbar {editor} />
+	<LinkEditor {editor} />
 </div>
