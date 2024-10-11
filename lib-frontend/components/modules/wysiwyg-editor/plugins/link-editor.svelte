@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { LinkNode } from '@lexical/link';
+	import { $getNearestNodeOfType as getNearestNodeOfType, mergeRegister } from '@lexical/utils';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
+		COMMAND_PRIORITY_HIGH,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
+		KEY_ESCAPE_COMMAND,
 		SELECTION_CHANGE_COMMAND,
 		type LexicalEditor
 	} from 'lexical';
-	import { $getNearestNodeOfType as getNearestNodeOfType } from '@lexical/utils';
+	import { onMount } from 'svelte';
 	import { getUrlObject } from '$lib/utilities/url';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 
@@ -25,20 +28,38 @@
 
 	let selectedLinkNode = $state<LinkNode | null>(null);
 
-	editor.registerCommand(
-		SELECTION_CHANGE_COMMAND,
-		(_, targetEditor) => {
-			if (editor.getKey() === targetEditor.getKey()) {
-				const node = getSelectedLinkNodes();
-				if (node) {
-					translateLinkEditor();
-				}
-				selectedLinkNode = node;
-			}
-			return false;
-		},
-		COMMAND_PRIORITY_CRITICAL
-	);
+	onMount(() => {
+		const removeListener = mergeRegister(
+			editor.registerCommand(
+				SELECTION_CHANGE_COMMAND,
+				(_, targetEditor) => {
+					if (editor.getKey() === targetEditor.getKey()) {
+						const node = getSelectedLinkNodes();
+						if (node) {
+							translateLinkEditor();
+						}
+						selectedLinkNode = node;
+					}
+					return false;
+				},
+				COMMAND_PRIORITY_CRITICAL
+			),
+
+			editor.registerCommand(
+				KEY_ESCAPE_COMMAND,
+				() => {
+					if (selectedLinkNode) {
+						selectedLinkNode = null;
+						return true;
+					}
+					return false;
+				},
+				COMMAND_PRIORITY_HIGH
+			)
+		);
+
+		return removeListener;
+	});
 
 	function getSelectedLinkNodes() {
 		const selection = getSelection();
