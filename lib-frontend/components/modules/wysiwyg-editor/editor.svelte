@@ -40,12 +40,12 @@
 			root: 'h-full font-sans text-[1.375rem] leading-[1.625] tracking-wider text-stone-950 underline-offset-[0.15em] outline-none',
 			code: 'my-4 block bg-slate-100 px-3 py-2 text-[0.875em]',
 			heading: {
-				h1: '[&:not(:first-child)]:mt-8 mb-4 text-[3.5em] font-semibold leading-[1.25]',
-				h2: '[&:not(:first-child)]:mt-8 mb-4 text-[2.5em] font-semibold leading-[1.25]',
-				h3: '[&:not(:first-child)]:mt-8 mb-4 text-[2em] font-semibold leading-[1.25]',
-				h4: 'my-4 text-[1.5em] font-semibold leading-[1.25]',
-				h5: 'my-4 text-[1.25em] font-semibold leading-[1.25]',
-				h6: 'my-4 text-[1.1em] font-semibold leading-[1.25]'
+				h1: '[&:not(:first-child)]:mt-8 mb-4 text-[3.25em] font-semibold leading-[1.25]',
+				h2: '[&:not(:first-child)]:mt-8 mb-4 text-[2em] font-semibold leading-[1.25]',
+				h3: '[&:not(:first-child)]:mt-8 mb-4 text-[1.5em] font-semibold leading-[1.3125]',
+				h4: 'my-4 text-[1.25em] font-semibold leading-[1.3125]',
+				h5: 'my-4 text-[1.1em] font-semibold leading-[1.375]',
+				h6: 'my-4 font-semibold leading-[1.375]'
 			},
 			link: 'cursor-pointer text-primary-700 underline',
 			list: {
@@ -85,7 +85,7 @@
 </script>
 
 <div class="flex flex-col items-center">
-	<div class="pb-12">
+	<div class="w-full pb-12">
 		<div bind:this={editorRootElem} contenteditable></div>
 	</div>
 	<Toolbar {editor} />
