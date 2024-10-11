@@ -65,7 +65,7 @@
 		editor.setRootElement(editorRootElem);
 
 		// Registring editor plugins
-		mergeRegister(
+		const removePluginListener = mergeRegister(
 			registerRichText(editor),
 			registerCodeHighlighting(editor),
 			registerDragonSupport(editor),
@@ -78,9 +78,14 @@
 			editor.setEditorState(parsedEditorState, { tag: 'history-merge' });
 		}
 
-		editor.registerUpdateListener(({ editorState }) => {
+		const removeUpdateListener = editor.registerUpdateListener(({ editorState }) => {
 			value = editorState.toJSON() as EditorState;
 		});
+
+		return () => {
+			removePluginListener();
+			removeUpdateListener();
+		};
 	});
 </script>
 
