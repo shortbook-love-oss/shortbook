@@ -14,7 +14,7 @@
 </script>
 
 <footer
-	class="flex flex-col justify-center overflow-x-hidden border-t border-stone-300 bg-white pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] {className}"
+	class="flex flex-col justify-center border-t border-stone-300 bg-white pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] {className}"
 >
 	<nav class="flex w-full flex-wrap gap-x-16 gap-y-8 px-4 py-12 sm:mx-auto sm:w-fit sm:px-8">
 		<div class="relative w-full sm:w-auto sm:pt-1.5">
