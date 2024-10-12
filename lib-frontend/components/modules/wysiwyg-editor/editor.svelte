@@ -8,6 +8,7 @@
 	import { mergeRegister } from '@lexical/utils';
 	import { createEditor, type CreateEditorArgs } from 'lexical';
 	import { onMount } from 'svelte';
+	import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
 	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import type { EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 	import LinkEditor from '$lib/components/modules/wysiwyg-editor/plugins/link-editor.svelte';
@@ -36,28 +37,7 @@
 		onError: (error: Error) => {
 			throw error;
 		},
-		theme: {
-			root: 'h-full font-sans text-[1.375rem] leading-[1.625] tracking-wider text-stone-950 underline-offset-[0.15em] outline-none',
-			code: 'my-4 block bg-slate-100 px-3 py-2 text-[0.875em]',
-			heading: {
-				h1: '[&:not(:first-child)]:mt-8 mb-4 text-[3.25em] font-semibold leading-[1.25]',
-				h2: '[&:not(:first-child)]:mt-8 mb-4 text-[2em] font-semibold leading-[1.25]',
-				h3: '[&:not(:first-child)]:mt-8 mb-4 text-[1.5em] font-semibold leading-[1.3125]',
-				h4: 'my-4 text-[1.25em] font-semibold leading-[1.3125]',
-				h5: 'my-4 text-[1.1em] font-semibold leading-[1.375]',
-				h6: 'my-4 font-semibold leading-[1.375]'
-			},
-			link: 'cursor-pointer text-primary-700 underline',
-			list: {
-				ol: 'my-4 list-decimal ps-8',
-				ul: 'my-4 list-disc ps-6'
-			},
-			quote: 'my-4 rounded-2xl bg-stone-200/80 p-6 text-[1.25em]',
-			text: {
-				code: 'bg-slate-100 p-1 text-[0.875em]',
-				strikethrough: 'line-through'
-			}
-		}
+		theme
 	};
 	const editor = createEditor(initialConfig);
 
