@@ -34,11 +34,11 @@
 				SELECTION_CHANGE_COMMAND,
 				(_, targetEditor) => {
 					if (editor.getKey() === targetEditor.getKey()) {
-						const node = getSelectedLinkNodes();
-						if (node) {
-							translateLinkEditor();
+						const linkNode = getSelectedLinkNodes();
+						if (linkNode) {
+							translateLinkEditor(linkNode);
 						}
-						selectedLinkNode = node;
+						selectedLinkNode = linkNode;
 					}
 					return false;
 				},
@@ -77,16 +77,14 @@
 		return selectedLinkNode;
 	}
 
-	function translateLinkEditor() {
-		const anchorElement = window.getSelection()?.anchorNode;
-		const editorRootElement = editor.getRootElement();
-		if (!anchorElement || !editorRootElement || !editorRootElement.contains(anchorElement)) {
+	function translateLinkEditor(linkNode: LinkNode) {
+		const anchorElement = editor.getElementByKey(linkNode.getKey());
+		if (!anchorElement) {
 			return;
 		}
 
-		const boundingElement = anchorElement.parentElement;
-		const domRect = boundingElement?.getBoundingClientRect();
-		if (linkEditorElem && boundingElement && domRect) {
+		const domRect = anchorElement.getBoundingClientRect();
+		if (linkEditorElem && anchorElement && domRect) {
 			const linkEditorWidth = linkEditorElem.offsetWidth;
 			const linkEditorHeight = linkEditorElem.offsetHeight;
 
