@@ -35,7 +35,7 @@
 <!-- Dropdown -->
 <div
 	id="common_dropdown_{name}"
-	class="max-w-screen absolute z-40 flex max-h-dvh flex-col rounded-lg border border-stone-400 bg-white {hideClass} {dropdownClass}"
+	class="max-w-screen absolute z-40 flex max-h-[calc(100dvh-6rem)] flex-col rounded-lg border border-stone-400 bg-white {hideClass} {dropdownClass}"
 >
 	<div class="flex-1 overflow-x-auto p-2">
 		{@render children()}
