@@ -23,7 +23,6 @@
 	let errorMessages = $state<string[]>([]);
 
 	let documentWidth = $state(0);
-	let documentHeight = $state(0);
 	let linkEditorElem = $state<HTMLElement | null>(null);
 
 	let selectedLinkNode = $state<LinkNode | null>(null);
@@ -36,7 +35,7 @@
 					if (editor.getKey() === targetEditor.getKey()) {
 						const linkNode = getSelectedLinkNodes();
 						if (linkNode) {
-							translateLinkEditor(linkNode);
+							positioningLinkEditor(linkNode);
 						}
 						selectedLinkNode = linkNode;
 					}
@@ -77,7 +76,7 @@
 		return selectedLinkNode;
 	}
 
-	function translateLinkEditor(linkNode: LinkNode) {
+	function positioningLinkEditor(linkNode: LinkNode) {
 		const anchorElement = editor.getElementByKey(linkNode.getKey());
 		if (!anchorElement) {
 			return;
@@ -119,7 +118,7 @@
 	}
 </script>
 
-<svelte:body bind:clientWidth={documentWidth} bind:clientHeight={documentHeight} />
+<svelte:body bind:clientWidth={documentWidth} />
 
 {#if selectedLinkNode}
 	<form

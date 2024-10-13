@@ -40,7 +40,11 @@
 	import IconFormatParagraph from '~icons/mdi/format-paragraph';
 	import IconFormatBlockquote from '~icons/mdi/format-quote-open';
 	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
-	import { findSelectedStartBlock } from '$lib/components/modules/wysiwyg-editor/editor';
+	import {
+		codeLanguageSelect,
+		findSelectedStartBlock,
+		type CodeLanguageItem
+	} from '$lib/components/modules/wysiwyg-editor/editor';
 	import {
 		blockquoteSelect,
 		codeBlockSelect,
@@ -90,7 +94,8 @@
 	let toolbarTopOffset = $state(0);
 
 	// Selection states
-	let canSwitchTextFormat = $state(false);
+	let canSwitchTextFormat = $state(true);
+	let isInCodeBlock = $state(false);
 	let isBold = $state(false);
 	let isItalic = $state(false);
 	let isStrikethrough = $state(false);
@@ -98,12 +103,17 @@
 
 	let selectedBlockType = $state<SelectItemSingle<BlockElementSelect>>(paragraphSelect);
 
+	let selectedLanguage = $state<CodeLanguageItem>(codeLanguageSelect[0]);
+
 	function setControllerState() {
 		const selection = getSelection();
 		if (isRangeSelection(selection)) {
 			// By Lexical specifications, the contents of a code block cannot set to bold or italic
 			canSwitchTextFormat = selection.getNodes().some((node) => {
 				return !isCodeNode(node.getTopLevelElement());
+			});
+			isInCodeBlock = selection.getNodes().every((node) => {
+				return isCodeNode(node.getTopLevelElement());
 			});
 			isBold = selection.hasFormat('bold');
 			isItalic = selection.hasFormat('italic');
@@ -162,6 +172,10 @@
 				setControllerState();
 			}
 		});
+	}
+
+	function changeCodeLanguage(language: CodeLanguageItem) {
+		selectedLanguage = language;
 	}
 
 	onMount(() => {
@@ -267,49 +281,78 @@
 				</ul>
 			</Dropdown>
 		</div>
-		<button
-			type="button"
-			disabled={!canSwitchTextFormat}
-			title="Bold"
-			class="rounded-md disabled:text-stone-400"
-			class:bg-stone-300={isBold}
-			class:hover:bg-stone-200={!isBold && canSwitchTextFormat}
-			onclick={() => dispatchTextCommand('bold')}
-		>
-			<IconFormatBold width="44" height="44" class="p-1" />
-		</button>
-		<button
-			type="button"
-			disabled={!canSwitchTextFormat}
-			title="Italic"
-			class="rounded-md disabled:text-stone-400"
-			class:bg-stone-300={isItalic}
-			class:hover:bg-stone-200={!isItalic && canSwitchTextFormat}
-			onclick={() => dispatchTextCommand('italic')}
-		>
-			<IconFormatItalic width="44" height="44" class="p-1" />
-		</button>
-		<button
-			type="button"
-			disabled={!canSwitchTextFormat}
-			title="Strikethrough"
-			class="rounded-md disabled:text-stone-400"
-			class:bg-stone-300={isStrikethrough}
-			class:hover:bg-stone-200={!isStrikethrough && canSwitchTextFormat}
-			onclick={() => dispatchTextCommand('strikethrough')}
-		>
-			<IconFormatStrikethrough width="44" height="44" class="p-1" />
-		</button>
-		<button
-			type="button"
-			disabled={!canSwitchTextFormat}
-			title="Code"
-			class="rounded-md disabled:text-stone-400"
-			class:bg-stone-300={isCode}
-			class:hover:bg-stone-200={!isCode && canSwitchTextFormat}
-			onclick={() => dispatchTextCommand('code')}
-		>
-			<IconFormatCode width="44" height="44" class="p-1" />
-		</button>
+		{#if canSwitchTextFormat}
+			<button
+				type="button"
+				title="Bold"
+				class="rounded-md disabled:text-stone-400 {isBold ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+				onclick={() => dispatchTextCommand('bold')}
+			>
+				<IconFormatBold width="44" height="44" class="p-1" />
+			</button>
+			<button
+				type="button"
+				title="Italic"
+				class="rounded-md disabled:text-stone-400 {isItalic
+					? 'bg-stone-300'
+					: 'hover:bg-stone-200'}"
+				onclick={() => dispatchTextCommand('italic')}
+			>
+				<IconFormatItalic width="44" height="44" class="p-1" />
+			</button>
+			<button
+				type="button"
+				title="Strikethrough"
+				class="rounded-md disabled:text-stone-400 {isStrikethrough
+					? 'bg-stone-300'
+					: 'hover:bg-stone-200'}"
+				onclick={() => dispatchTextCommand('strikethrough')}
+			>
+				<IconFormatStrikethrough width="44" height="44" class="p-1" />
+			</button>
+			<button
+				type="button"
+				title="Code"
+				class="rounded-md disabled:text-stone-400 {isCode ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+				onclick={() => dispatchTextCommand('code')}
+			>
+				<IconFormatCode width="44" height="44" class="p-1" />
+			</button>
+		{/if}
+		{#if isInCodeBlock}
+			<div class="relative">
+				<Dropdown
+					name="editor_control_code_lang_select"
+					openerClass="h-full rounded-md"
+					dropdownClass="bottom-14"
+				>
+					{#snippet opener()}
+						<div class="flex items-center pl-2 pr-1 leading-tight">
+							<div class="text-nowrap text-left">
+								<p class="text-stone-500">Language</p>
+								<p class="text-xl">{selectedLanguage.label}</p>
+							</div>
+							<IconArrow width="32" height="32" />
+						</div>
+					{/snippet}
+					<ul>
+						{#each codeLanguageSelect as language}
+							<li>
+								<button
+									type="button"
+									class="flex w-full items-center gap-2 text-nowrap rounded-md p-2 text-lg {selectedLanguage.value ===
+									language.value
+										? 'bg-stone-300'
+										: 'hover:bg-stone-200'}"
+									onclick={() => changeCodeLanguage(language)}
+								>
+									{language.label}
+								</button>
+							</li>
+						{/each}
+					</ul>
+				</Dropdown>
+			</div>
+		{/if}
 	</div>
 </div>
