@@ -69,8 +69,8 @@
 	});
 </script>
 
-<div class="flex flex-col items-center">
-	<div class="w-full pb-12">
+<div class="flex flex-1 flex-col items-center">
+	<div class="flex w-full flex-1 flex-col pb-8">
 		<div bind:this={editorRootElem} contenteditable></div>
 	</div>
 	<Toolbar {editor} />
