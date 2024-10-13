@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { CodeNode, $createCodeNode as createCodeNode } from '@lexical/code';
+	import {
+		CodeNode,
+		$createCodeNode as createCodeNode,
+		$isCodeNode as isCodeNode
+	} from '@lexical/code';
 	import { $createListNode as createListNode, ListNode } from '@lexical/list';
 	import {
 		$createHeadingNode as createHeadingNode,
@@ -8,6 +12,7 @@
 		QuoteNode
 	} from '@lexical/rich-text';
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
+	import { mergeRegister } from '@lexical/utils';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
 		$createParagraphNode as createParagraphNode,
@@ -85,6 +90,7 @@
 	let toolbarTopOffset = $state(0);
 
 	// Selection states
+	let canSwitchTextFormat = $state(false);
 	let isBold = $state(false);
 	let isItalic = $state(false);
 	let isStrikethrough = $state(false);
@@ -92,20 +98,13 @@
 
 	let selectedBlockType = $state<SelectItemSingle<BlockElementSelect>>(paragraphSelect);
 
-	editor.registerCommand(
-		SELECTION_CHANGE_COMMAND,
-		(_, targetEditor) => {
-			if (editor.getKey() === targetEditor.getKey()) {
-				setControllerState();
-			}
-			return false;
-		},
-		COMMAND_PRIORITY_CRITICAL
-	);
-
 	function setControllerState() {
 		const selection = getSelection();
 		if (isRangeSelection(selection)) {
+			// By Lexical specifications, the contents of a code block cannot set to bold or italic
+			canSwitchTextFormat = selection.getNodes().some((node) => {
+				return !isCodeNode(node.getTopLevelElement());
+			});
 			isBold = selection.hasFormat('bold');
 			isItalic = selection.hasFormat('italic');
 			isStrikethrough = selection.hasFormat('strikethrough');
@@ -158,9 +157,29 @@
 					setBlocksType(selection, () => createCodeNode());
 				}
 				selectedBlockType = element;
+
+				// If change to code block or change from it, switch controller clickable
+				setControllerState();
 			}
 		});
 	}
+
+	onMount(() => {
+		const removeListener = mergeRegister(
+			editor.registerCommand(
+				SELECTION_CHANGE_COMMAND,
+				(_, targetEditor) => {
+					if (editor.getKey() === targetEditor.getKey()) {
+						setControllerState();
+					}
+					return false;
+				},
+				COMMAND_PRIORITY_CRITICAL
+			)
+		);
+
+		removeListener;
+	});
 
 	onMount(() => {
 		const onViewportResize = () => {
@@ -250,32 +269,44 @@
 		</div>
 		<button
 			type="button"
+			disabled={!canSwitchTextFormat}
 			title="Bold"
-			class="rounded-md {isBold ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+			class="rounded-md disabled:text-stone-400"
+			class:bg-stone-300={isBold}
+			class:hover:bg-stone-200={!isBold && canSwitchTextFormat}
 			onclick={() => dispatchTextCommand('bold')}
 		>
 			<IconFormatBold width="44" height="44" class="p-1" />
 		</button>
 		<button
 			type="button"
+			disabled={!canSwitchTextFormat}
 			title="Italic"
-			class="rounded-md {isItalic ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+			class="rounded-md disabled:text-stone-400"
+			class:bg-stone-300={isItalic}
+			class:hover:bg-stone-200={!isItalic && canSwitchTextFormat}
 			onclick={() => dispatchTextCommand('italic')}
 		>
 			<IconFormatItalic width="44" height="44" class="p-1" />
 		</button>
 		<button
 			type="button"
+			disabled={!canSwitchTextFormat}
 			title="Strikethrough"
-			class="rounded-md {isStrikethrough ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+			class="rounded-md disabled:text-stone-400"
+			class:bg-stone-300={isStrikethrough}
+			class:hover:bg-stone-200={!isStrikethrough && canSwitchTextFormat}
 			onclick={() => dispatchTextCommand('strikethrough')}
 		>
 			<IconFormatStrikethrough width="44" height="44" class="p-1" />
 		</button>
 		<button
 			type="button"
+			disabled={!canSwitchTextFormat}
 			title="Code"
-			class="rounded-md {isCode ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+			class="rounded-md disabled:text-stone-400"
+			class:bg-stone-300={isCode}
+			class:hover:bg-stone-200={!isCode && canSwitchTextFormat}
 			onclick={() => dispatchTextCommand('code')}
 		>
 			<IconFormatCode width="44" height="44" class="p-1" />
