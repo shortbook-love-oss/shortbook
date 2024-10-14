@@ -4,7 +4,6 @@
 	type Props = {
 		value: string;
 		name: string;
-		label?: string;
 		required?: boolean;
 		errorMessages?: string[] | ValidationErrors<Record<string, unknown>>;
 		className?: string;
@@ -14,41 +13,35 @@
 	let {
 		value = $bindable(),
 		name,
-		label = '',
 		required = false,
 		errorMessages,
 		className = '',
 		inputClass = '',
 		...restProps
 	}: Props = $props();
+
+	function removeBreak(event: InputEvent) {
+		if (!event.isComposing) {
+			value = value.replace(/\n/g, '');
+		}
+	}
 </script>
 
-<label class="block {className}">
-	{#if label}
-		<div class="mb-1 flex items-end gap-4">
-			<p class="pb-px text-lg">{label}</p>
-			{#if required}
-				<div class="pb-1 text-base text-red-800">Required</div>
-			{/if}
-		</div>
-	{/if}
-	<div class="relative min-h-48 break-all">
+<div class={className}>
+	<div class="relative break-all">
 		<!-- "textarea" height is the same as inner content height -->
 		<textarea
 			{...restProps}
 			{name}
 			{required}
 			bind:value
-			class="overflow-none absolute start-0 top-0 block h-full w-full resize-none rounded-md border border-stone-700 px-4 py-2 disabled:bg-stone-100 disabled:text-stone-500 [&:user-invalid]:border-2 [&:user-invalid]:border-red-700 {errorMessages?.length
-				? 'border-2 border-red-700'
-				: 'border-stone-600'} {inputClass}"
+			class="overflow-none absolute start-0 top-0 block h-full w-full resize-none outline-none disabled:bg-stone-100 disabled:text-stone-500 [&:user-invalid]:border-b-2 [&:user-invalid]:border-red-700 {errorMessages?.length
+				? 'border-b-2 border-red-700'
+				: ''} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
+			oninput={(e) => removeBreak(e as unknown as InputEvent)}
 		></textarea>
-		<div
-			class="min-h-48 select-none whitespace-pre-wrap break-words rounded-md border px-4 py-2 {inputClass}"
-			aria-hidden="true"
-			translate="no"
-		>
+		<div class="select-none whitespace-pre-wrap {inputClass}" aria-hidden="true" translate="no">
 			{value + '\u200b'}
 		</div>
 	</div>
@@ -59,4 +52,4 @@
 			{/each}
 		</div>
 	{/if}
-</label>
+</div>
