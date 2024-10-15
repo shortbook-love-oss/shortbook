@@ -28,7 +28,7 @@
 </script>
 
 <div class={className}>
-	<div class="relative break-all">
+	<div class="relative">
 		<!-- "textarea" height is the same as inner content height -->
 		<textarea
 			{...restProps}
@@ -41,7 +41,11 @@
 			aria-invalid={errorMessages?.length ? true : undefined}
 			oninput={(e) => removeBreak(e as unknown as InputEvent)}
 		></textarea>
-		<div class="select-none whitespace-pre-wrap {inputClass}" aria-hidden="true" translate="no">
+		<div
+			class="select-none whitespace-pre-wrap break-words break-all {inputClass}"
+			aria-hidden="true"
+			translate="no"
+		>
 			{value + '\u200b'}
 		</div>
 	</div>
