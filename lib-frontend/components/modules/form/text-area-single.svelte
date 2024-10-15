@@ -35,7 +35,7 @@
 			{name}
 			{required}
 			bind:value
-			class="overflow-none absolute start-0 top-0 block h-full w-full resize-none outline-none disabled:bg-stone-100 disabled:text-stone-500 [&:user-invalid]:border-b-2 [&:user-invalid]:border-red-700 {errorMessages?.length
+			class="overflow-none absolute start-0 top-0 block h-full w-full resize-none outline-none placeholder:text-stone-400 disabled:bg-stone-100 disabled:text-stone-500 [&:user-invalid]:border-b-2 [&:user-invalid]:border-red-700 {errorMessages?.length
 				? 'border-b-2 border-red-700'
 				: ''} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}

@@ -39,7 +39,7 @@
 			{name}
 			{required}
 			bind:value
-			class="absolute start-0 top-0 block h-full w-full resize-none rounded-md border border-stone-700 px-4 py-2 disabled:bg-stone-100 disabled:text-stone-500 [&:user-invalid]:border-2 [&:user-invalid]:border-red-700 {errorMessages?.length
+			class="absolute start-0 top-0 block h-full w-full resize-none rounded-md border border-stone-700 px-4 py-2 placeholder:text-stone-400 disabled:bg-stone-100 disabled:text-stone-500 [&:user-invalid]:border-2 [&:user-invalid]:border-red-700 {errorMessages?.length
 				? 'border-2 border-red-700'
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
