@@ -70,9 +70,7 @@
 </script>
 
 <div class="flex flex-1 flex-col items-center">
-	<div class="flex w-full flex-1 flex-col pb-8">
-		<div bind:this={editorRootElem} contenteditable></div>
-	</div>
+	<div bind:this={editorRootElem} contenteditable class="w-full"></div>
 	<Toolbar {editor} />
 	<LinkEditor {editor} />
 </div>

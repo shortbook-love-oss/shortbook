@@ -32,12 +32,6 @@ export const load = async ({ locals, params }) => {
 	}
 	const bookLang = book?.languages[0];
 
-	const { bookBuys, dbError: dbBuyListError } = await dbBookBuyList({ bookId: params.bookId });
-	if (!bookBuys || dbBuyListError) {
-		return error(500, { message: dbBuyListError?.message ?? '' });
-	}
-	const isBoughtByOther = bookBuys.length > 0;
-
 	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
 	const bookCover = getBookCover({
@@ -74,7 +68,6 @@ export const load = async ({ locals, params }) => {
 		langTags,
 		status,
 		initTitle,
-		isBoughtByOther,
 		userCurrencyCode,
 		currencyRateIndex
 	};
