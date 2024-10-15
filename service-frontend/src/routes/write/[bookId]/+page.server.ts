@@ -1,6 +1,7 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { bookCreateUrlParam } from '$lib/utilities/book';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
@@ -16,24 +17,31 @@ export const load = async ({ locals, params }) => {
 
 	const form = await superValidate(zod(schema));
 
-	const { book, dbError } = await dbBookGet({
-		bookId: params.bookId,
-		userId: signInUser.id,
-		isIncludeDraft: true
-	});
-	if (!book || !book.cover || dbError) {
-		return error(500, { message: dbError?.message ?? '' });
+	let bookStatus = 0; // 0: Draft 1: Public 2: Fan club only
+	let updatedAt: Date | null = null;
+
+	if (params.bookId !== bookCreateUrlParam) {
+		const { book, dbError } = await dbBookGet({
+			bookId: params.bookId,
+			userId: signInUser.id,
+			isIncludeDraft: true
+		});
+		if (!book || !book.cover || dbError) {
+			return error(500, { message: dbError?.message ?? '' });
+		}
+
+		const bookLang = book.languages[0];
+		form.data.title = bookLang.title;
+		form.data.subtitle = bookLang.subtitle;
+		form.data.content = bookLang.content;
+
+		bookStatus = book.status;
+		updatedAt = book.updated_at;
 	}
 
-	const title = form.data.title;
-	const subtitle = form.data.subtitle;
-	const content = form.data.content;
 	const initTitle = form.data.title;
 
-	const titleMaxLength = form.constraints?.title?.maxlength;
-	const subtitleMaxLength = form.constraints?.subtitle?.maxlength;
-
-	return { title, subtitle, content, initTitle, titleMaxLength, subtitleMaxLength };
+	return { form, bookStatus, updatedAt, initTitle };
 };
 
 export const actions = {
