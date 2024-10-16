@@ -45,7 +45,7 @@
 			aria-invalid={errorMessages?.length ? true : undefined}
 		></textarea>
 		<div
-			class="min-h-48 select-none whitespace-pre-wrap break-words break-all rounded-md border px-4 py-2 {inputClass}"
+			class="min-h-48 select-none whitespace-pre-wrap break-words rounded-md border px-4 py-2 [word-break:break-word] {inputClass}"
 			aria-hidden="true"
 			translate="no"
 		>

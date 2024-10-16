@@ -42,7 +42,7 @@
 			oninput={(e) => removeBreak(e as unknown as InputEvent)}
 		></textarea>
 		<div
-			class="select-none whitespace-pre-wrap break-words break-all {inputClass}"
+			class="select-none whitespace-pre-wrap break-words [word-break:break-word] {inputClass}"
 			aria-hidden="true"
 			translate="no"
 		>
