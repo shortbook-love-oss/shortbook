@@ -12,6 +12,7 @@
 	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import type { EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 	import LinkEditor from '$lib/components/modules/wysiwyg-editor/plugins/link-editor.svelte';
+	import Placeholder from '$lib/components/modules/wysiwyg-editor/plugins/placeholder.svelte';
 	import Toolbar from '$lib/components/modules/wysiwyg-editor/plugins/toolbar.svelte';
 
 	type Props = {
@@ -69,8 +70,11 @@
 	});
 </script>
 
-<div class="flex flex-1 flex-col items-center">
-	<div bind:this={editorRootElem} contenteditable class="w-full"></div>
-	<Toolbar {editor} />
+<div class="flex flex-1 flex-col">
+	<div class="relative">
+		<Placeholder {editor} placeholder="Write your knowledge..." />
+	</div>
+	<div bind:this={editorRootElem} contenteditable></div>
+	<Toolbar {editor} className="self-center" />
 	<LinkEditor {editor} />
 </div>

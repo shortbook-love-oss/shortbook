@@ -1,13 +1,18 @@
 import type { SerializedCodeNode } from '@lexical/code';
 import type { SerializedLinkNode } from '@lexical/link';
 import type { SerializedListNode } from '@lexical/list';
-import type { SerializedHeadingNode, SerializedQuoteNode } from '@lexical/rich-text';
-import type {
-	RangeSelection,
-	SerializedEditorState,
-	SerializedElementNode,
-	SerializedParagraphNode,
-	SerializedTextNode
+import {
+	$isHeadingNode as isHeadingNode,
+	type SerializedHeadingNode,
+	type SerializedQuoteNode
+} from '@lexical/rich-text';
+import {
+	$isParagraphNode as isParagraphNode,
+	type RangeSelection,
+	type SerializedEditorState,
+	type SerializedElementNode,
+	type SerializedParagraphNode,
+	type SerializedTextNode
 } from 'lexical';
 import type { SelectItemSingle } from '$lib/utilities/select';
 
@@ -86,4 +91,29 @@ export type CodeLanguageItem = (typeof codeLanguageSelect)[number];
 // Find block node of lexical editor state, not text node in the block node
 export function findSelectedStartBlock(selection: RangeSelection) {
 	return selection.anchor.getNode().getTopLevelElement();
+}
+
+// If only exist an empty paragraph / heading node, the editor consider to be empty
+export function isEditorEmpty(selection: RangeSelection) {
+	const firstBlockNode = selection.anchor.getNode().getTopLevelElement();
+	const rootNode = firstBlockNode?.getParent();
+	if (!firstBlockNode || !rootNode) {
+		return false;
+	}
+	const blockNodeLength = rootNode.getChildrenSize();
+	if (blockNodeLength >= 2) {
+		return false;
+	}
+
+	if (blockNodeLength === 0) {
+		return true;
+	}
+	if (
+		(isParagraphNode(firstBlockNode) || isHeadingNode(firstBlockNode)) &&
+		firstBlockNode.getTextContentSize() === 0
+	) {
+		return true;
+	}
+
+	return false;
 }

@@ -60,8 +60,9 @@
 
 	type Props = {
 		editor: LexicalEditor;
+		className?: string;
 	};
-	let { editor }: Props = $props();
+	let { editor, className = '' }: Props = $props();
 
 	const elementSelect = [
 		unorderedListSelect,
@@ -233,7 +234,7 @@
 <!-- To ensure that the software keyboard maintains its distance from the bottom even when it appears, adjustments are made using JavaScript -->
 <div
 	bind:clientHeight={toolbarHeight}
-	class="transition-[top] duration-150"
+	class="transition-[top] duration-150 {className}"
 	style:position={isOpenKeyboard ? 'absolute' : 'fixed'}
 	style:top={isOpenKeyboard ? toolbarTopOffset + 'px' : 'auto'}
 	style:bottom={isOpenKeyboard ? undefined : '0'}
