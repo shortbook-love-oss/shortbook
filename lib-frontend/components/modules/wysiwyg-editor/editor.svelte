@@ -18,8 +18,9 @@
 	type Props = {
 		value: EditorState;
 		namespace: string;
+		oninput?: (value: EditorState) => void;
 	};
-	let { value = $bindable(), namespace }: Props = $props();
+	let { value = $bindable(), namespace, oninput }: Props = $props();
 
 	let editorRootElem = $state<HTMLElement | null>(null);
 
@@ -61,6 +62,7 @@
 
 		const removeUpdateListener = editor.registerUpdateListener(({ editorState }) => {
 			value = editorState.toJSON() as EditorState;
+			oninput?.(value);
 		});
 
 		return () => {
