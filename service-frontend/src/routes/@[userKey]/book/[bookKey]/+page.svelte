@@ -61,7 +61,7 @@
 				{data.bookDetail.title}
 			</h1>
 			{#if data.bookDetail.subtitle}
-				<p class="mb-8 whitespace-pre-wrap text-2xl leading-snug text-stone-500">
+				<p class="mb-8 whitespace-pre-wrap text-[1.5rem] text-stone-500">
 					{data.bookDetail.subtitle}
 				</p>
 			{/if}

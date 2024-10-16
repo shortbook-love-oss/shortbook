@@ -31,7 +31,7 @@
 	{/snippet}
 	{#snippet contents()}
 		<div class="flex flex-col items-center">
-			<div class="flex min-h-dvh w-full max-w-2xl flex-1 flex-col px-4 py-16">
+			<div class="flex min-h-dvh w-full max-w-2xl flex-1 flex-col px-4 pb-20 pt-16 sm:pb-24">
 				<TextAreaSingle
 					bind:value={title}
 					name="title"
@@ -47,8 +47,9 @@
 					maxlength={data.form.constraints?.subtitle?.maxlength}
 					placeholder="Subtitle"
 					className="mb-8"
-					inputClass="text-[1.5rem]"
+					inputClass="text-[1.5rem] text-stone-500"
 				/>
+				<hr class="mb-8 border-stone-300" />
 				<Editor bind:value={outputStateJson} namespace="book-editor" />
 			</div>
 		</div>
