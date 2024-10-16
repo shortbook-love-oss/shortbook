@@ -4,7 +4,12 @@
 		$createCodeNode as createCodeNode,
 		$isCodeNode as isCodeNode
 	} from '@lexical/code';
-	import { $createListNode as createListNode, ListNode } from '@lexical/list';
+	import {
+		$createListNode as createListNode,
+		ListItemNode,
+		ListNode,
+		type ListType
+	} from '@lexical/list';
 	import {
 		$createHeadingNode as createHeadingNode,
 		$createQuoteNode as createQuoteNode,
@@ -22,6 +27,7 @@
 		ParagraphNode,
 		SELECTION_CHANGE_COMMAND,
 		type LexicalEditor,
+		type RangeSelection,
 		type TextFormatType
 	} from 'lexical';
 	import { onMount } from 'svelte';
@@ -146,6 +152,18 @@
 		}
 	}
 
+	function replaceToListNode(selection: RangeSelection, listType: ListType) {
+		// When replace empty node to list block, need to manually add ListItemNode into it
+		const listNode = createListNode(listType);
+		if (
+			selection.anchor.key === selection.focus.key &&
+			selection.anchor.getNode().getTextContentSize() === 0
+		) {
+			listNode.append(new ListItemNode());
+		}
+		return listNode;
+	}
+
 	function dispatchTextCommand(command: TextFormatType) {
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, command);
 	}
@@ -153,25 +171,26 @@
 	function dispatchBlockCommand(element: SelectItemSingle<BlockElementSelect>) {
 		editor.update(() => {
 			const selection = getSelection();
-			if (isRangeSelection(selection)) {
-				if (paragraphSelect.value === element.value) {
-					setBlocksType(selection, () => createParagraphNode());
-				} else if (headingTypeValues.includes(element.value as HeadingTypes)) {
-					setBlocksType(selection, () => createHeadingNode(element.value as HeadingTypes));
-				} else if (unorderedListSelect.value === element.value) {
-					setBlocksType(selection, () => createListNode('bullet'));
-				} else if (orderedListSelect.value === element.value) {
-					setBlocksType(selection, () => createListNode('number'));
-				} else if (blockquoteSelect.value === element.value) {
-					setBlocksType(selection, () => createQuoteNode());
-				} else if (codeBlockSelect.value === element.value) {
-					setBlocksType(selection, () => createCodeNode());
-				}
-				selectedBlockType = element;
-
-				// If change to code block or change from it, switch controller clickable
-				setControllerState();
+			if (!isRangeSelection(selection)) {
+				return;
 			}
+			if (paragraphSelect.value === element.value) {
+				setBlocksType(selection, () => createParagraphNode());
+			} else if (headingTypeValues.includes(element.value as HeadingTypes)) {
+				setBlocksType(selection, () => createHeadingNode(element.value as HeadingTypes));
+			} else if (unorderedListSelect.value === element.value) {
+				setBlocksType(selection, () => replaceToListNode(selection, 'bullet'));
+			} else if (orderedListSelect.value === element.value) {
+				setBlocksType(selection, () => replaceToListNode(selection, 'number'));
+			} else if (blockquoteSelect.value === element.value) {
+				setBlocksType(selection, () => createQuoteNode());
+			} else if (codeBlockSelect.value === element.value) {
+				setBlocksType(selection, () => createCodeNode());
+			}
+			selectedBlockType = element;
+
+			// If change to code block or change from it, switch controller clickable
+			setControllerState();
 		});
 	}
 
