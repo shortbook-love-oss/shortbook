@@ -60,9 +60,12 @@
 			editor.setEditorState(parsedEditorState, { tag: 'history-merge' });
 		}
 
-		const removeUpdateListener = editor.registerUpdateListener(({ editorState }) => {
-			value = editorState.toJSON() as EditorState;
-			oninput?.(value);
+		const removeUpdateListener = editor.registerUpdateListener(({ editorState, dirtyElements }) => {
+			if (dirtyElements.size > 0) {
+				// Runs only when node adds / changes / removes, not on selection change or focus
+				value = editorState.toJSON() as EditorState;
+				oninput?.(value);
+			}
 		});
 
 		return () => {
