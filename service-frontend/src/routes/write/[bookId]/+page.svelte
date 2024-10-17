@@ -2,10 +2,10 @@
 	import { page } from '$app/stores';
 	import { initEditorState, type EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 	import { bookCreateUrlParam } from '$lib/utilities/book';
-	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import TextAreaSingle from '$lib/components/modules/form/text-area-single.svelte';
 	import Editor from '$lib/components/modules/wysiwyg-editor/editor.svelte';
 	import EditorHeader from '$lib/components/service/write/editor-header.svelte';
+	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
 
 	let { data } = $props();

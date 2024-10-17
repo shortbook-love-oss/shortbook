@@ -11,6 +11,7 @@
 	import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
 	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import type { EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
+	import AlbumDragUploader from '$lib/components/modules/wysiwyg-editor/plugins/album-drag-uploader.svelte';
 	import LinkEditor from '$lib/components/modules/wysiwyg-editor/plugins/link-editor.svelte';
 	import Placeholder from '$lib/components/modules/wysiwyg-editor/plugins/placeholder.svelte';
 	import Toolbar from '$lib/components/modules/wysiwyg-editor/plugins/toolbar.svelte';
@@ -18,9 +19,9 @@
 	type Props = {
 		value: EditorState;
 		namespace: string;
-		oninput?: (value: EditorState) => void;
+		onInput?: (value: EditorState) => void;
 	};
-	let { value = $bindable(), namespace, oninput }: Props = $props();
+	let { value = $bindable(), namespace, onInput }: Props = $props();
 
 	let editorRootElem = $state<HTMLElement | null>(null);
 
@@ -64,7 +65,7 @@
 			if (dirtyElements.size > 0) {
 				// Runs only when node adds / changes / removes, not on selection change or focus
 				value = editorState.toJSON() as EditorState;
-				oninput?.(value);
+				onInput?.(value);
 			}
 		});
 
@@ -82,4 +83,5 @@
 	<div bind:this={editorRootElem} contenteditable></div>
 	<Toolbar {editor} className="self-center" />
 	<LinkEditor {editor} />
+	<AlbumDragUploader {editor} />
 </div>

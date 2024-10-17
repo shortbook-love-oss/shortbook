@@ -1,3 +1,5 @@
+import type { ActionResult } from '@sveltejs/kit';
+
 export interface SelectedFile {
 	file: File;
 	dataUrl: string;
@@ -37,4 +39,38 @@ export function getUnitByteLength(byteLength: number, decimalPoint: number) {
 	const unitAmountFixed = unitAmount.replace(`.${'0'.repeat(decimalPoint)}`, '');
 
 	return `${unitAmountFixed} ${sizeUnits[sizeUnitIndex]}`;
+}
+
+export async function uploadFiles(actionUrl: string, files: FileList, uploadProp: string) {
+	const body = new FormData();
+	for (let i = 0; i < files.length; i++) {
+		body.append(uploadProp, files[i]);
+	}
+
+	const uploadResult = await fetch(actionUrl, {
+		method: 'POST',
+		headers: {
+			'user-agent': 'ShortBook Paid-Article Writing Platform'
+		},
+		body
+	})
+		.then(async (res) => {
+			const result = (await res.json()) as ActionResult;
+			if (result.type === 'error') {
+				if (result.error instanceof Error) {
+					return result.error;
+				} else if (typeof result.error === 'string') {
+					return new Error(result.error);
+				} else {
+					return new Error(`Failed to upload files ${result.status}`);
+				}
+			} else if (result.type === 'failure') {
+				return new Error(`Failed to upload files ${result.status}`);
+			} else {
+				return result;
+			}
+		})
+		.catch((error: Error) => error);
+
+	return uploadResult;
 }
