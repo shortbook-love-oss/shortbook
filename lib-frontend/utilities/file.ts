@@ -1,5 +1,3 @@
-import type { ActionResult } from '@sveltejs/kit';
-
 export interface SelectedFile {
 	file: File;
 	dataUrl: string;
@@ -41,7 +39,11 @@ export function getUnitByteLength(byteLength: number, decimalPoint: number) {
 	return `${unitAmountFixed} ${sizeUnits[sizeUnitIndex]}`;
 }
 
-export async function uploadFiles(actionUrl: string, files: FileList, uploadProp: string) {
+export async function uploadFiles<R extends Record<string, any>>(
+	actionUrl: string,
+	files: FileList,
+	uploadProp: string
+) {
 	const body = new FormData();
 	for (let i = 0; i < files.length; i++) {
 		body.append(uploadProp, files[i]);
@@ -55,20 +57,8 @@ export async function uploadFiles(actionUrl: string, files: FileList, uploadProp
 		body
 	})
 		.then(async (res) => {
-			const result = (await res.json()) as ActionResult;
-			if (result.type === 'error') {
-				if (result.error instanceof Error) {
-					return result.error;
-				} else if (typeof result.error === 'string') {
-					return new Error(result.error);
-				} else {
-					return new Error(`Failed to upload files ${result.status}`);
-				}
-			} else if (result.type === 'failure') {
-				return new Error(`Failed to upload files ${result.status}`);
-			} else {
-				return result;
-			}
+			const result = (await res.json()) as R;
+			return result;
 		})
 		.catch((error: Error) => error);
 

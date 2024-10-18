@@ -6,7 +6,7 @@
 	import {
 		albumImageAiSelect,
 		albumImageSensitiveSelect,
-		type AlbumImageItem
+		type AlbumImageEditItem
 	} from '$lib/utilities/album';
 	import { getUnitByteLength } from '$lib/utilities/file';
 	import { languageAndNotSelect } from '$lib/utilities/language';
@@ -19,7 +19,7 @@
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 
 	type Props = {
-		imageData: AlbumImageItem;
+		imageData: AlbumImageEditItem;
 	};
 	let { imageData }: Props = $props();
 
