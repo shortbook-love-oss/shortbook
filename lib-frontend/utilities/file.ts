@@ -1,10 +1,12 @@
+import type { AllowedFromExtension } from '$lib-backend/utilities/infrastructure/image';
+
 export interface SelectedFile {
 	file: File;
 	dataUrl: string;
 	key: number;
 }
 
-export const imageMIMEextension: Record<string, string> = {
+export const imageMIMEextension: Record<string, AllowedFromExtension> = {
 	'image/png': 'png',
 	'image/jpeg': 'jpg',
 	'image/gif': 'gif',
