@@ -5,6 +5,7 @@ import { getRandom } from '$lib/utilities/crypto';
 import { imageMIMEextension } from '$lib/utilities/file';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { dbUserAlbumImageCreate } from '$lib-backend/model/user/album/image-create';
+import { getExtensionForAll } from '$lib-backend/utilities/infrastructure/image';
 import { uploadFile } from '$lib-backend/utilities/file';
 import { getActualImageData, type ActualImageDataSuccess } from '$lib-backend/utilities/image';
 
@@ -79,6 +80,7 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 
 				return {
 					id: albumImage.id,
+					userId,
 					name: albumImage.name,
 					alt: albumImage.alt,
 					languageInImage: albumImage.language_in_image as AvailableLanguageTags | '',
@@ -86,7 +88,7 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 					byteLength: imageResult.value.byteLength,
 					width: imageResult.value.width,
 					height: imageResult.value.height,
-					toExtension: imageMIMEextension[imageResult.value.mimeType]
+					toExtension: getExtensionForAll(imageMIMEextension[imageResult.value.mimeType])
 				};
 			})
 		);

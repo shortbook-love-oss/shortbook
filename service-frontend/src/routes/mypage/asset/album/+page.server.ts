@@ -50,6 +50,7 @@ export const load = async ({ url, locals }) => {
 			return {
 				editForm,
 				id: image.id,
+				userId: signInUser.id,
 				name: image.name,
 				alt: image.alt,
 				languageInImage: image.language_in_image as AvailableLanguageTags | '',

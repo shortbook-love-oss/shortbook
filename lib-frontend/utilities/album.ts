@@ -3,8 +3,8 @@ import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SelectItem } from '$lib/utilities/select';
 
 export interface AlbumImageItem {
-	editForm: SuperValidated<Record<string, unknown>>;
 	id: string;
+	userId: string;
 	name: string;
 	alt: string;
 	languageInImage: AvailableLanguageTags | '';
@@ -13,6 +13,10 @@ export interface AlbumImageItem {
 	width: number;
 	height: number;
 	toExtension: string;
+}
+
+export interface AlbumImageEditItem extends AlbumImageItem {
+	editForm: SuperValidated<Record<string, unknown>>;
 }
 
 export const albumImageSensitiveSelect: SelectItem[] = [
