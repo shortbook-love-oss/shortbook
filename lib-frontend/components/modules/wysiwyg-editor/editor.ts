@@ -2,12 +2,13 @@ import type { SerializedCodeNode } from '@lexical/code';
 import type { SerializedLinkNode } from '@lexical/link';
 import type { SerializedListNode } from '@lexical/list';
 import {
-	$isHeadingNode as isHeadingNode,
+	$isHeadingNode,
 	type SerializedHeadingNode,
 	type SerializedQuoteNode
 } from '@lexical/rich-text';
 import {
-	$isParagraphNode as isParagraphNode,
+	$getRoot,
+	$isParagraphNode,
 	type RangeSelection,
 	type SerializedEditorState,
 	type SerializedElementNode,
@@ -95,25 +96,11 @@ export function findSelectedStartBlock(selection: RangeSelection) {
 
 // If only exist an empty paragraph / heading node, the editor consider to be empty
 export function isEditorEmpty(selection: RangeSelection) {
-	const firstBlockNode = selection.anchor.getNode().getTopLevelElement();
-	const rootNode = firstBlockNode?.getParent();
-	if (!firstBlockNode || !rootNode) {
+	const rootNode = $getRoot();
+	if (rootNode.getTextContentSize() === 0) {
+		const firstBlockNode = selection.anchor.getNode().getTopLevelElement();
+		return $isParagraphNode(firstBlockNode) || $isHeadingNode(firstBlockNode);
+	} else {
 		return false;
 	}
-	const blockNodeLength = rootNode.getChildrenSize();
-	if (blockNodeLength >= 2) {
-		return false;
-	}
-
-	if (blockNodeLength === 0) {
-		return true;
-	}
-	if (
-		(isParagraphNode(firstBlockNode) || isHeadingNode(firstBlockNode)) &&
-		firstBlockNode.getTextContentSize() === 0
-	) {
-		return true;
-	}
-
-	return false;
 }
