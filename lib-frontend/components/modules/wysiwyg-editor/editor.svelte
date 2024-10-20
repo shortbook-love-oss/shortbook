@@ -9,6 +9,8 @@
 	import { createEditor, type CreateEditorArgs } from 'lexical';
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
+	import { ImageNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/node';
+	import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/plugin';
 	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import type { EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 	import AlbumDragUploader from '$lib/components/modules/wysiwyg-editor/plugins/album-drag-uploader.svelte';
@@ -35,7 +37,8 @@
 			AutoLinkNode,
 			ListNode,
 			ListItemNode,
-			QuoteNode
+			QuoteNode,
+			ImageNode
 		],
 		onError: (error: Error) => {
 			throw error;
@@ -53,7 +56,8 @@
 			registerCodeHighlighting(editor),
 			registerDragonSupport(editor),
 			registerHistory(editor, createEmptyHistoryState(), 300),
-			registerPluginPasteLinkReplacer(editor)
+			registerPluginPasteLinkReplacer(editor),
+			registerImagePlugin(editor)
 		);
 
 		if (value) {

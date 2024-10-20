@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { LexicalEditor } from 'lexical';
+	import { INSERT_IMAGE_COMMAND } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/plugin';
 	import type { AlbumImageItem, AlbumImageUploadResult } from '$lib/utilities/album';
 	import { imageMIMEextension, uploadFiles } from '$lib/utilities/file';
 	import { isValidFilesSize } from '$lib/validation/rules/file';
@@ -12,7 +13,9 @@
 
 	function onUploadStart(images: FileList) {}
 
-	function onUploadSuccess(albumFiles: AlbumImageItem[]) {}
+	function onUploadSuccess(albumFiles: AlbumImageItem[]) {
+		editor.dispatchCommand(INSERT_IMAGE_COMMAND, albumFiles);
+	}
 
 	function onUploadError(error: Error) {}
 

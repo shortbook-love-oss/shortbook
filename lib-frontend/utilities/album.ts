@@ -19,6 +19,10 @@ export interface AlbumImageEditItem extends AlbumImageItem {
 	editForm: SuperValidated<Record<string, unknown>>;
 }
 
+export interface AlbumImageUploadResult {
+	fileResults: AlbumImageItem[];
+}
+
 export const albumImageSensitiveSelect: SelectItem[] = [
 	{ value: 0, label: 'No — Content for all' },
 	{ value: 1, label: 'Yes — Erotica as art' },
