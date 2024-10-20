@@ -37,7 +37,7 @@
 			class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200"
 			title="Back to my articles list"
 		>
-			<IconArrowLeft width="24" height="24" />
+			<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
 		</a>
 		<div class="min-w-24 px-2 leading-tight">
 			<p class="text-stone-700">

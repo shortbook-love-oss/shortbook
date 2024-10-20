@@ -32,7 +32,7 @@
 
 {#if isEmpty}
 	<p
-		class="pointer-events-none absolute left-0 top-0 select-none text-[1.375rem] leading-[1.625] tracking-wider text-stone-400"
+		class="pointer-events-none absolute start-0 top-0 select-none text-[1.375rem] leading-[1.625] tracking-wider text-stone-400"
 	>
 		{placeholder}
 	</p>

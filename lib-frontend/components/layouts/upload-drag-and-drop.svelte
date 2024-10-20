@@ -30,7 +30,7 @@
 <svelte:body ondragover={onDragOver} ondrop={onDropFiles} />
 
 <div
-	class="fixed left-0 top-0 z-50 h-dvh w-dvw items-center justify-center gap-2 bg-stone-50/80 max-xs:flex-col {isDragging
+	class="fixed start-0 top-0 z-50 h-dvh w-dvw items-center justify-center gap-2 bg-stone-50/80 max-xs:flex-col {isDragging
 		? 'flex'
 		: 'hidden'}"
 >
@@ -40,7 +40,7 @@
 	{/if}
 </div>
 <div
-	class="fixed left-0 top-0 z-50 h-dvh w-dvw {isDragging ? '' : 'hidden'}"
+	class="fixed start-0 top-0 z-50 h-dvh w-dvw {isDragging ? '' : 'hidden'}"
 	ondragleave={onDragLeave}
 	aria-hidden="true"
 ></div>

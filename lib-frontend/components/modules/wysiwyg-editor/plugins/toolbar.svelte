@@ -212,7 +212,7 @@
 			)
 		);
 
-		removeListener;
+		return removeListener;
 	});
 
 	onMount(() => {
@@ -273,7 +273,7 @@
 						<SelectedBlockComponent
 							width="44"
 							height="44"
-							class="-mr-2 p-1"
+							class="-me-2 p-1"
 							aria-label="This line is {selectedBlockType.label}"
 						/>
 						<IconArrow width="32" height="32" />
