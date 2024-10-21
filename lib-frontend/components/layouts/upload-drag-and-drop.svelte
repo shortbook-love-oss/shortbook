@@ -9,25 +9,45 @@
 
 	let isDragging = $state(false);
 
-	function onDragOver(event: DragEvent) {
-		event.preventDefault();
-		isDragging = true;
+	function isFileDragging(items: DataTransferItemList) {
+		for (let i = 0; i < items.length; i++) {
+			if (items[i].kind === 'string') {
+				return false;
+			}
+		}
+		return true;
 	}
 
-	function onDragLeave() {
-		isDragging = false;
+	function showDragStatus(event: DragEvent) {
+		if (event.dataTransfer && isFileDragging(event.dataTransfer.items)) {
+			event.preventDefault();
+			isDragging = true;
+		}
 	}
 
-	function onDropFiles(event: DragEvent) {
-		event.preventDefault();
-		if (event.dataTransfer?.files.length) {
+	function onDropOver(event: DragEvent) {
+		if (event.dataTransfer && isFileDragging(event.dataTransfer.items)) {
+			event.preventDefault();
+		}
+	}
+
+	function onDragLeave(event: DragEvent) {
+		if (event.dataTransfer && isFileDragging(event.dataTransfer.items)) {
+			event.preventDefault();
+			isDragging = false;
+		}
+	}
+
+	function onDropItems(event: DragEvent) {
+		if (event.dataTransfer && isFileDragging(event.dataTransfer.items)) {
+			event.preventDefault();
+			isDragging = false;
 			onDrop(event.dataTransfer.files);
 		}
-		isDragging = false;
 	}
 </script>
 
-<svelte:body ondragover={onDragOver} ondrop={onDropFiles} />
+<svelte:body ondragenter={showDragStatus} ondragover={onDropOver} ondrop={onDropItems} />
 
 <div
 	class="fixed start-0 top-0 z-50 h-dvh w-dvw items-center justify-center gap-2 bg-stone-50/80 max-xs:flex-col {isDragging
