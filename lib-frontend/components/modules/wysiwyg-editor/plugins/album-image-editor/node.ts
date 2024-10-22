@@ -1,8 +1,11 @@
 import {
-	ElementNode,
+	$getEditor,
+	DecoratorNode,
 	type DOMExportOutput,
+	type EditorConfig,
+	type LexicalEditor,
 	type NodeKey,
-	type SerializedElementNode,
+	type SerializedLexicalNode,
 	type Spread
 } from 'lexical';
 
@@ -14,10 +17,10 @@ export type SerializedImageNode = Spread<
 		width: number;
 		height: number;
 	},
-	SerializedElementNode
+	SerializedLexicalNode
 >;
 
-export class ImageNode extends ElementNode {
+export class ImageNode extends DecoratorNode<HTMLElement> {
 	__imageId: string;
 	__src: string;
 	__alt: string;
@@ -57,36 +60,50 @@ export class ImageNode extends ElementNode {
 	}
 
 	// Render in Lexical editor
-	createDOM(): HTMLElement {
-		const nodeRoot = document.createElement('div');
-		nodeRoot.contentEditable = 'false';
-		nodeRoot.className = 'my-4 max-w-full [&>br]:hidden';
+	decorate(_editor: LexicalEditor, config: EditorConfig): HTMLElement {
+		return this.createDOM();
+	}
 
-		const image = document.createElement('img');
-		image.src = this.__src;
-		image.alt = this.__alt;
-		image.width = this.__width;
-		image.height = this.__height;
-		image.decoding = 'async';
-		image.draggable = false;
-		nodeRoot.appendChild(image);
+	createDOM(): HTMLElement {
+		const blockTheme = $getEditor()._config.theme.embedBlock ?? {};
+
+		const nodeRoot = document.createElement('div');
+		nodeRoot.className = blockTheme.base ?? '';
+		nodeRoot.contentEditable = 'false';
+
+		if (this.getSrc()) {
+			const image = document.createElement('img');
+			image.src = this.getSrc();
+			image.alt = this.getAlt();
+			image.width = this.getWidth();
+			image.height = this.getHeight();
+			image.decoding = 'async';
+			image.draggable = false;
+			nodeRoot.appendChild(image);
+		} else {
+			const placeholder = document.createElement('div');
+			placeholder.className = 'px-4 py-16 bg bg-stone-100 text-center';
+			placeholder.innerText = 'Uploading image ...';
+			nodeRoot.appendChild(placeholder);
+		}
 
 		return nodeRoot;
 	}
 
-	updateDOM(): false {
-		return false;
+	updateDOM(): boolean {
+		return true;
 	}
 
+	// Render in output page
 	exportDOM(): DOMExportOutput {
 		const nodeRoot = document.createElement('div');
-		nodeRoot.className = 'my-4 max-w-full [&>br]:hidden';
+		nodeRoot.className = 'my-4 max-w-full';
 
 		const image = document.createElement('img');
-		image.src = this.__src;
-		image.alt = this.__alt;
-		image.width = this.__width;
-		image.height = this.__height;
+		image.src = this.getSrc();
+		image.alt = this.getAlt();
+		image.width = this.getWidth();
+		image.height = this.getHeight();
 		image.decoding = 'async';
 		nodeRoot.appendChild(image);
 
@@ -107,8 +124,8 @@ export class ImageNode extends ElementNode {
 
 	exportJSON(): SerializedImageNode {
 		return {
-			...super.exportJSON(),
-			type: 'image',
+			type: this.getType(),
+			version: 1,
 			imageId: this.getImageId(),
 			src: this.getSrc(),
 			alt: this.getAlt(),
@@ -124,15 +141,9 @@ export class ImageNode extends ElementNode {
 	getSrc(): string {
 		return this.__src;
 	}
-	setSrc(src: string): void {
-		this.__src = src;
-	}
 
 	getAlt(): string {
 		return this.__alt;
-	}
-	setAlt(alt: string): void {
-		this.__alt = alt;
 	}
 
 	getWidth(): number {
@@ -141,6 +152,15 @@ export class ImageNode extends ElementNode {
 
 	getHeight(): number {
 		return this.__height;
+	}
+
+	setImageData(imageId: string, src: string, alt: string, width: number, height: number) {
+		const self = this.getWritable();
+		self.__imageId = imageId;
+		self.__src = src;
+		self.__alt = alt;
+		self.__width = width;
+		self.__height = height;
 	}
 }
 
@@ -154,6 +174,6 @@ export function $createImageNode(
 	return new ImageNode(imageId, src, alt, width, height);
 }
 
-export function $isImageNode(node: ElementNode) {
+export function $isImageNode(node: DecoratorNode<HTMLElement>) {
 	return node instanceof ImageNode;
 }

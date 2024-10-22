@@ -35,6 +35,9 @@ export const theme: EditorThemeClasses = {
 		url: 'text-[#9a6e3a]',
 		variable: 'text-[#e90]'
 	},
+	embedBlock: {
+		base: 'my-4 max-w-full'
+	},
 	heading: {
 		h1: '[&:not(:first-child)]:mt-8 mb-4 text-[3.25em] font-semibold leading-[1.25]',
 		h2: '[&:not(:first-child)]:mt-8 mb-4 text-[2em] font-semibold leading-[1.25]',
