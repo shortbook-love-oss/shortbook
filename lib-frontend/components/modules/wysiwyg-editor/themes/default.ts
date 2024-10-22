@@ -54,7 +54,9 @@ export const theme: EditorThemeClasses = {
 	quote:
 		"relative my-4 rounded-2xl bg-stone-200/70 px-4 py-10 text-[1.25em] sm:px-14 before:absolute before:left-1 before:top-1 before:font-title before:text-[3em] before:leading-none before:text-stone-400/70 before:content-['“'] after:absolute after:bottom-2 after:right-1 after:font-title after:text-[3em] after:leading-none after:text-stone-400/70 after:content-['„']",
 	text: {
+		bold: 'font-bold',
 		code: 'bg-slate-100 p-1 text-[0.875em] tracking-wide',
+		italic: 'italic',
 		strikethrough: 'line-through'
 	}
 };
