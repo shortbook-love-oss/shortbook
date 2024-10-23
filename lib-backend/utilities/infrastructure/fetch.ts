@@ -9,21 +9,35 @@ interface FechJsonError {
 	errorMessage: string;
 }
 
-export async function fetchByJson<T>(
-	url: string,
-	body: Record<string, any>
+export function fetchGet<T>(url: string | URL, expectContentType: string) {
+	return fetchBase<T>(url, 'GET', undefined, expectContentType);
+}
+
+export function fetchByJson<T>(url: string | URL, body: Record<string, any>) {
+	return fetchBase<T>(url, 'POST', body, 'application/json');
+}
+
+async function fetchBase<T>(
+	url: string | URL,
+	method: string,
+	body: Record<string, any> | undefined,
+	expectContentType: string
 ): Promise<FechJsonSuccess<T> | FechJsonError> {
 	let errorMessage = '';
+
 	const data: T[] | null = await new Promise((resolve, reject) => {
 		const dataChunks: T[] = [];
+		const reqHeader: Record<string, string> = {
+			'user-agent': 'ShortBook Paid-Article Writing Platform'
+		};
+		if (expectContentType) {
+			reqHeader['content-type'] = expectContentType;
+		}
 		const req = https.request(
 			url,
 			{
-				method: 'POST',
-				headers: {
-					'content-type': 'application/json',
-					'user-agent': 'ShortBook Paid-Article Writing Platform'
-				}
+				method,
+				headers: reqHeader
 			},
 			(res) => {
 				res.on('data', (chunk: T) => {
@@ -36,12 +50,14 @@ export async function fetchByJson<T>(
 		);
 		req.on('error', (error: Error) => {
 			console.error(
-				`Error in image deliver API, reason: ${error.message}, url: ${url}, body: ${JSON.stringify(body)}`
+				`Error in fetchData, reason: ${error.message}, url: ${url}, body: ${JSON.stringify(body)}`
 			);
 			errorMessage = error.message;
 			reject(null);
 		});
-		req.write(JSON.stringify(body));
+		if (body) {
+			req.write(JSON.stringify(body));
+		}
 		req.end();
 	});
 
