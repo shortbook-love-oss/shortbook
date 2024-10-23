@@ -21,26 +21,32 @@ export const CHANGE_IMAGE_BLOCK_COMMAND: LexicalCommand<AlbumImageNodeItem> = cr
 );
 
 function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
-	editor.update(
-		() => {
-			const imageUploaderNode = $getNodeByKey(imageItem.nodeKey);
-			if (!(imageUploaderNode instanceof ImageUploadingNode)) {
-				return false;
-			}
+	const imageUploaderNode = $getNodeByKey(imageItem.nodeKey);
+	if (!(imageUploaderNode instanceof ImageUploadingNode)) {
+		return false;
+	}
 
-			const albumImage = imageItem.albumImage;
-			const imageNode = $createImageNode(
-				albumImage.id,
-				`${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.filePath}?ext=${albumImage.toExtension}&w=${albumImage.width}&h=${albumImage.height}&q=60`,
-				albumImage.alt,
-				albumImage.width,
-				albumImage.height
-			);
-			imageUploaderNode.replace(imageNode);
-		},
-		{ tag: 'history-merge' }
-	);
-
+	// First, cache the image by CDN
+	// By doing so, switch quickly to image node
+	const albumImage = imageItem.albumImage;
+	const imageSrc = `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.filePath}?ext=${albumImage.toExtension}&w=${albumImage.width}&h=${albumImage.height}&q=60`;
+	const imgCacher = document.createElement('img');
+	imgCacher.src = imageSrc;
+	imgCacher.onload = () => {
+		editor.update(
+			() => {
+				const imageNode = $createImageNode(
+					albumImage.id,
+					imageSrc,
+					albumImage.alt,
+					albumImage.width,
+					albumImage.height
+				);
+				imageUploaderNode.replace(imageNode);
+			},
+			{ tag: 'history-merge' }
+		);
+	};
 	return true;
 }
 
