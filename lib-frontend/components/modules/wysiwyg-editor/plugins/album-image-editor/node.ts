@@ -91,7 +91,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 	}
 
 	updateDOM(): boolean {
-		return true;
+		return false;
 	}
 
 	// Render in output page
@@ -152,15 +152,6 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 
 	getHeight(): number {
 		return this.__height;
-	}
-
-	setImageData(imageId: string, src: string, alt: string, width: number, height: number) {
-		const self = this.getWritable();
-		self.__imageId = imageId;
-		self.__src = src;
-		self.__alt = alt;
-		self.__width = width;
-		self.__height = height;
 	}
 }
 

@@ -10,7 +10,9 @@
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
 	import { ImageNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/node';
+	import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
 	import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/plugin';
+	import { registerImageUploaderPlugin } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/plugin';
 	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import type { EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 	import AlbumDragUploader from '$lib/components/modules/wysiwyg-editor/plugins/album-drag-uploader.svelte';
@@ -38,7 +40,8 @@
 			ListNode,
 			ListItemNode,
 			QuoteNode,
-			ImageNode
+			ImageNode,
+			ImageUploadingNode
 		],
 		onError: (error: Error) => {
 			throw error;
@@ -57,7 +60,8 @@
 			registerDragonSupport(editor),
 			registerHistory(editor, createEmptyHistoryState(), 300),
 			registerPluginPasteLinkReplacer(editor),
-			registerImagePlugin(editor)
+			registerImagePlugin(editor),
+			registerImageUploaderPlugin(editor)
 		);
 
 		if (value) {
