@@ -1,11 +1,13 @@
 export const imageBucketTransferKeys = ['profile', 'book-cover', 'ogp', 'user-album'] as const;
 export type ImageBucketTransferKey = (typeof imageBucketTransferKeys)[number];
 
+export type ImageFitOption = 'contain' | 'cover' | 'fill' | 'inside' | 'outside';
+
 export interface ImageDistributionOption {
 	toExtension: AllowedToExtension | '';
 	width: number;
 	height: number;
-	fit: 'contain' | 'cover' | 'fill' | 'inside' | 'outside';
+	fit: ImageFitOption;
 	quality: number;
 }
 
@@ -61,11 +63,11 @@ export const allowedResizeFit = [
 	'fill',
 	'inside',
 	'outside'
-] as ImageDistributionOption['fit'][];
+] as ImageFitOption[];
 export const allowedQuality = [10, 20, 40, 60, 80, 90, 100];
 
 export const defaultExtension: AllowedToExtension = 'png';
-export const defaultResizeFit: ImageDistributionOption['fit'] = 'cover';
+export const defaultResizeFit: ImageFitOption = 'cover';
 export const defaultQuality = 60;
 
 export function getExtensionForAll(fromExtension: AllowedFromExtension | ''): AllowedToExtension {
