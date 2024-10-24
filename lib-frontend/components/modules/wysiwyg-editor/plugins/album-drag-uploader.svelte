@@ -78,7 +78,7 @@
 			}
 		}
 		if (validFiles.items.length === 0) {
-			onUploadError(new Error('Please select at least one file.'), [], []);
+			onUploadError(new Error('Please select at least one image file.'), [], []);
 			return;
 		}
 		if (!isValidFilesSize(validFiles.files)) {
@@ -88,7 +88,7 @@
 
 		const { uploadingImages, uploadedImageNodes } = onUploadStart(validFiles.files);
 		const result = await uploadFiles<AlbumImageUploadResult>(
-			'/api/album/upload',
+			'/api/album',
 			validFiles.files,
 			'images'
 		);
