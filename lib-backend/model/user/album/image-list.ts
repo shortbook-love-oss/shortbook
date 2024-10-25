@@ -2,8 +2,9 @@ import prisma from '$lib-backend/database/connect';
 
 export interface DbUserAlbumImageListRequest {
 	userId?: string;
-	languageCode: string;
 	isIncludeDelete?: boolean;
+	limit?: number;
+	page?: number;
 }
 
 export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
@@ -12,6 +13,10 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 	const whereCondDelete: { deleted_at?: null } = {};
 	if (!req.isIncludeDelete) {
 		whereCondDelete.deleted_at = null;
+	}
+	let skip = undefined;
+	if (req.limit != undefined && req.page != undefined) {
+		skip = req.limit * (req.page - 1);
 	}
 
 	const albumImages = await prisma.user_images
@@ -33,10 +38,14 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 			},
 			orderBy: {
 				created_at: 'desc'
-			}
+			},
+			skip,
+			take: req.limit
 		})
 		.catch(() => {
-			dbError ??= new Error(`Failed to get user album images. User ID=${req.userId}`);
+			dbError ??= new Error(
+				`Failed to get user album images. User ID=${req.userId}, Page=${req.page}`
+			);
 			return undefined;
 		});
 

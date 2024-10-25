@@ -6,15 +6,11 @@ import type { AlbumImageEditItem } from '$lib/utilities/album';
 import { getRandom } from '$lib/utilities/crypto';
 import { imageMIMEextension } from '$lib/utilities/file';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user/album/image-create';
 import { schema as schemaEdit } from '$lib/validation/schema/user/album/image-update';
 import { uploadToAlbum } from '$lib-backend/functions/service/album/upload';
 import { dbUserAlbumImageList } from '$lib-backend/model/user/album/image-list';
-import {
-	getExtensionForAll,
-	type AllowedFromExtension
-} from '$lib-backend/utilities/infrastructure/image';
+import { getExtensionForAll } from '$lib-backend/utilities/infrastructure/image';
 
 export const load = async ({ url, locals }) => {
 	const signInUser = locals.signInUser;
@@ -22,12 +18,10 @@ export const load = async ({ url, locals }) => {
 		return error(401, { message: 'Unauthorized' });
 	}
 
-	const requestLang = getLanguageTagFromUrl(url);
 	const form = await superValidate(zod(schema));
 
 	const { albumImages, dbError } = await dbUserAlbumImageList({
-		userId: signInUser.id,
-		languageCode: requestLang
+		userId: signInUser.id
 	});
 	if (!albumImages || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
@@ -58,7 +52,7 @@ export const load = async ({ url, locals }) => {
 				byteLength: image.property?.byte_length ?? 0,
 				width: image.property?.width ?? 0,
 				height: image.property?.height ?? 0,
-				toExtension: getExtensionForAll(fromExtension as AllowedFromExtension | '')
+				toExtension: getExtensionForAll(fromExtension)
 			};
 		})
 	);

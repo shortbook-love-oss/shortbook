@@ -1,6 +1,7 @@
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SelectItem } from '$lib/utilities/select';
+import type { AllowedToExtension } from '$lib-backend/utilities/infrastructure/image';
 
 export interface AlbumImageItem {
 	id: string;
@@ -12,7 +13,7 @@ export interface AlbumImageItem {
 	byteLength: number;
 	width: number;
 	height: number;
-	toExtension: string;
+	toExtension: AllowedToExtension;
 }
 
 export interface AlbumImageEditItem extends AlbumImageItem {
