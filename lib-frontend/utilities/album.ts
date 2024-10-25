@@ -20,6 +20,11 @@ export interface AlbumImageEditItem extends AlbumImageItem {
 	editForm: SuperValidated<Record<string, unknown>>;
 }
 
+export interface AlbumImageGetResult {
+	albumImages: AlbumImageItem[];
+	isLastPage: boolean;
+}
+
 export interface AlbumImageUploadResult {
 	fileResults: AlbumImageItem[];
 }

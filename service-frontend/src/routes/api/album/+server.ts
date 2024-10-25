@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { AlbumImageItem } from '$lib/utilities/album';
+import type { AlbumImageGetResult, AlbumImageItem } from '$lib/utilities/album';
 import { imageMIMEextension } from '$lib/utilities/file';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { schema as listSchema } from '$lib/validation/schema/user/album/image-list';
@@ -22,7 +22,7 @@ export async function GET({ url, locals }) {
 		return error(400, { message: `Bad request. ${errorReasons ?? ''}` });
 	}
 
-	const { albumImages, dbError } = await dbUserAlbumImageList({
+	const { albumImages, dbError, isLastPage } = await dbUserAlbumImageList({
 		userId: signInUser.id,
 		limit: req.data.limit,
 		page: req.data.page
@@ -48,7 +48,11 @@ export async function GET({ url, locals }) {
 		return item;
 	});
 
-	const response = new Response(JSON.stringify(list));
+	const responseData: AlbumImageGetResult = {
+		albumImages: list,
+		isLastPage
+	};
+	const response = new Response(JSON.stringify(responseData));
 	response.headers.set('content-type', 'application/json');
 	return response;
 }
