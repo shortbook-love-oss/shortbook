@@ -15,8 +15,12 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 		whereCondDelete.deleted_at = null;
 	}
 	let skip = undefined;
+	let take = undefined;
 	if (req.limit != undefined && req.page != undefined) {
+		// Also get the first item of next page
+		// If have that, current page is not the last page
 		skip = req.limit * (req.page - 1);
+		take = req.limit + 1;
 	}
 
 	const albumImages = await prisma.user_images
@@ -40,7 +44,7 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 				created_at: 'desc'
 			},
 			skip,
-			take: req.limit
+			take
 		})
 		.catch(() => {
 			dbError ??= new Error(
@@ -49,5 +53,17 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 			return undefined;
 		});
 
-	return { albumImages, dbError };
+	// Get all = only one page
+	let isLastPage = albumImages != undefined;
+
+	if (req.limit != undefined && req.page != undefined) {
+		// Get only the page
+		if (albumImages && albumImages.length > req.limit) {
+			// If the page isn't last
+			albumImages?.pop();
+			isLastPage = false;
+		}
+	}
+
+	return { albumImages, dbError, isLastPage };
 }
