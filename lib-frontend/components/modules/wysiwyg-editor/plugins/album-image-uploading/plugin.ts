@@ -8,6 +8,7 @@ import {
 	type LexicalEditor
 } from 'lexical';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
+import { selectBlockEnd } from '$lib/components/modules/wysiwyg-editor/editor';
 
 export interface AlbumImageUploading {
 	fileName: string;
@@ -33,11 +34,7 @@ function insertImagePlaceholders(
 		if (!$isRangeSelection(selection)) {
 			return;
 		}
-		if (selection.anchor.isBefore(selection.focus)) {
-			selection.focus.getNode().getTopLevelElement()?.selectEnd();
-		} else {
-			selection.anchor.getNode().getTopLevelElement()?.selectEnd();
-		}
+		selectBlockEnd(selection);
 
 		// Insert images after selecting block
 		// Paragraph nodes are auto-added between images, but this is acceptable

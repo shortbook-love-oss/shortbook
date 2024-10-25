@@ -31,6 +31,7 @@
 		type TextFormatType
 	} from 'lexical';
 	import { onMount } from 'svelte';
+	import IconAdd from '~icons/mdi/add';
 	import IconArrow from '~icons/mdi/chevron-up';
 	import IconFormatOrderedList from '~icons/mdi/123';
 	import IconFormatCode from '~icons/mdi/code';
@@ -46,11 +47,14 @@
 	import IconFormatParagraph from '~icons/mdi/format-paragraph';
 	import IconFormatBlockquote from '~icons/mdi/format-quote-open';
 	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
+	import IconImage from '~icons/mdi/image-outline';
+	import { INSERT_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/plugin';
 	import {
 		codeLanguageSelect,
 		findSelectedStartBlock,
 		type CodeLanguageItem
 	} from '$lib/components/modules/wysiwyg-editor/editor';
+	import type { AlbumImageItem } from '$lib/utilities/album';
 	import {
 		blockquoteSelect,
 		codeBlockSelect,
@@ -63,6 +67,8 @@
 	} from '$lib/utilities/html';
 	import type { SelectItemSingle } from '$lib/utilities/select';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
+	import Dialog from '$lib/components/layouts/dialog.svelte';
+	import AlbumImageSelector from '$lib/components/modules/wysiwyg-editor/plugins/album-image-selector.svelte';
 
 	type Props = {
 		editor: LexicalEditor;
@@ -112,43 +118,47 @@
 
 	let selectedLanguage = $state<CodeLanguageItem>(codeLanguageSelect[0]);
 
+	const insertImageSelectDialogName = 'album_image_insert';
+
 	function setControllerState() {
 		const selection = getSelection();
-		if (isRangeSelection(selection)) {
-			// By Lexical specifications, the contents of a code block cannot set to bold or italic
-			canSwitchTextFormat = selection.getNodes().some((node) => {
-				return !isCodeNode(node.getTopLevelElement());
-			});
-			isInCodeBlock = selection.getNodes().every((node) => {
-				return isCodeNode(node.getTopLevelElement());
-			});
-			isBold = selection.hasFormat('bold');
-			isItalic = selection.hasFormat('italic');
-			isStrikethrough = selection.hasFormat('strikethrough');
-			isCode = selection.hasFormat('code');
+		if (!isRangeSelection(selection)) {
+			return;
+		}
 
-			// Change state of block type controller
-			const selectedStartBlock = findSelectedStartBlock(selection);
-			if (selectedStartBlock instanceof ParagraphNode) {
-				selectedBlockType = paragraphSelect;
-			} else if (selectedStartBlock instanceof HeadingNode) {
-				const tag = selectedStartBlock.getTag();
-				const matchNodeItem = headingSelect.find((item) => item.value === tag);
-				if (matchNodeItem) {
-					selectedBlockType = matchNodeItem;
-				}
-			} else if (selectedStartBlock instanceof ListNode) {
-				const tag = selectedStartBlock.getTag();
-				if (unorderedListSelect.value === tag) {
-					selectedBlockType = unorderedListSelect;
-				} else if (orderedListSelect.value === tag) {
-					selectedBlockType = orderedListSelect;
-				}
-			} else if (selectedStartBlock instanceof QuoteNode) {
-				selectedBlockType = blockquoteSelect;
-			} else if (selectedStartBlock instanceof CodeNode) {
-				selectedBlockType = codeBlockSelect;
+		// By Lexical specifications, the contents of a code block cannot set to bold or italic
+		canSwitchTextFormat = selection.getNodes().some((node) => {
+			return !isCodeNode(node.getTopLevelElement());
+		});
+		isInCodeBlock = selection.getNodes().every((node) => {
+			return isCodeNode(node.getTopLevelElement());
+		});
+		isBold = selection.hasFormat('bold');
+		isItalic = selection.hasFormat('italic');
+		isStrikethrough = selection.hasFormat('strikethrough');
+		isCode = selection.hasFormat('code');
+
+		// Change state of block type controller
+		const selectedStartBlock = findSelectedStartBlock(selection);
+		if (selectedStartBlock instanceof ParagraphNode) {
+			selectedBlockType = paragraphSelect;
+		} else if (selectedStartBlock instanceof HeadingNode) {
+			const tag = selectedStartBlock.getTag();
+			const matchNodeItem = headingSelect.find((item) => item.value === tag);
+			if (matchNodeItem) {
+				selectedBlockType = matchNodeItem;
 			}
+		} else if (selectedStartBlock instanceof ListNode) {
+			const tag = selectedStartBlock.getTag();
+			if (unorderedListSelect.value === tag) {
+				selectedBlockType = unorderedListSelect;
+			} else if (orderedListSelect.value === tag) {
+				selectedBlockType = orderedListSelect;
+			}
+		} else if (selectedStartBlock instanceof QuoteNode) {
+			selectedBlockType = blockquoteSelect;
+		} else if (selectedStartBlock instanceof CodeNode) {
+			selectedBlockType = codeBlockSelect;
 		}
 	}
 
@@ -196,6 +206,16 @@
 
 	function changeCodeLanguage(language: CodeLanguageItem) {
 		selectedLanguage = language;
+	}
+
+	function insertFromAlbum(albumImage: AlbumImageItem) {
+		editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, albumImage);
+		const dialogOpener = document.getElementById(
+			`common_dialog_open_${insertImageSelectDialogName}`
+		) as HTMLInputElement | null;
+		if (dialogOpener) {
+			dialogOpener.checked = false;
+		}
 	}
 
 	onMount(() => {
@@ -253,7 +273,7 @@
 <!-- To ensure that the software keyboard maintains its distance from the bottom even when it appears, adjustments are made using JavaScript -->
 <div
 	bind:clientHeight={toolbarHeight}
-	class="transition-[top] duration-150 {className}"
+	class="z-10 transition-[top] duration-150 {className}"
 	style:position={isOpenKeyboard ? 'absolute' : 'fixed'}
 	style:top={isOpenKeyboard ? toolbarTopOffset + 'px' : 'auto'}
 	style:bottom={isOpenKeyboard ? undefined : '0'}
@@ -374,5 +394,33 @@
 				</Dropdown>
 			</div>
 		{/if}
+		<div class="relative ms-1 border-s-2 border-stone-300 ps-1">
+			<Dropdown
+				name="editor_control_insert"
+				openerClass="h-full rounded-md"
+				dropdownClass="bottom-14 end-0"
+			>
+				{#snippet opener()}
+					<IconAdd width="44" height="44" />
+				{/snippet}
+				<ul>
+					<li>
+						<Dialog
+							name={insertImageSelectDialogName}
+							title="Insert album image"
+							dialogSizeClass="max-w-5xl"
+						>
+							{#snippet opener()}
+								<div class="flex items-center gap-2 p-2">
+									<IconImage width="28" height="28" />
+									<p class="text-nowrap text-lg">Insert image</p>
+								</div>
+							{/snippet}
+							<AlbumImageSelector onSelect={insertFromAlbum} />
+						</Dialog>
+					</li>
+				</ul>
+			</Dropdown>
+		</div>
 	</div>
 </div>

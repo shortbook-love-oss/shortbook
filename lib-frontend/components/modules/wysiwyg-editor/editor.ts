@@ -104,3 +104,11 @@ export function isEditorEmpty(selection: RangeSelection) {
 		return false;
 	}
 }
+
+export function selectBlockEnd(selection: RangeSelection) {
+	if (selection.anchor.isBefore(selection.focus)) {
+		selection.focus.getNode().getTopLevelElement()?.selectEnd();
+	} else {
+		selection.anchor.getNode().getTopLevelElement()?.selectEnd();
+	}
+}

@@ -18,7 +18,7 @@ export async function GET({ url, locals }) {
 	const searchParams = Object.fromEntries(url.searchParams);
 	const req = await superValidate(searchParams, zod(listSchema));
 	if (!req.valid) {
-		const errorReasons = req.errors._errors?.join(', ');
+		const errorReasons = Object.values(req.errors).flat().join(', ');
 		return error(400, { message: `Bad request. ${errorReasons ?? ''}` });
 	}
 
