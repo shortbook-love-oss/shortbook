@@ -1,10 +1,59 @@
 import { error } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import type { AlbumImageItem } from '$lib/utilities/album';
+import { imageMIMEextension } from '$lib/utilities/file';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
+import { schema as listSchema } from '$lib/validation/schema/user/album/image-list';
 import { uploadToAlbum } from '$lib-backend/functions/service/album/upload';
+import { dbUserAlbumImageList } from '$lib-backend/model/user/album/image-list';
+import { getExtensionForAll } from '$lib-backend/utilities/infrastructure/image';
 
-function isValidRequest(req: FormData | null) {
-	if (!req) {
-		return false;
+export async function GET({ url, locals }) {
+	const signInUser = locals.signInUser;
+	if (!signInUser) {
+		return error(401, { message: 'Unauthorized' });
 	}
+
+	const searchParams = Object.fromEntries(url.searchParams);
+	const req = await superValidate(searchParams, zod(listSchema));
+	if (!req.valid) {
+		const errorReasons = req.errors._errors?.join(', ');
+		return error(400, { message: `Bad request. ${errorReasons ?? ''}` });
+	}
+
+	const { albumImages, dbError } = await dbUserAlbumImageList({
+		userId: signInUser.id,
+		limit: req.data.limit,
+		page: req.data.page
+	});
+	if (!albumImages || dbError) {
+		return error(500, { message: dbError?.message ?? '' });
+	}
+
+	const list = albumImages.map((albumImage) => {
+		const fromExtension = imageMIMEextension[albumImage.property?.mime_type ?? ''] ?? '';
+		const item: AlbumImageItem = {
+			id: albumImage.id,
+			userId: albumImage.user_id,
+			name: albumImage.name,
+			alt: albumImage.alt,
+			languageInImage: albumImage.language_in_image as AvailableLanguageTags | '',
+			filePath: albumImage.property?.file_path ?? '',
+			byteLength: albumImage.property?.byte_length ?? 0,
+			width: albumImage.property?.width ?? 0,
+			height: albumImage.property?.height ?? 0,
+			toExtension: getExtensionForAll(fromExtension)
+		};
+		return item;
+	});
+
+	const response = new Response(JSON.stringify(list));
+	response.headers.set('content-type', 'application/json');
+	return response;
+}
+
+function isValidPostRequest(req: FormData) {
 	const reqFiles = req.getAll('images');
 	if (!reqFiles.every((file) => file instanceof File)) {
 		return false;
@@ -19,7 +68,7 @@ export async function POST({ request, locals }) {
 	}
 
 	const req = await request.formData();
-	const reqFiles = isValidRequest(req);
+	const reqFiles = isValidPostRequest(req);
 	if (reqFiles === false) {
 		return error(400, { message: 'Bad request.' });
 	}
