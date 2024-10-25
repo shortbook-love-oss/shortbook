@@ -19,8 +19,8 @@
 	}: Props = $props();
 
 	const hideClass = [
-		'opacity-0 hover:opacity-100 peer-focus/common_dropdown_open:opacity-100',
-		'pointer-events-none hover:pointer-events-auto peer-focus/common_dropdown_open:pointer-events-auto'
+		'opacity-0 hover:opacity-100 focus-within:opacity-100 peer-focus/common_dropdown_open:opacity-100',
+		'pointer-events-none hover:pointer-events-auto focus-within:pointer-events-auto peer-focus/common_dropdown_open:pointer-events-auto'
 	].join(' ');
 </script>
 
