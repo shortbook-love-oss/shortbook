@@ -97,10 +97,10 @@ export function findSelectedStartBlock(selection: RangeSelection) {
 }
 
 // If only exist an empty paragraph / heading node, the editor consider to be empty
-export function isEditorEmpty(selection: RangeSelection) {
+export function isEditorEmpty() {
 	const rootNode = $getRoot();
-	if (rootNode.getTextContentSize() === 0) {
-		const firstBlockNode = selection.anchor.getNode().getTopLevelElement();
+	if (rootNode.getTextContentSize() === 0 && rootNode.getChildrenSize() === 1) {
+		const firstBlockNode = rootNode.getFirstChild();
 		return $isParagraphNode(firstBlockNode) || $isHeadingNode(firstBlockNode);
 	} else {
 		return false;

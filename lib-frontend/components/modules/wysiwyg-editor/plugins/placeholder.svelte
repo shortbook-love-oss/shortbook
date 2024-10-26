@@ -18,11 +18,7 @@
 	onMount(() => {
 		const removeListener = editor.registerUpdateListener(() => {
 			editor.read(() => {
-				const selection = getSelection();
-				if (!isRangeSelection(selection)) {
-					return;
-				}
-				isEmpty = isEditorEmpty(selection);
+				isEmpty = isEditorEmpty();
 			});
 		});
 
