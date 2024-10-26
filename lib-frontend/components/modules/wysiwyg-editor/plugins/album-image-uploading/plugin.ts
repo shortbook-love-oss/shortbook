@@ -1,4 +1,4 @@
-import { mergeRegister, $insertNodeToNearestRoot } from '@lexical/utils';
+import { mergeRegister } from '@lexical/utils';
 import {
 	$getSelection,
 	$isRangeSelection,
@@ -8,7 +8,10 @@ import {
 	type LexicalEditor
 } from 'lexical';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
-import { selectBlockEnd } from '$lib/components/modules/wysiwyg-editor/editor';
+import {
+	insertBlockNodeToNext,
+	selectBlockEnd
+} from '$lib/components/modules/wysiwyg-editor/editor';
 
 export interface AlbumImageUploading {
 	fileName: string;
@@ -40,8 +43,7 @@ function insertImagePlaceholders(
 		// Paragraph nodes are auto-added between images, but this is acceptable
 		const insertedNodes = uploadingImages.map((image) => {
 			const insertNode = new ImageUploadingNode(image.fileName, image.dataUrl);
-			const insertedNode = $insertNodeToNearestRoot(insertNode);
-			return insertedNode;
+			return insertBlockNodeToNext(selection, insertNode);
 		});
 
 		// The caller holds the key of the added node

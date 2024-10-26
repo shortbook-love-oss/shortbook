@@ -1,4 +1,4 @@
-import { mergeRegister, $insertNodeToNearestRoot } from '@lexical/utils';
+import { mergeRegister } from '@lexical/utils';
 import {
 	$getNodeByKey,
 	$getSelection,
@@ -11,7 +11,10 @@ import {
 import { env as envPublic } from '$env/dynamic/public';
 import { $createImageNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/node';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
-import { selectBlockEnd } from '$lib/components/modules/wysiwyg-editor/editor';
+import {
+	insertBlockNodeToNext,
+	selectBlockEnd
+} from '$lib/components/modules/wysiwyg-editor/editor';
 import type { AlbumImageItem } from '$lib/utilities/album';
 
 export interface AlbumImageNodeItem {
@@ -45,7 +48,7 @@ function insertImage(editor: LexicalEditor, albumImage: AlbumImageItem) {
 			albumImage.width,
 			albumImage.height
 		);
-		$insertNodeToNearestRoot(imageNode);
+		insertBlockNodeToNext(selection, imageNode);
 	});
 }
 
@@ -64,6 +67,7 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 	imgCacher.onload = () => {
 		editor.update(
 			() => {
+				URL.revokeObjectURL(imageUploaderNode.getDataUrl());
 				const imageNode = $createImageNode(
 					albumImage.id,
 					imageSrc,

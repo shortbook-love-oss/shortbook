@@ -6,9 +6,11 @@ import {
 	type SerializedHeadingNode,
 	type SerializedQuoteNode
 } from '@lexical/rich-text';
+import { $insertNodeToNearestRoot } from '@lexical/utils';
 import {
 	$getRoot,
 	$isParagraphNode,
+	type LexicalNode,
 	type RangeSelection,
 	type SerializedEditorState,
 	type SerializedElementNode,
@@ -111,4 +113,20 @@ export function selectBlockEnd(selection: RangeSelection) {
 	} else {
 		selection.anchor.getNode().getTopLevelElement()?.selectEnd();
 	}
+	// Now selection.isCollapsed() is always true
+}
+
+export function insertBlockNodeToNext<T extends LexicalNode>(
+	selection: RangeSelection,
+	insertNode: T
+) {
+	const blockNode = selection.focus.getNode().getTopLevelElement();
+	// "insertNodeToNearestRoot" inserts the specify block and the empty paragraph block
+	const insertedNode = $insertNodeToNearestRoot(insertNode);
+	insertedNode.getNextSibling()?.selectStart();
+	if (blockNode && blockNode.getTextContentSize() === 0) {
+		blockNode.remove();
+	}
+
+	return insertNode;
 }

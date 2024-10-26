@@ -37,18 +37,15 @@
 
 	async function onUploadSuccess(
 		albumImages: AlbumImageItem[],
-		uploadingItems: AlbumImageUploading[],
 		uploadedImageNodes: AlbumImageUploadedNode[]
 	) {
-		uploadingItems.forEach((uploading) => {
-			URL.revokeObjectURL(uploading.dataUrl);
-		});
 		albumImages.forEach((albumImage, i) => {
 			editor.dispatchCommand(CHANGE_IMAGE_BLOCK_COMMAND, {
 				nodeKey: uploadedImageNodes[i].nodeKey,
 				albumImage
 			});
 		});
+		// The Data-URL in image-placeholder-node will be revoked just before being replaced by image-node
 	}
 
 	function onUploadError(
@@ -57,14 +54,16 @@
 		uploadedImageNodes: AlbumImageUploadedNode[]
 	) {
 		console.error(error);
-		uploadingItems.forEach((uploading) => {
-			URL.revokeObjectURL(uploading.dataUrl);
-		});
-		uploadedImageNodes.forEach((uploaded) => {
-			const node = getNodeByKey(uploaded.nodeKey);
-			if (node instanceof ImageUploadingNode) {
-				node.remove();
-			}
+		editor.update(() => {
+			uploadedImageNodes.forEach((uploaded) => {
+				const node = getNodeByKey(uploaded.nodeKey);
+				if (node instanceof ImageUploadingNode) {
+					node.remove();
+				}
+			});
+			uploadingItems.forEach((uploading) => {
+				URL.revokeObjectURL(uploading.dataUrl);
+			});
 		});
 	}
 
@@ -95,7 +94,7 @@
 		if (result instanceof Error) {
 			onUploadError(result, uploadingImages, uploadedImageNodes);
 		} else {
-			onUploadSuccess(result.fileResults, uploadingImages, uploadedImageNodes);
+			onUploadSuccess(result.fileResults, uploadedImageNodes);
 		}
 	}
 </script>
