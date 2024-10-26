@@ -70,12 +70,13 @@
 </script>
 
 {#if albumImages.length > 0}
-	<div
-		class="grid grid-cols-2 items-start gap-x-4 gap-y-8 xs:grid-cols-3 xs:gap-x-8 xs:px-4 md:grid-cols-4"
-	>
+	<div class="-mx-3 grid grid-cols-2 items-start gap-y-4 xs:grid-cols-3 md:grid-cols-4">
 		{#each albumImages as image}
-			<button onclick={() => onSelect?.(image)}>
-				<div class="relative before:block before:pt-[100%]">
+			<button
+				class="relative p-2 pt-4 after:absolute after:left-0 after:top-0 after:h-full after:w-full after:hover:bg-stone-500/20 focus:after:bg-stone-500/20 sm:p-4 sm:pt-6"
+				onclick={() => onSelect?.(image)}
+			>
+				<div class="relative mb-2 before:block before:pt-[100%]">
 					<picture>
 						<source srcset={getImageSrc(image, true)} type="image/avif" />
 						<img
@@ -87,7 +88,7 @@
 						/>
 					</picture>
 				</div>
-				<p class="mt-2 line-clamp-3">{image.name}</p>
+				<p class="line-clamp-3">{image.name}</p>
 			</button>
 		{/each}
 	</div>
