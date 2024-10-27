@@ -17,7 +17,7 @@ export default defineConfig({
 		host: true, // Access inside container
 		proxy: {},
 		fs: {
-			allow: ['./i18n']
+			allow: ['./i18n', './lib-backend/utilities/infrastructure']
 		},
 		https: {
 			key: fs.readFileSync('./localhost-key.pem'),
