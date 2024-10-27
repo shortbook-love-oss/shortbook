@@ -31,7 +31,7 @@
 	{/snippet}
 	{#snippet contents()}
 		<div class="flex flex-col items-center">
-			<div class="flex min-h-dvh w-full max-w-2xl flex-1 flex-col px-4 pb-20 pt-16 sm:pb-24">
+			<div class="flex min-h-dvh w-full max-w-[640px] flex-1 flex-col px-4 pb-20 pt-16 sm:pb-24">
 				<TextAreaSingle
 					bind:value={title}
 					name="title"

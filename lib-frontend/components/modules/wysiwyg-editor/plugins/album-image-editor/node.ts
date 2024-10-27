@@ -1,5 +1,4 @@
 import {
-	$getEditor,
 	DecoratorNode,
 	type DOMExportOutput,
 	type EditorConfig,
@@ -8,6 +7,8 @@ import {
 	type SerializedLexicalNode,
 	type Spread
 } from 'lexical';
+import { getUrlObject } from '$lib/utilities/url';
+import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
 export type SerializedImageNode = Spread<
 	{
@@ -19,6 +20,41 @@ export type SerializedImageNode = Spread<
 	},
 	SerializedLexicalNode
 >;
+
+function createDOM(src: string, alt: string, width: number, height: number, isEditPage: boolean) {
+	const nodeRoot = document.createElement('picture');
+	nodeRoot.className = 'block my-4 max-w-full text-center';
+	if (isEditPage) {
+		nodeRoot.contentEditable = 'false';
+	}
+
+	const narrowVer = document.createElement('source');
+	const narrowSrc = getUrlObject(src);
+	if (width > 448 && narrowSrc) {
+		// If narrow device and large image, show small-resized image
+		narrowVer.media = '(max-width: 448px)';
+		// Max-width of narrow image is 480 - margins (16*2)
+		const narrowImageWidth: (typeof allowedSize)[number] = 448;
+		narrowSrc.searchParams.set('w', narrowImageWidth + '');
+		narrowSrc.searchParams.delete('h');
+		narrowVer.srcset = narrowSrc.href;
+		nodeRoot.appendChild(narrowVer);
+	}
+
+	const image = document.createElement('img');
+	image.src = src;
+	image.alt = alt;
+	image.width = width;
+	image.height = height;
+	image.decoding = 'async';
+	image.className = 'inline-block';
+	if (isEditPage) {
+		image.draggable = false;
+	}
+	nodeRoot.appendChild(image);
+
+	return nodeRoot;
+}
 
 export class ImageNode extends DecoratorNode<HTMLElement> {
 	__imageId: string;
@@ -65,29 +101,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 	}
 
 	createDOM(): HTMLElement {
-		const blockTheme = $getEditor()._config.theme.embedBlock ?? {};
-
-		const nodeRoot = document.createElement('div');
-		nodeRoot.className = blockTheme.base ?? '';
-		nodeRoot.contentEditable = 'false';
-
-		if (this.getSrc()) {
-			const image = document.createElement('img');
-			image.src = this.getSrc();
-			image.alt = this.getAlt();
-			image.width = this.getWidth();
-			image.height = this.getHeight();
-			image.decoding = 'async';
-			image.draggable = false;
-			nodeRoot.appendChild(image);
-		} else {
-			const placeholder = document.createElement('div');
-			placeholder.className = 'px-4 py-16 bg bg-stone-100 text-center';
-			placeholder.innerText = 'Uploading image ...';
-			nodeRoot.appendChild(placeholder);
-		}
-
-		return nodeRoot;
+		return createDOM(this.getSrc(), this.getAlt(), this.getWidth(), this.getHeight(), true);
 	}
 
 	updateDOM(): boolean {
@@ -96,19 +110,8 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 
 	// Render in output page
 	exportDOM(): DOMExportOutput {
-		const nodeRoot = document.createElement('div');
-		nodeRoot.className = 'my-4 max-w-full';
-
-		const image = document.createElement('img');
-		image.src = this.getSrc();
-		image.alt = this.getAlt();
-		image.width = this.getWidth();
-		image.height = this.getHeight();
-		image.decoding = 'async';
-		nodeRoot.appendChild(image);
-
 		return {
-			element: nodeRoot
+			element: createDOM(this.getSrc(), this.getAlt(), this.getWidth(), this.getHeight(), false)
 		};
 	}
 

@@ -18,6 +18,7 @@ import {
 	type SerializedTextNode
 } from 'lexical';
 import type { SelectItemSingle } from '$lib/utilities/select';
+import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
 export type EditorState = SerializedEditorState<
 	| SerializedElementNode<SerializedTextNode | SerializedLinkNode>
@@ -32,6 +33,8 @@ export type EditorState = SerializedEditorState<
 	| (SerializedParagraphNode & { children: (SerializedTextNode | SerializedLinkNode)[] })
 	| (SerializedQuoteNode & { children: (SerializedTextNode | SerializedLinkNode)[] })
 >;
+
+export const editorMaxWidth: (typeof allowedSize)[number] = 640;
 
 export const initEditorState: EditorState = {
 	root: {
@@ -129,4 +132,14 @@ export function insertBlockNodeToNext<T extends LexicalNode>(
 	}
 
 	return insertNode;
+}
+
+export function getImageSizeForSrc(width: number, maxWidth: number) {
+	if (width <= maxWidth) {
+		// width=150 ... w="" (keep original size)
+		return '';
+	} else {
+		// width=800 ... w="640" (full-width and same aspect)
+		return `w=${maxWidth}&`;
+	}
 }
