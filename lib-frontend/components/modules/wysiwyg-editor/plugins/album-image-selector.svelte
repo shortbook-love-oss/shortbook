@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import IconExternal from '~icons/mdi/external-link';
 	import { env as envPublic } from '$env/dynamic/public';
 	import type { AlbumImageGetResult, AlbumImageItem } from '$lib/utilities/album';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -97,12 +98,16 @@
 {/if}
 
 {#if albumImagesCount > 0 && albumImages.length < albumImagesCount}
-	<div class="flex justify-center">
-		<button type="button" class="mt-8 rounded-lg" onclick={loadNextPage}>
+	<div class="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 pb-4">
+		<button type="button" class="rounded-lg" onclick={loadNextPage}>
 			<NavLinkSmall
-				name="Load more images"
+				name="Load more images ({albumImagesCount - albumImages.length} remain)"
 				colorClass="bg-primary-200 hover:bg-primary-300 focus:bg-primary-300"
 			/>
 		</button>
+		<a href="/mypage/asset/album" target="_blank" class="flex items-center gap-2 text-lg">
+			<span class="underline">Upload or manage images</span>
+			<IconExternal width="24" height="24" />
+		</a>
 	</div>
 {/if}
