@@ -34,7 +34,7 @@ export type EditorState = SerializedEditorState<
 	| (SerializedQuoteNode & { children: (SerializedTextNode | SerializedLinkNode)[] })
 >;
 
-export const editorMaxWidth: (typeof allowedSize)[number] = 640;
+export const editorImageMaxWidth: (typeof allowedSize)[number] = 768;
 
 export const initEditorState: EditorState = {
 	root: {
@@ -139,7 +139,7 @@ export function getImageSizeForSrc(width: number, maxWidth: number) {
 		// width=150 ... w="" (keep original size)
 		return '';
 	} else {
-		// width=800 ... w="640" (full-width and same aspect)
+		// width=2048 ... w="1280" (full-width and same aspect)
 		return `w=${maxWidth}&`;
 	}
 }

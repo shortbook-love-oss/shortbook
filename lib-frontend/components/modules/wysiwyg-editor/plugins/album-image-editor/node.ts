@@ -7,6 +7,7 @@ import {
 	type SerializedLexicalNode,
 	type Spread
 } from 'lexical';
+import { editorImageMaxWidth } from '$lib/components/modules/wysiwyg-editor/editor';
 import { getUrlObject } from '$lib/utilities/url';
 import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
@@ -23,7 +24,7 @@ export type SerializedImageNode = Spread<
 
 function createDOM(src: string, alt: string, width: number, height: number, isEditPage: boolean) {
 	const nodeRoot = document.createElement('picture');
-	nodeRoot.className = 'block my-4 max-w-full text-center';
+	nodeRoot.className = 'block my-4 mx-[calc(50%-50vw)] text-center';
 	if (isEditPage) {
 		nodeRoot.contentEditable = 'false';
 	}
@@ -48,6 +49,7 @@ function createDOM(src: string, alt: string, width: number, height: number, isEd
 	image.height = height;
 	image.decoding = 'async';
 	image.className = 'inline-block';
+	image.style.maxWidth = `${editorImageMaxWidth}px`;
 	if (isEditPage) {
 		image.draggable = false;
 	}

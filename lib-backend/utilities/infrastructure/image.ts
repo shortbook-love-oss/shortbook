@@ -54,8 +54,8 @@ export const imageExtensionMIME: Record<AllowedFromExtension, string> = {
 // outside ... Keep aspect, not clip, maybe overflow
 export const allowedSize = [
 	1, 16, 24, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 256, 288, 320, 384, 448,
-	480, 512, 576, 640, 672, 768, 896, 1024, 1080, 1152, 1280, 1440, 1536, 1600, 1920, 2160, 2400,
-	2560, 3384, 3440, 3840, 4096, 4320, 6016, 7680
+	480, 512, 576, 672, 768, 896, 1024, 1080, 1152, 1280, 1440, 1536, 1600, 1920, 2160, 2400, 2560,
+	3384, 3440, 3840, 4096, 4320, 6016, 7680
 ] as const;
 export const allowedResizeFit = [
 	'contain',

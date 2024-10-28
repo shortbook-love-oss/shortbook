@@ -12,7 +12,7 @@ import { env as envPublic } from '$env/dynamic/public';
 import { $createImageNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/node';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
 import {
-	editorMaxWidth,
+	editorImageMaxWidth,
 	getImageSizeForSrc,
 	insertBlockNodeToNext,
 	selectBlockEnd
@@ -32,7 +32,7 @@ export const CHANGE_IMAGE_BLOCK_COMMAND: LexicalCommand<AlbumImageNodeItem> = cr
 );
 
 function getImageSrc(albumImage: AlbumImageItem) {
-	const imageSize = getImageSizeForSrc(albumImage.width, editorMaxWidth);
+	const imageSize = getImageSizeForSrc(albumImage.width, editorImageMaxWidth);
 	return `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.filePath}?ext=${albumImage.toExtension}&${imageSize}q=60`;
 }
 
