@@ -49,7 +49,7 @@ function createDOM(src: string, alt: string, width: number, height: number, isEd
 	image.height = height;
 	image.decoding = 'async';
 	image.className = 'inline-block';
-	image.style.maxWidth = `${editorImageMaxWidth}px`;
+	image.style.maxWidth = `min(${editorImageMaxWidth}px, 100%)`;
 	if (isEditPage) {
 		image.draggable = false;
 	}
