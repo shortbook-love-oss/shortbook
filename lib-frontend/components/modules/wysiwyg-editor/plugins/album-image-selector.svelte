@@ -11,7 +11,7 @@
 
 	const albumImages = $state<AlbumImageItem[]>([]);
 	let page = $state(0);
-	let isLastPage = $state(false);
+	let albumImagesCount = $state(0);
 	const maxImageSize = 224;
 
 	async function getAlbumImages(page: number) {
@@ -25,11 +25,11 @@
 	function setAlbumImages(getResult: AlbumImageGetResult | Error) {
 		if (!(getResult instanceof Error)) {
 			albumImages.push(...getResult.albumImages);
-			isLastPage = getResult.isLastPage;
+			albumImagesCount = getResult.count;
 		} else {
 			console.error(getResult);
 			albumImages.splice(0);
-			isLastPage = false;
+			albumImagesCount = 0;
 		}
 	}
 
@@ -96,7 +96,7 @@
 	<p>No images yet.</p>
 {/if}
 
-{#if !isLastPage}
+{#if albumImagesCount > 0 && albumImages.length < albumImagesCount}
 	<div class="flex justify-center">
 		<button type="button" class="mt-8 rounded-lg" onclick={loadNextPage}>
 			<NavLinkSmall

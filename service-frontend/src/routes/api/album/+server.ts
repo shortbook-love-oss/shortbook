@@ -22,12 +22,12 @@ export async function GET({ url, locals }) {
 		return error(400, { message: `Bad request. ${errorReasons ?? ''}` });
 	}
 
-	const { albumImages, dbError, isLastPage } = await dbUserAlbumImageList({
+	const { albumImages, count, dbError } = await dbUserAlbumImageList({
 		userId: signInUser.id,
 		limit: req.data.limit,
 		page: req.data.page
 	});
-	if (!albumImages || dbError) {
+	if (!albumImages || count == undefined || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
 
@@ -50,7 +50,7 @@ export async function GET({ url, locals }) {
 
 	const responseData: AlbumImageGetResult = {
 		albumImages: list,
-		isLastPage
+		count
 	};
 	const response = new Response(JSON.stringify(responseData));
 	response.headers.set('content-type', 'application/json');

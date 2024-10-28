@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import prisma from '$lib-backend/database/connect';
 
 export interface DbUserAlbumImageListRequest {
@@ -20,50 +21,50 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 		// Also get the first item of next page
 		// If have that, current page is not the last page
 		skip = req.limit * (req.page - 1);
-		take = req.limit + 1;
+		take = req.limit;
 	}
 
-	const albumImages = await prisma.user_images
-		.findMany({
-			where: {
-				user_id: req.userId,
-				...whereCondDelete
-			},
-			include: {
-				property: {
-					where: { ...whereCondDelete }
+	const whereCond: Prisma.user_imagesWhereInput = {
+		user_id: req.userId,
+		...whereCondDelete
+	};
+
+	const [albumImages, count] = await Promise.all([
+		prisma.user_images
+			.findMany({
+				where: whereCond,
+				include: {
+					property: {
+						where: { ...whereCondDelete }
+					},
+					license: {
+						where: { ...whereCondDelete }
+					},
+					tags: {
+						where: { ...whereCondDelete }
+					}
 				},
-				license: {
-					where: { ...whereCondDelete }
+				orderBy: {
+					created_at: 'desc'
 				},
-				tags: {
-					where: { ...whereCondDelete }
-				}
-			},
-			orderBy: {
-				created_at: 'desc'
-			},
-			skip,
-			take
-		})
-		.catch(() => {
-			dbError ??= new Error(
-				`Failed to get user album images. User ID=${req.userId}, Page=${req.page}`
-			);
-			return undefined;
-		});
+				skip,
+				take
+			})
+			.catch(() => {
+				dbError ??= new Error(
+					`Failed to get user album images. User ID=${req.userId}, Page=${req.page}`
+				);
+				return undefined;
+			}),
+		prisma.user_images
+			.count({
+				where: whereCond
+			})
+			.catch(() => {
+				dbError ??= new Error(`Failed to count user album images. User ID=${req.userId}`);
+				return undefined;
+			})
+	]);
 
-	// Get all = only one page
-	let isLastPage = albumImages != undefined;
-
-	if (req.limit != undefined && req.page != undefined) {
-		// Get only the page
-		if (albumImages && albumImages.length > req.limit) {
-			// If the page isn't last
-			albumImages?.pop();
-			isLastPage = false;
-		}
-	}
-
-	return { albumImages, dbError, isLastPage };
+	return { albumImages, count, dbError };
 }

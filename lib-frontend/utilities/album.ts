@@ -22,7 +22,7 @@ export interface AlbumImageEditItem extends AlbumImageItem {
 
 export interface AlbumImageGetResult {
 	albumImages: AlbumImageItem[];
-	isLastPage: boolean;
+	count: number;
 }
 
 export interface AlbumImageUploadResult {
