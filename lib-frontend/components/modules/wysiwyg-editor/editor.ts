@@ -123,11 +123,16 @@ export function insertBlockNodeToNext<T extends LexicalNode>(
 	selection: RangeSelection,
 	insertNode: T
 ) {
+	const firstBlockNode = $getRoot().getFirstChild();
 	const blockNode = selection.focus.getNode().getTopLevelElement();
 	// "insertNodeToNearestRoot" inserts the specify block and the empty paragraph block
 	const insertedNode = $insertNodeToNearestRoot(insertNode);
 	insertedNode.getNextSibling()?.selectStart();
-	if (blockNode && blockNode.getTextContentSize() === 0) {
+	if (
+		blockNode &&
+		blockNode.getTextContentSize() === 0 &&
+		firstBlockNode?.getKey() !== blockNode.getKey()
+	) {
 		blockNode.remove();
 	}
 
