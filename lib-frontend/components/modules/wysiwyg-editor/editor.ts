@@ -8,9 +8,13 @@ import {
 } from '@lexical/rich-text';
 import { $insertNodeToNearestRoot } from '@lexical/utils';
 import {
+	$createNodeSelection,
 	$getRoot,
+	$isNodeSelection,
 	$isParagraphNode,
+	$setSelection,
 	type LexicalNode,
+	type NodeKey,
 	type RangeSelection,
 	type SerializedEditorState,
 	type SerializedElementNode,
@@ -146,5 +150,13 @@ export function getImageSizeForSrc(width: number, maxWidth: number) {
 	} else {
 		// width=2048 ... w="1280" (full-width and same aspect)
 		return `w=${maxWidth}&`;
+	}
+}
+
+export function selectSingleNode(nodeKey: NodeKey) {
+	const selection = $createNodeSelection();
+	$setSelection(selection);
+	if ($isNodeSelection(selection)) {
+		selection.add(nodeKey);
 	}
 }

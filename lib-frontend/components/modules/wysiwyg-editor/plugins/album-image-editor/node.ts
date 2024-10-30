@@ -22,7 +22,16 @@ export type SerializedImageNode = Spread<
 	SerializedLexicalNode
 >;
 
-function createDOM(src: string, alt: string, width: number, height: number, isEditPage: boolean) {
+export const imageActivatorAttr = 'data-lexical-node-image';
+
+function createDOM(
+	nodeKey: NodeKey,
+	src: string,
+	alt: string,
+	width: number,
+	height: number,
+	isEditPage: boolean
+) {
 	const nodeRoot = document.createElement('picture');
 	nodeRoot.className = 'block my-4 mx-[calc(50%-50vw)] text-center';
 	if (isEditPage) {
@@ -49,6 +58,7 @@ function createDOM(src: string, alt: string, width: number, height: number, isEd
 	image.height = height;
 	image.decoding = 'async';
 	image.className = 'inline-block';
+	image.setAttribute(imageActivatorAttr, nodeKey);
 	image.style.maxWidth = `min(${editorImageMaxWidth}px, 100%)`;
 	if (isEditPage) {
 		image.draggable = false;
@@ -103,7 +113,14 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 	}
 
 	createDOM(): HTMLElement {
-		return createDOM(this.getSrc(), this.getAlt(), this.getWidth(), this.getHeight(), true);
+		return createDOM(
+			this.getKey(),
+			this.getSrc(),
+			this.getAlt(),
+			this.getWidth(),
+			this.getHeight(),
+			true
+		);
 	}
 
 	updateDOM(): boolean {
@@ -113,7 +130,14 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 	// Render in output page
 	exportDOM(): DOMExportOutput {
 		return {
-			element: createDOM(this.getSrc(), this.getAlt(), this.getWidth(), this.getHeight(), false)
+			element: createDOM(
+				this.getKey(),
+				this.getSrc(),
+				this.getAlt(),
+				this.getWidth(),
+				this.getHeight(),
+				false
+			)
 		};
 	}
 
