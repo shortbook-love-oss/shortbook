@@ -28,29 +28,28 @@ export const INSERT_IMAGE_UPLOADER_BLOCK_COMMAND: LexicalCommand<{
 }> = createCommand('INSERT_IMAGE_UPLOADER_BLOCK_COMMAND');
 
 function insertImagePlaceholders(
-	editor: LexicalEditor,
 	uploadingImages: AlbumImageUploading[],
 	uploadedImageNodes: AlbumImageUploadedNode[]
 ) {
-	editor.update(() => {
-		const selection = $getSelection();
-		if (!$isRangeSelection(selection)) {
-			return;
-		}
-		selectBlockEnd(selection);
+	const selection = $getSelection();
+	if (!$isRangeSelection(selection)) {
+		return false;
+	}
+	selectBlockEnd(selection);
 
-		// Insert images after selecting block
-		// Paragraph nodes are auto-added between images, but this is acceptable
-		const insertedNodes = uploadingImages.map((image) => {
-			const insertNode = new ImageUploadingNode(image.fileName, image.dataUrl);
-			return insertBlockNodeToNext(selection, insertNode);
-		});
-
-		// The caller holds the key of the added node
-		for (let i = 0; i < uploadingImages.length; i++) {
-			uploadedImageNodes.push({ nodeKey: insertedNodes[i].getKey() });
-		}
+	// Insert images after selecting block
+	// Paragraph nodes are auto-added between images, but this is acceptable
+	const insertedNodes = uploadingImages.map((image) => {
+		const insertNode = new ImageUploadingNode(image.fileName, image.dataUrl);
+		return insertBlockNodeToNext(selection, insertNode);
 	});
+
+	// The caller holds the key of the added node
+	for (let i = 0; i < uploadingImages.length; i++) {
+		uploadedImageNodes.push({ nodeKey: insertedNodes[i].getKey() });
+	}
+
+	return true;
 }
 
 export function registerImageUploaderPlugin(editor: LexicalEditor): () => void {
@@ -58,8 +57,7 @@ export function registerImageUploaderPlugin(editor: LexicalEditor): () => void {
 		editor.registerCommand(
 			INSERT_IMAGE_UPLOADER_BLOCK_COMMAND,
 			(imageUpload) => {
-				insertImagePlaceholders(editor, imageUpload.uploading, imageUpload.uploaded);
-				return true;
+				return insertImagePlaceholders(imageUpload.uploading, imageUpload.uploaded);
 			},
 			COMMAND_PRIORITY_NORMAL
 		)
