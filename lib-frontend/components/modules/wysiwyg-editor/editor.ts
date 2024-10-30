@@ -1,6 +1,6 @@
 import type { SerializedCodeNode } from '@lexical/code';
 import type { SerializedLinkNode } from '@lexical/link';
-import type { SerializedListNode } from '@lexical/list';
+import type { SerializedListItemNode, SerializedListNode } from '@lexical/list';
 import {
 	$isHeadingNode,
 	type SerializedHeadingNode,
@@ -21,21 +21,24 @@ import {
 	type SerializedParagraphNode,
 	type SerializedTextNode
 } from 'lexical';
+import type { SerializedImageNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/node';
+import type { SerializedImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
 import type { SelectItemSingle } from '$lib/utilities/select';
 import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
+
+type SerializedNodeChildren = { children: (SerializedTextNode | SerializedLinkNode)[] };
 
 export type EditorState = SerializedEditorState<
 	| SerializedElementNode<SerializedTextNode | SerializedLinkNode>
 	| SerializedCodeNode
-	| (SerializedHeadingNode & { children: (SerializedTextNode | SerializedLinkNode)[] })
+	| (SerializedHeadingNode & SerializedNodeChildren)
 	| (SerializedListNode & {
-			children: (SerializedElementNode & {
-				type: 'listitem';
-				children: (SerializedTextNode | SerializedLinkNode)[];
-			})[];
+			children: (SerializedListItemNode & { type: 'listitem' } & SerializedNodeChildren)[];
 	  })
-	| (SerializedParagraphNode & { children: (SerializedTextNode | SerializedLinkNode)[] })
-	| (SerializedQuoteNode & { children: (SerializedTextNode | SerializedLinkNode)[] })
+	| (SerializedParagraphNode & SerializedNodeChildren)
+	| (SerializedQuoteNode & SerializedNodeChildren)
+	| SerializedImageUploadingNode
+	| SerializedImageNode
 >;
 
 export const editorImageMaxWidth: (typeof allowedSize)[number] = 768;
