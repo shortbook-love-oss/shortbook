@@ -13,6 +13,7 @@
 	import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
 	import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/plugin';
 	import { registerImageUploaderPlugin } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/plugin';
+	import { registerDecoratorNodeBase } from '$lib/components/modules/wysiwyg-editor/plugins/decorator-node-base';
 	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import type { EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 	import AlbumDragUploader from '$lib/components/modules/wysiwyg-editor/plugins/album-drag-uploader.svelte';
@@ -61,7 +62,8 @@
 			registerHistory(editor, createEmptyHistoryState(), 300),
 			registerPluginPasteLinkReplacer(editor),
 			registerImagePlugin(editor),
-			registerImageUploaderPlugin(editor)
+			registerImageUploaderPlugin(editor),
+			registerDecoratorNodeBase(editor)
 		);
 
 		if (value) {
