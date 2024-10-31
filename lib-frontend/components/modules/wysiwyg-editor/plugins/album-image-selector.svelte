@@ -12,11 +12,12 @@
 
 	const albumImages = $state<AlbumImageItem[]>([]);
 	let page = $state(0);
+	let loadDatetime = $state(Date.now());
 	let albumImagesCount = $state(0);
 	const maxImageSize = 224;
 
 	async function getAlbumImages(page: number) {
-		return fetch(`/api/album?limit=12&page=${page}`)
+		return fetch(`/api/album?limit=12&page=${page}&created-before=${loadDatetime}`)
 			.then(async (res) => {
 				return (await res.json()) as AlbumImageGetResult;
 			})

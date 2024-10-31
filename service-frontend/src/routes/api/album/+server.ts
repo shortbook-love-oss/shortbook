@@ -21,11 +21,14 @@ export async function GET({ url, locals }) {
 		const errorReasons = Object.values(req.errors).flat().join(', ');
 		return error(400, { message: `Bad request. ${errorReasons ?? ''}` });
 	}
+	const reqCreatedBefore = req.data['created-before'];
 
 	const { albumImages, count, dbError } = await dbUserAlbumImageList({
 		userId: signInUser.id,
 		limit: req.data.limit,
-		page: req.data.page
+		page: req.data.page,
+		// Prevent shifting even if page load → add images → paging
+		createdBefore: reqCreatedBefore != undefined ? new Date(reqCreatedBefore) : undefined
 	});
 	if (!albumImages || count == undefined || dbError) {
 		return error(500, { message: dbError?.message ?? '' });

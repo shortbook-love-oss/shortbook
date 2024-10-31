@@ -6,6 +6,7 @@ export interface DbUserAlbumImageListRequest {
 	isIncludeDelete?: boolean;
 	limit?: number;
 	page?: number;
+	createdBefore?: Date;
 }
 
 export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
@@ -28,6 +29,9 @@ export async function dbUserAlbumImageList(req: DbUserAlbumImageListRequest) {
 		user_id: req.userId,
 		...whereCondDelete
 	};
+	if (req.createdBefore != undefined) {
+		whereCond.created_at = { lte: req.createdBefore };
+	}
 
 	const [albumImages, count] = await Promise.all([
 		prisma.user_images
