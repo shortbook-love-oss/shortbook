@@ -3,7 +3,6 @@ import {
 	$getNodeByKey,
 	$getSelection,
 	$isNodeSelection,
-	$isRangeSelection,
 	CLICK_COMMAND,
 	COMMAND_PRIORITY_NORMAL,
 	createCommand,
@@ -21,8 +20,8 @@ import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugi
 import {
 	editorImageMaxWidth,
 	getImageSizeForSrc,
+	getSelectedBlock,
 	insertBlockNodeToNext,
-	selectBlockEnd,
 	selectSingleNode
 } from '$lib/components/modules/wysiwyg-editor/editor';
 import type { AlbumImageItem } from '$lib/utilities/album';
@@ -45,11 +44,10 @@ function getImageSrc(albumImage: AlbumImageItem) {
 }
 
 function insertImage(albumImage: AlbumImageItem) {
-	const selection = $getSelection();
-	if (!$isRangeSelection(selection)) {
+	const { selectedBlock } = getSelectedBlock();
+	if (!selectedBlock) {
 		return false;
 	}
-	selectBlockEnd(selection);
 
 	const imageNode = $createImageNode(
 		albumImage.id,
@@ -58,7 +56,7 @@ function insertImage(albumImage: AlbumImageItem) {
 		albumImage.width,
 		albumImage.height
 	);
-	insertBlockNodeToNext(selection, imageNode);
+	insertBlockNodeToNext(selectedBlock, imageNode);
 
 	return true;
 }
@@ -110,7 +108,7 @@ function toActiveImageDOM(event: MouseEvent) {
 	const imageElem = event.target as HTMLImageElement | null;
 	const nodeKey = imageElem?.getAttribute(imageActivatorAttr);
 	if (!nodeKey) {
-		toggleImageFocused(null);
+		setImageFocused(null);
 		return false;
 	}
 	selectSingleNode(nodeKey);
@@ -121,22 +119,22 @@ function toActiveImageDOM(event: MouseEvent) {
 function getSelectedImageElem(editor: LexicalEditor) {
 	const imageNode = isImageNodeSelected();
 	if (!imageNode) {
-		toggleImageFocused(null);
+		setImageFocused(null);
 		return false;
 	}
 
 	const nodeRootElem = editor.getElementByKey(imageNode.getKey());
 	const imageElem = nodeRootElem?.querySelector(`[${imageActivatorAttr}]`);
 	if (!imageElem || !(imageElem instanceof HTMLImageElement)) {
-		toggleImageFocused(null);
+		setImageFocused(null);
 		return false;
 	}
-	toggleImageFocused(imageElem);
+	setImageFocused(imageElem);
 
 	return imageElem;
 }
 
-function toggleImageFocused(targetImageElem: HTMLImageElement | null) {
+function setImageFocused(targetImageElem: HTMLImageElement | null) {
 	const classList = ['outline', 'outline-4', 'outline-primary-500'];
 	document.querySelectorAll(`[${imageActivatorAttr}]`).forEach((imageElem) => {
 		if (imageElem !== targetImageElem) {

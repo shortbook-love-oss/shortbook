@@ -1,7 +1,5 @@
 import { mergeRegister } from '@lexical/utils';
 import {
-	$getSelection,
-	$isRangeSelection,
 	COMMAND_PRIORITY_NORMAL,
 	createCommand,
 	type LexicalCommand,
@@ -9,8 +7,8 @@ import {
 } from 'lexical';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
 import {
-	insertBlockNodeToNext,
-	selectBlockEnd
+	getSelectedBlock,
+	insertBlockNodeToNext
 } from '$lib/components/modules/wysiwyg-editor/editor';
 
 export interface AlbumImageUploading {
@@ -31,17 +29,16 @@ function insertImagePlaceholders(
 	uploadingImages: AlbumImageUploading[],
 	uploadedImageNodes: AlbumImageUploadedNode[]
 ) {
-	const selection = $getSelection();
-	if (!$isRangeSelection(selection)) {
+	const { selectedBlock } = getSelectedBlock();
+	if (!selectedBlock) {
 		return false;
 	}
-	selectBlockEnd(selection);
 
 	// Insert images after selecting block
 	// Paragraph nodes are auto-added between images, but this is acceptable
 	const insertedNodes = uploadingImages.map((image) => {
 		const insertNode = new ImageUploadingNode(image.fileName, image.dataUrl);
-		return insertBlockNodeToNext(selection, insertNode);
+		return insertBlockNodeToNext(selectedBlock, insertNode);
 	});
 
 	// The caller holds the key of the added node

@@ -10,9 +10,14 @@ import { $insertNodeToNearestRoot } from '@lexical/utils';
 import {
 	$createNodeSelection,
 	$getRoot,
+	$getSelection,
+	$isDecoratorNode,
 	$isNodeSelection,
 	$isParagraphNode,
+	$isRangeSelection,
 	$setSelection,
+	DecoratorNode,
+	ElementNode,
 	type LexicalNode,
 	type NodeKey,
 	type RangeSelection,
@@ -25,6 +30,8 @@ import type { SerializedImageNode } from '$lib/components/modules/wysiwyg-editor
 import type { SerializedImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
 import type { SelectItemSingle } from '$lib/utilities/select';
 import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
+
+type BlockNode = ElementNode | DecoratorNode<HTMLElement>;
 
 type SerializedNodeChildren = { children: (SerializedTextNode | SerializedLinkNode)[] };
 
@@ -117,30 +124,39 @@ export function isEditorEmpty() {
 	}
 }
 
-export function selectBlockEnd(selection: RangeSelection) {
-	if (selection.anchor.isBefore(selection.focus)) {
-		selection.focus.getNode().getTopLevelElement()?.selectEnd();
-	} else {
-		selection.anchor.getNode().getTopLevelElement()?.selectEnd();
+export function getSelectedBlock() {
+	const selection = $getSelection();
+	if (selection == null) {
+		return { selection, selectedBlock: null };
 	}
-	// Now selection.isCollapsed() is always true
+
+	if ($isRangeSelection(selection)) {
+		const selectedNodes = selection.getNodes();
+		const selectedNodesEnd = selectedNodes[selectedNodes.length - 1];
+		const selectedBlock = selectedNodesEnd.getTopLevelElement() as BlockNode | null;
+		return { selection, selectedBlock };
+	} else {
+		const selectedBlock = selection.getNodes()[0]?.getTopLevelElement() as BlockNode | null;
+		return { selection, selectedBlock };
+	}
 }
 
 export function insertBlockNodeToNext<T extends LexicalNode>(
-	selection: RangeSelection,
+	originBlock: BlockNode,
 	insertNode: T
 ) {
+	originBlock.selectEnd();
 	const firstBlockNode = $getRoot().getFirstChild();
-	const blockNode = selection.focus.getNode().getTopLevelElement();
 	// "insertNodeToNearestRoot" inserts the specify block and the empty paragraph block
 	const insertedNode = $insertNodeToNearestRoot(insertNode);
 	insertedNode.getNextSibling()?.selectStart();
+
 	if (
-		blockNode &&
-		blockNode.getTextContentSize() === 0 &&
-		firstBlockNode?.getKey() !== blockNode.getKey()
+		!$isDecoratorNode(originBlock) &&
+		originBlock.getTextContentSize() === 0 &&
+		firstBlockNode?.getKey() !== originBlock.getKey()
 	) {
-		blockNode.remove();
+		originBlock.remove();
 	}
 
 	return insertNode;
