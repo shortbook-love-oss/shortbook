@@ -5,6 +5,8 @@ import {
 	$isDecoratorNode,
 	$isNodeSelection,
 	COMMAND_PRIORITY_NORMAL,
+	KEY_BACKSPACE_COMMAND,
+	KEY_DELETE_COMMAND,
 	KEY_ENTER_COMMAND,
 	type LexicalEditor
 } from 'lexical';
@@ -26,11 +28,31 @@ function insertLineToNext(editor: LexicalEditor) {
 	if (!decorateorNode) {
 		return false;
 	}
+
 	const insertedNode = decorateorNode.insertAfter($createParagraphNode());
-	// Prevent insert twice block by slight delay
+	// Prevent duplicate exec of commands by slight delay
 	requestAnimationFrame(() => {
 		editor.update(() => {
 			insertedNode.selectStart();
+		});
+	});
+
+	return true;
+}
+
+function deleteNode(editor: LexicalEditor, isBack: boolean) {
+	const { decorateorNode } = getSelectedNode();
+	if (!decorateorNode) {
+		return false;
+	}
+
+	// Prevent duplicate exec of commands by slight delay
+	requestAnimationFrame(() => {
+		editor.update(() => {
+			if (!isBack) {
+				decorateorNode.selectNext();
+			}
+			decorateorNode.remove();
 		});
 	});
 
@@ -43,6 +65,20 @@ export function registerDecoratorNodeBase(editor: LexicalEditor) {
 			KEY_ENTER_COMMAND,
 			() => {
 				return insertLineToNext(editor);
+			},
+			COMMAND_PRIORITY_NORMAL
+		),
+		editor.registerCommand(
+			KEY_BACKSPACE_COMMAND,
+			() => {
+				return deleteNode(editor, true);
+			},
+			COMMAND_PRIORITY_NORMAL
+		),
+		editor.registerCommand(
+			KEY_DELETE_COMMAND,
+			() => {
+				return deleteNode(editor, false);
 			},
 			COMMAND_PRIORITY_NORMAL
 		)
