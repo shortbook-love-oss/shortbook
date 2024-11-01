@@ -1,15 +1,11 @@
 import {
 	DecoratorNode,
 	type DOMExportOutput,
-	type EditorConfig,
-	type LexicalEditor,
 	type NodeKey,
 	type SerializedLexicalNode,
 	type Spread
 } from 'lexical';
-import { editorImageMaxWidth } from '$lib/components/modules/wysiwyg-editor/editor';
-import { getUrlObject } from '$lib/utilities/url';
-import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
+import { createImageNodeDOM } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/dom';
 
 export type SerializedImageNode = Spread<
 	{
@@ -18,55 +14,10 @@ export type SerializedImageNode = Spread<
 		alt: string;
 		width: number;
 		height: number;
+		caption: string;
 	},
 	SerializedLexicalNode
 >;
-
-export const imageActivatorAttr = 'data-lexical-node-image';
-
-function createDOM(
-	nodeKey: NodeKey,
-	src: string,
-	alt: string,
-	width: number,
-	height: number,
-	isEditPage: boolean
-) {
-	const nodeRoot = document.createElement('picture');
-	nodeRoot.className = 'block my-4 mx-[calc(50%-50vw)] text-center';
-	if (isEditPage) {
-		nodeRoot.contentEditable = 'false';
-	}
-
-	const narrowVer = document.createElement('source');
-	const narrowSrc = getUrlObject(src);
-	if (width > 448 && narrowSrc) {
-		// If narrow device and large image, show small-resized image
-		narrowVer.media = '(max-width: 448px)';
-		// Max-width of narrow image is 480 - margins (16*2)
-		const narrowImageWidth: (typeof allowedSize)[number] = 448;
-		narrowSrc.searchParams.set('w', narrowImageWidth + '');
-		narrowSrc.searchParams.delete('h');
-		narrowVer.srcset = narrowSrc.href;
-		nodeRoot.appendChild(narrowVer);
-	}
-
-	const image = document.createElement('img');
-	image.src = src;
-	image.alt = alt;
-	image.width = width;
-	image.height = height;
-	image.decoding = 'async';
-	image.className = 'inline-block';
-	image.setAttribute(imageActivatorAttr, nodeKey);
-	image.style.maxWidth = `min(${editorImageMaxWidth}px, 100%)`;
-	if (isEditPage) {
-		image.draggable = false;
-	}
-	nodeRoot.appendChild(image);
-
-	return nodeRoot;
-}
 
 export class ImageNode extends DecoratorNode<HTMLElement> {
 	__imageId: string;
@@ -74,6 +25,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 	__alt: string;
 	__width: number;
 	__height: number;
+	__caption: string;
 
 	static getType(): string {
 		return 'image';
@@ -86,6 +38,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 			node.__alt,
 			node.__width,
 			node.__height,
+			node.__caption,
 			node.__key
 		);
 	}
@@ -96,6 +49,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 		alt: string,
 		width: number,
 		height: number,
+		caption: string,
 		key?: NodeKey
 	) {
 		super(key);
@@ -105,39 +59,26 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 		this.__alt = alt;
 		this.__width = width;
 		this.__height = height;
+		this.__caption = caption;
 	}
 
 	// Render in Lexical editor
-	decorate(_editor: LexicalEditor, config: EditorConfig): HTMLElement {
-		return this.createDOM();
+	decorate(): HTMLElement {
+		return createImageNodeDOM(this, true);
 	}
 
 	createDOM(): HTMLElement {
-		return createDOM(
-			this.getKey(),
-			this.getSrc(),
-			this.getAlt(),
-			this.getWidth(),
-			this.getHeight(),
-			true
-		);
+		return createImageNodeDOM(this, true);
 	}
 
 	updateDOM(): boolean {
-		return false;
+		return true;
 	}
 
 	// Render in output page
 	exportDOM(): DOMExportOutput {
 		return {
-			element: createDOM(
-				this.getKey(),
-				this.getSrc(),
-				this.getAlt(),
-				this.getWidth(),
-				this.getHeight(),
-				false
-			)
+			element: createImageNodeDOM(this, false)
 		};
 	}
 
@@ -147,7 +88,8 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 			serializedNode.src,
 			serializedNode.alt,
 			serializedNode.width,
-			serializedNode.height
+			serializedNode.height,
+			serializedNode.caption
 		);
 	}
 
@@ -159,8 +101,13 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 			src: this.getSrc(),
 			alt: this.getAlt(),
 			width: this.getWidth(),
-			height: this.getHeight()
+			height: this.getHeight(),
+			caption: this.getCaption()
 		};
+	}
+
+	isInline(): boolean {
+		return false;
 	}
 
 	getImageId(): string {
@@ -182,6 +129,15 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 	getHeight(): number {
 		return this.__height;
 	}
+
+	getCaption(): string {
+		return this.__caption;
+	}
+	setCaption(caption: string): this {
+		const self = this.getWritable();
+		self.__caption = caption;
+		return self;
+	}
 }
 
 export function $createImageNode(
@@ -189,9 +145,10 @@ export function $createImageNode(
 	src: string,
 	alt: string,
 	width: number,
-	height: number
+	height: number,
+	caption: string
 ): ImageNode {
-	return new ImageNode(imageId, src, alt, width, height);
+	return new ImageNode(imageId, src, alt, width, height, caption);
 }
 
 export function $isImageNode(node: DecoratorNode<HTMLElement>) {

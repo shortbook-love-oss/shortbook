@@ -5,6 +5,7 @@ import {
 	$isDecoratorNode,
 	$isNodeSelection,
 	COMMAND_PRIORITY_NORMAL,
+	DecoratorNode,
 	KEY_BACKSPACE_COMMAND,
 	KEY_DELETE_COMMAND,
 	KEY_ENTER_COMMAND,
@@ -16,11 +17,11 @@ function getSelectedNode() {
 	if (!$isNodeSelection(selection)) {
 		return { selection, decorateorNode: null };
 	}
-	const decorateorNode = selection.getNodes()[0]?.getTopLevelElement();
-	if (!$isDecoratorNode(decorateorNode)) {
+	const blockNode = selection.getNodes()[0]?.getTopLevelElement();
+	if (!$isDecoratorNode(blockNode)) {
 		return { selection, decorateorNode: null };
 	}
-	return { selection, decorateorNode };
+	return { selection, decorateorNode: blockNode as DecoratorNode<HTMLElement> };
 }
 
 function insertLineToNext(editor: LexicalEditor) {

@@ -12,8 +12,11 @@ import {
 } from 'lexical';
 import { env as envPublic } from '$env/dynamic/public';
 import {
+	imageNodeActivatorAttr,
+	imageNodeAttr
+} from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/dom';
+import {
 	$createImageNode,
-	imageActivatorAttr,
 	ImageNode
 } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/node';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
@@ -54,7 +57,8 @@ function insertImage(albumImage: AlbumImageItem) {
 		getImageSrc(albumImage),
 		albumImage.alt,
 		albumImage.width,
-		albumImage.height
+		albumImage.height,
+		''
 	);
 	insertBlockNodeToNext(selectedBlock, imageNode);
 
@@ -82,7 +86,8 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 					imageSrc,
 					albumImage.alt,
 					albumImage.width,
-					albumImage.height
+					albumImage.height,
+					''
 				);
 				imageUploaderNode.replace(imageNode);
 			},
@@ -106,7 +111,7 @@ function isImageNodeSelected() {
 
 function toActiveImageDOM(event: MouseEvent) {
 	const imageElem = event.target as HTMLImageElement | null;
-	const nodeKey = imageElem?.getAttribute(imageActivatorAttr);
+	const nodeKey = imageElem?.closest(`[${imageNodeAttr}]`)?.getAttribute(imageNodeAttr);
 	if (!nodeKey) {
 		setImageFocused(null);
 		return false;
@@ -124,7 +129,7 @@ function getSelectedImageElem(editor: LexicalEditor) {
 	}
 
 	const nodeRootElem = editor.getElementByKey(imageNode.getKey());
-	const imageElem = nodeRootElem?.querySelector(`[${imageActivatorAttr}]`);
+	const imageElem = nodeRootElem?.querySelector(`[${imageNodeActivatorAttr}]`);
 	if (!imageElem || !(imageElem instanceof HTMLImageElement)) {
 		setImageFocused(null);
 		return false;
@@ -136,7 +141,7 @@ function getSelectedImageElem(editor: LexicalEditor) {
 
 function setImageFocused(targetImageElem: HTMLImageElement | null) {
 	const classList = ['outline', 'outline-4', 'outline-primary-500'];
-	document.querySelectorAll(`[${imageActivatorAttr}]`).forEach((imageElem) => {
+	document.querySelectorAll(`[${imageNodeActivatorAttr}]`).forEach((imageElem) => {
 		if (imageElem !== targetImageElem) {
 			imageElem.classList.remove(...classList);
 		}
