@@ -1,9 +1,5 @@
 <script lang="ts">
-	import {
-		$getSelection as getSelection,
-		$isRangeSelection as isRangeSelection,
-		type LexicalEditor
-	} from 'lexical';
+	import type { LexicalEditor } from 'lexical';
 	import { onMount } from 'svelte';
 	import { isEditorEmpty } from '$lib/components/modules/wysiwyg-editor/editor';
 

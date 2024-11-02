@@ -5,7 +5,7 @@ import {
 	type LexicalCommand,
 	type LexicalEditor
 } from 'lexical';
-import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
+import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 import {
 	getSelectedBlock,
 	insertBlockNodeToNext

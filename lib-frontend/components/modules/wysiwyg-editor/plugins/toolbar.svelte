@@ -48,7 +48,7 @@
 	import IconFormatBlockquote from '~icons/mdi/format-quote-open';
 	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
 	import IconImage from '~icons/mdi/image-outline';
-	import { INSERT_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/plugin';
+	import { INSERT_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
 	import {
 		codeLanguageSelect,
 		findSelectedStartBlock,

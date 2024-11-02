@@ -1,8 +1,6 @@
 import {
 	DecoratorNode,
 	type DOMExportOutput,
-	type EditorConfig,
-	type LexicalEditor,
 	type NodeKey,
 	type SerializedLexicalNode,
 	type Spread
@@ -36,7 +34,7 @@ export class ImageUploadingNode extends DecoratorNode<HTMLElement> {
 	}
 
 	// Render in Lexical editor
-	decorate(_editor: LexicalEditor, config: EditorConfig): HTMLElement {
+	decorate(): HTMLElement {
 		return this.createDOM();
 	}
 

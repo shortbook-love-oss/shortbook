@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { $getNodeByKey as getNodeByKey, type LexicalEditor } from 'lexical';
-	import { CHANGE_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/plugin';
-	import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
+	import { CHANGE_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
+	import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 	import {
 		INSERT_IMAGE_UPLOADER_BLOCK_COMMAND,
 		type AlbumImageUploadedNode,
 		type AlbumImageUploading
-	} from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/plugin';
+	} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/plugin';
 	import type { AlbumImageItem, AlbumImageUploadResult } from '$lib/utilities/album';
 	import { imageMIMEextension, uploadFiles } from '$lib/utilities/file';
 	import { isValidFilesSize } from '$lib/validation/rules/file';

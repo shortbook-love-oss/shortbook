@@ -14,12 +14,12 @@ import { env as envPublic } from '$env/dynamic/public';
 import {
 	imageNodeActivatorAttr,
 	imageNodeAttr
-} from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/dom';
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/dom';
 import {
 	$createImageNode,
 	ImageNode
-} from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/node';
-import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
+import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 import {
 	editorImageMaxWidth,
 	getImageSizeForSrc,

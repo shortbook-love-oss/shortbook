@@ -26,8 +26,8 @@ import {
 	type SerializedParagraphNode,
 	type SerializedTextNode
 } from 'lexical';
-import type { SerializedImageNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-editor/node';
-import type { SerializedImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/plugins/album-image-uploading/node';
+import type { SerializedImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
+import type { SerializedImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 import type { SelectItemSingle } from '$lib/utilities/select';
 import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
