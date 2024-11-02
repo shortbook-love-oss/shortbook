@@ -110,8 +110,8 @@ function isImageNodeSelected() {
 }
 
 function toActiveImageDOM(event: MouseEvent) {
-	const imageElem = event.target as HTMLImageElement | null;
-	const nodeKey = imageElem?.closest(`[${imageNodeAttr}]`)?.getAttribute(imageNodeAttr);
+	const imageElem = (event.target as HTMLImageElement | null)?.closest(`[${imageNodeAttr}]`);
+	const nodeKey = imageElem?.getAttribute(imageNodeAttr);
 	if (!nodeKey) {
 		setImageFocused(null);
 		return false;
