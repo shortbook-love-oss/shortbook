@@ -77,6 +77,31 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 			}
 			focusToNearestNode(elem, node.getKey());
 		});
+		caption.addEventListener('paste', (ev) => {
+			ev.preventDefault();
+			const beforeContent = caption.textContent;
+			if (beforeContent == null) {
+				return;
+			}
+			const nativeSelection = window.getSelection();
+			if (nativeSelection == null) {
+				return;
+			}
+			const pasteText = ev.clipboardData?.getData('text/plain');
+			if (!pasteText) {
+				return;
+			}
+			const insertText = pasteText.replace(/\n/g, ' ');
+
+			// The image caption is plain-text and single line only, not rich-text
+			const offsetStart = Math.min(nativeSelection.anchorOffset, nativeSelection.focusOffset);
+			const offsetEnd = Math.max(nativeSelection.anchorOffset, nativeSelection.focusOffset);
+			caption.innerText =
+				beforeContent.slice(0, offsetStart) + insertText + beforeContent.slice(offsetEnd);
+
+			const newSelectionOffset = offsetStart + insertText.length;
+			nativeSelection.setPosition(caption.firstChild, newSelectionOffset);
+		});
 		caption.addEventListener('blur', (ev) => {
 			const elem = ev.target as HTMLElement;
 			const editor = getNearestEditorFromDOMNode(elem);
