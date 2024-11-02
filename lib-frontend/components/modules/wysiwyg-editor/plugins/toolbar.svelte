@@ -175,10 +175,12 @@
 	}
 
 	function dispatchTextCommand(command: TextFormatType) {
+		editor.focus();
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, command);
 	}
 
 	function dispatchBlockCommand(element: SelectItemSingle<BlockElementSelect>) {
+		editor.focus();
 		editor.update(() => {
 			const selection = getSelection();
 			if (!isRangeSelection(selection)) {
@@ -209,6 +211,7 @@
 	}
 
 	function insertFromAlbum(albumImage: AlbumImageItem) {
+		editor.focus();
 		editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, albumImage);
 		const dialogOpener = document.getElementById(
 			`common_dialog_open_${insertImageSelectDialogName}`

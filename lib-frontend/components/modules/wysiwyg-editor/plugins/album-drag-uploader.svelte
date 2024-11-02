@@ -27,6 +27,7 @@
 				dataUrl
 			});
 		}
+		editor.focus();
 		editor.dispatchCommand(INSERT_IMAGE_UPLOADER_BLOCK_COMMAND, {
 			uploading: uploadingImages,
 			uploaded: uploadedImageNodes
