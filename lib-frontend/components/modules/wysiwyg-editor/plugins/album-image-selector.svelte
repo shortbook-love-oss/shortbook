@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import IconExternal from '~icons/mdi/external-link';
+	import IconReload from '~icons/mdi/reload';
+	import IconUpload from '~icons/mdi/tray-upload';
 	import { env as envPublic } from '$env/dynamic/public';
 	import type { AlbumImageGetResult, AlbumImageItem } from '$lib/utilities/album';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -11,7 +12,7 @@
 	let { onSelect }: Props = $props();
 
 	const albumImages = $state<AlbumImageItem[]>([]);
-	let page = $state(0);
+	let page = $state(1);
 	let loadDatetime = $state(Date.now());
 	let albumImagesCount = $state(0);
 	const maxImageSize = 224;
@@ -30,8 +31,7 @@
 			albumImagesCount = getResult.count;
 		} else {
 			console.error(getResult);
-			albumImages.splice(0);
-			albumImagesCount = 0;
+			resetList();
 		}
 	}
 
@@ -60,6 +60,19 @@
 		}
 	}
 
+	function resetList() {
+		albumImages.splice(0);
+		page = 1;
+		loadDatetime = Date.now();
+		albumImagesCount = 0;
+	}
+
+	async function loadFirstPage() {
+		resetList();
+		const result = await getAlbumImages(page);
+		setAlbumImages(result);
+	}
+
 	async function loadNextPage() {
 		page++;
 		const result = await getAlbumImages(page);
@@ -67,12 +80,23 @@
 	}
 
 	onMount(() => {
-		loadNextPage();
+		loadFirstPage();
 	});
 </script>
 
+<div class="flex flex-wrap items-center py-2">
+	<button type="button" onclick={loadFirstPage}>
+		<NavLinkSmall name="Refresh list">
+			<IconReload width="24" height="24" />
+		</NavLinkSmall>
+	</button>
+	<NavLinkSmall name="Upload or manage" href="/mypage/asset/album" target="_blank">
+		<IconUpload width="24" height="24" />
+	</NavLinkSmall>
+</div>
+
 {#if albumImages.length > 0}
-	<div class="-mx-3 grid grid-cols-2 items-start gap-y-4 xs:grid-cols-3 md:grid-cols-4">
+	<div class="-mx-3 mb-8 grid grid-cols-2 items-start gap-y-4 xs:grid-cols-3 md:grid-cols-4">
 		{#each albumImages as image}
 			<button
 				class="relative p-2 pt-4 after:absolute after:left-0 after:top-0 after:h-full after:w-full after:hover:bg-stone-500/20 focus:after:bg-stone-500/20 sm:p-4 sm:pt-6"
@@ -95,20 +119,16 @@
 		{/each}
 	</div>
 {:else}
-	<p>No images yet.</p>
+	<p class="mb-8">No images yet.</p>
 {/if}
 
 {#if albumImagesCount > 0 && albumImages.length < albumImagesCount}
-	<div class="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 pb-4">
+	<div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 pb-4">
 		<button type="button" class="rounded-lg" onclick={loadNextPage}>
 			<NavLinkSmall
 				name="Load more images ({albumImagesCount - albumImages.length} remain)"
 				colorClass="bg-primary-200 hover:bg-primary-300 focus:bg-primary-300"
 			/>
 		</button>
-		<a href="/mypage/asset/album" target="_blank" class="flex items-center gap-2 text-lg">
-			<span class="underline">Upload or manage images</span>
-			<IconExternal width="24" height="24" />
-		</a>
 	</div>
 {/if}
