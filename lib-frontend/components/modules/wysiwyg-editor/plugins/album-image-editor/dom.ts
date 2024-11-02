@@ -11,10 +11,9 @@ import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
 export const imageNodeAttr = 'data-lexical-node-image';
 export const imageNodeActivatorAttr = 'data-lexical-node-image-activator';
-export const imageNodeCaptionAttr = 'data-lexical-node-image-caption';
 
 export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
-	const nodeRoot = document.createElement('div');
+	const nodeRoot = document.createElement('figure');
 	nodeRoot.className = 'my-4 text-center';
 	if (isEditPage) {
 		nodeRoot.setAttribute(imageNodeAttr, node.getKey());
@@ -45,31 +44,23 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 	image.height = node.getHeight();
 	image.decoding = 'async';
 	image.className = 'inline-block';
-	image.setAttribute(imageNodeActivatorAttr, node.getKey());
-	image.style.maxWidth = `min(${editorImageMaxWidth}px, 100%)`;
 	if (isEditPage) {
+		image.setAttribute(imageNodeActivatorAttr, node.getKey());
 		image.draggable = false;
 	}
+	image.style.maxWidth = `min(${editorImageMaxWidth}px, 100%)`;
 	imageWrap.appendChild(image);
 
 	nodeRoot.appendChild(imageWrap);
 
 	if (isEditPage) {
-		const captionWrap = document.createElement('figure');
-		captionWrap.className = 'relative mt-2 text-[1.25rem] leading-[1.5] text-stone-600';
-
 		// -------------------- Caption area --------------------
-		const caption = document.createElement('p');
-		caption.className = 'peer min-h-[1.5em] outline-none';
-		caption.setAttribute(imageNodeCaptionAttr, node.getKey());
+		const caption = document.createElement('figcaption');
+		caption.className =
+			'mt-2 min-h-[1.5em] text-[1.25rem] leading-[1.5] text-stone-600 outline-none before:text-stone-400 empty:[&:not(:focus)]:before:content-[attr(placeholder)]';
+		caption.setAttribute('placeholder', 'Add caption ...');
 		caption.contentEditable = 'true';
-		caption.innerText = '';
-
-		if (node.getCaption()) {
-			const captionFirstLine = document.createElement('div');
-			captionFirstLine.innerText = node.getCaption();
-			caption.appendChild(captionFirstLine);
-		}
+		caption.innerText = node.getCaption();
 
 		caption.addEventListener('focus', (ev) => {
 			const elem = ev.target as HTMLElement;
@@ -95,16 +86,15 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 				}
 			});
 		});
-		captionWrap.appendChild(caption);
 
-		// -------------------- Caption placeholder area --------------------
-		const placeholder = document.createElement('figcaption');
-		placeholder.className =
-			'pointer-events-none absolute top-0 hidden w-full text-stone-400 peer-[:not(:focus):empty]:block';
-		placeholder.innerText = 'Add caption ...';
-		captionWrap.appendChild(placeholder);
-
-		nodeRoot.appendChild(captionWrap);
+		nodeRoot.appendChild(caption);
+	} else {
+		if (node.getCaption()) {
+			const caption = document.createElement('figcaption');
+			caption.className = 'mt-2 text-[1.25rem] leading-[1.5] text-stone-600';
+			caption.innerText = node.getCaption();
+			nodeRoot.appendChild(caption);
+		}
 	}
 
 	return nodeRoot;
