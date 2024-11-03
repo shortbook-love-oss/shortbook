@@ -26,9 +26,10 @@
 	type Props = {
 		value: EditorState;
 		namespace: string;
+		placeholder?: string;
 		onInput?: (value: EditorState) => void;
 	};
-	let { value = $bindable(), namespace, onInput }: Props = $props();
+	let { value = $bindable(), namespace, placeholder = '', onInput }: Props = $props();
 
 	let editorRootElem = $state<HTMLElement | null>(null);
 
@@ -92,7 +93,7 @@
 
 <div class="flex flex-1 flex-col">
 	<div class="relative">
-		<Placeholder {editor} placeholder="Write your knowledge..." />
+		<Placeholder {editor} {placeholder} />
 	</div>
 	<div bind:this={editorRootElem} contenteditable></div>
 	<Toolbar {editor} className="self-center" />

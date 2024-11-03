@@ -22,7 +22,7 @@
 	});
 </script>
 
-{#if isEmpty}
+{#if isEmpty && placeholder}
 	<p
 		class="pointer-events-none absolute start-0 top-0 select-none text-[1.375rem] leading-[1.625] tracking-wider text-stone-400"
 	>

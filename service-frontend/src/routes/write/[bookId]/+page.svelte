@@ -12,7 +12,8 @@
 
 	let title = $state(data.form.data.title);
 	let subtitle = $state(data.form.data.subtitle);
-	let outputStateJson = $state<EditorState>(initEditorState);
+	let prologue = $state<EditorState>(initEditorState);
+	let content = $state<EditorState>(initEditorState);
 </script>
 
 <svelte:head>
@@ -50,7 +51,17 @@
 					inputClass="text-[1.5rem] text-stone-500"
 				/>
 				<hr class="mb-8 border-stone-300" />
-				<Editor bind:value={outputStateJson} namespace="book-editor" />
+				<Editor
+					bind:value={prologue}
+					namespace="book-prologue"
+					placeholder="Write introduction... (optional)"
+				/>
+				<hr class="my-8 border-stone-300" />
+				<Editor
+					bind:value={content}
+					namespace="book-content"
+					placeholder="Paid area... Write your knowledge..."
+				/>
 			</div>
 		</div>
 	{/snippet}
