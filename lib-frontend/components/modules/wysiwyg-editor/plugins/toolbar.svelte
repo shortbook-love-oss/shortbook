@@ -19,7 +19,7 @@
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
 	import { mergeRegister } from '@lexical/utils';
 	import {
-		COMMAND_PRIORITY_CRITICAL,
+		COMMAND_PRIORITY_NORMAL,
 		$createParagraphNode as createParagraphNode,
 		FORMAT_TEXT_COMMAND,
 		$getSelection as getSelection,
@@ -251,13 +251,11 @@
 		const removeListener = mergeRegister(
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
-				(_, targetEditor) => {
-					if (editor.getKey() === targetEditor.getKey()) {
-						setControllerState();
-					}
+				() => {
+					setControllerState();
 					return false;
 				},
-				COMMAND_PRIORITY_CRITICAL
+				COMMAND_PRIORITY_NORMAL
 			),
 			editor.registerUpdateListener(({ dirtyElements }) => {
 				if (dirtyElements.size === 0) {

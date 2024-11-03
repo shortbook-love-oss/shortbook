@@ -26,6 +26,7 @@ import {
 	type SerializedParagraphNode,
 	type SerializedTextNode
 } from 'lexical';
+import { writable } from 'svelte/store';
 import type { SerializedImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
 import type { SerializedImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 import type { SerializedDividerNode } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
@@ -51,6 +52,8 @@ export type EditorState = SerializedEditorState<
 >;
 
 export const editorImageMaxWidth: (typeof allowedSize)[number] = 768;
+
+export const lastActiveEditor = writable('');
 
 export const initEditorState: EditorState = {
 	root: {
