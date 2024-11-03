@@ -229,6 +229,24 @@
 		editor.dispatchCommand(INSERT_DIVIDER_BLOCK_COMMAND, undefined);
 	}
 
+	function preventHideCaret() {
+		if (visualViewport == null) {
+			return;
+		}
+		const nativeSelection = window.getSelection();
+		if (nativeSelection == null || nativeSelection.rangeCount === 0) {
+			return;
+		}
+		const caretPosition = nativeSelection.getRangeAt(0).getBoundingClientRect();
+
+		const betweenCaretToolbar = visualViewport.height - caretPosition.bottom - toolbarHeight;
+		if (betweenCaretToolbar < 0) {
+			// Scroll down if the toolbar overlaps the caret
+			// Margin of caret ↔︎ toolbar is 8px
+			scrollBy({ top: -betweenCaretToolbar + 8 });
+		}
+	}
+
 	onMount(() => {
 		const removeListener = mergeRegister(
 			editor.registerCommand(
@@ -240,7 +258,14 @@
 					return false;
 				},
 				COMMAND_PRIORITY_CRITICAL
-			)
+			),
+			editor.registerUpdateListener(({ dirtyElements }) => {
+				if (dirtyElements.size === 0) {
+					return;
+				}
+				// Runs only when node adds / changes / removes, not on selection change or focus
+				preventHideCaret();
+			})
 		);
 
 		return removeListener;
