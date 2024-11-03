@@ -47,8 +47,10 @@
 	import IconFormatParagraph from '~icons/mdi/format-paragraph';
 	import IconFormatBlockquote from '~icons/mdi/format-quote-open';
 	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
+	import IconHorizontalLine from '~icons/mdi/horizontal-line';
 	import IconImage from '~icons/mdi/image-outline';
 	import { INSERT_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
+	import { INSERT_DIVIDER_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
 	import {
 		codeLanguageSelect,
 		findSelectedStartBlock,
@@ -69,6 +71,7 @@
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import AlbumImageSelector from '$lib/components/modules/wysiwyg-editor/plugins/album-image-selector.svelte';
+	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
 	type Props = {
 		editor: LexicalEditor;
@@ -219,6 +222,11 @@
 		if (dialogOpener) {
 			dialogOpener.checked = false;
 		}
+	}
+
+	function insertDivider() {
+		editor.focus();
+		editor.dispatchCommand(INSERT_DIVIDER_BLOCK_COMMAND, undefined);
 	}
 
 	onMount(() => {
@@ -408,13 +416,25 @@
 				{/snippet}
 				<ul>
 					<li>
+						<button
+							type="button"
+							class="rounded-lg hover:bg-stone-200 focus:bg-stone-200"
+							onclick={insertDivider}
+						>
+							<NavLinkSmall name="Insert divider" className="text-nowrap">
+								<IconHorizontalLine width="28" height="28" />
+							</NavLinkSmall>
+						</button>
+					</li>
+					<li>
 						<Dialog
 							name={insertImageSelectDialogName}
 							title="Insert album image"
+							openerClass="rounded-lg"
 							dialogSizeClass="max-w-5xl"
 						>
 							{#snippet opener()}
-								<div class="flex items-center gap-2 p-2">
+								<div class="flex items-center gap-2 px-3 py-2">
 									<IconImage width="28" height="28" />
 									<p class="text-nowrap text-lg">Insert image</p>
 								</div>

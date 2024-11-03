@@ -6,6 +6,7 @@ import {
 	type Spread
 } from 'lexical';
 import { createImageNodeDOM } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/dom';
+import type { BlockNode } from '$lib/components/modules/wysiwyg-editor/editor';
 
 export type SerializedImageNode = Spread<
 	{
@@ -151,6 +152,6 @@ export function $createImageNode(
 	return new ImageNode(imageId, src, alt, width, height, caption);
 }
 
-export function $isImageNode(node: DecoratorNode<HTMLElement>) {
+export function $isImageNode(node: BlockNode | null) {
 	return node instanceof ImageNode;
 }

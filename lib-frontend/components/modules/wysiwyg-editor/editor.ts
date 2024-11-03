@@ -28,10 +28,11 @@ import {
 } from 'lexical';
 import type { SerializedImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
 import type { SerializedImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
+import type { SerializedDividerNode } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
 import type { SelectItemSingle } from '$lib/utilities/select';
 import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
-type BlockNode = ElementNode | DecoratorNode<HTMLElement>;
+export type BlockNode = ElementNode | DecoratorNode<HTMLElement>;
 
 type SerializedNodeChildren = { children: (SerializedTextNode | SerializedLinkNode)[] };
 
@@ -46,6 +47,7 @@ export type EditorState = SerializedEditorState<
 	| (SerializedQuoteNode & SerializedNodeChildren)
 	| SerializedImageUploadingNode
 	| SerializedImageNode
+	| SerializedDividerNode
 >;
 
 export const editorImageMaxWidth: (typeof allowedSize)[number] = 768;

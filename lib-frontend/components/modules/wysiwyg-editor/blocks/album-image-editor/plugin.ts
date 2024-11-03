@@ -17,6 +17,7 @@ import {
 } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/dom';
 import {
 	$createImageNode,
+	$isImageNode,
 	ImageNode
 } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
@@ -122,13 +123,13 @@ function toActiveImageDOM(event: MouseEvent) {
 }
 
 function getSelectedImageElem(editor: LexicalEditor) {
-	const imageNode = isImageNodeSelected();
-	if (!imageNode) {
+	const { selectedBlock } = getSelectedBlock();
+	if (!$isImageNode(selectedBlock)) {
 		setImageFocused(null);
 		return false;
 	}
 
-	const nodeRootElem = editor.getElementByKey(imageNode.getKey());
+	const nodeRootElem = editor.getElementByKey(selectedBlock.getKey());
 	const imageElem = nodeRootElem?.querySelector(`[${imageNodeActivatorAttr}]`);
 	if (!imageElem || !(imageElem instanceof HTMLImageElement)) {
 		setImageFocused(null);

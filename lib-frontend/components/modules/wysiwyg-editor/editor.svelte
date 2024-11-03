@@ -13,6 +13,8 @@
 	import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 	import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
 	import { registerImageUploaderPlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/plugin';
+	import { DividerNode } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
+	import { registerDividerBlock } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
 	import { registerDecoratorNodeBase } from '$lib/components/modules/wysiwyg-editor/blocks/decorator-node-base';
 	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import type { EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
@@ -42,7 +44,8 @@
 			ListItemNode,
 			QuoteNode,
 			ImageNode,
-			ImageUploadingNode
+			ImageUploadingNode,
+			DividerNode
 		],
 		onError: (error: Error) => {
 			throw error;
@@ -61,9 +64,10 @@
 			registerDragonSupport(editor),
 			registerHistory(editor, createEmptyHistoryState(), 300),
 			registerPluginPasteLinkReplacer(editor),
+			registerDecoratorNodeBase(editor),
 			registerImagePlugin(editor),
 			registerImageUploaderPlugin(editor),
-			registerDecoratorNodeBase(editor)
+			registerDividerBlock(editor)
 		);
 
 		if (value) {
