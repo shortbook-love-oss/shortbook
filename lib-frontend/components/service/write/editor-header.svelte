@@ -9,8 +9,9 @@
 		lastSaved: Date | null;
 		isAutoSaved: boolean;
 		className?: string;
+		onSave: () => void;
 	};
-	let { bookStatus, lastSaved, isAutoSaved, className = '' }: Props = $props();
+	let { bookStatus, lastSaved, isAutoSaved, className = '', onSave }: Props = $props();
 
 	const requestLang = getLanguageTagFromUrl($page.url);
 
@@ -30,7 +31,7 @@
 
 <header class="fixed start-0 top-0 z-10 flex items-center {className}">
 	<nav
-		class="flex items-center rounded-ee-lg border-b border-e border-stone-300 bg-white pl-[env(safe-area-inset-left,0px)] pt-[env(safe-area-inset-top,0px)] rtl:pr-[env(safe-area-inset-right,0px)]"
+		class="flex items-center gap-1 rounded-ee-lg border-b border-e border-stone-300 bg-white pl-[env(safe-area-inset-left,0px)] pt-[env(safe-area-inset-top,0px)] rtl:pr-[env(safe-area-inset-right,0px)]"
 	>
 		<a
 			href="/write"
@@ -39,7 +40,7 @@
 		>
 			<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
 		</a>
-		<div class="min-w-24 px-2 leading-tight">
+		<div class="min-w-20 leading-tight">
 			<p class="text-stone-700">
 				{#if bookStatus === 0}
 					Draft
@@ -55,5 +56,10 @@
 				{/if}
 			</p>
 		</div>
+		<button
+			type="button"
+			class="mx-1.5 rounded-md bg-primary-200 px-2 py-1 text-lg hover:bg-primary-700 hover:text-white focus:bg-primary-700 focus:text-white"
+			onclick={onSave}>Publish</button
+		>
 	</nav>
 </header>
