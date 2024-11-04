@@ -1,8 +1,9 @@
 import prisma from '$lib-backend/database/connect';
-import type { DbBookCreateRequest } from './create';
+import type { DbBookCreateRequest } from '$lib-backend/model/book/create';
 
 export interface DbBookUpdateRequest extends DbBookCreateRequest {
 	bookId: string;
+	revision: number;
 }
 
 export async function dbBookUpdate(req: DbBookUpdateRequest) {
@@ -45,14 +46,69 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 					published_at: publishedAt
 				}
 			});
-			if (!book?.id) {
+			if (!book) {
 				dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
 				throw dbError;
 			}
 
+			let revisionId = '';
+			const revision = await tx.book_revisions.findUnique({
+				where: {
+					book_id_revision: {
+						book_id: book.id,
+						revision: req.revision
+					}
+				}
+			});
+			if (req.revision === 0) {
+				// 1. Get maximum revison number of the book
+				const previosRevision = await tx.book_revisions.aggregate({
+					where: { book_id: book.id },
+					_max: { revision: true }
+				});
+				const previosRevisionNo = previosRevision._max.revision;
+				if (previosRevisionNo == null) {
+					dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
+					throw dbError;
+				}
+				// 2. Give the latest revision an incremented number and save it as a past revision
+				await tx.book_revisions.update({
+					where: {
+						book_id_revision: {
+							book_id: book.id,
+							revision: 0
+						}
+					},
+					data: {
+						book_id: book.id,
+						revision: previosRevisionNo + 1
+					}
+				});
+				// 3. Create new revision as latest revision
+				const newRevision = await tx.book_revisions.create({
+					data: {
+						book_id: book.id,
+						revision: 0
+					}
+				});
+				if (!newRevision) {
+					dbError ??= new Error(`Can't create book revision. Book ID=${req.bookId}`);
+					throw dbError;
+				}
+				revisionId = newRevision.id;
+			} else {
+				if (!revision) {
+					dbError ??= new Error(
+						`Can't find book revision. Book ID=${req.bookId}, Revision=${req.revision}`
+					);
+					throw dbError;
+				}
+				revisionId = revision.id;
+			}
+
 			await tx.book_covers.update({
 				where: {
-					book_id: book.id
+					revision_id: revisionId
 				},
 				data: {
 					base_color_start: req.baseColorStart,
@@ -69,15 +125,15 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				}
 			});
 
-			await tx.book_languages.deleteMany({
+			await tx.book_contents.deleteMany({
 				where: {
-					book_id: book.id
+					revision_id: revisionId
 				}
 			});
-			await tx.book_languages.createMany({
+			await tx.book_contents.createMany({
 				data: [
 					{
-						book_id: book.id,
+						revision_id: revisionId,
 						target_language: req.targetLanguage,
 						thumbnail_url: '',
 						title: req.title,

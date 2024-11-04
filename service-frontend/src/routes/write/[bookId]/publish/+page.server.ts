@@ -22,32 +22,32 @@ export const load = async ({ locals, params }) => {
 	const form = await superValidate(zod(schema));
 	const langTags = languageSelect;
 
-	const { book, dbError } = await dbBookGet({
+	const { book, bookRevision, dbError } = await dbBookGet({
 		bookId: params.bookId,
 		userId: signInUser.id,
 		isIncludeDraft: true
 	});
-	if (!book || !book.cover || dbError) {
+	if (!book || !bookRevision?.cover || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const bookLang = book?.languages[0];
+	const bookLang = bookRevision?.contents[0];
 
 	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
 		subtitle: bookLang?.subtitle ?? '',
-		baseColorStart: book.cover.base_color_start,
-		baseColorEnd: book.cover.base_color_end,
-		baseColorDirection: book.cover.base_color_direction,
-		titleFontSize: book.cover.title_font_size,
-		titleAlign: book.cover.title_align,
-		titleColor: book.cover.title_color,
-		subtitleFontSize: book.cover.subtitle_font_size,
-		subtitleAlign: book.cover.subtitle_align,
-		subtitleColor: book.cover.subtitle_color,
-		writerAlign: book.cover.writer_align,
-		writerColor: book.cover.writer_color
+		baseColorStart: bookRevision.cover.base_color_start,
+		baseColorEnd: bookRevision.cover.base_color_end,
+		baseColorDirection: bookRevision.cover.base_color_direction,
+		titleFontSize: bookRevision.cover.title_font_size,
+		titleAlign: bookRevision.cover.title_align,
+		titleColor: bookRevision.cover.title_color,
+		subtitleFontSize: bookRevision.cover.subtitle_font_size,
+		subtitleAlign: bookRevision.cover.subtitle_align,
+		subtitleColor: bookRevision.cover.subtitle_color,
+		writerAlign: bookRevision.cover.writer_align,
+		writerColor: bookRevision.cover.writer_color
 	});
 	for (const coverProp in bookCover) {
 		const prop = coverProp as keyof typeof bookCover;
@@ -96,6 +96,7 @@ export const actions = {
 
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
+			revision: 0,
 			userId: signInUser.id,
 			status: 1,
 			...form.data
@@ -139,6 +140,7 @@ export const actions = {
 
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
+			revision: 0,
 			userId: signInUser.id,
 			status: 0,
 			...form.data

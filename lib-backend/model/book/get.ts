@@ -15,6 +15,7 @@ type IdExclusiveProps =
 
 type DbBookGetRequest = IdExclusiveProps & {
 	userId?: string;
+	revision?: number;
 	isIncludeDraft?: boolean;
 	isIncludeDelete?: boolean;
 };
@@ -47,15 +48,19 @@ export async function dbBookGet(req: DbBookGetRequest) {
 				}
 			},
 			include: {
-				cover: {
-					where: { ...whereCondDelete }
-				},
-				languages: {
-					where: { ...whereCondDelete }
-				},
-				tags: {
-					where: { ...whereCondDelete },
-					orderBy: { sort: 'asc' }
+				revisions: {
+					where: {
+						revision: req.revision,
+						...whereCondDelete
+					},
+					include: {
+						cover: {
+							where: { ...whereCondDelete }
+						},
+						contents: {
+							where: { ...whereCondDelete }
+						}
+					}
 				},
 				user: {
 					select: {
@@ -94,5 +99,10 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			return undefined;
 		});
 
-	return { book, dbError };
+	let bookRevision;
+	if (req.revision != undefined) {
+		bookRevision = book?.revisions?.[0];
+	}
+
+	return { book, bookRevision, dbError };
 }

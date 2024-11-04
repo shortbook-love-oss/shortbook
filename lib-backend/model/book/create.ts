@@ -35,30 +35,36 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 					url_slug: req.urlSlug,
 					status: req.status,
 					buy_point: req.buyPoint,
-					cover: {
+					native_language: req.targetLanguage,
+					revisions: {
 						create: {
-							base_color_start: req.baseColorStart,
-							base_color_end: req.baseColorEnd,
-							base_color_direction: req.baseColorDirection,
-							title_font_size: req.titleFontSize,
-							title_align: req.titleAlign,
-							title_color: req.titleColor,
-							subtitle_font_size: req.subtitleFontSize,
-							subtitle_align: req.subtitleAlign,
-							subtitle_color: req.subtitleColor,
-							writer_align: req.writerAlign,
-							writer_color: req.writerColor
-						}
-					},
-					languages: {
-						create: {
-							target_language: req.targetLanguage,
-							thumbnail_url: '',
-							title: req.title,
-							subtitle: req.subtitle,
-							prologue: req.prologue,
-							content: req.content,
-							sales_message: req.salesMessage
+							revision: 0,
+							cover: {
+								create: {
+									base_color_start: req.baseColorStart,
+									base_color_end: req.baseColorEnd,
+									base_color_direction: req.baseColorDirection,
+									title_font_size: req.titleFontSize,
+									title_align: req.titleAlign,
+									title_color: req.titleColor,
+									subtitle_font_size: req.subtitleFontSize,
+									subtitle_align: req.subtitleAlign,
+									subtitle_color: req.subtitleColor,
+									writer_align: req.writerAlign,
+									writer_color: req.writerColor
+								}
+							},
+							contents: {
+								create: {
+									target_language: req.targetLanguage,
+									thumbnail_url: '',
+									title: req.title,
+									subtitle: req.subtitle,
+									prologue: req.prologue,
+									content: req.content,
+									sales_message: req.salesMessage
+								}
+							}
 						}
 					}
 				}

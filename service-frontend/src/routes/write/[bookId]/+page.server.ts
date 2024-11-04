@@ -21,16 +21,17 @@ export const load = async ({ locals, params }) => {
 	let updatedAt: Date | null = null;
 
 	if (params.bookId !== bookCreateUrlParam) {
-		const { book, dbError } = await dbBookGet({
+		const { book, bookRevision, dbError } = await dbBookGet({
 			bookId: params.bookId,
 			userId: signInUser.id,
+			revision: 0,
 			isIncludeDraft: true
 		});
-		if (!book || !book.cover || dbError) {
+		if (!book || !bookRevision || dbError) {
 			return error(500, { message: dbError?.message ?? '' });
 		}
 
-		const bookLang = book.languages[0];
+		const bookLang = bookRevision.contents[0];
 		form.data.title = bookLang.title;
 		form.data.subtitle = bookLang.subtitle;
 		form.data.content = bookLang.content;
@@ -68,6 +69,7 @@ export const actions = {
 
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: bookIdParam,
+			revision: 0,
 			userId: signInUser.id,
 			status: 1,
 			...form.data
@@ -93,6 +95,7 @@ export const actions = {
 
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
+			revision: 0,
 			userId: signInUser.id,
 			status: 0,
 			...form.data

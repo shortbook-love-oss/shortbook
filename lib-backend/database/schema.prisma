@@ -215,24 +215,39 @@ model books {
   url_slug                String              @db.VarChar(100) // Length 1 - 100
   status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
   buy_point               Int
+  native_language         String              @db.VarChar(5)
   published_at            DateTime            @default(now())
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
-  cover                   book_covers?
-  languages               book_languages[]
-  tags                    book_tags[]
+  revisions               book_revisions[]
   buys                    book_buys[]
 
   @@unique([user_id, url_slug])
 }
 
-model book_covers {
+model book_revisions {
   book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @db.VarChar(30) @default(cuid())
-  book_id                 String              @unique
+  book_id                 String
+  revision                Int                 // 0: Latest 1~: Previos revision
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  cover                   book_covers?
+  contents                book_contents[]
+
+  @@unique([book_id, revision])
+}
+
+model book_covers {
+  book_revision           book_revisions      @relation(fields: [revision_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @db.VarChar(30) @default(cuid())
+  revision_id             String              @unique
   base_color_start        String              @db.VarChar(15) // Hex code with "#"
   base_color_end          String              @db.VarChar(15)
   base_color_direction    Int                 @db.SmallInt // 0: bottom→top 90: left→right
@@ -249,11 +264,11 @@ model book_covers {
   deleted_at              DateTime?
 }
 
-model book_languages {
-  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
+model book_contents {
+  book_revision           book_revisions      @relation(fields: [revision_id], references: [id], onUpdate: Cascade)
 
   id                      String              @id @db.VarChar(30) @default(cuid())
-  book_id                 String
+  revision_id             String
   target_language         String              @db.VarChar(5)
   thumbnail_url           String              @db.VarChar(255)
   title                   String              @db.VarChar(1400) // Max length is 200
@@ -265,21 +280,7 @@ model book_languages {
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
-  @@unique([book_id, target_language])
-}
-
-model book_tags {
-  book                    books               @relation(fields: [book_id], references: [id], onUpdate: Cascade)
-
-  id                      String              @id @db.VarChar(30) @default(cuid())
-  book_id                 String
-  name                    String              @db.VarChar(350) // Max length is 50
-  sort                    Int                 @db.SmallInt
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              DateTime?
-
-  @@index([name])
+  @@unique([revision_id, target_language])
 }
 
 model book_buys {

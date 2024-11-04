@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
+import { getBookCover, contentsToMarkdown, type BookDetail } from '$lib/utilities/book';
 import {
 	currencySupports,
 	defaultCurrencyCode,
@@ -25,18 +25,23 @@ export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { book, dbError: dbBookGetError } = await dbBookGet({
+	const {
+		book,
+		bookRevision,
+		dbError: dbBookGetError
+	} = await dbBookGet({
 		bookUrlSlug: params.bookKey,
 		userKeyHandle: params.userKey,
+		revision: 0,
 		isIncludeDraft: true,
 		isIncludeDelete: true
 	});
-	if (!book || !book.cover || dbBookGetError) {
+	if (!book || !bookRevision?.cover || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
-	if (!bookLang && book.languages.length) {
-		bookLang = book.languages[0];
+	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+	if (!bookLang) {
+		bookLang = bookRevision.contents[0];
 	}
 	if (!bookLang) {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
@@ -160,17 +165,17 @@ export const load = async ({ url, locals, params }) => {
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
 		subtitle: bookLang?.subtitle ?? '',
-		baseColorStart: book.cover.base_color_start,
-		baseColorEnd: book.cover.base_color_end,
-		baseColorDirection: book.cover.base_color_direction,
-		titleFontSize: book.cover.title_font_size,
-		titleAlign: book.cover.title_align,
-		titleColor: book.cover.title_color,
-		subtitleFontSize: book.cover.subtitle_font_size,
-		subtitleAlign: book.cover.subtitle_align,
-		subtitleColor: book.cover.subtitle_color,
-		writerAlign: book.cover.writer_align,
-		writerColor: book.cover.writer_color
+		baseColorStart: bookRevision.cover.base_color_start,
+		baseColorEnd: bookRevision.cover.base_color_end,
+		baseColorDirection: bookRevision.cover.base_color_direction,
+		titleFontSize: bookRevision.cover.title_font_size,
+		titleAlign: bookRevision.cover.title_align,
+		titleColor: bookRevision.cover.title_color,
+		subtitleFontSize: bookRevision.cover.subtitle_font_size,
+		subtitleAlign: bookRevision.cover.subtitle_align,
+		subtitleColor: bookRevision.cover.subtitle_color,
+		writerAlign: bookRevision.cover.writer_align,
+		writerColor: bookRevision.cover.writer_color
 	});
 	const bookDetail: BookDetail = {
 		...bookCover,

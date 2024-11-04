@@ -1,11 +1,11 @@
 import type { user_payment_checkouts } from '@prisma/client';
 import { error } from '@sveltejs/kit';
-import { dbBookList } from '$lib-backend/model/book/list';
-import { dbUserPaymentCheckoutList } from '$lib-backend/model/user/payment-checkout/list';
-import { dbUserPointList } from '$lib-backend/model/user/point/list';
 import type { CurrencySupportCodes } from '$lib/utilities/currency';
 import type { PointListItem } from '$lib/utilities/point';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
+import { dbBookList } from '$lib-backend/model/book/list';
+import { dbUserPaymentCheckoutList } from '$lib-backend/model/user/payment-checkout/list';
+import { dbUserPointList } from '$lib-backend/model/user/point/list';
 
 export const load = async ({ url, locals }) => {
 	const signInUser = locals.signInUser;
@@ -65,11 +65,16 @@ export const load = async ({ url, locals }) => {
 		let bookTitle = '';
 		const book = pointBooksMap[point.book_id];
 		if (point.book_id && book) {
-			let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
-			if (!bookLang && book.languages.length) {
-				bookLang = book.languages[0];
+			const bookRevision = book.revisions[0];
+			if (bookRevision.contents.length > 0) {
+				let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+				if (!bookLang) {
+					bookLang = bookRevision.contents[0];
+				}
+				if (bookLang.title) {
+					bookTitle = bookLang.title;
+				}
 			}
-			bookTitle = bookLang?.title ?? '';
 		}
 		const checkout = paymentCheckoutMap[point.payment_checkout_id];
 		const pointItem: PointListItem = {

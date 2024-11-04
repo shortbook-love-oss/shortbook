@@ -37,19 +37,24 @@ export async function dbBookList(req: DbBookListRequest) {
 			},
 			orderBy: { updated_at: 'desc' },
 			include: {
-				cover: {
-					where: { ...whereCondDelete }
-				},
-				languages: {
-					where: { ...whereCondDelete },
-					omit: {
-						prologue: true,
-						content: true,
-						sales_message: true
+				revisions: {
+					where: {
+						revision: 0,
+						...whereCondDelete
+					},
+					include: {
+						cover: {
+							where: { ...whereCondDelete }
+						},
+						contents: {
+							where: { ...whereCondDelete },
+							omit: {
+								prologue: true,
+								content: true,
+								sales_message: true
+							}
+						}
 					}
-				},
-				tags: {
-					where: { ...whereCondDelete }
 				},
 				user: {
 					select: {
