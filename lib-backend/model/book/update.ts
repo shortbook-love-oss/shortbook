@@ -52,18 +52,13 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 			}
 
 			let revisionId = '';
-			const revision = await tx.book_revisions.findUnique({
-				where: {
-					book_id_revision: {
-						book_id: book.id,
-						revision: req.revision
-					}
-				}
-			});
-			if (req.revision === 0) {
+			if (!Number.isFinite(req.revision)) {
 				// 1. Get maximum revison number of the book
 				const previosRevision = await tx.book_revisions.aggregate({
-					where: { book_id: book.id },
+					where: {
+						book_id: book.id,
+						deleted_at: null
+					},
 					_max: { revision: true }
 				});
 				const previosRevisionNo = previosRevision._max.revision;
@@ -97,7 +92,25 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				}
 				revisionId = newRevision.id;
 			} else {
-				if (!revision) {
+				const revision = await tx.book_revisions.findUnique({
+					where: {
+						book_id_revision: {
+							book_id: book.id,
+							revision: req.revision
+						},
+						deleted_at: null
+					},
+					select: {
+						id: true,
+						cover: {
+							select: { id: true }
+						},
+						contents: {
+							select: { id: true }
+						}
+					}
+				});
+				if (!revision || !revision.cover || revision.contents.length === 0) {
 					dbError ??= new Error(
 						`Can't find book revision. Book ID=${req.bookId}, Revision=${req.revision}`
 					);
@@ -106,23 +119,28 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				revisionId = revision.id;
 			}
 
-			await tx.book_covers.update({
+			const bookCoverData = {
+				base_color_start: req.baseColorStart,
+				base_color_end: req.baseColorEnd,
+				base_color_direction: req.baseColorDirection,
+				title_font_size: req.titleFontSize,
+				title_align: req.titleAlign,
+				title_color: req.titleColor,
+				subtitle_font_size: req.subtitleFontSize,
+				subtitle_align: req.subtitleAlign,
+				subtitle_color: req.subtitleColor,
+				writer_align: req.writerAlign,
+				writer_color: req.writerColor
+			};
+			await tx.book_covers.upsert({
 				where: {
 					revision_id: revisionId
 				},
-				data: {
-					base_color_start: req.baseColorStart,
-					base_color_end: req.baseColorEnd,
-					base_color_direction: req.baseColorDirection,
-					title_font_size: req.titleFontSize,
-					title_align: req.titleAlign,
-					title_color: req.titleColor,
-					subtitle_font_size: req.subtitleFontSize,
-					subtitle_align: req.subtitleAlign,
-					subtitle_color: req.subtitleColor,
-					writer_align: req.writerAlign,
-					writer_color: req.writerColor
-				}
+				create: {
+					...bookCoverData,
+					revision_id: revisionId
+				},
+				update: bookCoverData
 			});
 
 			await tx.book_contents.deleteMany({

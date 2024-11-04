@@ -42,6 +42,11 @@ export interface BookDetail extends BookItem {
 	isBookDeleted: boolean;
 }
 
+export interface BookDraftUpdateResult {
+	bookId: string;
+	urlSlug: string;
+}
+
 // text-align: ***;
 export const bookTextAlignSelect = [
 	{ value: 'start', label: 'Left' },
