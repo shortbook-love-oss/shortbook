@@ -1,0 +1,472 @@
+<script lang="ts">
+	import {
+		CodeNode,
+		$createCodeNode as createCodeNode,
+		$isCodeNode as isCodeNode
+	} from '@lexical/code';
+	import {
+		$createListNode as createListNode,
+		ListItemNode,
+		ListNode,
+		type ListType
+	} from '@lexical/list';
+	import {
+		$createHeadingNode as createHeadingNode,
+		$createQuoteNode as createQuoteNode,
+		HeadingNode,
+		QuoteNode
+	} from '@lexical/rich-text';
+	import { $setBlocksType as setBlocksType } from '@lexical/selection';
+	import { mergeRegister } from '@lexical/utils';
+	import {
+		COMMAND_PRIORITY_NORMAL,
+		$createParagraphNode as createParagraphNode,
+		FORMAT_TEXT_COMMAND,
+		$getSelection as getSelection,
+		$isRangeSelection as isRangeSelection,
+		ParagraphNode,
+		SELECTION_CHANGE_COMMAND,
+		type LexicalEditor,
+		type RangeSelection,
+		type TextFormatType
+	} from 'lexical';
+	import { onMount } from 'svelte';
+	import IconAdd from '~icons/mdi/add';
+	import IconArrow from '~icons/mdi/chevron-up';
+	import IconFormatOrderedList from '~icons/mdi/123';
+	import IconFormatCode from '~icons/mdi/code';
+	import IconFormatCodeBlock from '~icons/mdi/code-block-tags';
+	import IconFormatBold from '~icons/mdi/format-bold';
+	import IconFormatHeading2 from '~icons/mdi/format-heading-2';
+	import IconFormatHeading3 from '~icons/mdi/format-heading-3';
+	import IconFormatHeading4 from '~icons/mdi/format-heading-4';
+	import IconFormatHeading5 from '~icons/mdi/format-heading-5';
+	import IconFormatHeading6 from '~icons/mdi/format-heading-6';
+	import IconFormatItalic from '~icons/mdi/format-italic';
+	import IconFormatUnorderedList from '~icons/mdi/format-list-bulleted-square';
+	import IconFormatParagraph from '~icons/mdi/format-paragraph';
+	import IconFormatBlockquote from '~icons/mdi/format-quote-open';
+	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
+	import IconHorizontalLine from '~icons/mdi/horizontal-line';
+	import IconImage from '~icons/mdi/image-outline';
+	import { INSERT_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
+	import { INSERT_DIVIDER_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
+	import {
+		codeLanguageSelect,
+		findSelectedStartBlock,
+		type CodeLanguageItem
+	} from '$lib/components/modules/wysiwyg-editor/editor';
+	import type { AlbumImageItem } from '$lib/utilities/album';
+	import {
+		blockquoteSelect,
+		codeBlockSelect,
+		headingSelect,
+		headingTypeValues,
+		orderedListSelect,
+		paragraphSelect,
+		unorderedListSelect,
+		type HeadingTypes
+	} from '$lib/utilities/html';
+	import type { SelectItemSingle } from '$lib/utilities/select';
+	import Dropdown from '$lib/components/layouts/dropdown.svelte';
+	import Dialog from '$lib/components/layouts/dialog.svelte';
+	import AlbumImageSelector from '$lib/components/modules/wysiwyg-editor/plugins/album-image-selector.svelte';
+	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
+
+	type Props = {
+		editor: LexicalEditor;
+		className?: string;
+	};
+	let { editor, className = '' }: Props = $props();
+
+	const elementSelect = [
+		unorderedListSelect,
+		orderedListSelect,
+		codeBlockSelect,
+		blockquoteSelect,
+		...headingSelect,
+		paragraphSelect
+	];
+	type BlockElementSelect = (typeof elementSelect)[number]['value'];
+
+	const elementIndex = {
+		p: IconFormatParagraph,
+		h2: IconFormatHeading2,
+		h3: IconFormatHeading3,
+		h4: IconFormatHeading4,
+		h5: IconFormatHeading5,
+		h6: IconFormatHeading6,
+		ul: IconFormatUnorderedList,
+		ol: IconFormatOrderedList,
+		blockquote: IconFormatBlockquote,
+		codeblock: IconFormatCodeBlock
+	} satisfies Record<BlockElementSelect, unknown>;
+
+	// Keep state opening the iOS/Android virtual keyboard
+	let isOpenKeyboard = $state(false);
+
+	let documentHeight = $state(0);
+	let toolbarHeight = $state(0);
+	let toolbarTopOffset = $state(0);
+
+	// Selection states
+	let canSwitchTextFormat = $state(true);
+	let isInCodeBlock = $state(false);
+	let isBold = $state(false);
+	let isItalic = $state(false);
+	let isStrikethrough = $state(false);
+	let isCode = $state(false);
+
+	let selectedBlockType = $state<SelectItemSingle<BlockElementSelect>>(paragraphSelect);
+
+	let selectedLanguage = $state<CodeLanguageItem>(codeLanguageSelect[0]);
+
+	const insertImageSelectDialogName = 'album_image_insert';
+
+	function setControllerState() {
+		const selection = getSelection();
+		if (!isRangeSelection(selection)) {
+			return;
+		}
+
+		// By Lexical specifications, the contents of a code block cannot set to bold or italic
+		canSwitchTextFormat = selection.getNodes().some((node) => {
+			return !isCodeNode(node.getTopLevelElement());
+		});
+		isInCodeBlock = selection.getNodes().every((node) => {
+			return isCodeNode(node.getTopLevelElement());
+		});
+		isBold = selection.hasFormat('bold');
+		isItalic = selection.hasFormat('italic');
+		isStrikethrough = selection.hasFormat('strikethrough');
+		isCode = selection.hasFormat('code');
+
+		// Change state of block type controller
+		const selectedStartBlock = findSelectedStartBlock(selection);
+		if (selectedStartBlock instanceof ParagraphNode) {
+			selectedBlockType = paragraphSelect;
+		} else if (selectedStartBlock instanceof HeadingNode) {
+			const tag = selectedStartBlock.getTag();
+			const matchNodeItem = headingSelect.find((item) => item.value === tag);
+			if (matchNodeItem) {
+				selectedBlockType = matchNodeItem;
+			}
+		} else if (selectedStartBlock instanceof ListNode) {
+			const tag = selectedStartBlock.getTag();
+			if (unorderedListSelect.value === tag) {
+				selectedBlockType = unorderedListSelect;
+			} else if (orderedListSelect.value === tag) {
+				selectedBlockType = orderedListSelect;
+			}
+		} else if (selectedStartBlock instanceof QuoteNode) {
+			selectedBlockType = blockquoteSelect;
+		} else if (selectedStartBlock instanceof CodeNode) {
+			selectedBlockType = codeBlockSelect;
+		}
+	}
+
+	function replaceToListNode(selection: RangeSelection, listType: ListType) {
+		// When replace empty node to list block, need to manually add ListItemNode into it
+		const listNode = createListNode(listType);
+		if (
+			selection.anchor.key === selection.focus.key &&
+			selection.anchor.getNode().getTextContentSize() === 0
+		) {
+			listNode.append(new ListItemNode());
+		}
+		return listNode;
+	}
+
+	function dispatchTextCommand(command: TextFormatType) {
+		editor.focus();
+		editor.dispatchCommand(FORMAT_TEXT_COMMAND, command);
+	}
+
+	function dispatchBlockCommand(element: SelectItemSingle<BlockElementSelect>) {
+		editor.focus();
+		editor.update(() => {
+			const selection = getSelection();
+			if (!isRangeSelection(selection)) {
+				return;
+			}
+			if (paragraphSelect.value === element.value) {
+				setBlocksType(selection, () => createParagraphNode());
+			} else if (headingTypeValues.includes(element.value as HeadingTypes)) {
+				setBlocksType(selection, () => createHeadingNode(element.value as HeadingTypes));
+			} else if (unorderedListSelect.value === element.value) {
+				setBlocksType(selection, () => replaceToListNode(selection, 'bullet'));
+			} else if (orderedListSelect.value === element.value) {
+				setBlocksType(selection, () => replaceToListNode(selection, 'number'));
+			} else if (blockquoteSelect.value === element.value) {
+				setBlocksType(selection, () => createQuoteNode());
+			} else if (codeBlockSelect.value === element.value) {
+				setBlocksType(selection, () => createCodeNode());
+			}
+			selectedBlockType = element;
+
+			// If change to code block or change from it, switch controller clickable
+			setControllerState();
+		});
+	}
+
+	function changeCodeLanguage(language: CodeLanguageItem) {
+		selectedLanguage = language;
+	}
+
+	function insertFromAlbum(albumImage: AlbumImageItem) {
+		editor.focus();
+		editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, albumImage);
+		const dialogOpener = document.getElementById(
+			`common_dialog_open_${insertImageSelectDialogName}`
+		) as HTMLInputElement | null;
+		if (dialogOpener) {
+			dialogOpener.checked = false;
+		}
+	}
+
+	function insertDivider() {
+		editor.focus();
+		editor.dispatchCommand(INSERT_DIVIDER_BLOCK_COMMAND, undefined);
+	}
+
+	function preventHideCaret() {
+		if (visualViewport == null) {
+			return;
+		}
+		const nativeSelection = window.getSelection();
+		if (nativeSelection == null || nativeSelection.rangeCount === 0) {
+			return;
+		}
+		const caretPosition = nativeSelection.getRangeAt(0).getBoundingClientRect();
+
+		const betweenCaretToolbar = visualViewport.height - caretPosition.bottom - toolbarHeight;
+		if (betweenCaretToolbar < 0) {
+			// Scroll down if the toolbar overlaps the caret
+			// Margin of caret ↔︎ toolbar is 8px
+			scrollBy({ top: -betweenCaretToolbar + 8 });
+		}
+	}
+
+	onMount(() => {
+		const removeListener = mergeRegister(
+			editor.registerCommand(
+				SELECTION_CHANGE_COMMAND,
+				() => {
+					setControllerState();
+					return false;
+				},
+				COMMAND_PRIORITY_NORMAL
+			),
+			editor.registerUpdateListener(({ dirtyElements }) => {
+				if (dirtyElements.size === 0) {
+					return;
+				}
+				// Runs only when node adds / changes / removes, not on selection change or focus
+				preventHideCaret();
+			})
+		);
+
+		return removeListener;
+	});
+
+	onMount(() => {
+		const onViewportResize = () => {
+			if (!visualViewport) {
+				isOpenKeyboard = false;
+				return;
+			}
+			// If iOS and Android, visualViewport.height is low when virtual keyboard is open
+			isOpenKeyboard = window.innerHeight !== visualViewport.height;
+		};
+		visualViewport?.addEventListener('resize', onViewportResize);
+
+		return () => {
+			visualViewport?.removeEventListener('resize', onViewportResize);
+		};
+	});
+
+	onMount(() => {
+		const toolbarPositionAdjuster = setInterval(() => {
+			if (visualViewport && isOpenKeyboard) {
+				// position: fixed; and bottom specification does not work when the virtual keyboard is displayed
+				// So, combine absolute and top to position the toolbar slightly above the virtual keyboard
+				const currentTopOffset = window.scrollY + visualViewport.height - toolbarHeight;
+				const maxTopOffset = documentHeight - toolbarHeight;
+				toolbarTopOffset = Math.min(currentTopOffset, maxTopOffset);
+			}
+		}, 50);
+
+		return () => {
+			clearInterval(toolbarPositionAdjuster);
+		};
+	});
+</script>
+
+<svelte:body bind:clientHeight={documentHeight} />
+
+<!-- To ensure that the software keyboard maintains its distance from the bottom even when it appears, adjustments are made using JavaScript -->
+<div
+	bind:clientHeight={toolbarHeight}
+	class="z-10 transition-[top] duration-150 {className}"
+	style:position={isOpenKeyboard ? 'absolute' : 'fixed'}
+	style:top={isOpenKeyboard ? toolbarTopOffset + 'px' : 'auto'}
+	style:bottom={isOpenKeyboard ? undefined : '0'}
+>
+	<div
+		class="flex rounded-t-lg border-x border-t border-stone-300 bg-stone-50/95 p-1 sm:mb-4 sm:rounded-b-lg sm:border-b"
+	>
+		<div class="relative">
+			<Dropdown
+				name="editor_control_heading_select"
+				openerClass="h-full rounded-md"
+				dropdownClass="bottom-14"
+			>
+				{#snippet opener()}
+					{@const SelectedBlockComponent = elementIndex[selectedBlockType.value]}
+					<div class="flex items-center">
+						<SelectedBlockComponent
+							width="44"
+							height="44"
+							class="-me-2 p-1"
+							aria-label="This line is {selectedBlockType.label}"
+						/>
+						<IconArrow width="32" height="32" />
+					</div>
+				{/snippet}
+				<ul>
+					{#each elementSelect as heading}
+						<li>
+							<button
+								type="button"
+								class="flex w-full items-center gap-2 rounded-md p-2 {selectedBlockType.value ===
+								heading.value
+									? 'bg-stone-300'
+									: 'hover:bg-stone-200'}"
+								onclick={() => dispatchBlockCommand(heading)}
+							>
+								{#if elementIndex[heading.value]}
+									{@const Component = elementIndex[heading.value]}
+									<Component width="28" height="28" />
+								{/if}
+								<p class="text-nowrap text-lg">{heading.label}</p>
+							</button>
+						</li>
+					{/each}
+				</ul>
+			</Dropdown>
+		</div>
+		{#if canSwitchTextFormat}
+			<button
+				type="button"
+				title="Bold"
+				class="rounded-md disabled:text-stone-400 {isBold ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+				onclick={() => dispatchTextCommand('bold')}
+			>
+				<IconFormatBold width="44" height="44" class="p-1" />
+			</button>
+			<button
+				type="button"
+				title="Italic"
+				class="rounded-md disabled:text-stone-400 {isItalic
+					? 'bg-stone-300'
+					: 'hover:bg-stone-200'}"
+				onclick={() => dispatchTextCommand('italic')}
+			>
+				<IconFormatItalic width="44" height="44" class="p-1" />
+			</button>
+			<button
+				type="button"
+				title="Strikethrough"
+				class="rounded-md disabled:text-stone-400 {isStrikethrough
+					? 'bg-stone-300'
+					: 'hover:bg-stone-200'}"
+				onclick={() => dispatchTextCommand('strikethrough')}
+			>
+				<IconFormatStrikethrough width="44" height="44" class="p-1" />
+			</button>
+			<button
+				type="button"
+				title="Code"
+				class="rounded-md disabled:text-stone-400 {isCode ? 'bg-stone-300' : 'hover:bg-stone-200'}"
+				onclick={() => dispatchTextCommand('code')}
+			>
+				<IconFormatCode width="44" height="44" class="p-1" />
+			</button>
+		{/if}
+		{#if isInCodeBlock}
+			<div class="relative">
+				<Dropdown
+					name="editor_control_code_lang_select"
+					openerClass="h-full rounded-md"
+					dropdownClass="bottom-14"
+				>
+					{#snippet opener()}
+						<div class="flex items-center pl-2 pr-1 leading-tight">
+							<div class="text-nowrap text-left">
+								<p class="text-stone-500">Language</p>
+								<p class="text-xl">{selectedLanguage.label}</p>
+							</div>
+							<IconArrow width="32" height="32" />
+						</div>
+					{/snippet}
+					<ul>
+						{#each codeLanguageSelect as language}
+							<li>
+								<button
+									type="button"
+									class="flex w-full items-center gap-2 text-nowrap rounded-md p-2 text-lg {selectedLanguage.value ===
+									language.value
+										? 'bg-stone-300'
+										: 'hover:bg-stone-200'}"
+									onclick={() => changeCodeLanguage(language)}
+								>
+									{language.label}
+								</button>
+							</li>
+						{/each}
+					</ul>
+				</Dropdown>
+			</div>
+		{/if}
+		<div class="relative ms-1 border-s-2 border-stone-300 ps-1">
+			<Dropdown
+				name="editor_control_insert"
+				openerClass="h-full rounded-md"
+				dropdownClass="bottom-14 end-0"
+			>
+				{#snippet opener()}
+					<IconAdd width="44" height="44" />
+				{/snippet}
+				<ul>
+					<li>
+						<button
+							type="button"
+							class="rounded-lg hover:bg-stone-200 focus:bg-stone-200"
+							onclick={insertDivider}
+						>
+							<NavLinkSmall name="Insert divider" className="text-nowrap">
+								<IconHorizontalLine width="28" height="28" />
+							</NavLinkSmall>
+						</button>
+					</li>
+					<li>
+						<Dialog
+							name={insertImageSelectDialogName}
+							title="Insert album image"
+							openerClass="rounded-lg"
+							dialogSizeClass="max-w-5xl"
+						>
+							{#snippet opener()}
+								<div class="flex items-center gap-2 px-3 py-2">
+									<IconImage width="28" height="28" />
+									<p class="text-nowrap text-lg">Insert image</p>
+								</div>
+							{/snippet}
+							<AlbumImageSelector onSelect={insertFromAlbum} />
+						</Dialog>
+					</li>
+				</ul>
+			</Dropdown>
+		</div>
+	</div>
+</div>

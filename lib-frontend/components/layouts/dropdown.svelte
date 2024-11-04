@@ -17,20 +17,28 @@
 		openerClass = '',
 		dropdownClass = ''
 	}: Props = $props();
+
+	const hideClass = [
+		'opacity-0 hover:opacity-100 focus-within:opacity-100 peer-focus/common_dropdown_open:opacity-100',
+		'pointer-events-none hover:pointer-events-auto focus-within:pointer-events-auto peer-focus/common_dropdown_open:pointer-events-auto'
+	].join(' ');
 </script>
 
-<div class="peer/common_dropdown_open">
-	<button type="button" class="inline-block {openerColorClass} {openerClass}" tabindex="0">
-		{@render opener()}
-	</button>
-</div>
+<button
+	type="button"
+	id="common_dropdown_open_{name}"
+	class="peer/common_dropdown_open inline-block {openerColorClass} {openerClass}"
+	tabindex="0"
+>
+	{@render opener()}
+</button>
 
 <!-- Dropdown -->
 <div
 	id="common_dropdown_{name}"
-	class="max-w-screen absolute z-40 mx-[999rem] flex max-h-dvh flex-col rounded-lg border border-stone-400 bg-white focus-within:mx-0 hover:mx-0 peer-has-[:focus-within]/common_dropdown_open:mx-0 {dropdownClass}"
+	class="max-w-screen absolute z-40 flex max-h-[calc(100dvh-6rem)] flex-col rounded-lg border border-stone-400 bg-white {hideClass} {dropdownClass}"
 >
-	<div class="flex-1 overflow-x-auto p-2">
+	<label for="common_dropdown_open_{name}" class="flex-1 overflow-x-auto p-2">
 		{@render children()}
-	</div>
+	</label>
 </div>

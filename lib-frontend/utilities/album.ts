@@ -1,10 +1,11 @@
 import type { SuperValidated } from 'sveltekit-superforms';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SelectItem } from '$lib/utilities/select';
+import type { AllowedToExtension } from '$lib-backend/utilities/infrastructure/image';
 
 export interface AlbumImageItem {
-	editForm: SuperValidated<Record<string, unknown>>;
 	id: string;
+	userId: string;
 	name: string;
 	alt: string;
 	languageInImage: AvailableLanguageTags | '';
@@ -12,7 +13,20 @@ export interface AlbumImageItem {
 	byteLength: number;
 	width: number;
 	height: number;
-	toExtension: string;
+	toExtension: AllowedToExtension;
+}
+
+export interface AlbumImageEditItem extends AlbumImageItem {
+	editForm: SuperValidated<Record<string, unknown>>;
+}
+
+export interface AlbumImageGetResult {
+	albumImages: AlbumImageItem[];
+	count: number;
+}
+
+export interface AlbumImageUploadResult {
+	fileResults: AlbumImageItem[];
 }
 
 export const albumImageSensitiveSelect: SelectItem[] = [

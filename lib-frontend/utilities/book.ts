@@ -59,6 +59,8 @@ export const bookPointSelect: SelectItemSingle[] = [
 	{ value: 2000, label: '2000' }
 ];
 
+export const bookCreateUrlParam = 'new';
+
 export function getBookCover(editCover: Partial<BookCover>): BookCover {
 	const defaultCover: BookCover = {
 		title: '',

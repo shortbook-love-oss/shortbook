@@ -120,7 +120,7 @@ export async function finalizeSign(
 	// Create auth-session
 	const sessionToken = crypto.randomUUID();
 	const after1Year = new Date();
-	after1Year.setDate(after1Year.getDate() + 1);
+	after1Year.setFullYear(after1Year.getFullYear() + 1);
 	const { userSession, dbError: dbSessionCreateError } = await dbUserSessionCreate({
 		sessionToken,
 		userId,

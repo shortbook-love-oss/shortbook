@@ -33,20 +33,25 @@ export function removeLanguageTagFromPath(pathname: string) {
 	return i18n.route(pathname);
 }
 
+export function getUrlObject(maybeUrl: string) {
+	try {
+		const object = new URL(maybeUrl);
+		return object;
+	} catch {
+		return false;
+	}
+}
+
 // Preventing access to unexpected origin.
 // "https://shortbook.life/de/write" → "https://shortbook.life/de/write"
 // "https://iamshortbook.writer/books" (safeOrigin: "https://iamshortbook.writer") → "https://iamshortbook.writer/books"
 // "https://evil.example/de/write" → "https://shortbook.life"
 // "invalidURL" → "https://shortbook.life"
-export function getSafetyUrl(url: string, safeOrigin: string) {
-	try {
-		const inputCallbackUrl = new URL(url);
-		if (inputCallbackUrl.origin === safeOrigin) {
-			return inputCallbackUrl;
-		} else {
-			return new URL(safeOrigin);
-		}
-	} catch {
+export function getSafetyUrl(maybeUrl: string, safeOrigin: string) {
+	const urlObject = getUrlObject(maybeUrl);
+	if (urlObject && urlObject.origin === safeOrigin) {
+		return urlObject;
+	} else {
 		return new URL(safeOrigin);
 	}
 }

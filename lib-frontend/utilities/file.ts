@@ -1,10 +1,12 @@
+import type { AllowedFromExtension } from '$lib-backend/utilities/infrastructure/image';
+
 export interface SelectedFile {
 	file: File;
 	dataUrl: string;
 	key: number;
 }
 
-export const imageMIMEextension: Record<string, string> = {
+export const imageMIMEextension: Record<string, AllowedFromExtension> = {
 	'image/png': 'png',
 	'image/jpeg': 'jpg',
 	'image/gif': 'gif',
@@ -37,4 +39,30 @@ export function getUnitByteLength(byteLength: number, decimalPoint: number) {
 	const unitAmountFixed = unitAmount.replace(`.${'0'.repeat(decimalPoint)}`, '');
 
 	return `${unitAmountFixed} ${sizeUnits[sizeUnitIndex]}`;
+}
+
+export async function uploadFiles<R extends Record<string, any>>(
+	actionUrl: string,
+	files: FileList,
+	uploadProp: string
+) {
+	const body = new FormData();
+	for (let i = 0; i < files.length; i++) {
+		body.append(uploadProp, files[i]);
+	}
+
+	const uploadResult = await fetch(actionUrl, {
+		method: 'POST',
+		headers: {
+			'user-agent': 'ShortBook Paid-Article Writing Platform'
+		},
+		body
+	})
+		.then(async (res) => {
+			const result = (await res.json()) as R;
+			return result;
+		})
+		.catch((error: Error) => error);
+
+	return uploadResult;
 }

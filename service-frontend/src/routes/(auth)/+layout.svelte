@@ -16,7 +16,7 @@
 		<div></div>
 	{/snippet}
 	{#snippet contents()}
-		<div class="flex min-h-full bg-gradient-to-b from-primary-50/40 to-primary-50">
+		<div class="flex flex-1 bg-gradient-to-b from-primary-50/40 to-primary-50">
 			<main
 				class="flex flex-1 flex-col items-center justify-center gap-6 bg-primary-700 p-4 lg:px-16"
 			>

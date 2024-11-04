@@ -23,7 +23,7 @@
 </script>
 
 <div
-	class="flex h-dvh w-dvw flex-col overflow-x-hidden font-sans tracking-wider text-stone-950 underline-offset-[0.15em]"
+	class="flex min-h-dvh w-dvw flex-col font-sans tracking-wider text-stone-950 underline-offset-[0.15em]"
 >
 	{#if alert}
 		{@render alert()}

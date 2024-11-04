@@ -32,20 +32,20 @@
 			{/if}
 		</div>
 	{/if}
-	<div class="relative min-h-48 break-all">
+	<div class="relative min-h-48">
 		<!-- "textarea" height is the same as inner content height -->
 		<textarea
 			{...restProps}
 			{name}
 			{required}
 			bind:value
-			class="overflow-none absolute start-0 top-0 block h-full w-full resize-none rounded-md border border-stone-700 px-4 py-2 disabled:bg-stone-100 disabled:text-stone-500 [&:user-invalid]:border-2 [&:user-invalid]:border-red-700 {errorMessages?.length
+			class="absolute start-0 top-0 block h-full w-full resize-none rounded-md border border-stone-700 px-4 py-2 placeholder:text-stone-400 disabled:bg-stone-100 disabled:text-stone-500 [&:user-invalid]:border-2 [&:user-invalid]:border-red-700 {errorMessages?.length
 				? 'border-2 border-red-700'
 				: 'border-stone-600'} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
 		></textarea>
 		<div
-			class="min-h-48 select-none whitespace-pre-wrap break-words rounded-md border px-4 py-2"
+			class="min-h-48 select-none whitespace-pre-wrap break-words rounded-md border px-4 py-2 [word-break:break-word] {inputClass}"
 			aria-hidden="true"
 			translate="no"
 		>

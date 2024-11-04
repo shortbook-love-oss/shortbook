@@ -3,6 +3,11 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
+	import {
+		albumImageAiSelect,
+		albumImageSensitiveSelect,
+		type AlbumImageEditItem
+	} from '$lib/utilities/album';
 	import { getUnitByteLength } from '$lib/utilities/file';
 	import { languageAndNotSelect } from '$lib/utilities/language';
 	import { schema } from '$lib/validation/schema/user/album/image-update';
@@ -12,10 +17,9 @@
 	import SubmitText from '$lib/components/modules/form/submit-text.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
-	import { albumImageAiSelect, albumImageSensitiveSelect, type AlbumImageItem } from './album';
 
 	type Props = {
-		imageData: AlbumImageItem;
+		imageData: AlbumImageEditItem;
 	};
 	let { imageData }: Props = $props();
 

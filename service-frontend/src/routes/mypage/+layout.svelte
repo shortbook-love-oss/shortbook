@@ -36,7 +36,7 @@
 				<Nav />
 			</nav>
 		</div>
-		<div class="mx-auto max-w-xl flex-1 sm:-mx-4 sm:overflow-x-hidden sm:px-4">
+		<div class="mx-auto max-w-xl flex-1 sm:-mx-4 sm:px-4">
 			{@render children()}
 		</div>
 	</div>
