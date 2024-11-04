@@ -5,6 +5,7 @@ import { setLanguageTagToPath } from '$lib/utilities/url';
 export const load = async ({ url, params }) => {
 	const { book, dbError } = await dbBookGet({
 		bookId: params.bookId,
+		revision: 0,
 		isIncludeDelete: true,
 		isIncludeDraft: true
 	});

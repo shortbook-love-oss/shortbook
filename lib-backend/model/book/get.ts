@@ -50,7 +50,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			include: {
 				revisions: {
 					where: {
-						revision: req.revision,
+						revision: req.revision ?? 0,
 						...whereCondDelete
 					},
 					include: {
