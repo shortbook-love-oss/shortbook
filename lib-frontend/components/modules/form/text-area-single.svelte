@@ -8,6 +8,7 @@
 		errorMessages?: string[] | ValidationErrors<Record<string, unknown>>;
 		className?: string;
 		inputClass?: string;
+		onInput?: (value: string) => void;
 		[key: string]: unknown;
 	};
 	let {
@@ -17,8 +18,20 @@
 		errorMessages,
 		className = '',
 		inputClass = '',
+		onInput,
 		...restProps
 	}: Props = $props();
+
+	type InputTextAreaSingleEvent<T extends Event> = T & {
+		currentTarget: EventTarget & HTMLTextAreaElement;
+	};
+
+	function onInputLocal(event: InputTextAreaSingleEvent<Event>) {
+		if (event instanceof InputEvent) {
+			removeBreak(event);
+		}
+		onInput?.(value);
+	}
 
 	function removeBreak(event: InputEvent) {
 		if (!event.isComposing) {
@@ -39,7 +52,7 @@
 				? 'border-b-2 border-red-700'
 				: ''} {inputClass}"
 			aria-invalid={errorMessages?.length ? true : undefined}
-			oninput={(e) => removeBreak(e as unknown as InputEvent)}
+			oninput={(e) => onInputLocal(e)}
 		></textarea>
 		<div
 			class="select-none whitespace-pre-wrap break-words [word-break:break-word] {inputClass}"
