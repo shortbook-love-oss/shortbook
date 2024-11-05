@@ -52,13 +52,17 @@ export const load = async ({ url }) => {
 		return error(500, { message: 'Invalid URL parameter of book-info' });
 	}
 
-	const { book, dbError: dbBookGetError } = await dbBookGet({
+	const {
+		book,
+		bookRevision,
+		dbError: dbBookGetError
+	} = await dbBookGet({
 		bookId: bookPaymentInfo.bookId,
 		revision: 0,
 		isIncludeDraft: true,
 		isIncludeDelete: true
 	});
-	if (!book?.user || dbBookGetError) {
+	if (!book?.user || !bookRevision || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 
@@ -81,7 +85,7 @@ export const load = async ({ url }) => {
 		return error(500, { message: dbBookBuyGetError.message });
 	}
 
-	if (book.status === 0 || book.deleted_at != null || bookBuy) {
+	if (bookRevision.status === 0 || book.deleted_at != null || bookBuy) {
 		// If the book is deleted or draft, return as point
 		// If already bought same book, return as point (this occurs due to multiple tab payments)
 		const { dbError } = await dbUserPointCreate({

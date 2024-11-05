@@ -11,8 +11,7 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 
 	const bookBeforeEdit = await prisma.books.findUnique({
 		select: {
-			user_id: true,
-			published_at: true
+			user_id: true
 		},
 		where: {
 			id: req.bookId,
@@ -27,11 +26,6 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 		return { dbError };
 	}
 
-	let publishedAt = new Date();
-	if (req.status === 0) {
-		publishedAt = bookBeforeEdit.published_at;
-	}
-
 	const book = await prisma
 		.$transaction(async (tx) => {
 			const book = await tx.books.update({
@@ -41,9 +35,7 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				},
 				data: {
 					url_slug: req.urlSlug,
-					status: req.status,
-					buy_point: req.buyPoint,
-					published_at: publishedAt
+					buy_point: req.buyPoint
 				}
 			});
 			if (!book) {
@@ -59,9 +51,9 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 						book_id: book.id,
 						deleted_at: null
 					},
-					_max: { revision: true }
+					_max: { number: true }
 				});
-				const previosRevisionNo = previosRevision._max.revision;
+				const previosRevisionNo = previosRevision._max.number;
 				if (previosRevisionNo == null) {
 					dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
 					throw dbError;
@@ -69,21 +61,22 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				// 2. Give the latest revision an incremented number and save it as a past revision
 				await tx.book_revisions.update({
 					where: {
-						book_id_revision: {
+						book_id_number: {
 							book_id: book.id,
-							revision: 0
+							number: 0
 						}
 					},
 					data: {
 						book_id: book.id,
-						revision: previosRevisionNo + 1
+						number: previosRevisionNo + 1
 					}
 				});
 				// 3. Create new revision as latest revision
 				const newRevision = await tx.book_revisions.create({
 					data: {
 						book_id: book.id,
-						revision: 0
+						number: 0,
+						status: req.status
 					}
 				});
 				if (!newRevision) {
@@ -94,9 +87,9 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 			} else {
 				const revision = await tx.book_revisions.findUnique({
 					where: {
-						book_id_revision: {
+						book_id_number: {
 							book_id: book.id,
-							revision: req.revision
+							number: req.revision
 						},
 						deleted_at: null
 					},

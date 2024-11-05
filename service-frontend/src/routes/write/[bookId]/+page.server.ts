@@ -19,7 +19,7 @@ export const load = async ({ locals, params }) => {
 	let prologue = initEditorState;
 	let content = initEditorState;
 	let bookId = '';
-	let bookStatus = 0; // 0: Draft 1: Public 2: Fan club only
+	let bookStatus = 0;
 	let updatedAt: Date | null = null;
 	let initTitle = '';
 	let initUrlSlug = '';
@@ -42,7 +42,7 @@ export const load = async ({ locals, params }) => {
 		content = JSON.parse(bookLang.content) as EditorState;
 
 		bookId = book.id;
-		bookStatus = book.status;
+		bookStatus = bookRevision.status;
 		updatedAt = book.updated_at;
 		initTitle = bookLang.title;
 		initUrlSlug = book.url_slug;

@@ -66,7 +66,7 @@ export const load = async ({ locals, params }) => {
 
 	const initTitle = bookLang.title;
 	const initSubtitle = bookLang.subtitle;
-	const status = book?.status ?? 0;
+	const status = bookRevision.status;
 
 	return {
 		form,

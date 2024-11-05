@@ -213,10 +213,8 @@ model books {
   id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
   url_slug                String              @db.VarChar(100) // Length 1 - 100
-  status                  Int                 @db.SmallInt // 0: Draft 1: Public 2: Fan club only
   buy_point               Int
   native_language         String              @db.VarChar(5)
-  published_at            DateTime            @default(now())
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
@@ -232,7 +230,8 @@ model book_revisions {
 
   id                      String              @id @db.VarChar(30) @default(cuid())
   book_id                 String
-  revision                Int                 // 0: Latest 1~: Previos revision
+  number                  Int                 // 0: Latest 1~ Previos revision
+  status                  Int                 @db.SmallInt // 0: Draft 1: Public
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
@@ -240,7 +239,7 @@ model book_revisions {
   cover                   book_covers?
   contents                book_contents[]
 
-  @@unique([book_id, revision])
+  @@unique([book_id, number])
 }
 
 model book_covers {

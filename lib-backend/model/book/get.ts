@@ -23,11 +23,11 @@ type DbBookGetRequest = IdExclusiveProps & {
 export async function dbBookGet(req: DbBookGetRequest) {
 	let dbError: Error | undefined;
 
-	const whereByCond: Prisma.booksWhereInput = {};
+	const revisionWhereByCond: Prisma.book_revisionsWhereInput = {};
 	if (req.isIncludeDraft) {
-		whereByCond.status = { in: [0, 1] };
+		revisionWhereByCond.status = { in: [0, 1] };
 	} else {
-		whereByCond.status = { in: [1] };
+		revisionWhereByCond.status = { in: [1] };
 	}
 
 	const whereCondDelete: { deleted_at?: null } = {};
@@ -40,7 +40,6 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			where: {
 				id: req.bookId,
 				url_slug: req.bookUrlSlug,
-				...whereByCond,
 				...whereCondDelete,
 				user: {
 					key_handle: req.userKeyHandle,
@@ -50,7 +49,8 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			include: {
 				revisions: {
 					where: {
-						revision: req.revision ?? 0,
+						number: req.revision ?? 0,
+						...revisionWhereByCond,
 						...whereCondDelete
 					},
 					include: {

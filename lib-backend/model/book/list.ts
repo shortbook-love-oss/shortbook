@@ -18,10 +18,11 @@ export async function dbBookList(req: DbBookListRequest) {
 	if (req.bookIds?.length) {
 		whereByCond.id = { in: req.bookIds };
 	}
+	const revisionWhereByCond: Prisma.book_revisionsWhereInput = {};
 	if (req.isIncludeDraft) {
-		whereByCond.status = { in: [0, 1] };
+		revisionWhereByCond.status = { in: [0, 1] };
 	} else {
-		whereByCond.status = { in: [1] };
+		revisionWhereByCond.status = { in: [1] };
 	}
 
 	const whereCondDelete: { deleted_at?: null } = {};
@@ -39,7 +40,8 @@ export async function dbBookList(req: DbBookListRequest) {
 			include: {
 				revisions: {
 					where: {
-						revision: 0,
+						number: 0,
+						...revisionWhereByCond,
 						...whereCondDelete
 					},
 					include: {

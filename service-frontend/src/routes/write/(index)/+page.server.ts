@@ -50,8 +50,7 @@ export const load = async ({ url, locals }) => {
 			...bookCover,
 			id: book.id,
 			userId: book.user_id,
-			status: book.status,
-			publishedAt: book.published_at,
+			status: bookRevision.status,
 			updatedAt: book.updated_at
 		});
 	}

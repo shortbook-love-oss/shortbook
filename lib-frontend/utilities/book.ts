@@ -23,7 +23,6 @@ export interface MyBookItem extends BookCover {
 	id: string;
 	userId: string;
 	status: number;
-	publishedAt: Date;
 	updatedAt: Date;
 }
 

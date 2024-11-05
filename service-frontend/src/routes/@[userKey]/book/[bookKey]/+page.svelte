@@ -13,7 +13,7 @@
 
 	let { data } = $props();
 
-	const publishedAt = toLocaleDate(data.bookDetail.publishedAt, data.requestLang);
+	const updatedAt = toLocaleDate(data.bookDetail.updatedAt, data.requestLang);
 </script>
 
 <svelte:head>
@@ -77,8 +77,8 @@
 				</ProfileCard>
 			</div>
 			<div class="flex items-center gap-4">
-				<time datetime={data.bookDetail.publishedAt.toISOString()} class="text-stone-600"
-					>{publishedAt}</time
+				<time datetime={data.bookDetail.updatedAt.toISOString()} class="text-stone-600"
+					>{updatedAt}</time
 				>
 				{#if data.isOwn && !data.bookDetail.isBookDeleted}
 					<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">

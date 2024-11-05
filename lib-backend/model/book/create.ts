@@ -2,7 +2,7 @@ import prisma from '$lib-backend/database/connect';
 
 export interface DbBookCreateRequest {
 	userId: string;
-	status: number; // 0: Draft 1: Public 2: Fan club only
+	status: number; // 0: Draft 1: Public
 	targetLanguage: string;
 	title: string;
 	subtitle: string;
@@ -33,12 +33,12 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 				data: {
 					user_id: req.userId,
 					url_slug: req.urlSlug,
-					status: req.status,
 					buy_point: req.buyPoint,
 					native_language: req.targetLanguage,
 					revisions: {
 						create: {
-							revision: 0,
+							number: 0,
+							status: req.status,
 							cover: {
 								create: {
 									base_color_start: req.baseColorStart,

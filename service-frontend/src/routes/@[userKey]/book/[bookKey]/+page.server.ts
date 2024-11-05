@@ -82,7 +82,7 @@ export const load = async ({ url, locals, params }) => {
 		userPoint = currentPoint;
 	}
 
-	if (book.status === 0 && !isOwn) {
+	if (bookRevision.status === 0 && !isOwn) {
 		return error(404, { message: 'Not found' });
 	}
 	if (book.deleted_at != null && !isBoughtBook && !isOwn) {
@@ -181,11 +181,10 @@ export const load = async ({ url, locals, params }) => {
 		...bookCover,
 		id: book.id,
 		userId: book.user_id,
-		status: book.status,
+		status: bookRevision.status,
 		buyPoint,
 		title: bookLang.title,
 		subtitle: bookLang.subtitle,
-		publishedAt: book.published_at,
 		updatedAt: book.updated_at,
 		bookUrlSlug: book.url_slug,
 		userKeyHandle: book.user.key_handle,
