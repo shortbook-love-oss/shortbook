@@ -4,7 +4,6 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import IconDelete from '~icons/mdi/trash-can-outline';
 	import { page } from '$app/stores';
-	import { initEditorState, type EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/book/update';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
@@ -25,8 +24,6 @@
 
 	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
-
-	let outputStateJson = $state<EditorState>(initEditorState);
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
@@ -84,21 +81,6 @@
 						</h1>
 					</div>
 					<div class="w-full max-w-xl">
-						<TextField
-							bind:value={$form.title}
-							name="title"
-							required={true}
-							label="Title"
-							errorMessages={$errors.title}
-							className="mb-8"
-						/>
-						<TextField
-							bind:value={$form.subtitle}
-							name="subtitle"
-							label="Subtitle"
-							errorMessages={$errors.subtitle}
-							className="mb-8"
-						/>
 						<Select
 							bind:value={$form.targetLanguage as string}
 							name="targetLanguage"
@@ -107,21 +89,6 @@
 							label="Native language"
 							errorMessages={$errors.targetLanguage}
 							className="mb-8 max-w-72"
-						/>
-						<TextArea
-							bind:value={$form.prologue}
-							name="prologue"
-							label="Prologue"
-							errorMessages={$errors.prologue}
-							className="mb-8"
-						/>
-						<TextArea
-							bind:value={$form.content}
-							name="content"
-							required={true}
-							label="Main content"
-							errorMessages={$errors.content}
-							className="mb-8"
 						/>
 						<TextArea
 							bind:value={$form.salesMessage}
@@ -156,6 +123,8 @@
 						<div class="w-fit lg:-mx-4 lg:-mt-3">
 							<BookCoverEdit
 								book={$form}
+								title={data.initTitle}
+								subtitle={data.initSubtitle}
 								penName={$page.data.signInUser.penName}
 								errors={$errors}
 								oninput={applyChildChange}

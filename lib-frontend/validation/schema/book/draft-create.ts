@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 
 export const schema = z.object({
-	title: z.string().max(200).refine(validateOnlyVisibleChar, {
+	title: z.string().min(1).max(200).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),
 	subtitle: z.string().max(200).refine(validateOnlyVisibleChar, {

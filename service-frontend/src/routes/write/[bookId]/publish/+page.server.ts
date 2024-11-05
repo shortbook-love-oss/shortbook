@@ -4,7 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { AvailableLanguageTag } from '$i18n/output/runtime';
 import { getBookCover } from '$lib/utilities/book';
 import { languageSelect } from '$lib/utilities/language';
-import { setLanguageTagToPath } from '$lib/utilities/url';
+import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
 import { editLoad } from '$lib-backend/functions/service/write/edit-load';
@@ -28,16 +28,19 @@ export const load = async ({ locals, params }) => {
 		revision: 0,
 		isIncludeDraft: true
 	});
-	if (!book || !bookRevision?.cover || dbError) {
+	if (dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const bookLang = bookRevision?.contents[0];
+	if (!book || !bookRevision?.cover || bookRevision.contents.length === 0) {
+		return error(500, { message: `Can't find book. Book ID=${params.bookId}` });
+	}
+	const bookLang = bookRevision.contents[0];
 
 	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
 	const bookCover = getBookCover({
-		title: bookLang?.title ?? '',
-		subtitle: bookLang?.subtitle ?? '',
+		title: bookLang.title,
+		subtitle: bookLang.subtitle,
 		baseColorStart: bookRevision.cover.base_color_start,
 		baseColorEnd: bookRevision.cover.base_color_end,
 		baseColorDirection: bookRevision.cover.base_color_direction,
@@ -52,23 +55,25 @@ export const load = async ({ locals, params }) => {
 	});
 	for (const coverProp in bookCover) {
 		const prop = coverProp as keyof typeof bookCover;
-		form.data[prop] = bookCover[prop] as never;
+		if (prop !== 'title' && prop !== 'subtitle') {
+			form.data[prop] = bookCover[prop] as never;
+		}
 	}
 	form.data.targetLanguage = (bookLang?.target_language ?? '') as AvailableLanguageTag;
-	form.data.prologue = bookLang?.prologue ?? '';
-	form.data.content = bookLang?.content ?? '';
 	form.data.salesMessage = bookLang?.sales_message ?? '';
 	form.data.urlSlug = book.url_slug;
 	form.data.buyPoint = book.buy_point;
 
+	const initTitle = bookLang.title;
+	const initSubtitle = bookLang.subtitle;
 	const status = book?.status ?? 0;
-	const initTitle = form.data.title;
 
 	return {
 		form,
 		langTags,
-		status,
 		initTitle,
+		initSubtitle,
+		status,
 		userCurrencyCode,
 		currencyRateIndex
 	};
@@ -80,6 +85,7 @@ export const actions = {
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
+		const requestLang = getLanguageTagFromUrl(url);
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
@@ -95,12 +101,29 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
+			bookId: params.bookId,
+			userId: signInUser.id,
+			revision: 0,
+			isIncludeDraft: true
+		});
+		if (!bookRevision || dbBookGetError) {
+			return error(500, { message: dbBookGetError?.message ?? '' });
+		}
+		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+		if (!bookLang) {
+			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
+		}
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			revision: 0,
 			userId: signInUser.id,
 			status: 1,
-			...form.data
+			...form.data,
+			title: bookLang.title,
+			subtitle: bookLang.subtitle,
+			prologue: bookLang.prologue,
+			content: bookLang.content
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
@@ -114,6 +137,7 @@ export const actions = {
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
+		const requestLang = getLanguageTagFromUrl(url);
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
@@ -139,12 +163,29 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
+			bookId: params.bookId,
+			userId: signInUser.id,
+			revision: 0,
+			isIncludeDraft: true
+		});
+		if (!bookRevision || dbBookGetError) {
+			return error(500, { message: dbBookGetError?.message ?? '' });
+		}
+		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+		if (!bookLang) {
+			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
+		}
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			revision: 0,
 			userId: signInUser.id,
 			status: 0,
-			...form.data
+			...form.data,
+			title: bookLang.title,
+			subtitle: bookLang.subtitle,
+			prologue: bookLang.prologue,
+			content: bookLang.content
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });

@@ -16,14 +16,18 @@
 
 	type Props = {
 		oninput: Function;
-		book: BookCoverProp;
+		book: Omit<BookCoverProp, 'title' | 'subtitle'>;
+		title: string;
+		subtitle: string;
 		penName: string;
 		errors?: Errors;
 		className?: string;
 	};
-	let { oninput, book, penName, errors = {}, className = '' }: Props = $props();
+	let { oninput, book, title, subtitle, penName, errors = {}, className = '' }: Props = $props();
 
 	let previewWidth = $state(256);
+
+	let bookCover = $derived<BookCoverProp>({ ...book, title, subtitle });
 
 	function applyChanges() {
 		requestAnimationFrame(() => {
@@ -36,7 +40,7 @@
 	{#snippet opener()}
 		<div class="flex flex-col items-center gap-4 p-4 sm:flex-row lg:flex-col {className}">
 			<div class="mx-auto" aria-hidden="true">
-				<BookCover {book} {penName} width={160} />
+				<BookCover book={bookCover} {penName} width={160} />
 			</div>
 			<div class="mx-auto w-fit rounded-lg border-2 border-primary-700">
 				<NavLinkSmall name="Edit cover">
@@ -52,7 +56,7 @@
 			bind:clientWidth={previewWidth}
 			aria-hidden="true"
 		>
-			<BookCover {book} {penName} width={previewWidth} />
+			<BookCover book={bookCover} {penName} width={previewWidth} />
 		</div>
 		<div>
 			<!-- Background -->
