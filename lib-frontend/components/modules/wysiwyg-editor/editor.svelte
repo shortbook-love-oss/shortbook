@@ -1,23 +1,18 @@
 <script lang="ts">
-	import { CodeHighlightNode, CodeNode, registerCodeHighlighting } from '@lexical/code';
+	import { registerCodeHighlighting } from '@lexical/code';
 	import { registerDragonSupport } from '@lexical/dragon';
 	import { createEmptyHistoryState, registerHistory } from '@lexical/history';
-	import { AutoLinkNode, LinkNode } from '@lexical/link';
-	import { ListItemNode, ListNode } from '@lexical/list';
-	import { HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
+	import { registerRichText } from '@lexical/rich-text';
 	import { mergeRegister } from '@lexical/utils';
-	import { createEditor, type CreateEditorArgs } from 'lexical';
+	import { createEditor } from 'lexical';
 	import { onMount } from 'svelte';
-	import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
-	import { ImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
-	import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 	import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
 	import { registerImageUploaderPlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/plugin';
-	import { DividerNode } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
 	import { registerDividerBlock } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
 	import { registerDecoratorNodeBase } from '$lib/components/modules/wysiwyg-editor/blocks/decorator-node-base';
 	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import {
+		initEditorConfig,
 		lastActiveEditor,
 		type EditorState
 	} from '$lib/components/modules/wysiwyg-editor/editor';
@@ -37,27 +32,7 @@
 	let editorRootElem = $state<HTMLElement | null>(null);
 	let isActive = $state(false);
 
-	const initialConfig: CreateEditorArgs = {
-		namespace,
-		nodes: [
-			CodeHighlightNode,
-			CodeNode,
-			HeadingNode,
-			LinkNode,
-			AutoLinkNode,
-			ListNode,
-			ListItemNode,
-			QuoteNode,
-			ImageNode,
-			ImageUploadingNode,
-			DividerNode
-		],
-		onError: (error: Error) => {
-			throw error;
-		},
-		theme
-	};
-	const editor = createEditor(initialConfig);
+	const editor = createEditor({ ...initEditorConfig, namespace });
 
 	onMount(() => {
 		editor.setRootElement(editorRootElem);

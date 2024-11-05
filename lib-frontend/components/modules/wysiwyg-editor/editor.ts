@@ -1,6 +1,12 @@
-import type { SerializedCodeNode } from '@lexical/code';
-import type { SerializedLinkNode } from '@lexical/link';
-import type { SerializedListItemNode, SerializedListNode } from '@lexical/list';
+import { CodeHighlightNode, CodeNode, type SerializedCodeNode } from '@lexical/code';
+import { AutoLinkNode, LinkNode, type SerializedLinkNode } from '@lexical/link';
+import {
+	ListItemNode,
+	ListNode,
+	type SerializedListItemNode,
+	type SerializedListNode
+} from '@lexical/list';
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import {
 	$isHeadingNode,
 	type SerializedHeadingNode,
@@ -18,6 +24,7 @@ import {
 	$setSelection,
 	DecoratorNode,
 	ElementNode,
+	type CreateEditorArgs,
 	type LexicalNode,
 	type NodeKey,
 	type RangeSelection,
@@ -27,9 +34,19 @@ import {
 	type SerializedTextNode
 } from 'lexical';
 import { writable } from 'svelte/store';
-import type { SerializedImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
-import type { SerializedImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
-import type { SerializedDividerNode } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
+import {
+	ImageNode,
+	type SerializedImageNode
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
+import {
+	ImageUploadingNode,
+	type SerializedImageUploadingNode
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
+import {
+	DividerNode,
+	type SerializedDividerNode
+} from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
+import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
 import type { SelectItemSingle } from '$lib/utilities/select';
 import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
@@ -54,6 +71,26 @@ export type EditorState = SerializedEditorState<
 export const editorImageMaxWidth: (typeof allowedSize)[number] = 768;
 
 export const lastActiveEditor = writable('');
+
+export const initEditorConfig: CreateEditorArgs = {
+	nodes: [
+		CodeHighlightNode,
+		CodeNode,
+		HeadingNode,
+		LinkNode,
+		AutoLinkNode,
+		ListNode,
+		ListItemNode,
+		QuoteNode,
+		ImageNode,
+		ImageUploadingNode,
+		DividerNode
+	],
+	onError: (error: Error) => {
+		throw error;
+	},
+	theme
+};
 
 export const initEditorState: EditorState = {
 	root: {
