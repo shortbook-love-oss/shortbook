@@ -114,7 +114,6 @@ export const actions = {
 		}
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
-			revision: 0,
 			userId: signInUser.id,
 			status: 1,
 			...form.data,
@@ -175,7 +174,6 @@ export const actions = {
 		}
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
-			revision: 0,
 			userId: signInUser.id,
 			status: 0,
 			...form.data,

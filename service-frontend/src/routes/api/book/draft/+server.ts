@@ -65,7 +65,6 @@ export async function PUT({ request, url, locals }) {
 	const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 		...getBookCover({}),
 		bookId: form.data.bookId,
-		revision: 0,
 		userId: signInUser.id,
 		status: 0,
 		targetLanguage: requestLang,

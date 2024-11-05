@@ -3,7 +3,6 @@ import type { DbBookCreateRequest } from '$lib-backend/model/book/create';
 
 export interface DbBookUpdateRequest extends DbBookCreateRequest {
 	bookId: string;
-	revision: number;
 }
 
 export async function dbBookUpdate(req: DbBookUpdateRequest) {
@@ -43,60 +42,47 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				throw dbError;
 			}
 
-			let revisionId = '';
-			if (!Number.isFinite(req.revision)) {
-				// 1. Get maximum revison number of the book
-				const previosRevision = await tx.book_revisions.aggregate({
-					where: {
-						book_id: book.id,
-						deleted_at: null
-					},
-					_max: { number: true }
-				});
-				const previosRevisionNo = previosRevision._max.number;
-				if (previosRevisionNo == null) {
-					dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
-					throw dbError;
+			const latestRevision = await tx.book_revisions.findFirst({
+				where: {
+					book_id: book.id,
+					deleted_at: null
+				},
+				orderBy: {
+					number: 'desc'
+				},
+				take: 1,
+				select: {
+					id: true,
+					number: true,
+					status: true
 				}
-				// 2. Create new latest revision
+			});
+			if (latestRevision == null) {
+				dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
+				throw dbError;
+			}
+
+			let revisionId = latestRevision.id;
+			if (latestRevision.status !== 0) {
+				// If the book isn't "draft", create new revision
 				const newRevision = await tx.book_revisions.create({
 					data: {
 						book_id: book.id,
-						number: previosRevisionNo + 1,
+						number: latestRevision.number + 1,
 						status: req.status
 					}
 				});
 				if (!newRevision) {
-					dbError ??= new Error(`Can't create book revision. Book ID=${req.bookId}`);
+					dbError ??= new Error(`Can't create a new revision. Book ID=${req.bookId}`);
 					throw dbError;
 				}
 				revisionId = newRevision.id;
-			} else {
-				const revision = await tx.book_revisions.findUnique({
-					where: {
-						book_id_number: {
-							book_id: book.id,
-							number: req.revision
-						},
-						deleted_at: null
-					},
-					select: {
-						id: true,
-						cover: {
-							select: { id: true }
-						},
-						contents: {
-							select: { id: true }
-						}
-					}
+			} else if (req.status !== latestRevision.status) {
+				// If the book is "draft", update status of latest revision
+				await tx.book_revisions.update({
+					where: { id: latestRevision.id },
+					data: { status: req.status }
 				});
-				if (!revision || !revision.cover || revision.contents.length === 0) {
-					dbError ??= new Error(
-						`Can't find book revision. Book ID=${req.bookId}, Revision=${req.revision}`
-					);
-					throw dbError;
-				}
-				revisionId = revision.id;
 			}
 
 			const bookCoverData = {

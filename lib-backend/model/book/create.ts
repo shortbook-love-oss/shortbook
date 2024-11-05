@@ -37,7 +37,7 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 					native_language: req.targetLanguage,
 					revisions: {
 						create: {
-							number: 0,
+							number: 1,
 							status: req.status,
 							cover: {
 								create: {

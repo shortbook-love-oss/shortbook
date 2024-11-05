@@ -230,7 +230,7 @@ model book_revisions {
 
   id                      String              @id @db.VarChar(30) @default(cuid())
   book_id                 String
-  number                  Int                 // 0: Latest 1~ Previos revision
+  number                  Int
   status                  Int                 @db.SmallInt // 0: Draft 1: Public
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
