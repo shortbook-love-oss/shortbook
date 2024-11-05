@@ -2,11 +2,13 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
+	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import IconDelete from '~icons/mdi/trash-can-outline';
 	import { page } from '$app/stores';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/book/update';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
+	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
@@ -56,11 +58,22 @@
 </svelte:head>
 
 <LayoutRule>
-	{#snippet header()}{/snippet}
+	{#snippet header()}
+		<HeaderArea>
+			<a
+				href="/write/{$page.params.bookId}"
+				class="flex shrink-0 items-center gap-2 rounded-ee-[0.4375rem] p-3 hover:bg-stone-200 focus:bg-stone-200"
+				title="Back to my articles list"
+			>
+				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
+				<p class="text-lg leading-none">Back to edit</p>
+			</a>
+		</HeaderArea>
+	{/snippet}
 
 	<!-- Edit area -->
 	{#snippet contents()}
-		<div class="py-12">
+		<div class="pb-24 pt-16">
 			<Form
 				method="POST"
 				action="{$page.url.pathname}?/update"

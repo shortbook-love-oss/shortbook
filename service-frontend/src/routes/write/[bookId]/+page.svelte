@@ -1,14 +1,19 @@
 <script lang="ts">
+	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { BookDraftUpdateResult } from '$lib/utilities/book';
+	import { toLocaleDatetime } from '$lib/utilities/date';
+	import { getLanguageTagFromUrl } from '$lib/utilities/url';
+	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import TextAreaSingle from '$lib/components/modules/form/text-area-single.svelte';
 	import Editor from '$lib/components/modules/wysiwyg-editor/editor.svelte';
-	import EditorHeader from '$lib/components/service/write/editor-header.svelte';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
 
 	let { data } = $props();
+
+	const requestLang = getLanguageTagFromUrl($page.url);
 
 	let title = $state(data.form.data.title);
 	let subtitle = $state(data.form.data.subtitle);
@@ -19,6 +24,19 @@
 
 	let initTitle = $state(data.initTitle);
 	let isAutoSaved = $state(false);
+
+	const savedLabel = $derived.by(() => {
+		const datetime = toLocaleDatetime(data.updatedAt, requestLang);
+		if (data.updatedAt) {
+			if (isAutoSaved) {
+				return `Auto saved at ${datetime}`;
+			} else {
+				return `Last edited at ${datetime}`;
+			}
+		} else {
+			return undefined;
+		}
+	});
 
 	let autoSaveTimeout = $state(0);
 	function autoSave() {
@@ -77,16 +95,40 @@
 
 <LayoutRule>
 	{#snippet header()}
-		<EditorHeader
-			bookStatus={data.bookStatus}
-			lastSaved={data.updatedAt}
-			{isAutoSaved}
-			onSave={finish}
-		/>
+		<HeaderArea>
+			<a
+				href="/write"
+				class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200"
+				title="Back to my articles list"
+			>
+				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
+			</a>
+			<div class="min-w-20 px-1 leading-tight">
+				<p class="text-stone-700">
+					{#if data.bookStatus === 0}
+						Draft
+					{:else}
+						Published
+					{/if}
+				</p>
+				<p class="text-stone-500" title={savedLabel}>
+					{#if isAutoSaved}
+						Saved
+					{:else}
+						Auto save
+					{/if}
+				</p>
+			</div>
+			<button
+				type="button"
+				class="mx-1.5 rounded-md bg-primary-200 px-2 py-1 text-lg hover:bg-primary-700 hover:text-white focus:bg-primary-700 focus:text-white"
+				onclick={finish}>Publish</button
+			>
+		</HeaderArea>
 	{/snippet}
 	{#snippet contents()}
 		<div class="flex flex-col items-center">
-			<div class="flex min-h-dvh w-full max-w-[640px] flex-1 flex-col px-4 pb-20 pt-16 sm:pb-24">
+			<div class="flex min-h-dvh w-full max-w-[640px] flex-1 flex-col px-4 pb-24 pt-16">
 				<TextAreaSingle
 					bind:value={title}
 					name="title"
