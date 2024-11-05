@@ -40,10 +40,13 @@ export async function dbBookList(req: DbBookListRequest) {
 			include: {
 				revisions: {
 					where: {
-						number: 0,
 						...revisionWhereByCond,
 						...whereCondDelete
 					},
+					orderBy: {
+						number: 'desc'
+					},
+					take: 1,
 					include: {
 						cover: {
 							where: { ...whereCondDelete }

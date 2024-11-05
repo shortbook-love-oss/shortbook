@@ -32,7 +32,6 @@ export const load = async ({ url, locals, params }) => {
 	} = await dbBookGet({
 		bookUrlSlug: params.bookKey,
 		userKeyHandle: params.userKey,
-		revision: 0,
 		isIncludeDraft: true,
 		isIncludeDelete: true
 	});

@@ -25,7 +25,6 @@ export const load = async ({ locals, params }) => {
 	const { book, bookRevision, dbError } = await dbBookGet({
 		bookId: params.bookId,
 		userId: signInUser.id,
-		revision: 0,
 		isIncludeDraft: true
 	});
 	if (dbError) {
@@ -104,7 +103,6 @@ export const actions = {
 		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
 			bookId: params.bookId,
 			userId: signInUser.id,
-			revision: 0,
 			isIncludeDraft: true
 		});
 		if (!bookRevision || dbBookGetError) {
@@ -166,7 +164,6 @@ export const actions = {
 		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
 			bookId: params.bookId,
 			userId: signInUser.id,
-			revision: 0,
 			isIncludeDraft: true
 		});
 		if (!bookRevision || dbBookGetError) {

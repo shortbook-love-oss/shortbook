@@ -58,24 +58,11 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 					dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
 					throw dbError;
 				}
-				// 2. Give the latest revision an incremented number and save it as a past revision
-				await tx.book_revisions.update({
-					where: {
-						book_id_number: {
-							book_id: book.id,
-							number: 0
-						}
-					},
-					data: {
-						book_id: book.id,
-						number: previosRevisionNo + 1
-					}
-				});
-				// 3. Create new revision as latest revision
+				// 2. Create new latest revision
 				const newRevision = await tx.book_revisions.create({
 					data: {
 						book_id: book.id,
-						number: 0,
+						number: previosRevisionNo + 1,
 						status: req.status
 					}
 				});

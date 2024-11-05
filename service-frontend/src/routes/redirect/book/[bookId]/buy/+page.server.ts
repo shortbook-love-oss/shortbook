@@ -37,10 +37,7 @@ export const load = async ({ url, params, locals }) => {
 		return error(500, { message: dbUserPointError?.message ?? '' });
 	}
 
-	const { book, dbError: dbBookGetError } = await dbBookGet({
-		bookId,
-		revision: 0
-	});
+	const { book, dbError: dbBookGetError } = await dbBookGet({ bookId });
 	if (!book?.user || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
