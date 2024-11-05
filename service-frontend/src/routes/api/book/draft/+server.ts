@@ -7,6 +7,7 @@ import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema as createSchema } from '$lib/validation/schema/book/draft-create';
 import { schema as updateSchema } from '$lib/validation/schema/book/draft-update';
 import { dbBookCreate } from '$lib-backend/model/book/create';
+import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 
 export async function POST({ request, url, locals }) {
@@ -41,8 +42,7 @@ export async function POST({ request, url, locals }) {
 	}
 
 	const responseData: BookDraftUpdateResult = {
-		bookId: book.id,
-		urlSlug
+		bookId: book.id
 	};
 	const response = new Response(JSON.stringify(responseData));
 	response.headers.set('content-type', 'application/json');
@@ -62,9 +62,25 @@ export async function PUT({ request, url, locals }) {
 		return error(400, { message: `Bad request. ${errorReasons ?? ''}` });
 	}
 
-	const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
-		...getBookCover({}),
+	const {
+		book: currentBook,
+		bookRevision,
+		dbError: dbBookGetError
+	} = await dbBookGet({
 		bookId: form.data.bookId,
+		userId: signInUser.id,
+		isIncludeDraft: true
+	});
+	if (!currentBook || !bookRevision || bookRevision.contents.length === 0 || dbBookGetError) {
+		return error(500, { message: dbBookGetError?.message ?? '' });
+	}
+	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+	if (!bookLang) {
+		bookLang = bookRevision.contents[0];
+	}
+	const { dbError: dbBookUpdateError } = await dbBookUpdate({
+		...getBookCover({}),
+		bookId: currentBook.id,
 		userId: signInUser.id,
 		status: 0,
 		targetLanguage: requestLang,
@@ -72,17 +88,16 @@ export async function PUT({ request, url, locals }) {
 		subtitle: form.data.subtitle,
 		prologue: form.data.prologue,
 		content: form.data.content,
-		salesMessage: '',
-		urlSlug: form.data.urlSlug,
-		buyPoint: 0
+		salesMessage: bookLang.sales_message,
+		urlSlug: currentBook.url_slug,
+		buyPoint: currentBook.buy_point
 	});
-	if (!book || dbBookUpdateError) {
+	if (dbBookUpdateError) {
 		return error(500, { message: dbBookUpdateError?.message ?? '' });
 	}
 
 	const responseData: BookDraftUpdateResult = {
-		bookId: book.id,
-		urlSlug: form.data.urlSlug
+		bookId: form.data.bookId
 	};
 	const response = new Response(JSON.stringify(responseData));
 	response.headers.set('content-type', 'application/json');

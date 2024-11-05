@@ -43,7 +43,6 @@ export interface BookDetail extends BookItem {
 
 export interface BookDraftUpdateResult {
 	bookId: string;
-	urlSlug: string;
 }
 
 // text-align: ***;

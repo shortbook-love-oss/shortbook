@@ -20,7 +20,6 @@
 	let prologue = $state(data.prologue);
 	let content = $state(data.content);
 	let bookId = $state(data.bookId);
-	let urlSlug = $state(data.initUrlSlug);
 
 	let initTitle = $state(data.initTitle);
 	let isAutoSaved = $state(false);
@@ -65,7 +64,6 @@
 				prologue: JSON.stringify(prologue),
 				content: JSON.stringify(content),
 				bookId,
-				urlSlug
 			})
 		})
 			.then(async (res) => {
@@ -73,7 +71,6 @@
 				isAutoSaved = true;
 				initTitle = title;
 				bookId = result.bookId;
-				urlSlug = result.urlSlug;
 				window.setTimeout(() => {
 					isAutoSaved = false;
 				}, 2000);
