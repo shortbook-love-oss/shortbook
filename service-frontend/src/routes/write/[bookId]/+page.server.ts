@@ -7,6 +7,7 @@ import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/draft-create';
 import { dbBookDelete } from '$lib-backend/model/book/delete';
 import { dbBookGet } from '$lib-backend/model/book/get';
+import { dbBookRevisionList } from '$lib-backend/model/book/revision-list';
 
 export const load = async ({ locals, params }) => {
 	const signInUser = locals.signInUser;
@@ -23,6 +24,7 @@ export const load = async ({ locals, params }) => {
 	let updatedAt: Date | null = null;
 	let initTitle = '';
 	let initUrlSlug = '';
+	let hasPublishedRevision = false;
 
 	if (params.bookId !== bookCreateUrlParam) {
 		const { book, bookRevision, dbError } = await dbBookGet({
@@ -32,6 +34,21 @@ export const load = async ({ locals, params }) => {
 		});
 		if (!book || !bookRevision || dbError) {
 			return error(500, { message: dbError?.message ?? '' });
+		}
+
+		// If the latest version is a draft, check for exist published revision
+		hasPublishedRevision = bookRevision.status === 1;
+		if (!hasPublishedRevision) {
+			const { revisions, dbError } = await dbBookRevisionList({
+				bookId: book.id,
+				isIncludeDraft: true
+			});
+			if (!revisions || dbError) {
+				return error(500, { message: dbError?.message ?? '' });
+			}
+			hasPublishedRevision = revisions.some((revision) => {
+				return revision.status === 1;
+			});
 		}
 
 		const bookLang = bookRevision.contents[0];
@@ -47,7 +64,17 @@ export const load = async ({ locals, params }) => {
 		initUrlSlug = book.url_slug;
 	}
 
-	return { form, prologue, content, bookId, bookStatus, updatedAt, initTitle, initUrlSlug };
+	return {
+		form,
+		prologue,
+		content,
+		bookId,
+		bookStatus,
+		updatedAt,
+		initTitle,
+		initUrlSlug,
+		hasPublishedRevision
+	};
 };
 
 export const actions = {

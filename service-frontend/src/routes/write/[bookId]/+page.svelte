@@ -15,12 +15,14 @@
 
 	const requestLang = getLanguageTagFromUrl($page.url);
 
+	let bookId = $state(data.bookId);
+	let bookStatus = $state(data.bookStatus);
 	let title = $state(data.form.data.title);
 	let subtitle = $state(data.form.data.subtitle);
 	let prologue = $state(data.prologue);
 	let content = $state(data.content);
-	let bookId = $state(data.bookId);
 
+	const hasPublishedRevision = data.hasPublishedRevision;
 	let initTitle = $state(data.initTitle);
 	let isAutoSaved = $state(false);
 
@@ -43,6 +45,7 @@
 		autoSaveTimeout = window.setTimeout(async () => {
 			autoSaveTimeout = 0;
 			await save();
+			bookStatus = 0;
 		}, 3000);
 	}
 
@@ -100,27 +103,25 @@
 			>
 				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
 			</a>
-			<div class="min-w-20 px-1 leading-tight">
+			<div class="min-w-24 px-2 leading-tight">
 				<p class="text-stone-700">
-					{#if data.bookStatus === 0}
-						Draft
-					{:else}
+					{#if bookStatus === 1}
 						Published
+					{:else if hasPublishedRevision}
+						Rewriting
+					{:else}
+						Draft
 					{/if}
 				</p>
 				<p class="text-stone-500" title={savedLabel}>
-					{#if isAutoSaved}
-						Saved
-					{:else}
-						Auto save
-					{/if}
+					{isAutoSaved ? 'Saved' : 'Auto save'}
 				</p>
 			</div>
 			<button
 				type="button"
 				disabled={!title}
 				class="mx-1.5 rounded-md bg-primary-200 px-2 py-1 text-lg disabled:bg-stone-200 disabled:text-stone-500 hover:[&:not(:disabled)]:bg-primary-700 hover:[&:not(:disabled)]:text-white focus:[&:not(:disabled)]:bg-primary-700 focus:[&:not(:disabled)]:text-white"
-				onclick={finish}>Publish</button
+				onclick={finish}>{bookStatus === 1 ? 'Republish' : 'Publish'}</button
 			>
 		</HeaderArea>
 	{/snippet}
