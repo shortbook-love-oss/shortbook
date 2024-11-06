@@ -22,7 +22,11 @@
 			<h2
 				class="mb-1 line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] text-3xl font-semibold lg:line-clamp-4"
 			>
-				{book.title}
+				{#if book.title}
+					{book.title}
+				{:else}
+					<span class="text-stone-500">[No title]</span>
+				{/if}
 			</h2>
 			<div class="flex flex-wrap items-center gap-x-4 gap-y-2">
 				<p>Last updated {toLocaleDatetime(book.updatedAt, requestLang)}</p>
@@ -30,7 +34,7 @@
 					<p
 						class="font-semibold before:mb-1 before:me-1 before:inline-block before:h-4 before:w-4 before:rounded-full before:bg-red-500 before:align-middle"
 					>
-						Draft
+						{book.hasPublishedRevision ? 'Rewriting' : 'Draft'}
 					</p>
 				{:else if book.status === 1}
 					<p>Published</p>

@@ -51,7 +51,8 @@ export const load = async ({ url, locals }) => {
 			id: book.id,
 			userId: book.user_id,
 			status: bookRevision.status,
-			updatedAt: book.updated_at
+			updatedAt: book.updated_at,
+			hasPublishedRevision: book.revisions.some((rev) => rev.status === 1)
 		});
 	}
 

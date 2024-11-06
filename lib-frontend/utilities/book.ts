@@ -24,9 +24,10 @@ export interface MyBookItem extends BookCover {
 	userId: string;
 	status: number;
 	updatedAt: Date;
+	hasPublishedRevision: boolean;
 }
 
-export interface BookItem extends MyBookItem {
+export interface BookItem extends Omit<MyBookItem, 'hasPublishedRevision'> {
 	bookUrlSlug: string;
 	userKeyHandle: string;
 	penName: string;

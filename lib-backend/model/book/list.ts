@@ -46,7 +46,7 @@ export async function dbBookList(req: DbBookListRequest) {
 					orderBy: {
 						number: 'desc'
 					},
-					take: 1,
+					take: req.isIncludeDraft ? 2 : 1, // Get latest draft and previos published
 					include: {
 						cover: {
 							where: { ...whereCondDelete }
