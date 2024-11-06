@@ -11,12 +11,3 @@ export function validateOnlyVisibleChar(value: string) {
 export function validateColor(value: string) {
 	return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(value);
 }
-
-export function validAsJson(value: string) {
-	try {
-		JSON.parse(value);
-		return true;
-	} catch {
-		return false;
-	}
-}

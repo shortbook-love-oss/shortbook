@@ -5,6 +5,7 @@
 	import type { BookDraftUpdateResult } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
+	import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import TextAreaSingle from '$lib/components/modules/form/text-area-single.svelte';
 	import Editor from '$lib/components/modules/wysiwyg-editor/editor.svelte';
@@ -23,6 +24,7 @@
 	let content = $state(data.content);
 
 	const hasPublishedRevision = data.hasPublishedRevision;
+	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
 	let initTitle = $state(data.initTitle);
 	let isAutoSaved = $state(false);
 
@@ -64,8 +66,8 @@
 			body: JSON.stringify({
 				title,
 				subtitle,
-				prologue: JSON.stringify(prologue),
-				content: JSON.stringify(content),
+				prologue,
+				content,
 				bookId
 			})
 		})
@@ -119,7 +121,8 @@
 			</div>
 			<button
 				type="button"
-				disabled={!title}
+				disabled={!isValidTitle}
+				title={isValidTitle ? undefined : 'Title is required.'}
 				class="mx-1.5 rounded-md bg-primary-200 px-2 py-1 text-lg disabled:bg-stone-200 disabled:text-stone-500 hover:[&:not(:disabled)]:bg-primary-700 hover:[&:not(:disabled)]:text-white focus:[&:not(:disabled)]:bg-primary-700 focus:[&:not(:disabled)]:text-white"
 				onclick={finish}>{bookStatus === 1 ? 'Republish' : 'Publish'}</button
 			>

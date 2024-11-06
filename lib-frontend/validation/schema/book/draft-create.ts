@@ -1,17 +1,13 @@
 import { z } from 'zod';
-import { validAsJson, validateOnlyVisibleChar } from '$lib/validation/rules/string';
+import { validateEditorContent } from '$lib/validation/rules/book';
 
 export const schema = z.object({
-	title: z.string().max(200).refine(validateOnlyVisibleChar, {
-		message: 'Cannot register using only invisible characters'
+	title: z.string().max(200),
+	subtitle: z.string().max(200),
+	prologue: z.record(z.record(z.unknown())).refine(validateEditorContent, {
+		message: 'Invalid serialized book content'
 	}),
-	subtitle: z.string().max(200).refine(validateOnlyVisibleChar, {
-		message: 'Cannot register using only invisible characters'
-	}),
-	prologue: z.string().min(1).max(5e8).refine(validAsJson, {
-		message: 'Invalid JSON'
-	}),
-	content: z.string().min(1).max(5e8).refine(validAsJson, {
-		message: 'Invalid JSON'
+	content: z.record(z.record(z.unknown())).refine(validateEditorContent, {
+		message: 'Invalid serialized book content'
 	})
 });

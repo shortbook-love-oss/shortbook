@@ -6,6 +6,7 @@ import { getBookCover } from '$lib/utilities/book';
 import { languageSelect } from '$lib/utilities/language';
 import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
+import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
 import { editLoad } from '$lib-backend/functions/service/write/edit-load';
 import { dbBookDelete } from '$lib-backend/model/book/delete';
@@ -38,7 +39,7 @@ export const load = async ({ url, locals, params }) => {
 	if (!bookLang) {
 		bookLang = bookRevision.contents[0];
 	}
-	if (!bookLang.title) {
+	if (!validateOnlyVisibleChar(bookLang.title)) {
 		redirect(303, `/write/${book.id}`);
 	}
 
