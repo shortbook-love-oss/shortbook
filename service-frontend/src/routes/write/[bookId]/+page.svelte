@@ -63,7 +63,7 @@
 				subtitle,
 				prologue: JSON.stringify(prologue),
 				content: JSON.stringify(content),
-				bookId,
+				bookId
 			})
 		})
 			.then(async (res) => {
@@ -118,7 +118,8 @@
 			</div>
 			<button
 				type="button"
-				class="mx-1.5 rounded-md bg-primary-200 px-2 py-1 text-lg hover:bg-primary-700 hover:text-white focus:bg-primary-700 focus:text-white"
+				disabled={!title}
+				class="mx-1.5 rounded-md bg-primary-200 px-2 py-1 text-lg disabled:bg-stone-200 disabled:text-stone-500 hover:[&:not(:disabled)]:bg-primary-700 hover:[&:not(:disabled)]:text-white focus:[&:not(:disabled)]:bg-primary-700 focus:[&:not(:disabled)]:text-white"
 				onclick={finish}>Publish</button
 			>
 		</HeaderArea>

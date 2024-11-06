@@ -13,11 +13,12 @@ import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
+	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(zod(schema));
 	const langTags = languageSelect;
@@ -33,7 +34,13 @@ export const load = async ({ locals, params }) => {
 	if (!book || !bookRevision?.cover || bookRevision.contents.length === 0) {
 		return error(500, { message: `Can't find book. Book ID=${params.bookId}` });
 	}
-	const bookLang = bookRevision.contents[0];
+	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+	if (!bookLang) {
+		bookLang = bookRevision.contents[0];
+	}
+	if (!bookLang.title) {
+		redirect(303, `/write/${book.id}`);
+	}
 
 	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
