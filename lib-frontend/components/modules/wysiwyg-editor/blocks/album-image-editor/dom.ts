@@ -60,7 +60,7 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 			'mt-2 min-h-[1.5em] text-[1.25rem] leading-[1.5] text-stone-600 outline-none before:text-stone-400 empty:[&:not(:focus)]:before:content-[attr(placeholder)]';
 		caption.setAttribute('placeholder', 'Add caption ...');
 		caption.contentEditable = 'true';
-		caption.innerText = node.getCaption();
+		caption.textContent = node.getCaption();
 
 		caption.addEventListener('focus', (ev) => {
 			const elem = ev.target as HTMLElement;
@@ -73,7 +73,7 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 			}
 			const elem = ev.target as HTMLElement;
 			if (caption.textContent?.length === 0) {
-				elem.innerText = '';
+				elem.textContent = '';
 			}
 			focusToNearestNode(elem, node.getKey());
 		});
@@ -96,7 +96,7 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 			// The image caption is plain-text and single line only, not rich-text
 			const offsetStart = Math.min(nativeSelection.anchorOffset, nativeSelection.focusOffset);
 			const offsetEnd = Math.max(nativeSelection.anchorOffset, nativeSelection.focusOffset);
-			caption.innerText =
+			caption.textContent =
 				beforeContent.slice(0, offsetStart) + insertText + beforeContent.slice(offsetEnd);
 
 			const newSelectionOffset = offsetStart + insertText.length;
@@ -117,7 +117,7 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 		if (node.getCaption()) {
 			const caption = document.createElement('figcaption');
 			caption.className = 'mt-2 text-[1.25rem] leading-[1.5] text-stone-600';
-			caption.innerText = node.getCaption();
+			caption.textContent = node.getCaption();
 			nodeRoot.appendChild(caption);
 		}
 	}
