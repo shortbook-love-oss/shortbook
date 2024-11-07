@@ -43,7 +43,7 @@ export const theme: EditorThemeClasses = {
 		h5: 'my-4 text-[1.1em] font-semibold leading-[1.375]',
 		h6: 'my-4 font-semibold leading-[1.375]'
 	},
-	link: 'cursor-pointer text-primary-700 underline',
+	link: 'cursor-pointer break-words text-primary-700 underline [word-break:break-word]',
 	list: {
 		ol: 'my-4 list-decimal ps-8',
 		ul: 'my-4 list-disc ps-6'
