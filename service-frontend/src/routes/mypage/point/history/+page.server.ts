@@ -49,7 +49,6 @@ export const load = async ({ url, locals }) => {
 	if (userPointBookIds.length) {
 		const { books, dbError: dbBookListError } = await dbBookList({
 			bookIds: userPointBookIds,
-			isIncludeDraft: true,
 			isIncludeDelete: true
 		});
 		if (!books || dbBookListError) {

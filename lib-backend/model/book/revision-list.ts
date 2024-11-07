@@ -3,7 +3,7 @@ import prisma from '$lib-backend/database/connect';
 
 type DbBookRevisionListRequest = {
 	bookId: string;
-	isIncludeDraft?: boolean;
+	statuses?: number[];
 	isIncludeDelete?: boolean;
 };
 
@@ -11,12 +11,9 @@ export async function dbBookRevisionList(req: DbBookRevisionListRequest) {
 	let dbError: Error | undefined;
 
 	const whereByCond: Prisma.book_revisionsWhereInput = {};
-	if (req.isIncludeDraft) {
-		whereByCond.status = { in: [0, 1] };
-	} else {
-		whereByCond.status = { in: [1] };
+	if (req.statuses) {
+		whereByCond.status = { in: req.statuses };
 	}
-
 	const whereCondDelete: { deleted_at?: null } = {};
 	if (!req.isIncludeDelete) {
 		whereCondDelete.deleted_at = null;

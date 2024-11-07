@@ -231,7 +231,7 @@ model book_revisions {
   id                      String              @id @db.VarChar(30) @default(cuid())
   book_id                 String
   number                  Int
-  status                  Int                 @db.SmallInt // 0: Draft 1: Public
+  status                  Int                 @db.SmallInt // 0: Draft 1: Published
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

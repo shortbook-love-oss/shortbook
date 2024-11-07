@@ -29,8 +29,7 @@ export const load = async ({ locals, params }) => {
 	if (params.bookId !== bookCreateUrlParam) {
 		const { book, bookRevision, dbError } = await dbBookGet({
 			bookId: params.bookId,
-			userId: signInUser.id,
-			isIncludeDraft: true
+			userId: signInUser.id
 		});
 		if (!book || !bookRevision || dbError) {
 			return error(500, { message: dbError?.message ?? '' });
@@ -39,10 +38,7 @@ export const load = async ({ locals, params }) => {
 		// If the latest version is a draft, check for exist published revision
 		hasPublishedRevision = bookRevision.status === 1;
 		if (!hasPublishedRevision) {
-			const { revisions, dbError } = await dbBookRevisionList({
-				bookId: book.id,
-				isIncludeDraft: true
-			});
+			const { revisions, dbError } = await dbBookRevisionList({ bookId: book.id });
 			if (!revisions || dbError) {
 				return error(500, { message: dbError?.message ?? '' });
 			}

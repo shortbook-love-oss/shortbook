@@ -9,10 +9,7 @@ export const load = async ({ url, locals }) => {
 		return error(401, { message: 'Unauthorized' });
 	}
 
-	const { books, dbError } = await dbBookList({
-		userId: signInUser.id,
-		isIncludeDraft: true
-	});
+	const { books, dbError } = await dbBookList({ userId: signInUser.id });
 	if (!books || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}

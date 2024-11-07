@@ -4,7 +4,7 @@ import prisma from '$lib-backend/database/connect';
 export interface DbBookListRequest {
 	bookIds?: string[];
 	userId?: string;
-	isIncludeDraft?: boolean;
+	statuses?: number[]; // 0: Draft 1: Published
 	isIncludeDelete?: boolean;
 }
 
@@ -19,15 +19,18 @@ export async function dbBookList(req: DbBookListRequest) {
 		whereByCond.id = { in: req.bookIds };
 	}
 	const revisionWhereByCond: Prisma.book_revisionsWhereInput = {};
-	if (req.isIncludeDraft) {
-		revisionWhereByCond.status = { in: [0, 1] };
-	} else {
-		revisionWhereByCond.status = { in: [1] };
+	if (req.statuses) {
+		revisionWhereByCond.status = { in: req.statuses };
 	}
-
 	const whereCondDelete: { deleted_at?: null } = {};
 	if (!req.isIncludeDelete) {
 		whereCondDelete.deleted_at = null;
+	}
+
+	let getRevisionsCount = 1;
+	if (req.statuses == undefined || req.statuses.some((status) => status !== 1)) {
+		// Get latest draft and previos published
+		getRevisionsCount = 2;
 	}
 
 	const books = await prisma.books
@@ -46,7 +49,7 @@ export async function dbBookList(req: DbBookListRequest) {
 					orderBy: {
 						number: 'desc'
 					},
-					take: req.isIncludeDraft ? 2 : 1, // Get latest draft and previos published
+					take: getRevisionsCount,
 					include: {
 						cover: {
 							where: { ...whereCondDelete }

@@ -26,6 +26,7 @@ export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
+	// Get a book even if it's a draft, and filter it later
 	const {
 		book,
 		bookRevision,
@@ -33,7 +34,7 @@ export const load = async ({ url, locals, params }) => {
 	} = await dbBookGet({
 		bookUrlSlug: params.bookKey,
 		userKeyHandle: params.userKey,
-		isIncludeDraft: true,
+		statuses: [1],
 		isIncludeDelete: true
 	});
 	if (!book || !bookRevision?.cover || dbBookGetError) {
@@ -199,6 +200,7 @@ export const load = async ({ url, locals, params }) => {
 	bookDetail.prologue = await fromEditorStateToHtml(bookLang.prologue);
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		bookDetail.content = await fromEditorStateToHtml(bookLang.content);
+		console.log(bookDetail.content);
 	} else {
 		bookDetail.salesMessage = await contentsToMarkdown(bookLang.sales_message);
 	}

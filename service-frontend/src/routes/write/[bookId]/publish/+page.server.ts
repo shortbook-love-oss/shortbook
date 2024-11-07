@@ -26,8 +26,7 @@ export const load = async ({ url, locals, params }) => {
 
 	const { book, bookRevision, dbError } = await dbBookGet({
 		bookId: params.bookId,
-		userId: signInUser.id,
-		isIncludeDraft: true
+		userId: signInUser.id
 	});
 	if (dbError) {
 		return error(500, { message: dbError?.message ?? '' });
@@ -110,8 +109,7 @@ export const actions = {
 
 		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
 			bookId: params.bookId,
-			userId: signInUser.id,
-			isIncludeDraft: true
+			userId: signInUser.id
 		});
 		if (!bookRevision || dbBookGetError) {
 			return error(500, { message: dbBookGetError?.message ?? '' });
@@ -170,8 +168,7 @@ export const actions = {
 
 		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
 			bookId: params.bookId,
-			userId: signInUser.id,
-			isIncludeDraft: true
+			userId: signInUser.id
 		});
 		if (!bookRevision || dbBookGetError) {
 			return error(500, { message: dbBookGetError?.message ?? '' });

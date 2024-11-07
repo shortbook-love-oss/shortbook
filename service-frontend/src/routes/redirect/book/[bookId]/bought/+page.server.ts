@@ -58,7 +58,6 @@ export const load = async ({ url }) => {
 		dbError: dbBookGetError
 	} = await dbBookGet({
 		bookId: bookPaymentInfo.bookId,
-		isIncludeDraft: true,
 		isIncludeDelete: true
 	});
 	if (!book?.user || !bookRevision || dbBookGetError) {

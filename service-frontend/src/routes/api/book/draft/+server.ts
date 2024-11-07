@@ -68,8 +68,7 @@ export async function PUT({ request, url, locals }) {
 		dbError: dbBookGetError
 	} = await dbBookGet({
 		bookId: form.data.bookId,
-		userId: signInUser.id,
-		isIncludeDraft: true
+		userId: signInUser.id
 	});
 	if (!currentBook || !bookRevision || bookRevision.contents.length === 0 || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });

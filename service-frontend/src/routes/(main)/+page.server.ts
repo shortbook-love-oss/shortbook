@@ -5,7 +5,7 @@ import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookList } from '$lib-backend/model/book/list';
 
 export const load = async ({ url }) => {
-	const { books, dbError } = await dbBookList({});
+	const { books, dbError } = await dbBookList({ statuses: [1] });
 	if (!books || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}

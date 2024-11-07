@@ -16,7 +16,10 @@ export const load = async ({ url, params }) => {
 		user.image_src = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image_src;
 	}
 
-	const { books, dbError: bookDbError } = await dbBookList({ userId: user.id });
+	const { books, dbError: bookDbError } = await dbBookList({
+		userId: user.id,
+		statuses: [1]
+	});
 	if (!books || bookDbError) {
 		return error(500, { message: bookDbError?.message ?? '' });
 	}
