@@ -1,19 +1,10 @@
 <script lang="ts">
-	import { registerCodeHighlighting } from '@lexical/code';
-	import { registerDragonSupport } from '@lexical/dragon';
-	import { createEmptyHistoryState, registerHistory } from '@lexical/history';
-	import { registerRichText } from '@lexical/rich-text';
-	import { mergeRegister } from '@lexical/utils';
 	import { createEditor } from 'lexical';
 	import { onMount } from 'svelte';
-	import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
-	import { registerImageUploaderPlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/plugin';
-	import { registerDividerBlock } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
-	import { registerDecoratorNodeBase } from '$lib/components/modules/wysiwyg-editor/blocks/decorator-node-base';
-	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import {
 		initEditorConfig,
 		lastActiveEditor,
+		registerEditorPlugins,
 		type EditorState
 	} from '$lib/components/modules/wysiwyg-editor/editor';
 	import AlbumDragUploader from '$lib/components/modules/wysiwyg-editor/plugins/album-drag-uploader.svelte';
@@ -38,17 +29,7 @@
 		editor.setRootElement(editorRootElem);
 
 		// Registring editor plugins
-		const removePluginListener = mergeRegister(
-			registerRichText(editor),
-			registerCodeHighlighting(editor),
-			registerDragonSupport(editor),
-			registerHistory(editor, createEmptyHistoryState(), 300),
-			registerPluginPasteLinkReplacer(editor),
-			registerDecoratorNodeBase(editor),
-			registerImagePlugin(editor),
-			registerImageUploaderPlugin(editor),
-			registerDividerBlock(editor)
-		);
+		const removePluginListener = registerEditorPlugins(editor);
 
 		if (value) {
 			const parsedEditorState = editor.parseEditorState(value);

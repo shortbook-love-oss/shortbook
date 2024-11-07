@@ -1,4 +1,11 @@
-import { CodeHighlightNode, CodeNode, type SerializedCodeNode } from '@lexical/code';
+import {
+	CodeHighlightNode,
+	CodeNode,
+	registerCodeHighlighting,
+	type SerializedCodeNode
+} from '@lexical/code';
+import { registerDragonSupport } from '@lexical/dragon';
+import { createEmptyHistoryState, registerHistory } from '@lexical/history';
 import { AutoLinkNode, LinkNode, type SerializedLinkNode } from '@lexical/link';
 import {
 	ListItemNode,
@@ -6,13 +13,13 @@ import {
 	type SerializedListItemNode,
 	type SerializedListNode
 } from '@lexical/list';
-import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
 import {
 	$isHeadingNode,
 	type SerializedHeadingNode,
 	type SerializedQuoteNode
 } from '@lexical/rich-text';
-import { $insertNodeToNearestRoot } from '@lexical/utils';
+import { $insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
 import {
 	$createNodeSelection,
 	$getRoot,
@@ -25,6 +32,7 @@ import {
 	DecoratorNode,
 	ElementNode,
 	type CreateEditorArgs,
+	type LexicalEditor,
 	type LexicalNode,
 	type NodeKey,
 	type RangeSelection,
@@ -38,14 +46,19 @@ import {
 	ImageNode,
 	type SerializedImageNode
 } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
+import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
 import {
 	ImageUploadingNode,
 	type SerializedImageUploadingNode
 } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
+import { registerImageUploaderPlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/plugin';
 import {
 	DividerNode,
 	type SerializedDividerNode
 } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
+import { registerDividerBlock } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
+import { registerDecoratorNodeBase } from '$lib/components/modules/wysiwyg-editor/blocks/decorator-node-base';
+import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
 import type { SelectItemSingle } from '$lib/utilities/select';
 import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
@@ -150,9 +163,18 @@ export const codeLanguageSelect = [
 ] as const satisfies SelectItemSingle<string>[];
 export type CodeLanguageItem = (typeof codeLanguageSelect)[number];
 
-// Find block node of lexical editor state, not text node in the block node
-export function findSelectedStartBlock(selection: RangeSelection) {
-	return selection.anchor.getNode().getTopLevelElement();
+export function registerEditorPlugins(editor: LexicalEditor) {
+	return mergeRegister(
+		registerRichText(editor),
+		registerCodeHighlighting(editor),
+		registerDragonSupport(editor),
+		registerHistory(editor, createEmptyHistoryState(), 300),
+		registerPluginPasteLinkReplacer(editor),
+		registerDecoratorNodeBase(editor),
+		registerImagePlugin(editor),
+		registerImageUploaderPlugin(editor),
+		registerDividerBlock(editor)
+	);
 }
 
 // If only exist an empty paragraph / heading node, the editor consider to be empty
@@ -164,6 +186,11 @@ export function isEditorEmpty() {
 	} else {
 		return false;
 	}
+}
+
+// Find block node of lexical editor state, not text node in the block node
+export function findSelectedStartBlock(selection: RangeSelection) {
+	return selection.anchor.getNode().getTopLevelElement();
 }
 
 export function getSelectedBlock() {

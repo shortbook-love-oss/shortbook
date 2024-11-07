@@ -20,6 +20,7 @@ import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
 import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
 import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
+import { fromEditorStateToHtml } from '$lib-backend/utilities/book';
 
 export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
@@ -189,14 +190,15 @@ export const load = async ({ url, locals, params }) => {
 		userKeyHandle: book.user.key_handle,
 		penName: book.user.pen_name,
 		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src,
-		prologue: await contentsToMarkdown(bookLang.prologue),
+		prologue: '',
 		content: '',
 		salesMessage: '',
 		isBookDeleted: book.deleted_at != null
 	};
 
+	bookDetail.prologue = await fromEditorStateToHtml(bookLang.prologue);
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
-		bookDetail.content = await contentsToMarkdown(bookLang.content);
+		bookDetail.content = await fromEditorStateToHtml(bookLang.content);
 	} else {
 		bookDetail.salesMessage = await contentsToMarkdown(bookLang.sales_message);
 	}
