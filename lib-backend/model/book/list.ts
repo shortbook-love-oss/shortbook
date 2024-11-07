@@ -18,6 +18,13 @@ export async function dbBookList(req: DbBookListRequest) {
 	if (req.bookIds?.length) {
 		whereByCond.id = { in: req.bookIds };
 	}
+	if (req.statuses) {
+		whereByCond.revisions = {
+			some: {
+				status: { in: req.statuses }
+			}
+		};
+	}
 	const revisionWhereByCond: Prisma.book_revisionsWhereInput = {};
 	if (req.statuses) {
 		revisionWhereByCond.status = { in: req.statuses };
