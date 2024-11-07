@@ -185,7 +185,7 @@ export const load = async ({ url, locals, params }) => {
 		buyPoint,
 		title: bookLang.title,
 		subtitle: bookLang.subtitle,
-		updatedAt: book.updated_at,
+		updatedAt: bookRevision.updated_at,
 		bookUrlSlug: book.url_slug,
 		userKeyHandle: book.user.key_handle,
 		penName: book.user.pen_name,

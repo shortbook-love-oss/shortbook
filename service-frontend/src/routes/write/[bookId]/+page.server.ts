@@ -59,7 +59,7 @@ export const load = async ({ locals, params }) => {
 
 		bookId = book.id;
 		bookStatus = bookRevision.status;
-		updatedAt = book.updated_at;
+		updatedAt = bookRevision.updated_at;
 		initTitle = bookLang.title;
 		initUrlSlug = book.url_slug;
 	}

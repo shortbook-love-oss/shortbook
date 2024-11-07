@@ -77,8 +77,8 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 					throw dbError;
 				}
 				revisionId = newRevision.id;
-			} else if (req.status !== latestRevision.status) {
-				// If the book is "draft", update status of latest revision
+			} else {
+				// If the book is "draft", update latest revision
 				await tx.book_revisions.update({
 					where: { id: latestRevision.id },
 					data: { status: req.status }

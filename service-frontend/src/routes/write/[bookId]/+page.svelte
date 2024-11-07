@@ -26,18 +26,20 @@
 	const hasPublishedRevision = data.hasPublishedRevision;
 	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
 	let initTitle = $state(data.initTitle);
+	let lastUpdatedAt = $state(data.updatedAt);
 	let isAutoSaved = $state(false);
 
 	const savedLabel = $derived.by(() => {
-		const datetime = toLocaleDatetime(data.updatedAt, requestLang);
-		if (data.updatedAt) {
-			if (isAutoSaved) {
-				return `Auto saved at ${datetime}`;
-			} else {
-				return `Last edited at ${datetime}`;
-			}
-		} else {
+		if (lastUpdatedAt == null || data.updatedAt == null) {
 			return undefined;
+		}
+		const datetime = toLocaleDatetime(lastUpdatedAt, requestLang);
+		if (bookStatus === 1) {
+			return `Published at ${datetime}`;
+		} else if (Number(lastUpdatedAt) !== Number(data.updatedAt)) {
+			return `Auto saved at ${datetime}`;
+		} else {
+			return `Last edited at ${datetime}`;
 		}
 	});
 
@@ -47,7 +49,6 @@
 		autoSaveTimeout = window.setTimeout(async () => {
 			autoSaveTimeout = 0;
 			await save();
-			bookStatus = 0;
 		}, 3000);
 	}
 
@@ -73,9 +74,11 @@
 		})
 			.then(async (res) => {
 				const result = (await res.json()) as BookDraftUpdateResult;
-				isAutoSaved = true;
-				initTitle = title;
 				bookId = result.bookId;
+				bookStatus = 0;
+				initTitle = title;
+				lastUpdatedAt = new Date();
+				isAutoSaved = true;
 				window.setTimeout(() => {
 					isAutoSaved = false;
 				}, 2000);
