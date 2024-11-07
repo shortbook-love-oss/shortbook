@@ -157,7 +157,9 @@
 					placeholder="Write introduction... (optional)"
 					onInput={autoSave}
 				/>
-				<hr class="my-8 border-stone-300" />
+				<p class="mt-8 text-center text-lg text-stone-500">Free area end</p>
+				<hr class="my-2 border-t-4 border-double border-stone-300" />
+				<p class="mb-8 text-center text-lg text-stone-500">Paid area start</p>
 				<Editor
 					bind:value={content}
 					namespace="book-content"
