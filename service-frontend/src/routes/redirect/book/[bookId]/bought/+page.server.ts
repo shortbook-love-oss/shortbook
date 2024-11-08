@@ -58,6 +58,7 @@ export const load = async ({ url }) => {
 		dbError: dbBookGetError
 	} = await dbBookGet({
 		bookId: bookPaymentInfo.bookId,
+		statuses: [1],
 		isIncludeDelete: true
 	});
 	if (!book?.user || !bookRevision || dbBookGetError) {
@@ -83,7 +84,28 @@ export const load = async ({ url }) => {
 		return error(500, { message: dbBookBuyGetError.message });
 	}
 
-	if (bookRevision.status === 0 || book.deleted_at != null || bookBuy) {
+	if (currency) {
+		const { dbError } = await dbUserPaymentSettingUpsert({
+			userId: bookPaymentInfo.userId,
+			currencyCode: currency
+		});
+		if (dbError) {
+			return error(500, { message: dbError.message });
+		}
+	}
+
+	if (isCreateCustomer) {
+		const { dbError: dbContractError } = await dbUserPaymentContractCreate({
+			userId: bookPaymentInfo.userId,
+			providerKey: 'stripe',
+			customerId: encryptAndFlat(customerId, env.ENCRYPT_PAYMENT_CUSTOMER_ID, env.ENCRYPT_SALT)
+		});
+		if (dbContractError) {
+			return error(500, { message: dbContractError?.message ?? '' });
+		}
+	}
+
+	if (book.deleted_at != null || bookBuy) {
 		// If the book is deleted or draft, return as point
 		// If already bought same book, return as point (this occurs due to multiple tab payments)
 		const { dbError } = await dbUserPointCreate({
@@ -104,27 +126,6 @@ export const load = async ({ url }) => {
 	});
 	if (dbBookBuyCreateError) {
 		return error(500, { message: dbBookBuyCreateError?.message ?? '' });
-	}
-
-	if (currency) {
-		const { dbError } = await dbUserPaymentSettingUpsert({
-			userId: bookPaymentInfo.userId,
-			currencyCode: currency
-		});
-		if (dbError) {
-			return error(500, { message: dbError.message });
-		}
-	}
-
-	if (isCreateCustomer) {
-		const { dbError: dbContractError } = await dbUserPaymentContractCreate({
-			userId: bookPaymentInfo.userId,
-			providerKey: 'stripe',
-			customerId: encryptAndFlat(customerId, env.ENCRYPT_PAYMENT_CUSTOMER_ID, env.ENCRYPT_SALT)
-		});
-		if (dbContractError) {
-			return error(500, { message: dbContractError?.message ?? '' });
-		}
 	}
 
 	redirect(303, afterUrl);
