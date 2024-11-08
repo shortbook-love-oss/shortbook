@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -37,7 +38,7 @@
 		if (!isValidTitle) {
 			reasons.push('Title is required.');
 		}
-		if (isPrologueEmpty || isContentEmpty) {
+		if (isPrologueEmpty && isContentEmpty) {
 			reasons.push('Either free or paid contents is required.');
 		}
 		return reasons;
@@ -55,6 +56,10 @@
 		} else {
 			return `Last edited at ${datetime}`;
 		}
+	});
+
+	onMount(() => {
+		return () => window.clearTimeout(autoSaveTimeout);
 	});
 
 	let autoSaveTimeout = $state(0);
