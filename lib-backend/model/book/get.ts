@@ -23,11 +23,15 @@ export async function dbBookGet(req: DbBookGetRequest) {
 	let dbError: Error | undefined;
 
 	const whereByCond: Prisma.booksWhereInput = {};
-	if (req.statuses) {
+	if (req.statuses != null || (req.userKeyHandle && req.bookUrlSlug)) {
 		whereByCond.revisions = {
 			some: {
-				status: { in: req.statuses }
+				status: req.statuses != null ? { in: req.statuses } : undefined,
+				url_slug: req.bookUrlSlug
 			}
+		};
+		whereByCond.user = {
+			key_handle: req.userKeyHandle
 		};
 	}
 	const revisionWhereByCond: Prisma.book_revisionsWhereInput = {};
@@ -50,12 +54,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			where: {
 				...whereByCond,
 				...whereCondDelete,
-				id: req.bookId,
-				url_slug: req.bookUrlSlug,
-				user: {
-					...whereCondDelete,
-					key_handle: req.userKeyHandle
-				}
+				id: req.bookId
 			},
 			include: {
 				revisions: {

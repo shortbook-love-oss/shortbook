@@ -66,7 +66,7 @@ export const load = async ({ url }) => {
 
 	const afterUrl = new URL(
 		url.origin +
-			setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.url_slug}`, requestLang)
+			setLanguageTagToPath(`/@${book.user.key_handle}/book/${bookRevision.url_slug}`, requestLang)
 	);
 	const paymentCheckoutRequest: DbUserPaymentCheckoutCreateRequest = {
 		provider: 'stripe',

@@ -57,7 +57,7 @@ export const load = async ({ locals, params }) => {
 		bookStatus = bookRevision.status;
 		updatedAt = bookRevision.updated_at;
 		initTitle = bookLang.title;
-		initUrlSlug = book.url_slug;
+		initUrlSlug = bookRevision.url_slug;
 	}
 
 	return {

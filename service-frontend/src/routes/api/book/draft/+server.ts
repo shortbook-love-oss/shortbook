@@ -88,8 +88,8 @@ export async function PUT({ request, url, locals }) {
 		prologue: JSON.stringify(form.data.prologue),
 		content: JSON.stringify(form.data.content),
 		salesMessage: bookLang.sales_message,
-		urlSlug: currentBook.url_slug,
-		buyPoint: currentBook.buy_point
+		urlSlug: bookRevision.url_slug,
+		buyPoint: bookRevision.buy_point
 	});
 	if (dbBookUpdateError) {
 		return error(500, { message: dbBookUpdateError?.message ?? '' });

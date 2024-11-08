@@ -67,8 +67,8 @@ export const load = async ({ url, locals, params }) => {
 	}
 	form.data.targetLanguage = (bookLang?.target_language ?? '') as AvailableLanguageTag;
 	form.data.salesMessage = bookLang?.sales_message ?? '';
-	form.data.urlSlug = book.url_slug;
-	form.data.buyPoint = book.buy_point;
+	form.data.urlSlug = bookRevision.url_slug;
+	form.data.buyPoint = bookRevision.buy_point;
 
 	const initTitle = bookLang.title;
 	const initSubtitle = bookLang.subtitle;
@@ -116,6 +116,9 @@ export const actions = {
 		}
 		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
 		if (!bookLang) {
+			bookLang = bookRevision.contents[0];
+		}
+		if (!bookLang) {
 			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
 		}
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
@@ -132,7 +135,7 @@ export const actions = {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
 		}
 
-		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${book.url_slug}`, url));
+		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${form.data.urlSlug}`, url));
 	},
 
 	draft: async ({ request, url, locals, params }) => {
@@ -174,6 +177,9 @@ export const actions = {
 			return error(500, { message: dbBookGetError?.message ?? '' });
 		}
 		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+		if (!bookLang) {
+			bookLang = bookRevision.contents[0];
+		}
 		if (!bookLang) {
 			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
 		}

@@ -212,17 +212,12 @@ model books {
 
   id                      String              @id @db.VarChar(30) @default(cuid())
   user_id                 String
-  url_slug                String              @db.VarChar(100) // Length 1 - 100
-  buy_point               Int
-  native_language         String              @db.VarChar(5)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
   revisions               book_revisions[]
   buys                    book_buys[]
-
-  @@unique([user_id, url_slug])
 }
 
 model book_revisions {
@@ -232,6 +227,9 @@ model book_revisions {
   book_id                 String
   number                  Int
   status                  Int                 @db.SmallInt // 0: Draft 1: Published
+  url_slug                String              @db.VarChar(100) // Length 1 - 100
+  buy_point               Int
+  native_language         String              @db.VarChar(5)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

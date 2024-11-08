@@ -27,14 +27,10 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 
 	const book = await prisma
 		.$transaction(async (tx) => {
-			const book = await tx.books.update({
+			const book = await tx.books.findUnique({
 				where: {
 					id: req.bookId,
 					deleted_at: null
-				},
-				data: {
-					url_slug: req.urlSlug,
-					buy_point: req.buyPoint
 				}
 			});
 			if (!book) {
@@ -69,7 +65,10 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 					data: {
 						book_id: book.id,
 						number: latestRevision.number + 1,
-						status: req.status
+						status: req.status,
+						url_slug: req.urlSlug,
+						buy_point: req.buyPoint,
+						native_language: req.targetLanguage
 					}
 				});
 				if (!newRevision) {
@@ -81,7 +80,12 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				// If the book is "draft", update latest revision
 				await tx.book_revisions.update({
 					where: { id: latestRevision.id },
-					data: { status: req.status }
+					data: {
+						status: req.status,
+						url_slug: req.urlSlug,
+						buy_point: req.buyPoint,
+						native_language: req.targetLanguage
+					}
 				});
 			}
 

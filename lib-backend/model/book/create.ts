@@ -32,13 +32,13 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 			const book = await tx.books.create({
 				data: {
 					user_id: req.userId,
-					url_slug: req.urlSlug,
-					buy_point: req.buyPoint,
-					native_language: req.targetLanguage,
 					revisions: {
 						create: {
 							number: 1,
 							status: req.status,
+							url_slug: req.urlSlug,
+							buy_point: req.buyPoint,
+							native_language: req.targetLanguage,
 							cover: {
 								create: {
 									base_color_start: req.baseColorStart,

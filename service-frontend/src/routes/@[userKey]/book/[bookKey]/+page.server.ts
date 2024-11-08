@@ -58,7 +58,7 @@ export const load = async ({ url, locals, params }) => {
 	}
 
 	// Check buy book if it's paid and written by another
-	const buyPoint = book.buy_point;
+	const buyPoint = bookRevision.buy_point;
 	const isOwn = signInUser?.id === book.user_id;
 	let isBoughtBook = false;
 	// Can user buy books using only the points have
@@ -187,7 +187,7 @@ export const load = async ({ url, locals, params }) => {
 		title: bookLang.title,
 		subtitle: bookLang.subtitle,
 		updatedAt: bookRevision.updated_at,
-		bookUrlSlug: book.url_slug,
+		bookUrlSlug: bookRevision.url_slug,
 		userKeyHandle: book.user.key_handle,
 		penName: book.user.pen_name,
 		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src,

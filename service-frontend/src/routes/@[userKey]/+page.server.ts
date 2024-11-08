@@ -65,7 +65,7 @@ export const load = async ({ url, params }) => {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			updatedAt: bookRevision.updated_at,
-			bookUrlSlug: book.url_slug,
+			bookUrlSlug: bookRevision.url_slug,
 			userKeyHandle: user.key_handle,
 			penName: user.pen_name,
 			userImage: user.image_src

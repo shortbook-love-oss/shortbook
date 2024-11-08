@@ -49,6 +49,7 @@ export const load = async ({ url, locals }) => {
 	if (userPointBookIds.length) {
 		const { books, dbError: dbBookListError } = await dbBookList({
 			bookIds: userPointBookIds,
+			statuses: [1],
 			isIncludeDelete: true
 		});
 		if (!books || dbBookListError) {
@@ -63,8 +64,8 @@ export const load = async ({ url, locals }) => {
 	const pointList: PointListItem[] = userPointHistories.map((point) => {
 		let bookTitle = '';
 		const book = pointBooksMap[point.book_id];
+		const bookRevision = book?.revisions[0];
 		if (point.book_id && book) {
-			const bookRevision = book.revisions[0];
 			if (bookRevision.contents.length > 0) {
 				let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
 				if (!bookLang) {
@@ -80,7 +81,7 @@ export const load = async ({ url, locals }) => {
 			amount: point.amount,
 			createdAt: point.created_at,
 			bookTitle,
-			bookUrlSlug: book?.url_slug ?? '',
+			bookUrlSlug: bookRevision?.url_slug ?? '',
 			writeKeyHandle: book?.user.key_handle,
 			isSell: point.is_sell > 0
 		};
