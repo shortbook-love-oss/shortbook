@@ -200,7 +200,6 @@ export const load = async ({ url, locals, params }) => {
 	bookDetail.prologue = await fromEditorStateToHtml(bookLang.prologue);
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		bookDetail.content = await fromEditorStateToHtml(bookLang.content);
-		console.log(bookDetail.content);
 	} else {
 		bookDetail.salesMessage = await contentsToMarkdown(bookLang.sales_message);
 	}

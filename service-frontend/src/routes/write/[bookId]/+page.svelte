@@ -23,11 +23,16 @@
 	let prologue = $state(data.prologue);
 	let content = $state(data.content);
 
+	let isPrologueEmpty = $state(true);
+	let isContentEmpty = $state(true);
+
 	const hasPublishedRevision = data.hasPublishedRevision;
-	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
 	let initTitle = $state(data.initTitle);
 	let lastUpdatedAt = $state(data.updatedAt);
 	let isAutoSaved = $state(false);
+
+	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
+	const isValidDraft = $derived(isValidTitle && !(isPrologueEmpty && isContentEmpty));
 
 	const savedLabel = $derived.by(() => {
 		if (lastUpdatedAt == null || data.updatedAt == null) {
@@ -124,7 +129,7 @@
 			</div>
 			<button
 				type="button"
-				disabled={!isValidTitle}
+				disabled={!isValidDraft}
 				title={isValidTitle ? undefined : 'Title is required.'}
 				class="mx-1.5 rounded-md bg-primary-200 px-2 py-1 text-lg disabled:bg-stone-200 disabled:text-stone-500 hover:[&:not(:disabled)]:bg-primary-700 hover:[&:not(:disabled)]:text-white focus:[&:not(:disabled)]:bg-primary-700 focus:[&:not(:disabled)]:text-white"
 				onclick={finish}>{bookStatus === 1 ? 'Republish' : 'Publish'}</button
@@ -156,8 +161,9 @@
 				<hr class="mb-8 border-stone-300" />
 				<Editor
 					bind:value={prologue}
+					bind:isEmpty={isPrologueEmpty}
 					namespace="book-prologue"
-					placeholder="Write introduction... (optional)"
+					placeholder="Free area... Write your knowledge..."
 					onInput={autoSave}
 				/>
 				<p class="mt-8 text-center text-lg text-stone-500">Free area end</p>
@@ -165,8 +171,9 @@
 				<p class="mb-8 text-center text-lg text-stone-500">Paid area start</p>
 				<Editor
 					bind:value={content}
+					bind:isEmpty={isContentEmpty}
 					namespace="book-content"
-					placeholder="Paid area... Write your knowledge..."
+					placeholder="Paid area... Write special contents..."
 					onInput={autoSave}
 				/>
 			</div>

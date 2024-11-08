@@ -1,7 +1,7 @@
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { JSDOM } from 'jsdom';
 import { createEditor } from 'lexical';
-import { initEditorConfig } from '$lib/components/modules/wysiwyg-editor/editor';
+import { initEditorConfig, isEditorEmpty } from '$lib/components/modules/wysiwyg-editor/editor';
 
 export async function fromEditorStateToHtml(stringifyState: string) {
 	// To load Lexical editor server-side, replace window and document with jsdom
@@ -13,21 +13,26 @@ export async function fromEditorStateToHtml(stringifyState: string) {
 	global.document = dom.window.document;
 
 	const editor = createEditor(initEditorConfig);
-	const html = await new Promise<string>(async (resolve, reject) => {
-		try {
-			const parsedEditorState = editor.parseEditorState(stringifyState);
-			editor.setEditorState(parsedEditorState);
-			editor.read(() => {
-				resolve($generateHtmlFromNodes(editor));
-			});
-		} catch (e) {
-			console.error(e);
-			reject('');
+	const { html, isEmpty } = await new Promise<{ html: string; isEmpty: boolean }>(
+		async (resolve, reject) => {
+			try {
+				const parsedEditorState = editor.parseEditorState(stringifyState);
+				editor.setEditorState(parsedEditorState);
+				editor.read(() => {
+					resolve({ html: $generateHtmlFromNodes(editor), isEmpty: isEditorEmpty(editor) });
+				});
+			} catch (e) {
+				console.error(e);
+				reject({ html: '', isEmpty: true });
+			}
 		}
-	});
+	);
 
 	global.window = _window;
 	global.document = _document;
 
+	if (isEmpty) {
+		return '';
+	}
 	return html;
 }

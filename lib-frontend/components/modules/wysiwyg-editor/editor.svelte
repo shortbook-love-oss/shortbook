@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import {
 		initEditorConfig,
+		isEditorEmpty,
 		lastActiveEditor,
 		registerEditorPlugins,
 		type EditorState
@@ -14,11 +15,18 @@
 
 	type Props = {
 		value: EditorState;
+		isEmpty: boolean;
 		namespace: string;
 		placeholder?: string;
-		onInput?: (value: EditorState) => void;
+		onInput?: () => void;
 	};
-	let { value = $bindable(), namespace, placeholder = '', onInput }: Props = $props();
+	let {
+		value = $bindable(),
+		isEmpty = $bindable(),
+		namespace,
+		placeholder = '',
+		onInput
+	}: Props = $props();
 
 	let editorRootElem = $state<HTMLElement | null>(null);
 	let isActive = $state(false);
@@ -34,6 +42,9 @@
 		if (value) {
 			const parsedEditorState = editor.parseEditorState(value);
 			editor.setEditorState(parsedEditorState, { tag: 'history-merge' });
+			editor.read(() => {
+				isEmpty = isEditorEmpty(editor);
+			});
 		}
 
 		const removeUpdateListener = editor.registerUpdateListener(({ editorState, dirtyElements }) => {
@@ -41,7 +52,10 @@
 			if (dirtyElements.size > 0) {
 				// Runs only when node adds / changes / removes, not on selection change or focus
 				value = editorState.toJSON() as EditorState;
-				onInput?.(value);
+				onInput?.();
+				editor.read(() => {
+					isEmpty = isEditorEmpty(editor);
+				});
 			}
 		});
 

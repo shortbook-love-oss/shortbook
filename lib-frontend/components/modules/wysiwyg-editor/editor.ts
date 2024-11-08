@@ -31,6 +31,7 @@ import {
 	$setSelection,
 	DecoratorNode,
 	ElementNode,
+	ParagraphNode,
 	type CreateEditorArgs,
 	type LexicalEditor,
 	type LexicalNode,
@@ -177,15 +178,34 @@ export function registerEditorPlugins(editor: LexicalEditor) {
 	);
 }
 
-// If only exist an empty paragraph / heading node, the editor consider to be empty
-export function isEditorEmpty() {
+// If only exist an empty paragraph / heading node, the editor appears to have no input
+export function isShowEditorPlaceholder() {
 	const rootNode = $getRoot();
-	if (rootNode.getTextContentSize() === 0 && rootNode.getChildrenSize() === 1) {
+	if (rootNode.getChildrenSize() === 1 && rootNode.getTextContentSize() === 0) {
 		const firstBlockNode = rootNode.getFirstChild();
 		return $isParagraphNode(firstBlockNode) || $isHeadingNode(firstBlockNode);
 	} else {
 		return false;
 	}
+}
+
+// Indicates that the editor does not contain any meaningful content
+export function isEditorEmpty(editor: LexicalEditor) {
+	const nodeMap = editor.getEditorState()._nodeMap;
+	for (const [_, node] of nodeMap) {
+		if (
+			[ParagraphNode, CodeNode, HeadingNode, ListNode, QuoteNode].some(
+				(instance) => node instanceof instance
+			)
+		) {
+			if (node.getTextContentSize() !== 0) {
+				return false;
+			}
+		} else if (node instanceof ImageNode) {
+			return false;
+		}
+	}
+	return true;
 }
 
 // Find block node of lexical editor state, not text node in the block node
