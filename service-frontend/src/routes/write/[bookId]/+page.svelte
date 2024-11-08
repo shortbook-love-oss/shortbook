@@ -32,7 +32,16 @@
 	let isAutoSaved = $state(false);
 
 	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
-	const isValidDraft = $derived(isValidTitle && !(isPrologueEmpty && isContentEmpty));
+	const unpublishableReasons = $derived.by(() => {
+		const reasons: string[] = [];
+		if (!isValidTitle) {
+			reasons.push('Title is required.');
+		}
+		if (isPrologueEmpty || isContentEmpty) {
+			reasons.push('Either free or paid contents is required.');
+		}
+		return reasons;
+	});
 
 	const savedLabel = $derived.by(() => {
 		if (lastUpdatedAt == null || data.updatedAt == null) {
@@ -127,13 +136,21 @@
 					{isAutoSaved ? 'Saved' : 'Auto save'}
 				</p>
 			</div>
-			<button
-				type="button"
-				disabled={!isValidDraft}
-				title={isValidTitle ? undefined : 'Title is required.'}
-				class="mx-1.5 rounded-md bg-primary-200 px-2 py-1 text-lg disabled:bg-stone-200 disabled:text-stone-500 hover:[&:not(:disabled)]:bg-primary-700 hover:[&:not(:disabled)]:text-white focus:[&:not(:disabled)]:bg-primary-700 focus:[&:not(:disabled)]:text-white"
-				onclick={finish}>{bookStatus === 1 ? 'Republish' : 'Publish'}</button
-			>
+			<div class="relative mx-1.5">
+				<button
+					type="button"
+					disabled={unpublishableReasons.length > 0}
+					class="peer rounded-md bg-primary-200 px-2 py-1 text-lg disabled:bg-stone-200 disabled:text-stone-500 hover:[&:not(:disabled)]:bg-primary-700 hover:[&:not(:disabled)]:text-white focus:[&:not(:disabled)]:bg-primary-700 focus:[&:not(:disabled)]:text-white"
+					onclick={finish}>{bookStatus === 1 ? 'Republish' : 'Publish'}</button
+				>
+				<div
+					class="absolute -left-4 top-12 hidden min-w-56 flex-col gap-3 rounded-lg border border-stone-300 bg-white px-4 py-3 text-lg text-red-700 peer-[:hover:disabled]:flex"
+				>
+					{#each unpublishableReasons as reason}
+						<p>{reason}</p>
+					{/each}
+				</div>
+			</div>
 		</HeaderArea>
 	{/snippet}
 	{#snippet contents()}
