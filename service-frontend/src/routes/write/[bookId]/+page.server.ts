@@ -17,8 +17,8 @@ export const load = async ({ locals, params }) => {
 
 	const form = await superValidate(zod(schema));
 
-	let prologue = initEditorState;
-	let content = initEditorState;
+	let freeArea = initEditorState;
+	let paidArea = initEditorState;
 	let bookId = '';
 	let bookStatus = 0;
 	let updatedAt: Date | null = null;
@@ -50,8 +50,8 @@ export const load = async ({ locals, params }) => {
 		const bookLang = bookRevision.contents[0];
 		form.data.title = bookLang.title;
 		form.data.subtitle = bookLang.subtitle;
-		prologue = JSON.parse(bookLang.prologue) as EditorState;
-		content = JSON.parse(bookLang.content) as EditorState;
+		freeArea = JSON.parse(bookLang.free_area) as EditorState;
+		paidArea = JSON.parse(bookLang.paid_area) as EditorState;
 
 		bookId = book.id;
 		bookStatus = bookRevision.status;
@@ -62,8 +62,8 @@ export const load = async ({ locals, params }) => {
 
 	return {
 		form,
-		prologue,
-		content,
+		freeArea,
+		paidArea,
 		bookId,
 		bookStatus,
 		updatedAt,

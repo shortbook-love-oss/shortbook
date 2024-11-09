@@ -21,11 +21,11 @@
 	let bookStatus = $state(data.bookStatus);
 	let title = $state(data.form.data.title);
 	let subtitle = $state(data.form.data.subtitle);
-	let prologue = $state(data.prologue);
-	let content = $state(data.content);
+	let freeArea = $state(data.freeArea);
+	let paidArea = $state(data.paidArea);
 
-	let isPrologueEmpty = $state(true);
-	let isContentEmpty = $state(true);
+	let isEmptyFreeArea = $state(true);
+	let isEmptyPaidArea = $state(true);
 
 	const hasPublishedRevision = data.hasPublishedRevision;
 	let initTitle = $state(data.initTitle);
@@ -38,7 +38,7 @@
 		if (!isValidTitle) {
 			reasons.push('Title is required.');
 		}
-		if (isPrologueEmpty && isContentEmpty) {
+		if (isEmptyFreeArea && isEmptyPaidArea) {
 			reasons.push('Either free or paid contents is required.');
 		}
 		return reasons;
@@ -86,8 +86,8 @@
 			body: JSON.stringify({
 				title,
 				subtitle,
-				prologue,
-				content,
+				freeArea,
+				paidArea,
 				bookId
 			})
 		})
@@ -182,9 +182,9 @@
 				/>
 				<hr class="mb-8 border-stone-300" />
 				<Editor
-					bind:value={prologue}
-					bind:isEmpty={isPrologueEmpty}
-					namespace="book-prologue"
+					bind:value={freeArea}
+					bind:isEmpty={isEmptyFreeArea}
+					namespace="book-free-area"
 					placeholder="Free area... Write your knowledge..."
 					onInput={autoSave}
 				/>
@@ -192,9 +192,9 @@
 				<hr class="my-2 border-t-4 border-double border-stone-300" />
 				<p class="mb-8 text-center text-lg text-stone-500">Paid area start</p>
 				<Editor
-					bind:value={content}
-					bind:isEmpty={isContentEmpty}
-					namespace="book-content"
+					bind:value={paidArea}
+					bind:isEmpty={isEmptyPaidArea}
+					namespace="book-paid-area"
 					placeholder="Paid area... Write special contents..."
 					onInput={autoSave}
 				/>

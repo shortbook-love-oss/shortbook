@@ -191,20 +191,20 @@ export const load = async ({ url, locals, params }) => {
 		userKeyHandle: book.user.key_handle,
 		penName: book.user.pen_name,
 		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src,
-		prologue: '',
-		content: '',
+		freeArea: '',
+		paidArea: '',
 		salesMessage: '',
 		isBookDeleted: book.deleted_at != null
 	};
 
-	const { html: prologueHtml } = await fromEditorStateToHtml(bookLang.prologue);
-	const { html: contentHtml, isEmpty: isEmptyContent } = await fromEditorStateToHtml(
-		bookLang.content
+	const { html: freeAreaHtml } = await fromEditorStateToHtml(bookLang.free_area);
+	const { html: paidAreaHtml, isEmpty: isEmptyPaidArea } = await fromEditorStateToHtml(
+		bookLang.free_area
 	);
-	bookDetail.prologue = prologueHtml;
+	bookDetail.freeArea = freeAreaHtml;
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
-		if (!isEmptyContent) {
-			bookDetail.content = contentHtml;
+		if (!isEmptyPaidArea) {
+			bookDetail.paidArea = paidAreaHtml;
 		}
 	} else {
 		bookDetail.salesMessage = await contentsToMarkdown(bookLang.sales_message);
@@ -212,7 +212,7 @@ export const load = async ({ url, locals, params }) => {
 
 	return {
 		bookDetail,
-		isEmptyContent,
+		isEmptyPaidArea,
 		requestLang,
 		userLang,
 		isOwn,

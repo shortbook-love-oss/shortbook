@@ -270,8 +270,8 @@ model book_contents {
   thumbnail_url           String              @db.VarChar(255)
   title                   String              @db.VarChar(1400) // Max length is 200
   subtitle                String              @db.VarChar(1400) // Max length is 200
-  prologue                String              @db.LongText
-  content                 String              @db.LongText
+  free_area               String              @db.LongText
+  paid_area               String              @db.LongText
   sales_message           String              @db.Text // Max length is 2000
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt

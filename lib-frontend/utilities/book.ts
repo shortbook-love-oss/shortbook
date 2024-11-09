@@ -36,8 +36,8 @@ export interface BookItem extends Omit<MyBookItem, 'hasPublishedRevision'> {
 
 export interface BookDetail extends BookItem {
 	buyPoint: number;
-	prologue: string;
-	content: string;
+	freeArea: string;
+	paidArea: string;
 	salesMessage: string;
 	isBookDeleted: boolean;
 }

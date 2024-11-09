@@ -6,8 +6,8 @@ export interface DbBookCreateRequest {
 	targetLanguage: string;
 	title: string;
 	subtitle: string;
-	prologue: string;
-	content: string;
+	freeArea: string;
+	paidArea: string;
 	salesMessage: string;
 	urlSlug: string;
 	buyPoint: number;
@@ -60,8 +60,8 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 									thumbnail_url: '',
 									title: req.title,
 									subtitle: req.subtitle,
-									prologue: req.prologue,
-									content: req.content,
+									free_area: req.freeArea,
+									paid_area: req.paidArea,
 									sales_message: req.salesMessage
 								}
 							}

@@ -126,8 +126,8 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 						thumbnail_url: '',
 						title: req.title,
 						subtitle: req.subtitle,
-						prologue: req.prologue,
-						content: req.content,
+						free_area: req.freeArea,
+						paid_area: req.paidArea,
 						sales_message: req.salesMessage
 					}
 				]

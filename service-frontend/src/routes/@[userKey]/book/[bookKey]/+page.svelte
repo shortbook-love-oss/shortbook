@@ -114,15 +114,15 @@
 			</div>
 		{/if}
 		<hr class="my-8 border-stone-300" />
-		{#if data.bookDetail.prologue}
+		{#if data.bookDetail.freeArea}
 			<section class="article_content mb-8 text-xl">
-				{@html data.bookDetail.prologue}
+				{@html data.bookDetail.freeArea}
 			</section>
 		{/if}
-		{#if !data.isEmptyContent}
+		{#if !data.isEmptyPaidArea}
 			{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
 				<section class="article_content text-xl">
-					{@html data.bookDetail.content}
+					{@html data.bookDetail.paidArea}
 				</section>
 			{:else}
 				<SalesMessage imageSrc={data.bookDetail.userImage} message={data.bookDetail.salesMessage}>

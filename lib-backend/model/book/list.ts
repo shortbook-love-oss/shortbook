@@ -64,8 +64,8 @@ export async function dbBookList(req: DbBookListRequest) {
 						contents: {
 							where: { ...whereCondDelete },
 							omit: {
-								prologue: true,
-								content: true,
+								free_area: true,
+								paid_area: true,
 								sales_message: true
 							}
 						}

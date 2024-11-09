@@ -31,8 +31,8 @@ export async function POST({ request, url, locals }) {
 		targetLanguage: requestLang,
 		title: form.data.title,
 		subtitle: form.data.subtitle,
-		prologue: JSON.stringify(form.data.prologue),
-		content: JSON.stringify(form.data.content),
+		freeArea: JSON.stringify(form.data.freeArea),
+		paidArea: JSON.stringify(form.data.paidArea),
 		salesMessage: '',
 		urlSlug,
 		buyPoint: 0
@@ -85,8 +85,8 @@ export async function PUT({ request, url, locals }) {
 		targetLanguage: requestLang,
 		title: form.data.title,
 		subtitle: form.data.subtitle,
-		prologue: JSON.stringify(form.data.prologue),
-		content: JSON.stringify(form.data.content),
+		freeArea: JSON.stringify(form.data.freeArea),
+		paidArea: JSON.stringify(form.data.paidArea),
 		salesMessage: bookLang.sales_message,
 		urlSlug: bookRevision.url_slug,
 		buyPoint: bookRevision.buy_point

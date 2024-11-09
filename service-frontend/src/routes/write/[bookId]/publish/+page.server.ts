@@ -128,8 +128,8 @@ export const actions = {
 			...form.data,
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
-			prologue: bookLang.prologue,
-			content: bookLang.content
+			freeArea: bookLang.free_area,
+			paidArea: bookLang.paid_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
@@ -190,8 +190,8 @@ export const actions = {
 			...form.data,
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
-			prologue: bookLang.prologue,
-			content: bookLang.content
+			freeArea: bookLang.free_area,
+			paidArea: bookLang.paid_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
