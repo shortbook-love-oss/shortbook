@@ -23,9 +23,11 @@
 	let subtitle = $state(data.form.data.subtitle);
 	let freeArea = $state(data.freeArea);
 	let paidArea = $state(data.paidArea);
+	let salesArea = $state(data.salesArea);
 
 	let isEmptyFreeArea = $state(true);
 	let isEmptyPaidArea = $state(true);
+	let isEmptySalesArea = $state(true);
 
 	const hasPublishedRevision = data.hasPublishedRevision;
 	let initTitle = $state(data.initTitle);
@@ -88,6 +90,7 @@
 				subtitle,
 				freeArea,
 				paidArea,
+				salesArea,
 				bookId
 			})
 		})
@@ -198,6 +201,16 @@
 					placeholder="Paid area... Write special contents..."
 					onInput={autoSave}
 				/>
+				<hr class="my-8 border-t-4 border-double border-stone-300" />
+				<div>
+					<Editor
+						bind:value={salesArea}
+						bind:isEmpty={isEmptySalesArea}
+						namespace="book-sales-area"
+						placeholder="Appeal &quot;Buy and read this!&quot;..."
+						onInput={autoSave}
+					/>
+				</div>
 			</div>
 		</div>
 	{/snippet}

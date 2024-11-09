@@ -274,7 +274,8 @@ model book_contents {
   is_empty_free_area      Boolean
   paid_area               String              @db.LongText
   is_empty_paid_area      Boolean
-  sales_message           String              @db.Text // Max length is 2000
+  sales_area              String              @db.LongText
+  is_empty_sales_area     Boolean
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

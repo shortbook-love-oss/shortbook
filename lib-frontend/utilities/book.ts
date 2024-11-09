@@ -38,7 +38,7 @@ export interface BookDetail extends BookItem {
 	buyPoint: number;
 	freeArea: string;
 	paidArea: string;
-	salesMessage: string;
+	salesArea: string;
 	isBookDeleted: boolean;
 }
 

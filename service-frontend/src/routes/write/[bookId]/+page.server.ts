@@ -19,6 +19,8 @@ export const load = async ({ locals, params }) => {
 
 	let freeArea = initEditorState;
 	let paidArea = initEditorState;
+	let salesArea = initEditorState;
+
 	let bookId = '';
 	let bookStatus = 0;
 	let updatedAt: Date | null = null;
@@ -52,6 +54,7 @@ export const load = async ({ locals, params }) => {
 		form.data.subtitle = bookLang.subtitle;
 		freeArea = JSON.parse(bookLang.free_area) as EditorState;
 		paidArea = JSON.parse(bookLang.paid_area) as EditorState;
+		salesArea = JSON.parse(bookLang.sales_area) as EditorState;
 
 		bookId = book.id;
 		bookStatus = bookRevision.status;
@@ -64,6 +67,7 @@ export const load = async ({ locals, params }) => {
 		form,
 		freeArea,
 		paidArea,
+		salesArea,
 		bookId,
 		bookStatus,
 		updatedAt,

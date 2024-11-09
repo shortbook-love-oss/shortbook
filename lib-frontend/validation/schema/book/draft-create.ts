@@ -9,5 +9,8 @@ export const schema = z.object({
 	}),
 	paidArea: z.record(z.record(z.unknown())).refine(validateEditorContent, {
 		message: 'Invalid serialized book content'
+	}),
+	salesArea: z.record(z.record(z.unknown())).refine(validateEditorContent, {
+		message: 'Invalid serialized book content'
 	})
 });

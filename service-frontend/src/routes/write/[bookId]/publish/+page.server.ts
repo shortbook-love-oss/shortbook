@@ -65,8 +65,7 @@ export const load = async ({ url, locals, params }) => {
 			form.data[prop] = bookCover[prop] as never;
 		}
 	}
-	form.data.targetLanguage = (bookLang?.target_language ?? '') as AvailableLanguageTag;
-	form.data.salesMessage = bookLang?.sales_message ?? '';
+	form.data.targetLanguage = bookLang.target_language as AvailableLanguageTag;
 	form.data.urlSlug = bookRevision.url_slug;
 	form.data.buyPoint = bookRevision.buy_point;
 
@@ -132,7 +131,9 @@ export const actions = {
 			freeArea: bookLang.free_area,
 			isEmptyFreeArea: bookLang.is_empty_free_area,
 			paidArea: bookLang.paid_area,
-			isEmptyPaidArea: bookLang.is_empty_paid_area
+			isEmptyPaidArea: bookLang.is_empty_paid_area,
+			salesArea: bookLang.sales_area,
+			isEmptySalesArea: bookLang.is_empty_sales_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
@@ -196,7 +197,9 @@ export const actions = {
 			freeArea: bookLang.free_area,
 			isEmptyFreeArea: bookLang.is_empty_free_area,
 			paidArea: bookLang.paid_area,
-			isEmptyPaidArea: bookLang.is_empty_paid_area
+			isEmptyPaidArea: bookLang.is_empty_paid_area,
+			salesArea: bookLang.sales_area,
+			isEmptySalesArea: bookLang.is_empty_sales_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });

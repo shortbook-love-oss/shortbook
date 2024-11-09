@@ -125,7 +125,7 @@
 					{@html data.bookDetail.paidArea}
 				</section>
 			{:else}
-				<SalesMessage imageSrc={data.bookDetail.userImage} message={data.bookDetail.salesMessage}>
+				<SalesMessage imageSrc={data.bookDetail.userImage} message={data.bookDetail.salesArea}>
 					{#snippet action()}
 						{#if data.hasEnoughPoint}
 							<a

@@ -66,7 +66,7 @@ export async function dbBookList(req: DbBookListRequest) {
 							omit: {
 								free_area: true,
 								paid_area: true,
-								sales_message: true
+								sales_area: true
 							}
 						}
 					}

@@ -103,13 +103,6 @@
 							errorMessages={$errors.targetLanguage}
 							className="mb-8 max-w-72"
 						/>
-						<TextArea
-							bind:value={$form.salesMessage}
-							name="salesMessage"
-							label="&quot;Read this!&quot; appeal"
-							errorMessages={$errors.salesMessage}
-							className="mb-8"
-						/>
 						<TextField
 							bind:value={$form.urlSlug}
 							name="urlSlug"

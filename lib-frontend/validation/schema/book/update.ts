@@ -20,9 +20,6 @@ export const schema = z
 		targetLanguage: z.string().max(5).refine(isAvailableLanguageTag, {
 			message: 'Please select language'
 		}),
-		salesMessage: z.string().max(1000).refine(validateOnlyVisibleChar, {
-			message: 'Cannot register using only invisible characters'
-		}),
 		buyPoint: z.number().min(70).max(1_000_000),
 		// For book cover design
 		baseColorStart: z.string().max(15).refine(validateColor, {

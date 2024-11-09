@@ -32,6 +32,9 @@ export async function POST({ request, url, locals }) {
 	const { isEmpty: isEmptyPaidArea } = await fromEditorStateToHtml(
 		form.data.paidArea as unknown as SerializedEditorState
 	);
+	const { isEmpty: isEmptySalesArea } = await fromEditorStateToHtml(
+		form.data.salesArea as unknown as SerializedEditorState
+	);
 	const { book, dbError: dbBookUpdateError } = await dbBookCreate({
 		...getBookCover({}),
 		userId: signInUser.id,
@@ -43,7 +46,8 @@ export async function POST({ request, url, locals }) {
 		isEmptyFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
 		isEmptyPaidArea,
-		salesMessage: '',
+		salesArea: JSON.stringify(form.data.salesArea),
+		isEmptySalesArea,
 		urlSlug,
 		buyPoint: 0
 	});
@@ -94,6 +98,9 @@ export async function PUT({ request, url, locals }) {
 	const { isEmpty: isEmptyPaidArea } = await fromEditorStateToHtml(
 		form.data.paidArea as unknown as SerializedEditorState
 	);
+	const { isEmpty: isEmptySalesArea } = await fromEditorStateToHtml(
+		form.data.salesArea as unknown as SerializedEditorState
+	);
 	const { dbError: dbBookUpdateError } = await dbBookUpdate({
 		...getBookCover({}),
 		bookId: currentBook.id,
@@ -106,7 +113,8 @@ export async function PUT({ request, url, locals }) {
 		isEmptyFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
 		isEmptyPaidArea,
-		salesMessage: bookLang.sales_message,
+		salesArea: JSON.stringify(form.data.salesArea),
+		isEmptySalesArea,
 		urlSlug: bookRevision.url_slug,
 		buyPoint: bookRevision.buy_point
 	});

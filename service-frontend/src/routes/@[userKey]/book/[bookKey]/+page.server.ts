@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { getBookCover, contentsToMarkdown, type BookDetail } from '$lib/utilities/book';
+import { getBookCover, type BookDetail } from '$lib/utilities/book';
 import {
 	currencySupports,
 	defaultCurrencyCode,
@@ -193,21 +193,26 @@ export const load = async ({ url, locals, params }) => {
 		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src,
 		freeArea: '',
 		paidArea: '',
-		salesMessage: '',
+		salesArea: '',
 		isBookDeleted: book.deleted_at != null
 	};
 
-	const { html: freeAreaHtml } = await fromEditorStateToHtml(JSON.parse(bookLang.free_area));
-	const { html: paidAreaHtml } = await fromEditorStateToHtml(JSON.parse(bookLang.paid_area));
+	if (!bookLang.is_empty_free_area) {
+		const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.free_area));
+		bookDetail.freeArea = html;
+	}
 	const isEmptyPaidArea = bookLang.is_empty_paid_area;
 
-	bookDetail.freeArea = freeAreaHtml;
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		if (!isEmptyPaidArea) {
-			bookDetail.paidArea = paidAreaHtml;
+			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.paid_area));
+			bookDetail.paidArea = html;
 		}
 	} else {
-		bookDetail.salesMessage = await contentsToMarkdown(bookLang.sales_message);
+		if (!bookLang.is_empty_sales_area) {
+			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.sales_area));
+			bookDetail.salesArea = html;
+		}
 	}
 
 	return {
