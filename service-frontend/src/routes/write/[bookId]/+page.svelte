@@ -204,7 +204,7 @@
 				/>
 				<p class="mt-8 text-center text-lg text-stone-500">Paid area end</p>
 				<hr class="my-2 border-t-4 border-double border-stone-300" />
-				<p class="mb-8 text-center text-lg text-stone-500">Bonus: Writing a sales pitch</p>
+				<p class="mb-8 text-center text-lg text-stone-500">Bonus: Write a sales pitch</p>
 				<SalesMessage imageSrc={$page.data.signInUser.imageSrc}>
 					<Editor
 						bind:value={salesArea}
