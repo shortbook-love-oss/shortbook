@@ -1,7 +1,6 @@
 import type { EditorThemeClasses } from 'lexical';
 
 export const theme: EditorThemeClasses = {
-	root: 'min-h-20 flex-1 font-sans text-[1.375rem] leading-[1.625] tracking-wider text-stone-950 underline-offset-[0.15em] outline-none',
 	code: 'my-4 block bg-slate-100 ps-14 pe-3 py-2 text-[0.75em] tracking-wide [counter-reset:code-row] [counter-increment:code-row] [&>br]:[counter-increment:code-row] [&>span:first-child]:before:[content:counter(code-row)] [&>span:first-child]:before:-ms-11 [&>span:first-child]:before:w-11 [&>span:first-child]:before:inline-block [&>span:first-child]:before:text-stone-400 [&>br+span]:before:[content:counter(code-row)] [&>br+span]:before:-ms-11 [&>br+span]:before:w-11 [&>br+span]:before:inline-block [&>br+span]:before:text-stone-400',
 	codeHighlight: {
 		atrule: 'text-[#07a]',
