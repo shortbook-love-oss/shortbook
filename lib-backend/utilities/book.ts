@@ -19,7 +19,15 @@ export async function fromEditorStateToHtml(stringifyState: string) {
 				const parsedEditorState = editor.parseEditorState(stringifyState);
 				editor.setEditorState(parsedEditorState);
 				editor.read(() => {
-					resolve({ html: $generateHtmlFromNodes(editor), isEmpty: isEditorEmpty(editor) });
+					const isEmpty = isEditorEmpty(editor);
+					if (isEmpty) {
+						resolve({ html: '', isEmpty });
+					} else {
+						resolve({
+							html: $generateHtmlFromNodes(editor),
+							isEmpty
+						});
+					}
 				});
 			} catch (e) {
 				console.error(e);
@@ -31,8 +39,5 @@ export async function fromEditorStateToHtml(stringifyState: string) {
 	global.window = _window;
 	global.document = _document;
 
-	if (isEmpty) {
-		return '';
-	}
-	return html;
+	return { html, isEmpty };
 }

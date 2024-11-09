@@ -197,15 +197,22 @@ export const load = async ({ url, locals, params }) => {
 		isBookDeleted: book.deleted_at != null
 	};
 
-	bookDetail.prologue = await fromEditorStateToHtml(bookLang.prologue);
+	const { html: prologueHtml } = await fromEditorStateToHtml(bookLang.prologue);
+	const { html: contentHtml, isEmpty: isEmptyContent } = await fromEditorStateToHtml(
+		bookLang.content
+	);
+	bookDetail.prologue = prologueHtml;
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
-		bookDetail.content = await fromEditorStateToHtml(bookLang.content);
+		if (!isEmptyContent) {
+			bookDetail.content = contentHtml;
+		}
 	} else {
 		bookDetail.salesMessage = await contentsToMarkdown(bookLang.sales_message);
 	}
 
 	return {
 		bookDetail,
+		isEmptyContent,
 		requestLang,
 		userLang,
 		isOwn,
