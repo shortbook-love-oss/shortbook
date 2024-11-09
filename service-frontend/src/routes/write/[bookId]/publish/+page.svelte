@@ -85,9 +85,9 @@
 				className="contents"
 			>
 				<div
-					class="mb-8 flex flex-col items-center justify-center gap-x-16 gap-y-8 lg:flex-row lg:items-stretch"
+					class="mb-8 flex flex-col items-center justify-center gap-x-12 gap-y-8 lg:flex-row lg:items-stretch"
 				>
-					<div class="w-full max-w-xl shrink-0 text-lg lg:w-48 lg:justify-end">
+					<div class="w-full max-w-xl shrink-0 text-lg lg:w-40 lg:justify-end">
 						<p>Editing</p>
 						<h1 class="whitespace-pre-wrap break-words text-xl font-semibold">
 							{data.initTitle}
@@ -132,7 +132,7 @@
 							currencyRates={data.currencyRateIndex}
 						/>
 					</div>
-					<div class="shrink-0 lg:w-48">
+					<div class="shrink-0 lg:w-40">
 						<div class="w-fit lg:-mx-4 lg:-mt-3">
 							<BookCoverEdit
 								book={$form}
@@ -146,7 +146,7 @@
 					</div>
 				</div>
 				<div class="flex justify-center gap-x-16">
-					<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
+					<div class="hidden w-40 shrink-0 lg:block" aria-hidden="true"></div>
 					<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
 						<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
 							{data.status === 0 ? 'Publish book' : 'Republish book'}
@@ -175,7 +175,7 @@
 							{/snippet}
 						</Dialog>
 					</div>
-					<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
+					<div class="hidden w-40 shrink-0 lg:block" aria-hidden="true"></div>
 				</div>
 				{#snippet submit()}
 					<div></div>
