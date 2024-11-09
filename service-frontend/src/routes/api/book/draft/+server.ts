@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+import type { SerializedEditorState } from 'lexical';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { getBookCover, type BookDraftUpdateResult } from '$lib/utilities/book';
@@ -9,6 +10,7 @@ import { schema as updateSchema } from '$lib/validation/schema/book/draft-update
 import { dbBookCreate } from '$lib-backend/model/book/create';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
+import { fromEditorStateToHtml } from '$lib-backend/utilities/book';
 
 export async function POST({ request, url, locals }) {
 	const signInUser = locals.signInUser;
@@ -24,6 +26,12 @@ export async function POST({ request, url, locals }) {
 	}
 
 	const urlSlug = getRandom(16);
+	const { isEmpty: isEmptyFreeArea } = await fromEditorStateToHtml(
+		form.data.freeArea as unknown as SerializedEditorState
+	);
+	const { isEmpty: isEmptyPaidArea } = await fromEditorStateToHtml(
+		form.data.paidArea as unknown as SerializedEditorState
+	);
 	const { book, dbError: dbBookUpdateError } = await dbBookCreate({
 		...getBookCover({}),
 		userId: signInUser.id,
@@ -32,7 +40,9 @@ export async function POST({ request, url, locals }) {
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
+		isEmptyFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
+		isEmptyPaidArea,
 		salesMessage: '',
 		urlSlug,
 		buyPoint: 0
@@ -77,6 +87,13 @@ export async function PUT({ request, url, locals }) {
 	if (!bookLang) {
 		bookLang = bookRevision.contents[0];
 	}
+
+	const { isEmpty: isEmptyFreeArea } = await fromEditorStateToHtml(
+		form.data.freeArea as unknown as SerializedEditorState
+	);
+	const { isEmpty: isEmptyPaidArea } = await fromEditorStateToHtml(
+		form.data.paidArea as unknown as SerializedEditorState
+	);
 	const { dbError: dbBookUpdateError } = await dbBookUpdate({
 		...getBookCover({}),
 		bookId: currentBook.id,
@@ -86,7 +103,9 @@ export async function PUT({ request, url, locals }) {
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
+		isEmptyFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
+		isEmptyPaidArea,
 		salesMessage: bookLang.sales_message,
 		urlSlug: bookRevision.url_slug,
 		buyPoint: bookRevision.buy_point

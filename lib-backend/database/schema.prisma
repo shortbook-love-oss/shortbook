@@ -271,7 +271,9 @@ model book_contents {
   title                   String              @db.VarChar(1400) // Max length is 200
   subtitle                String              @db.VarChar(1400) // Max length is 200
   free_area               String              @db.LongText
+  is_empty_free_area      Boolean
   paid_area               String              @db.LongText
+  is_empty_paid_area      Boolean
   sales_message           String              @db.Text // Max length is 2000
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt

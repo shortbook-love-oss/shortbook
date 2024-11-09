@@ -121,6 +121,7 @@ export const actions = {
 		if (!bookLang) {
 			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
 		}
+
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			userId: signInUser.id,
@@ -129,7 +130,9 @@ export const actions = {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			freeArea: bookLang.free_area,
-			paidArea: bookLang.paid_area
+			isEmptyFreeArea: bookLang.is_empty_free_area,
+			paidArea: bookLang.paid_area,
+			isEmptyPaidArea: bookLang.is_empty_paid_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
@@ -191,7 +194,9 @@ export const actions = {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			freeArea: bookLang.free_area,
-			paidArea: bookLang.paid_area
+			isEmptyFreeArea: bookLang.is_empty_free_area,
+			paidArea: bookLang.paid_area,
+			isEmptyPaidArea: bookLang.is_empty_paid_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });

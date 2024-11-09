@@ -197,10 +197,10 @@ export const load = async ({ url, locals, params }) => {
 		isBookDeleted: book.deleted_at != null
 	};
 
-	const { html: freeAreaHtml } = await fromEditorStateToHtml(bookLang.free_area);
-	const { html: paidAreaHtml, isEmpty: isEmptyPaidArea } = await fromEditorStateToHtml(
-		bookLang.free_area
-	);
+	const { html: freeAreaHtml } = await fromEditorStateToHtml(JSON.parse(bookLang.free_area));
+	const { html: paidAreaHtml } = await fromEditorStateToHtml(JSON.parse(bookLang.paid_area));
+	const isEmptyPaidArea = bookLang.is_empty_paid_area;
+
 	bookDetail.freeArea = freeAreaHtml;
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		if (!isEmptyPaidArea) {

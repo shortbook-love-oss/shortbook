@@ -7,7 +7,9 @@ export interface DbBookCreateRequest {
 	title: string;
 	subtitle: string;
 	freeArea: string;
+	isEmptyFreeArea: boolean;
 	paidArea: string;
+	isEmptyPaidArea: boolean;
 	salesMessage: string;
 	urlSlug: string;
 	buyPoint: number;
@@ -61,7 +63,9 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 									title: req.title,
 									subtitle: req.subtitle,
 									free_area: req.freeArea,
+									is_empty_free_area: req.isEmptyFreeArea,
 									paid_area: req.paidArea,
+									is_empty_paid_area: req.isEmptyPaidArea,
 									sales_message: req.salesMessage
 								}
 							}

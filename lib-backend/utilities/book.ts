@@ -1,9 +1,9 @@
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { JSDOM } from 'jsdom';
-import { createEditor } from 'lexical';
+import { createEditor, type SerializedEditorState } from 'lexical';
 import { initEditorConfig, isEditorEmpty } from '$lib/components/modules/wysiwyg-editor/editor';
 
-export async function fromEditorStateToHtml(stringifyState: string) {
+export async function fromEditorStateToHtml(serializedState: SerializedEditorState) {
 	// To load Lexical editor server-side, replace window and document with jsdom
 	const dom = new JSDOM();
 	const _window = global.window;
@@ -16,7 +16,7 @@ export async function fromEditorStateToHtml(stringifyState: string) {
 	const { html, isEmpty } = await new Promise<{ html: string; isEmpty: boolean }>(
 		async (resolve, reject) => {
 			try {
-				const parsedEditorState = editor.parseEditorState(stringifyState);
+				const parsedEditorState = editor.parseEditorState(serializedState);
 				editor.setEditorState(parsedEditorState);
 				editor.read(() => {
 					const isEmpty = isEditorEmpty(editor);
