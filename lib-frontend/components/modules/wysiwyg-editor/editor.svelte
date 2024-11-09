@@ -15,14 +15,14 @@
 
 	type Props = {
 		value: EditorState;
-		isEmpty: boolean;
+		hasContent: boolean;
 		namespace: string;
 		placeholder?: string;
 		onInput?: () => void;
 	};
 	let {
 		value = $bindable(),
-		isEmpty = $bindable(),
+		hasContent = $bindable(),
 		namespace,
 		placeholder = '',
 		onInput
@@ -43,7 +43,7 @@
 			const parsedEditorState = editor.parseEditorState(value);
 			editor.setEditorState(parsedEditorState, { tag: 'history-merge' });
 			editor.read(() => {
-				isEmpty = isEditorEmpty(editor);
+				hasContent = !isEditorEmpty(editor);
 			});
 		}
 
@@ -54,7 +54,7 @@
 				value = editorState.toJSON() as EditorState;
 				onInput?.();
 				editor.read(() => {
-					isEmpty = isEditorEmpty(editor);
+					hasContent = !isEditorEmpty(editor);
 				});
 			}
 		});

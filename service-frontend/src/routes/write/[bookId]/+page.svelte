@@ -25,9 +25,9 @@
 	let paidArea = $state(data.paidArea);
 	let salesArea = $state(data.salesArea);
 
-	let isEmptyFreeArea = $state(true);
-	let isEmptyPaidArea = $state(true);
-	let isEmptySalesArea = $state(true);
+	let hasFreeArea = $state(false);
+	let hasPaidArea = $state(false);
+	let hasSalesArea = $state(false);
 
 	const hasPublishedRevision = data.hasPublishedRevision;
 	let initTitle = $state(data.initTitle);
@@ -40,7 +40,7 @@
 		if (!isValidTitle) {
 			reasons.push('Title is required.');
 		}
-		if (isEmptyFreeArea && isEmptyPaidArea) {
+		if (hasFreeArea && hasPaidArea) {
 			reasons.push('Either free or paid contents is required.');
 		}
 		return reasons;
@@ -186,7 +186,7 @@
 				<hr class="mb-8 border-stone-300" />
 				<Editor
 					bind:value={freeArea}
-					bind:isEmpty={isEmptyFreeArea}
+					bind:hasContent={hasFreeArea}
 					namespace="book-free-area"
 					placeholder="Free area... Write your knowledge..."
 					onInput={autoSave}
@@ -196,7 +196,7 @@
 				<p class="mb-8 text-center text-lg text-stone-500">Paid area start</p>
 				<Editor
 					bind:value={paidArea}
-					bind:isEmpty={isEmptyPaidArea}
+					bind:hasContent={hasPaidArea}
 					namespace="book-paid-area"
 					placeholder="Paid area... Write special contents..."
 					onInput={autoSave}
@@ -205,7 +205,7 @@
 				<div>
 					<Editor
 						bind:value={salesArea}
-						bind:isEmpty={isEmptySalesArea}
+						bind:hasContent={hasSalesArea}
 						namespace="book-sales-area"
 						placeholder="Appeal &quot;Buy and read this!&quot;..."
 						onInput={autoSave}

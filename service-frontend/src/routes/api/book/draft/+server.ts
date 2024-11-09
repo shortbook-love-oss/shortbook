@@ -26,13 +26,13 @@ export async function POST({ request, url, locals }) {
 	}
 
 	const urlSlug = getRandom(16);
-	const { isEmpty: isEmptyFreeArea } = await fromEditorStateToHtml(
+	const { hasContent: hasFreeArea } = await fromEditorStateToHtml(
 		form.data.freeArea as unknown as SerializedEditorState
 	);
-	const { isEmpty: isEmptyPaidArea } = await fromEditorStateToHtml(
+	const { hasContent: hasPaidArea } = await fromEditorStateToHtml(
 		form.data.paidArea as unknown as SerializedEditorState
 	);
-	const { isEmpty: isEmptySalesArea } = await fromEditorStateToHtml(
+	const { hasContent: hasSalesArea } = await fromEditorStateToHtml(
 		form.data.salesArea as unknown as SerializedEditorState
 	);
 	const { book, dbError: dbBookUpdateError } = await dbBookCreate({
@@ -43,11 +43,11 @@ export async function POST({ request, url, locals }) {
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
-		isEmptyFreeArea,
+		hasFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
-		isEmptyPaidArea,
+		hasPaidArea,
 		salesArea: JSON.stringify(form.data.salesArea),
-		isEmptySalesArea,
+		hasSalesArea,
 		urlSlug,
 		buyPoint: 0
 	});
@@ -92,13 +92,13 @@ export async function PUT({ request, url, locals }) {
 		bookLang = bookRevision.contents[0];
 	}
 
-	const { isEmpty: isEmptyFreeArea } = await fromEditorStateToHtml(
+	const { hasContent: hasFreeArea } = await fromEditorStateToHtml(
 		form.data.freeArea as unknown as SerializedEditorState
 	);
-	const { isEmpty: isEmptyPaidArea } = await fromEditorStateToHtml(
+	const { hasContent: hasPaidArea } = await fromEditorStateToHtml(
 		form.data.paidArea as unknown as SerializedEditorState
 	);
-	const { isEmpty: isEmptySalesArea } = await fromEditorStateToHtml(
+	const { hasContent: hasSalesArea } = await fromEditorStateToHtml(
 		form.data.salesArea as unknown as SerializedEditorState
 	);
 	const { dbError: dbBookUpdateError } = await dbBookUpdate({
@@ -110,11 +110,11 @@ export async function PUT({ request, url, locals }) {
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
-		isEmptyFreeArea,
+		hasFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
-		isEmptyPaidArea,
+		hasPaidArea,
 		salesArea: JSON.stringify(form.data.salesArea),
-		isEmptySalesArea,
+		hasSalesArea,
 		urlSlug: bookRevision.url_slug,
 		buyPoint: bookRevision.buy_point
 	});

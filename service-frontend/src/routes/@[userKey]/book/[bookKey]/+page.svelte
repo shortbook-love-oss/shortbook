@@ -119,7 +119,7 @@
 				{@html data.bookDetail.freeArea}
 			</section>
 		{/if}
-		{#if !data.isEmptyPaidArea}
+		{#if data.hasPaidArea}
 			{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
 				<section class="article_content text-xl">
 					{@html data.bookDetail.paidArea}

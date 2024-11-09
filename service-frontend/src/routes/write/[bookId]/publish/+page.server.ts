@@ -129,11 +129,11 @@ export const actions = {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			freeArea: bookLang.free_area,
-			isEmptyFreeArea: bookLang.is_empty_free_area,
+			hasFreeArea: bookLang.has_free_area,
 			paidArea: bookLang.paid_area,
-			isEmptyPaidArea: bookLang.is_empty_paid_area,
+			hasPaidArea: bookLang.has_paid_area,
 			salesArea: bookLang.sales_area,
-			isEmptySalesArea: bookLang.is_empty_sales_area
+			hasSalesArea: bookLang.has_sales_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
@@ -195,11 +195,11 @@ export const actions = {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			freeArea: bookLang.free_area,
-			isEmptyFreeArea: bookLang.is_empty_free_area,
+			hasFreeArea: bookLang.has_free_area,
 			paidArea: bookLang.paid_area,
-			isEmptyPaidArea: bookLang.is_empty_paid_area,
+			hasPaidArea: bookLang.has_paid_area,
 			salesArea: bookLang.sales_area,
-			isEmptySalesArea: bookLang.is_empty_sales_area
+			hasSalesArea: bookLang.has_sales_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });

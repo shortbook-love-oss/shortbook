@@ -13,25 +13,25 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 	global.document = dom.window.document;
 
 	const editor = createEditor(initEditorConfig);
-	const { html, isEmpty } = await new Promise<{ html: string; isEmpty: boolean }>(
+	const { html, hasContent } = await new Promise<{ html: string; hasContent: boolean }>(
 		async (resolve, reject) => {
 			try {
 				const parsedEditorState = editor.parseEditorState(serializedState);
 				editor.setEditorState(parsedEditorState);
 				editor.read(() => {
-					const isEmpty = isEditorEmpty(editor);
-					if (isEmpty) {
-						resolve({ html: '', isEmpty });
-					} else {
+					const hasContent = !isEditorEmpty(editor);
+					if (hasContent) {
 						resolve({
 							html: $generateHtmlFromNodes(editor),
-							isEmpty
+							hasContent
 						});
+					} else {
+						resolve({ html: '', hasContent });
 					}
 				});
 			} catch (e) {
 				console.error(e);
-				reject({ html: '', isEmpty: true });
+				reject({ html: '', hasContent: false });
 			}
 		}
 	);
@@ -39,5 +39,5 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 	global.window = _window;
 	global.document = _document;
 
-	return { html, isEmpty };
+	return { html, hasContent };
 }

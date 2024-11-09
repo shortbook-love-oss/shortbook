@@ -197,19 +197,19 @@ export const load = async ({ url, locals, params }) => {
 		isBookDeleted: book.deleted_at != null
 	};
 
-	if (!bookLang.is_empty_free_area) {
+	if (!bookLang.has_free_area) {
 		const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.free_area));
 		bookDetail.freeArea = html;
 	}
-	const isEmptyPaidArea = bookLang.is_empty_paid_area;
+	const hasPaidArea = bookLang.has_paid_area;
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
-		if (!isEmptyPaidArea) {
+		if (hasPaidArea) {
 			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.paid_area));
 			bookDetail.paidArea = html;
 		}
 	} else {
-		if (!bookLang.is_empty_sales_area) {
+		if (bookLang.has_sales_area) {
 			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.sales_area));
 			bookDetail.salesArea = html;
 		}
@@ -217,7 +217,7 @@ export const load = async ({ url, locals, params }) => {
 
 	return {
 		bookDetail,
-		isEmptyPaidArea,
+		hasPaidArea,
 		requestLang,
 		userLang,
 		isOwn,
