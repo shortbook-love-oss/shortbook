@@ -13,7 +13,6 @@
 	import Select from '$lib/components/modules/form/select.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
 	import SubmitText from '$lib/components/modules/form/submit-text.svelte';
-	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
@@ -87,13 +86,13 @@
 				<div
 					class="mb-8 flex flex-col items-center justify-center gap-x-12 gap-y-8 lg:flex-row lg:items-stretch"
 				>
-					<div class="w-full max-w-xl shrink-0 text-lg lg:w-40 lg:justify-end">
+					<div class="w-full max-w-[640px] shrink-0 text-lg lg:w-40 lg:justify-end">
 						<p>Editing</p>
 						<h1 class="whitespace-pre-wrap break-words text-xl font-semibold">
 							{data.initTitle}
 						</h1>
 					</div>
-					<div class="w-full max-w-xl">
+					<div class="w-full max-w-[640px]">
 						<Select
 							bind:value={$form.targetLanguage as string}
 							name="targetLanguage"
@@ -140,7 +139,7 @@
 				</div>
 				<div class="flex justify-center gap-x-16">
 					<div class="hidden w-40 shrink-0 lg:block" aria-hidden="true"></div>
-					<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
+					<div class="flex w-full max-w-[640px] flex-wrap items-center gap-4">
 						<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
 							{data.status === 0 ? 'Publish book' : 'Republish book'}
 						</SubmitButton>

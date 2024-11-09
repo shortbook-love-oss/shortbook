@@ -50,7 +50,7 @@
 			{/if}
 		</div>
 	</div>
-	<div class="w-full min-w-0 max-w-2xl break-words">
+	<div class="w-full min-w-0 max-w-[640px] break-words">
 		<div class="-mx-4 mb-8 px-4">
 			<h1
 				class="whitespace-pre-wrap text-[2.25rem] font-semibold leading-tight xs:text-[3.25rem] {data
@@ -125,23 +125,24 @@
 					{@html data.bookDetail.paidArea}
 				</section>
 			{:else}
-				<SalesMessage imageSrc={data.bookDetail.userImage} message={data.bookDetail.salesArea}>
-					{#snippet action()}
-						{#if data.hasEnoughPoint}
-							<a
-								href="/redirect/book/{data.bookDetail.id}/buy"
-								class="mb-2 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
-								data-sveltekit-reload>Buy for {data.bookDetail.buyPoint} point</a
-							>
-							<p>You have {data.userPoint} point.</p>
-						{:else}
-							<PaymentAction
-								bookId={data.bookDetail.id}
-								currencyList={data.currencyList}
-								primaryCurrency={data.primaryCurrency}
-							/>
-						{/if}
-					{/snippet}
+				<SalesMessage imageSrc={data.bookDetail.userImage}>
+					<section class="article_content mb-4 text-xl">
+						{@html data.bookDetail.salesArea}
+					</section>
+					{#if data.hasEnoughPoint}
+						<a
+							href="/redirect/book/{data.bookDetail.id}/buy"
+							class="mb-2 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
+							data-sveltekit-reload>Buy for {data.bookDetail.buyPoint} point</a
+						>
+						<p>You have {data.userPoint} point.</p>
+					{:else}
+						<PaymentAction
+							bookId={data.bookDetail.id}
+							currencyList={data.currencyList}
+							primaryCurrency={data.primaryCurrency}
+						/>
+					{/if}
 				</SalesMessage>
 			{/if}
 		{/if}

@@ -197,7 +197,7 @@ export const load = async ({ url, locals, params }) => {
 		isBookDeleted: book.deleted_at != null
 	};
 
-	if (!bookLang.has_free_area) {
+	if (bookLang.has_free_area) {
 		const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.free_area));
 		bookDetail.freeArea = html;
 	}

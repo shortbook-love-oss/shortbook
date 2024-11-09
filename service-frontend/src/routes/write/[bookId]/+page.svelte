@@ -10,6 +10,7 @@
 	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import TextAreaSingle from '$lib/components/modules/form/text-area-single.svelte';
 	import Editor from '$lib/components/modules/wysiwyg-editor/editor.svelte';
+	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
 
@@ -40,7 +41,7 @@
 		if (!isValidTitle) {
 			reasons.push('Title is required.');
 		}
-		if (hasFreeArea && hasPaidArea) {
+		if (!hasFreeArea && !hasPaidArea) {
 			reasons.push('Either free or paid contents is required.');
 		}
 		return reasons;
@@ -201,8 +202,10 @@
 					placeholder="Paid area... Write special contents..."
 					onInput={autoSave}
 				/>
-				<hr class="my-8 border-t-4 border-double border-stone-300" />
-				<div>
+				<p class="mt-8 text-center text-lg text-stone-500">Paid area end</p>
+				<hr class="my-2 border-t-4 border-double border-stone-300" />
+				<p class="mb-8 text-center text-lg text-stone-500">Bonus: Writing a sales pitch</p>
+				<SalesMessage imageSrc={$page.data.signInUser.imageSrc}>
 					<Editor
 						bind:value={salesArea}
 						bind:hasContent={hasSalesArea}
@@ -210,7 +213,12 @@
 						placeholder="Appeal &quot;Buy and read this!&quot;..."
 						onInput={autoSave}
 					/>
-				</div>
+					<div
+						class="mt-4 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
+					>
+						Buy for $◯.◯◯
+					</div>
+				</SalesMessage>
 			</div>
 		</div>
 	{/snippet}
