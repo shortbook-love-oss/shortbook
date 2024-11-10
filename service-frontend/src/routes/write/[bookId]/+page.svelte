@@ -13,6 +13,7 @@
 	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
+	import MessageWarning from '$lib/components/modules/information/message-warning.svelte';
 
 	let { data } = $props();
 
@@ -213,11 +214,16 @@
 						placeholder="Appeal &quot;Buy and read this!&quot;..."
 						onInput={autoSave}
 					/>
-					<div
-						class="mt-4 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
-					>
-						Buy for $◯.◯◯
-					</div>
+					{#if !hasPaidArea && hasSalesArea}
+						<MessageWarning
+							message="If you do not write the paid area, this message will not be displayed to users."
+							className="mt-4"
+						/>
+					{:else}
+						<div class="mt-4 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl">
+							Buy for $◯.◯◯
+						</div>
+					{/if}
 				</SalesMessage>
 			</div>
 		</div>
