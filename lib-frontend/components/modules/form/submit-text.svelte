@@ -3,17 +3,17 @@
 
 	type Props = {
 		children: Snippet;
-		formaction?: string;
 		hasInvalid?: boolean;
 		isLoading?: boolean;
 		className?: string;
+		[key: string]: unknown;
 	};
 	let {
 		children,
-		formaction = '',
 		hasInvalid = false,
 		isLoading = false,
-		className = ''
+		className = '',
+		...restProps
 	}: Props = $props();
 
 	const cursorClass = $state(
@@ -34,8 +34,8 @@
 		? 'border-stone-400 bg-stone-200 text-stone-700'
 		: 'text-stone-950 hover:bg-stone-500/30'} {cursorClass} {className}"
 	type={hasInvalid || isLoading ? 'button' : 'submit'}
-	{formaction}
 	aria-disabled={hasInvalid || isLoading ? true : undefined}
+	{...restProps}
 >
 	{@render children()}
 </button>
