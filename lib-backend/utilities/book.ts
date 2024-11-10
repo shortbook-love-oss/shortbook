@@ -1,5 +1,6 @@
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { JSDOM } from 'jsdom';
+import DOMPurify from 'isomorphic-dompurify';
 import { createEditor, type SerializedEditorState } from 'lexical';
 import { initEditorConfig, isEditorEmpty } from '$lib/components/modules/wysiwyg-editor/editor';
 
@@ -22,7 +23,7 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 					const hasContent = !isEditorEmpty(editor);
 					if (hasContent) {
 						resolve({
-							html: $generateHtmlFromNodes(editor),
+							html: DOMPurify.sanitize($generateHtmlFromNodes(editor)),
 							hasContent
 						});
 					} else {
