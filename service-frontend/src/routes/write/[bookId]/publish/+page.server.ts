@@ -37,7 +37,11 @@ export const load = async ({ url, locals, params }) => {
 	if (!bookLang) {
 		bookLang = bookRevision.contents[0];
 	}
-	if (!validateOnlyVisibleChar(bookLang.title)) {
+
+	if (
+		!validateOnlyVisibleChar(bookLang.title) ||
+		!(bookLang.has_free_area || bookLang.has_paid_area)
+	) {
 		redirect(303, `/write/${book.id}`);
 	}
 
