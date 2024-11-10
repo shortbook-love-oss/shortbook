@@ -75,6 +75,7 @@ export const load = async ({ url, locals, params }) => {
 	const initTitle = bookLang.title;
 	const initSubtitle = bookLang.subtitle;
 	const status = bookRevision.status;
+	const hasPaidArea = bookLang.has_paid_area;
 
 	return {
 		form,
@@ -82,6 +83,7 @@ export const load = async ({ url, locals, params }) => {
 		initTitle,
 		initSubtitle,
 		status,
+		hasPaidArea,
 		userCurrencyCode,
 		currencyRateIndex
 	};

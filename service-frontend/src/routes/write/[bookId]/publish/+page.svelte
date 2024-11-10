@@ -10,10 +10,12 @@
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
+	import Number from '$lib/components/modules/form/number.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
 	import SubmitText from '$lib/components/modules/form/submit-text.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
+	import MessageInfo from '$lib/components/modules/information/message-info.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
 	import InputPoint from '$lib/components/service/write/input-point.svelte';
@@ -122,13 +124,24 @@
 						<InputPoint
 							bind:point={$form.buyPoint}
 							errorMessages={$errors.buyPoint}
-							className="mb-8"
+							className="mb-8 {data.hasPaidArea ? '' : 'hidden'}"
 						/>
-						<PricePreview
-							point={$form.buyPoint}
-							userCurrencyCode={data.userCurrencyCode}
-							currencyRates={data.currencyRateIndex}
-						/>
+						{#if data.hasPaidArea}
+							<PricePreview
+								point={$form.buyPoint}
+								userCurrencyCode={data.userCurrencyCode}
+								currencyRates={data.currencyRateIndex}
+							/>
+						{:else}
+							<Number
+								value={0}
+								label="Selling point amount"
+								name=""
+								disabled={true}
+								className="mb-2 w-48"
+							/>
+							<MessageInfo message="This book has no paid content. Publish as a free book." />
+						{/if}
 					</div>
 					<div class="shrink-0 lg:w-40">
 						<div class="w-fit lg:-mx-4 lg:-mt-3">
