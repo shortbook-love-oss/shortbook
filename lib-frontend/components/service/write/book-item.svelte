@@ -1,8 +1,11 @@
 <script lang="ts">
+	import IconMore from '~icons/mdi/more-horiz';
 	import type { MyBookItem } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
 	import type { AvailableLanguageTags } from '$lib/utilities/language';
+	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
+	import Dialog from '$lib/components/layouts/dialog.svelte';
 
 	type Props = {
 		book: MyBookItem;
@@ -12,15 +15,17 @@
 	let { book, penName, requestLang }: Props = $props();
 </script>
 
-<article>
+<article class="relative flex">
 	<a
 		href="/write/{book.id}"
-		class="flex items-center gap-x-4 px-4 py-6 hover:bg-stone-200 focus:bg-stone-200 sm:gap-6"
+		class="flex flex-1 items-center gap-x-4 p-4 hover:bg-stone-200 focus:bg-stone-200 sm:gap-6"
 	>
-		<BookCover {book} {penName} width={64} />
-		<div class="-mt-1.5 flex-1 overflow-x-hidden">
+		<div class="hidden xs:contents">
+			<BookCover {book} {penName} width={64} />
+		</div>
+		<div class="-mt-1.5 flex-1 py-2">
 			<h2
-				class="mb-1 line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] text-3xl font-semibold lg:line-clamp-4"
+				class="mb-1 line-clamp-3 whitespace-pre-wrap break-words pb-[0.1em] text-3xl font-semibold [word-break:break-word] lg:line-clamp-4"
 			>
 				{#if book.title}
 					{book.title}
@@ -42,4 +47,32 @@
 			</div>
 		</div>
 	</a>
+	<Dropdown
+		name="book_item_control_{book.id}"
+		openerClass="shrink-0"
+		dropdownClass="right-0 bottom-0"
+	>
+		{#snippet opener()}
+			<div class="flex items-center p-2">
+				<IconMore width="36" height="36" />
+			</div>
+		{/snippet}
+		<form method="POST" action="/write/{book.id}?/delete">
+			<Dialog
+				name="book_item_control_{book.id}"
+				openerClass="rounded-md"
+				dialogSizeClass="max-w-md"
+			>
+				{#snippet opener()}
+					<p class="p-2 text-red-800">Delete a book</p>
+				{/snippet}
+				<p>Are you sure you want to delete this book?</p>
+				<p class="mb-2">It cannot be restored.</p>
+				<button
+					class="mx-auto block rounded-lg px-3 py-2 text-red-800 hover:bg-stone-200 focus:bg-stone-200"
+					>Delete</button
+				>
+			</Dialog>
+		</form>
+	</Dropdown>
 </article>
