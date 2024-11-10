@@ -110,6 +110,11 @@
 			})
 			.catch((e: Error) => e);
 	}
+
+	function backPage(event: MouseEvent) {
+		event.preventDefault();
+		history.back();
+	}
 </script>
 
 <svelte:head>
@@ -129,6 +134,7 @@
 				href="/write"
 				class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200"
 				title="Back to my articles list"
+				onclick={backPage}
 			>
 				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
 			</a>
@@ -216,7 +222,7 @@
 					/>
 					{#if !hasPaidArea && hasSalesArea}
 						<MessageWarning
-							message="If you do not write the paid area, this message will not be displayed to users."
+							message="If you do not write the paid area, this area will not be displayed to users."
 							className="mt-4"
 						/>
 					{:else}
