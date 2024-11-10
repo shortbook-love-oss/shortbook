@@ -9,7 +9,6 @@ import { schema } from '$lib/validation/schema/book/update';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
 import { editLoad } from '$lib-backend/functions/service/write/edit-load';
-import { dbBookDelete } from '$lib-backend/model/book/delete';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
@@ -206,22 +205,5 @@ export const actions = {
 		}
 
 		redirect(303, setLanguageTagToPath(`/write`, url));
-	},
-
-	delete: async ({ url, locals, params }) => {
-		const signInUser = locals.signInUser;
-		if (!signInUser) {
-			return error(401, { message: 'Unauthorized' });
-		}
-
-		const { dbError } = await dbBookDelete({
-			bookId: params.bookId,
-			userId: signInUser.id
-		});
-		if (dbError) {
-			return error(500, { message: dbError.message });
-		}
-
-		redirect(303, setLanguageTagToPath('/write', url));
 	}
 };

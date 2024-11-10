@@ -157,8 +157,7 @@
 							<p>Do you want to delete it?</p>
 							{#snippet actions()}
 								<SubmitText
-									formaction="{removeLanguageTagFromPath($page.url.pathname)}?/delete"
-									hasInvalid={!hasVaild && isEnableJS}
+									form="book_item_delete_form"
 									isLoading={$submitting}
 									className="mx-auto"
 								>
@@ -173,6 +172,12 @@
 					<div></div>
 				{/snippet}
 			</Form>
+			<form
+				method="POST"
+				action="/write/{$page.params.bookId}?/delete"
+				id="book_item_delete_form"
+				aria-hidden="true"
+			></form>
 		</div>
 	{/snippet}
 	{#snippet footerNav()}{/snippet}
