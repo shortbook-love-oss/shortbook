@@ -51,7 +51,7 @@
 	<TextField
 		bind:value={$form.keyHandle}
 		name="keyHandle"
-		label="Type &quot;{$form.keyHandle}&quot; to delete user data."
+		label="Type &quot;{$page.data.signInUser.keyHandle}&quot; to delete user data."
 		errorMessages={$errors.keyHandle}
 		className="mb-8"
 	/>
