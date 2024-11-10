@@ -6,6 +6,7 @@
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
+	import NavLinkSmall from '../navigation/nav-link-small.svelte';
 
 	type Props = {
 		book: MyBookItem;
@@ -57,14 +58,17 @@
 				<IconMore width="36" height="36" />
 			</div>
 		{/snippet}
+		{#if book.hasPublishedRevision}
+			<NavLinkSmall name="Go to published page" href="/book/{book.id}" />
+		{/if}
 		<form method="POST" action="/write/{book.id}?/delete">
 			<Dialog
 				name="book_item_control_{book.id}"
-				openerClass="rounded-md"
+				openerClass="rounded-lg"
 				dialogSizeClass="max-w-md"
 			>
 				{#snippet opener()}
-					<p class="p-2 text-red-800">Delete a book</p>
+					<p class="px-3 py-2 text-lg text-red-800">Delete a book</p>
 				{/snippet}
 				<p>Are you sure you want to delete this book?</p>
 				<p class="mb-2">It cannot be restored.</p>

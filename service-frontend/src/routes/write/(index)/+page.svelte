@@ -10,7 +10,7 @@
 	<title>My books | ShortBook</title>
 </svelte:head>
 
-<div class="mx-auto max-w-xl">
+<div class="mx-auto max-w-[640px]">
 	<div class="mb-8 flex flex-wrap items-center gap-4">
 		<h1 class="text-2xl">My books</h1>
 		<a
