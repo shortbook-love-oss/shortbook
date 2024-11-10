@@ -56,11 +56,11 @@ export const bookTextAlignSelect = [
 export type BookTextAlignSelectValues = (typeof bookTextAlignSelect)[number]['value'];
 
 export const bookPointSelect: SelectItemSingle[] = [
+	{ value: 100, label: '100' },
 	{ value: 200, label: '200' },
 	{ value: 300, label: '300' },
 	{ value: 500, label: '500' },
-	{ value: 1000, label: '1000' },
-	{ value: 2000, label: '2000' }
+	{ value: 1000, label: '1000' }
 ];
 
 export const bookCreateUrlParam = 'new';

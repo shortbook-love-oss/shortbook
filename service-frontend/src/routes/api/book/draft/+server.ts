@@ -49,7 +49,7 @@ export async function POST({ request, url, locals }) {
 		salesArea: JSON.stringify(form.data.salesArea),
 		hasSalesArea,
 		urlSlug,
-		buyPoint: 0
+		buyPoint: 200
 	});
 	if (!book || dbBookUpdateError) {
 		return error(500, { message: dbBookUpdateError?.message ?? '' });
