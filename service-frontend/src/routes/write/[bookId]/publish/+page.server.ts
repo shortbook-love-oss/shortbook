@@ -40,7 +40,7 @@ export const load = async ({ url, locals, params }) => {
 
 	if (
 		!validateOnlyVisibleChar(bookLang.title) ||
-		!(bookLang.has_free_area || bookLang.has_paid_area)
+		!(bookRevision.has_free_area || bookRevision.has_paid_area)
 	) {
 		redirect(303, `/write/${book.id}`);
 	}
@@ -75,7 +75,7 @@ export const load = async ({ url, locals, params }) => {
 	const initTitle = bookLang.title;
 	const initSubtitle = bookLang.subtitle;
 	const status = bookRevision.status;
-	const hasPaidArea = bookLang.has_paid_area;
+	const hasPaidArea = bookRevision.has_paid_area;
 
 	return {
 		form,
@@ -134,11 +134,11 @@ export const actions = {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			freeArea: bookLang.free_area,
-			hasFreeArea: bookLang.has_free_area,
+			hasFreeArea: bookRevision.has_free_area,
 			paidArea: bookLang.paid_area,
-			hasPaidArea: bookLang.has_paid_area,
+			hasPaidArea: bookRevision.has_paid_area,
 			salesArea: bookLang.sales_area,
-			hasSalesArea: bookLang.has_sales_area
+			hasSalesArea: bookRevision.has_sales_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
@@ -200,11 +200,11 @@ export const actions = {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			freeArea: bookLang.free_area,
-			hasFreeArea: bookLang.has_free_area,
+			hasFreeArea: bookRevision.has_free_area,
 			paidArea: bookLang.paid_area,
-			hasPaidArea: bookLang.has_paid_area,
+			hasPaidArea: bookRevision.has_paid_area,
 			salesArea: bookLang.sales_area,
-			hasSalesArea: bookLang.has_sales_area
+			hasSalesArea: bookRevision.has_sales_area
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });

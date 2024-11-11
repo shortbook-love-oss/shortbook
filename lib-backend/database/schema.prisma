@@ -230,6 +230,9 @@ model book_revisions {
   url_slug                String              @db.VarChar(100) // Length 1 - 100
   buy_point               Int
   native_language         String              @db.VarChar(5)
+  has_free_area           Boolean
+  has_paid_area           Boolean
+  has_sales_area          Boolean
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
@@ -271,11 +274,8 @@ model book_contents {
   title                   String              @db.VarChar(1400) // Max length is 200
   subtitle                String              @db.VarChar(1400) // Max length is 200
   free_area               String              @db.LongText
-  has_free_area           Boolean
   paid_area               String              @db.LongText
-  has_paid_area           Boolean
   sales_area              String              @db.LongText
-  has_sales_area          Boolean
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

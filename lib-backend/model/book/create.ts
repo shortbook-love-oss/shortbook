@@ -42,6 +42,9 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 							url_slug: req.urlSlug,
 							buy_point: req.buyPoint,
 							native_language: req.targetLanguage,
+							has_free_area: req.hasFreeArea,
+							has_paid_area: req.hasPaidArea,
+							has_sales_area: req.hasSalesArea,
 							cover: {
 								create: {
 									base_color_start: req.baseColorStart,
@@ -64,11 +67,8 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 									title: req.title,
 									subtitle: req.subtitle,
 									free_area: req.freeArea,
-									has_free_area: req.hasFreeArea,
 									paid_area: req.paidArea,
-									has_paid_area: req.hasPaidArea,
-									sales_area: req.salesArea,
-									has_sales_area: req.hasSalesArea
+									sales_area: req.salesArea
 								}
 							}
 						}
