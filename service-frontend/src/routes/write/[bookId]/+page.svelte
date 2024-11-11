@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import IconArrowLeft from '~icons/mdi/arrow-left';
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
-	import type { BookDraftUpdateResult } from '$lib/utilities/book';
+	import { bookCreateUrlParam, type BookDraftUpdateResult } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
 	import { getLanguageTagFromUrl } from '$lib/utilities/url';
 	import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
@@ -79,7 +79,7 @@
 		if (autoSaveTimeout !== 0) {
 			await save();
 		}
-		if (bookId) {
+		if (bookId !== '' && bookId !== bookCreateUrlParam) {
 			goto(`/write/${bookId}/publish`);
 		}
 	}
@@ -88,17 +88,16 @@
 		return await fetch('/api/book/draft', {
 			method: bookId ? 'PUT' : 'POST',
 			body: JSON.stringify({
+				bookId,
 				title,
 				subtitle,
 				freeArea,
 				paidArea,
-				salesArea,
-				bookId
+				salesArea
 			})
 		})
 			.then(async (res) => {
 				const result = (await res.json()) as BookDraftUpdateResult;
-				bookId = result.bookId;
 				bookStatus = 0;
 				initTitle = title;
 				lastUpdatedAt = new Date();
@@ -106,6 +105,10 @@
 				window.setTimeout(() => {
 					isAutoSaved = false;
 				}, 2000);
+				if (bookId !== result.bookId) {
+					replaceState(`/write/${result.bookId}`, {});
+				}
+				bookId = result.bookId;
 				return result;
 			})
 			.catch((e: Error) => e);
@@ -118,10 +121,12 @@
 </script>
 
 <svelte:head>
-	{#if data.bookId}
-		<title>Write new book | ShortBook</title>
-	{:else}
+	{#if bookId && initTitle}
 		<title>Edit "{initTitle}" | ShortBook</title>
+	{:else if bookId}
+		<title>Edit [No title] | ShortBook</title>
+	{:else}
+		<title>Write new book | ShortBook</title>
 	{/if}
 	<Meta />
 	<meta name="robots" content="noindex" />
