@@ -41,11 +41,7 @@ export function getUnitByteLength(byteLength: number, decimalPoint: number) {
 	return `${unitAmountFixed} ${sizeUnits[sizeUnitIndex]}`;
 }
 
-export async function uploadFiles<R extends Record<string, any>>(
-	actionUrl: string,
-	files: FileList,
-	uploadProp: string
-) {
+export async function uploadFiles<R>(actionUrl: string, files: FileList, uploadProp: string) {
 	const body = new FormData();
 	for (let i = 0; i < files.length; i++) {
 		body.append(uploadProp, files[i]);

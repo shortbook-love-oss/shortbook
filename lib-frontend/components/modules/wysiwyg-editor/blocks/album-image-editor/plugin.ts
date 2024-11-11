@@ -1,8 +1,6 @@
 import { mergeRegister } from '@lexical/utils';
 import {
 	$getNodeByKey,
-	$getSelection,
-	$isNodeSelection,
 	CLICK_COMMAND,
 	COMMAND_PRIORITY_NORMAL,
 	createCommand,
@@ -17,8 +15,7 @@ import {
 } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/dom';
 import {
 	$createImageNode,
-	$isImageNode,
-	ImageNode
+	$isImageNode
 } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 import {
@@ -96,18 +93,6 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 		);
 	};
 	return true;
-}
-
-function isImageNodeSelected() {
-	const selection = $getSelection();
-	if (!$isNodeSelection(selection)) {
-		return false;
-	}
-	const node = selection.getNodes()[0];
-	if (!(node instanceof ImageNode)) {
-		return false;
-	}
-	return node;
 }
 
 function toActiveImageDOM(event: MouseEvent) {

@@ -8,7 +8,7 @@ import {
 import { createDeviderNodeDOM } from '$lib/components/modules/wysiwyg-editor/blocks/divider/dom';
 import type { BlockNode } from '$lib/components/modules/wysiwyg-editor/editor';
 
-export type SerializedDividerNode = Spread<{}, SerializedLexicalNode>;
+export type SerializedDividerNode = SerializedLexicalNode;
 
 export class DividerNode extends DecoratorNode<HTMLElement> {
 	static getType(): string {
