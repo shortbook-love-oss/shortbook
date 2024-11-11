@@ -36,10 +36,15 @@
 	}
 </script>
 
-<Dialog name="book-preview" title="Cover editor" dialogSizeClass="max-w-3xl">
+<Dialog
+	name="book-preview"
+	title="Cover editor"
+	openerClass={className}
+	dialogSizeClass="max-w-3xl"
+>
 	{#snippet opener()}
-		<div class="flex flex-col items-center gap-4 p-4 sm:flex-row lg:flex-col {className}">
-			<div class="mx-auto" aria-hidden="true">
+		<div class="flex flex-col items-center gap-4 p-4 xs:flex-row">
+			<div class="mx-auto cursor-pointer" aria-hidden="true">
 				<BookCover book={bookCover} {penName} width={160} />
 			</div>
 			<div class="mx-auto w-fit rounded-lg border-2 border-primary-700">
@@ -50,7 +55,7 @@
 		</div>
 	{/snippet}
 
-	<div class="flex flex-col gap-8 sm:flex-row">
+	<div class="flex flex-wrap gap-8">
 		<div
 			class="w-64 flex-1 md:w-96 lg:w-[32rem]"
 			bind:clientWidth={previewWidth}

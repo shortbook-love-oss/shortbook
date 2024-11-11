@@ -80,123 +80,113 @@
 
 	<!-- Edit area -->
 	{#snippet contents()}
-		<div class="pb-24 pt-16">
-			<Form
-				method="POST"
-				action="{$page.url.pathname}?/update"
-				{enhance}
-				hasInvalid={!hasVaild}
-				isLoading={$submitting}
-				successMessage={$page.status === 200 ? $message : ''}
-				errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
-				className="contents"
-			>
-				<div
-					class="mb-8 flex flex-col items-center justify-center gap-x-12 gap-y-8 lg:flex-row lg:items-stretch"
+		<div class="flex flex-col items-center px-4 pb-24 pt-16">
+			<div class="w-full max-w-[640px]">
+				<Form
+					method="POST"
+					action="{$page.url.pathname}?/update"
+					{enhance}
+					hasInvalid={!hasVaild}
+					isLoading={$submitting}
+					successMessage={$page.status === 200 ? $message : ''}
+					errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
+					className="contents"
 				>
-					<div class="w-full max-w-[640px] shrink-0 text-lg lg:w-40 lg:justify-end">
-						<p>Editing</p>
-						<h1 class="whitespace-pre-wrap break-words text-xl font-semibold">
-							{data.initTitle}
-						</h1>
-					</div>
-					<div class="w-full max-w-[640px]">
-						<Select
-							bind:value={$form.targetLanguage as string}
-							name="targetLanguage"
-							list={data.langTags}
-							required={true}
-							label="Native language"
-							errorMessages={$errors.targetLanguage}
-							className="mb-8 max-w-72"
+					<p class="text-lg">Publish setting of</p>
+					<h1 class="mb-8 whitespace-pre-wrap break-words text-3xl font-semibold">
+						"{data.initTitle}"
+					</h1>
+					<Select
+						bind:value={$form.targetLanguage as string}
+						name="targetLanguage"
+						list={data.langTags}
+						required={true}
+						label="Native language"
+						errorMessages={$errors.targetLanguage}
+						className="mb-8 max-w-72"
+					/>
+					<TextField
+						bind:value={$form.urlSlug}
+						name="urlSlug"
+						required={true}
+						label="URL string"
+						errorMessages={$errors.urlSlug}
+						className="mb-1"
+					/>
+					<p class="mb-8 break-words">
+						{$page.url.origin}/@{$page.data.signInUser.keyHandle}/book/{$form.urlSlug}
+					</p>
+					<InputPoint
+						bind:point={$form.buyPoint}
+						errorMessages={$errors.buyPoint}
+						className="mb-8 {data.hasPaidArea ? '' : 'hidden'}"
+					/>
+					{#if data.hasPaidArea}
+						<PricePreview
+							point={$form.buyPoint}
+							userCurrencyCode={data.userCurrencyCode}
+							currencyRates={data.currencyRateIndex}
+							className="mb-8"
 						/>
-						<TextField
-							bind:value={$form.urlSlug}
-							name="urlSlug"
-							required={true}
-							label="URL string"
-							errorMessages={$errors.urlSlug}
-							className="mb-1"
+					{:else}
+						<Number
+							value={0}
+							label="Selling point amount"
+							name=""
+							disabled={true}
+							className="mb-2 w-48"
 						/>
-						<p class="mb-8 break-words">
-							{$page.url.origin}/@{$page.data.signInUser.keyHandle}/book/{$form.urlSlug}
-						</p>
-						<InputPoint
-							bind:point={$form.buyPoint}
-							errorMessages={$errors.buyPoint}
-							className="mb-8 {data.hasPaidArea ? '' : 'hidden'}"
+						<MessageInfo
+							message="This book has no paid content. Publish as a free book."
+							className="mb-8"
 						/>
-						{#if data.hasPaidArea}
-							<PricePreview
-								point={$form.buyPoint}
-								userCurrencyCode={data.userCurrencyCode}
-								currencyRates={data.currencyRateIndex}
-							/>
-						{:else}
-							<Number
-								value={0}
-								label="Selling point amount"
-								name=""
-								disabled={true}
-								className="mb-2 w-48"
-							/>
-							<MessageInfo message="This book has no paid content. Publish as a free book." />
-						{/if}
-					</div>
-					<div class="shrink-0 lg:w-40">
-						<div class="w-fit lg:-mx-4 lg:-mt-3">
-							<BookCoverEdit
-								book={$form}
-								title={data.initTitle}
-								subtitle={data.initSubtitle}
-								penName={$page.data.signInUser.penName}
-								errors={$errors}
-								oninput={applyChildChange}
-							/>
+					{/if}
+					<BookCoverEdit
+						book={$form}
+						title={data.initTitle}
+						subtitle={data.initSubtitle}
+						penName={$page.data.signInUser.penName}
+						errors={$errors}
+						oninput={applyChildChange}
+						className="mb-12 mx-auto w-fit"
+					/>
+					{#snippet submit()}
+						<div class="flex flex-wrap items-center gap-4">
+							<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
+								{data.status === 0 ? 'Publish book' : 'Republish book'}
+							</SubmitButton>
+							<SubmitText
+								formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
+								hasInvalid={!hasVaild && isEnableJS}
+								isLoading={$submitting}>Save draft</SubmitText
+							>
+							<Dialog name="delete" openerClass="rounded-lg" dialogSizeClass="max-w-fit">
+								{#snippet opener()}
+									<NavLinkSmall name="Delete" className="text-red-800">
+										<IconDelete width="24" height="24" />
+									</NavLinkSmall>
+								{/snippet}
+								<p>Do you want to delete it?</p>
+								{#snippet actions()}
+									<SubmitText
+										form="book_item_delete_form"
+										isLoading={$submitting}
+										className="mx-auto"
+									>
+										<span class="text-red-800">Delete</span>
+									</SubmitText>
+								{/snippet}
+							</Dialog>
 						</div>
-					</div>
-				</div>
-				<div class="flex justify-center gap-x-16">
-					<div class="hidden w-40 shrink-0 lg:block" aria-hidden="true"></div>
-					<div class="flex w-full max-w-[640px] flex-wrap items-center gap-4">
-						<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
-							{data.status === 0 ? 'Publish book' : 'Republish book'}
-						</SubmitButton>
-						<SubmitText
-							formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
-							hasInvalid={!hasVaild && isEnableJS}
-							isLoading={$submitting}>Save draft</SubmitText
-						>
-						<Dialog name="delete" openerClass="rounded-lg" dialogSizeClass="max-w-fit">
-							{#snippet opener()}
-								<NavLinkSmall name="Delete" className="text-red-800">
-									<IconDelete width="24" height="24" />
-								</NavLinkSmall>
-							{/snippet}
-							<p>Do you want to delete it?</p>
-							{#snippet actions()}
-								<SubmitText
-									form="book_item_delete_form"
-									isLoading={$submitting}
-									className="mx-auto"
-								>
-									<span class="text-red-800">Delete</span>
-								</SubmitText>
-							{/snippet}
-						</Dialog>
-					</div>
-					<div class="hidden w-40 shrink-0 lg:block" aria-hidden="true"></div>
-				</div>
-				{#snippet submit()}
-					<div></div>
-				{/snippet}
-			</Form>
-			<form
-				method="POST"
-				action="/write/{$page.params.bookId}?/delete"
-				id="book_item_delete_form"
-				aria-hidden="true"
-			></form>
+					{/snippet}
+				</Form>
+				<form
+					method="POST"
+					action="/write/{$page.params.bookId}?/delete"
+					id="book_item_delete_form"
+					class="hidden"
+				></form>
+			</div>
 		</div>
 	{/snippet}
 	{#snippet footerNav()}{/snippet}

@@ -17,8 +17,9 @@
 		point: number;
 		userCurrencyCode: CurrencySupportCodes;
 		currencyRates: Partial<Record<CurrencySupportCodes, number>>;
+		className?: string;
 	};
-	let { point, userCurrencyCode, currencyRates }: Props = $props();
+	let { point, userCurrencyCode, currencyRates, className = '' }: Props = $props();
 
 	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
@@ -79,7 +80,7 @@
 </script>
 
 {#if isEnableJS}
-	<div class="rounded-lg bg-primary-100 p-4 text-lg">
+	<div class="rounded-lg bg-primary-100 p-4 text-lg {className}">
 		{#if buyPrice != undefined}
 			<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1">
 				<p>

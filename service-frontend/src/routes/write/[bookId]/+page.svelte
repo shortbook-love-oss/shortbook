@@ -175,8 +175,8 @@
 		</HeaderArea>
 	{/snippet}
 	{#snippet contents()}
-		<div class="flex flex-col items-center">
-			<div class="flex min-h-dvh w-full max-w-[640px] flex-1 flex-col px-4 pb-24 pt-16">
+		<div class="flex flex-col items-center px-4 pb-24 pt-16">
+			<div class="flex min-h-dvh w-full max-w-[640px] flex-1 flex-col">
 				<TextAreaSingle
 					bind:value={title}
 					name="title"
