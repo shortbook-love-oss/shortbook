@@ -2,13 +2,12 @@ import sharp from 'sharp';
 import { sharpFromBmp } from 'sharp-bmp';
 import { sharpsFromIco, type ImageData as ImageDataIco } from 'sharp-ico';
 import { env } from '$env/dynamic/private';
-import { imageMIMEextension } from '$lib/utilities/file';
+import { imageExtensionMIME, imageMIMEextension } from '$lib/utilities/file';
 import {
 	allowedFromExtensions,
 	allowedResizeFit,
 	allowedSize,
 	allowedToExtensions,
-	imageExtensionMIME,
 	vectorFileExtensions,
 	type AllowedFromExtension,
 	type AllowedToExtension,

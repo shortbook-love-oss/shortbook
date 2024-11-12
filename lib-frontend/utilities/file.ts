@@ -6,6 +6,19 @@ export interface SelectedFile {
 	key: number;
 }
 
+export const imageExtensionMIME: Record<AllowedFromExtension, string> = {
+	png: 'image/png',
+	jpg: 'image/jpeg',
+	jpeg: 'image/jpeg',
+	gif: 'image/gif',
+	webp: 'image/webp',
+	avif: 'image/avif',
+	tiff: 'image/tiff',
+	bmp: 'image/bmp',
+	ico: 'image/vnd.microsoft.icon',
+	svg: 'image/svg+xml'
+};
+
 export const imageMIMEextension: Record<string, AllowedFromExtension> = {
 	'image/png': 'png',
 	'image/jpeg': 'jpg',
