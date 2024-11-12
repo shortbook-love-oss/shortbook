@@ -4,7 +4,7 @@
 	import IconWarning from '~icons/mdi/warning';
 	import { page } from '$app/stores';
 	import { toLocaleDate } from '$lib/utilities/date';
-	import { inquiryCategoryParam } from '$lib/utilities/url';
+	import { callbackParam, inquiryCategoryParam } from '$lib/utilities/url';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
@@ -14,6 +14,11 @@
 	let { data } = $props();
 
 	const updatedAt = toLocaleDate(data.bookDetail.updatedAt, data.requestLang);
+
+	const editUrl = $derived.by(() => {
+		const searchParams = new URLSearchParams({ [callbackParam]: $page.url.pathname });
+		return `/write/${data.bookDetail.id}?${searchParams.toString()}`;
+	});
 </script>
 
 <svelte:head>
@@ -81,7 +86,7 @@
 					>{updatedAt}</time
 				>
 				{#if data.isOwn && !data.bookDetail.isBookDeleted}
-					<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">
+					<NavLinkSmall name="Edit" href={editUrl} className="w-fit">
 						<IconWrite width="20" height="20" className="-me-1" />
 					</NavLinkSmall>
 				{/if}

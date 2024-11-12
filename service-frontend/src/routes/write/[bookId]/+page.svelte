@@ -5,7 +5,7 @@
 	import { page } from '$app/stores';
 	import { bookCreateUrlParam, type BookDraftUpdateResult } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
-	import { getLanguageTagFromUrl } from '$lib/utilities/url';
+	import { callbackParam, getLanguageTagFromUrl } from '$lib/utilities/url';
 	import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import TextAreaSingle from '$lib/components/modules/form/text-area-single.svelte';
@@ -35,6 +35,8 @@
 	let initTitle = $state(data.initTitle);
 	let lastUpdatedAt = $state(data.updatedAt);
 	let isAutoSaved = $state(false);
+
+	const callbackUrl = $derived($page.url.searchParams.get(callbackParam) ?? '');
 
 	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
 	const unpublishableReasons = $derived.by(() => {
@@ -75,12 +77,17 @@
 		}, 3000);
 	}
 
-	async function finish() {
+	async function finish(event: MouseEvent) {
 		if (autoSaveTimeout !== 0) {
 			await save();
 		}
 		if (bookId !== '' && bookId !== bookCreateUrlParam) {
-			goto(`/write/${bookId}/publish`);
+			const url = `/write/${bookId}/publish${$page.url.search}`;
+			if (event.shiftKey || event.ctrlKey) {
+				window.open(url, '_blank', 'noreferrer');
+			} else {
+				goto(url);
+			}
 		}
 	}
 
@@ -113,11 +120,6 @@
 			})
 			.catch((e: Error) => e);
 	}
-
-	function backPage(event: MouseEvent) {
-		event.preventDefault();
-		history.back();
-	}
 </script>
 
 <svelte:head>
@@ -136,10 +138,9 @@
 	{#snippet header()}
 		<HeaderArea>
 			<a
-				href="/write"
+				href={callbackUrl || '/write'}
 				class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200"
 				title="Back to my articles list"
-				onclick={backPage}
 			>
 				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
 			</a>

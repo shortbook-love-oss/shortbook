@@ -50,11 +50,6 @@
 	function applyChildChange(book: typeof $form) {
 		form.set({ ...book });
 	}
-
-	function backPage(event: MouseEvent) {
-		event.preventDefault();
-		history.back();
-	}
 </script>
 
 <svelte:head>
@@ -67,10 +62,9 @@
 	{#snippet header()}
 		<HeaderArea>
 			<a
-				href="/write/{$page.params.bookId}"
+				href="/write/{$page.params.bookId}{$page.url.search}"
 				class="flex shrink-0 items-center gap-2 rounded-ee-[0.4375rem] p-3 hover:bg-stone-200 focus:bg-stone-200"
 				title="Back to book contents editor"
-				onclick={backPage}
 			>
 				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
 				<p class="text-lg leading-none">Back to edit</p>
