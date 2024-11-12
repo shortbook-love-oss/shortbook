@@ -132,6 +132,7 @@ export const initEditorState: EditorState = {
 export const codeLanguageSelect = [
 	{ value: 'plain', label: 'Select language' },
 	{ value: 'c', label: 'C' },
+	{ value: 'csharp', label: 'C#' },
 	{ value: 'cpp', label: 'C++' },
 	{ value: 'css', label: 'CSS' },
 	{ value: 'd', label: 'D' },
@@ -145,8 +146,11 @@ export const codeLanguageSelect = [
 	{ value: 'java', label: 'Java' },
 	{ value: 'js', label: 'JavaScript' },
 	{ value: 'json', label: 'JSON' },
+	{ value: 'makefile', label: 'Makefile' },
 	{ value: 'markdown', label: 'Markdown' },
+	{ value: 'mathml', label: 'MathML' },
 	{ value: 'objc', label: 'Objective-C' },
+	{ value: 'php', label: 'PHP' },
 	{ value: 'powershell', label: 'PowerShell' },
 	{ value: 'pug', label: 'Pug' },
 	{ value: 'py', label: 'Python' },
@@ -156,11 +160,14 @@ export const codeLanguageSelect = [
 	{ value: 'regex', label: 'Regex' },
 	{ value: 'ruby', label: 'Ruby' },
 	{ value: 'rust', label: 'Rust' },
+	{ value: 'scala', label: 'Scala' },
 	{ value: 'scss', label: 'Sass (SCSS)' },
 	{ value: 'sql', label: 'SQL' },
+	{ value: 'svg', label: 'SVG' },
 	{ value: 'swift', label: 'Swift' },
 	{ value: 'toml', label: 'TOML' },
 	{ value: 'typescript', label: 'TypeScript' },
+	{ value: 'xml', label: 'XML' },
 	{ value: 'yaml', label: 'YAML' }
 ] as const satisfies SelectItemSingle<string>[];
 export type CodeLanguageItem = (typeof codeLanguageSelect)[number];
