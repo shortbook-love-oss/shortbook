@@ -59,6 +59,7 @@ import {
 } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
 import { registerDividerBlock } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
 import { registerDecoratorNodeBase } from '$lib/components/modules/wysiwyg-editor/blocks/decorator-node-base';
+import { registerListItemEscape } from '$lib/components/modules/wysiwyg-editor/plugins/list-item-escape';
 import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
 import type { SelectItemSingle } from '$lib/utilities/select';
@@ -171,6 +172,7 @@ export function registerEditorPlugins(editor: LexicalEditor) {
 		registerDragonSupport(editor),
 		registerHistory(editor, createEmptyHistoryState(), 300),
 		registerPluginPasteLinkReplacer(editor),
+		registerListItemEscape(editor),
 		registerDecoratorNodeBase(editor),
 		registerImagePlugin(editor),
 		registerImageUploaderPlugin(editor),
