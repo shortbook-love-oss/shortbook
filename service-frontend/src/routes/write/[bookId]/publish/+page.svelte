@@ -46,10 +46,6 @@
 	});
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
-
-	function applyChildChange(book: typeof schema._type) {
-		form.set({ ...book });
-	}
 </script>
 
 <svelte:head>
@@ -136,12 +132,21 @@
 						/>
 					{/if}
 					<BookCoverEdit
-						book={$form}
+						bind:baseColorStart={$form.baseColorStart}
+						bind:baseColorEnd={$form.baseColorEnd}
+						bind:baseColorDirection={$form.baseColorDirection}
+						bind:titleFontSize={$form.titleFontSize}
+						bind:titleAlign={$form.titleAlign}
+						bind:titleColor={$form.titleColor}
+						bind:subtitleFontSize={$form.subtitleFontSize}
+						bind:subtitleAlign={$form.subtitleAlign}
+						bind:subtitleColor={$form.subtitleColor}
+						bind:writerAlign={$form.writerAlign}
+						bind:writerColor={$form.writerColor}
 						title={data.initTitle}
 						subtitle={data.initSubtitle}
 						penName={$page.data.signInUser.penName}
 						errors={$errors}
-						oninput={applyChildChange}
 						className="mb-12 mx-auto w-fit"
 					/>
 					{#snippet submit()}
