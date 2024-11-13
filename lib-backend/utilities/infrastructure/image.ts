@@ -34,19 +34,6 @@ export type AllowedToExtension = (typeof allowedToExtensions)[number];
 export const allowedFromExtensions = [...allowedToExtensions, 'tiff', 'ico', 'bmp'] as const;
 export type AllowedFromExtension = (typeof allowedFromExtensions)[number];
 
-export const imageExtensionMIME: Record<AllowedFromExtension, string> = {
-	png: 'image/png',
-	jpg: 'image/jpeg',
-	jpeg: 'image/jpeg',
-	gif: 'image/gif',
-	webp: 'image/webp',
-	avif: 'image/avif',
-	tiff: 'image/tiff',
-	bmp: 'image/bmp',
-	ico: 'image/vnd.microsoft.icon',
-	svg: 'image/svg+xml'
-};
-
 // contain ... Keep aspect, not clip
 // cover ... Keep aspect, clip
 // fill ... Stretch, not clip, keep width or height original if it's not specified

@@ -37,8 +37,15 @@ export const load = async ({ url, params, locals }) => {
 		return error(500, { message: dbUserPointError?.message ?? '' });
 	}
 
-	const { book, dbError: dbBookGetError } = await dbBookGet({ bookId });
-	if (!book?.user || dbBookGetError) {
+	const {
+		book,
+		bookRevision,
+		dbError: dbBookGetError
+	} = await dbBookGet({
+		bookId,
+		statuses: [1]
+	});
+	if (!book?.user || !bookRevision || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 	const afterPaymentUrl = new URL(
@@ -46,7 +53,7 @@ export const load = async ({ url, params, locals }) => {
 	);
 	const cancelUrl =
 		url.origin +
-		setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.url_slug}`, requestLang);
+		setLanguageTagToPath(`/@${book.user.key_handle}/book/${bookRevision.url_slug}`, requestLang);
 	if (book.user_id === signInUser.id) {
 		// Prevent buy own book
 		return redirect(303, cancelUrl);
@@ -68,10 +75,10 @@ export const load = async ({ url, params, locals }) => {
 		bookId,
 		writeUserId: book.user_id,
 		userId: signInUser.id,
-		pointSpend: book.buy_point,
+		pointSpend: bookRevision.buy_point,
 		beforePointChargeAmount: 0
 	};
-	if (currentPoint >= book.buy_point) {
+	if (currentPoint >= bookRevision.buy_point) {
 		const { dbError: dbBookBuyError } = await dbBookBuyCreate(dbBookBuyCreateReq);
 		if (dbBookBuyError) {
 			return error(500, { message: dbBookBuyError?.message ?? '' });
@@ -86,7 +93,7 @@ export const load = async ({ url, params, locals }) => {
 	}
 
 	// Need 100 USD + service fee to buy 100 point
-	const pointAmountBase = (book.buy_point / 100) * (100 / (100 - chargeFee));
+	const pointAmountBase = (bookRevision.buy_point / 100) * (100 / (100 - chargeFee));
 	const { currencyRateIndex, dbError: dbRateGetError } = await dbCurrencyRateGet({
 		amount: pointAmountBase
 	});
@@ -115,7 +122,7 @@ export const load = async ({ url, params, locals }) => {
 	// If do not have enough points, use Stripe Checkout.
 	// Need 456 points → charge 456 points
 	// Need 8000 points → charge 8000 points
-	dbBookBuyCreateReq.beforePointChargeAmount = book.buy_point;
+	dbBookBuyCreateReq.beforePointChargeAmount = bookRevision.buy_point;
 	const bookPaymentInfo = encryptAndFlat(
 		JSON.stringify(dbBookBuyCreateReq),
 		env.ENCRYPT_PAYMENT_BOOK_INFO,

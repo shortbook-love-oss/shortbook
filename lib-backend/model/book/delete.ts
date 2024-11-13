@@ -37,33 +37,45 @@ export async function dbBookDelete(req: DbBookDeleteRequest) {
 					deleted_at: deletedAt
 				}
 			});
-			await tx.book_covers.update({
+			const deleteBookRevisions = await tx.book_revisions.findMany({
 				where: {
 					book_id: req.bookId,
 					deleted_at: null
 				},
-				data: {
-					deleted_at: deletedAt
+				select: {
+					id: true
 				}
 			});
-			await tx.book_languages.updateMany({
-				where: {
-					book_id: req.bookId,
-					deleted_at: null
-				},
-				data: {
-					deleted_at: deletedAt
-				}
-			});
-			await tx.book_tags.updateMany({
-				where: {
-					book_id: req.bookId,
-					deleted_at: null
-				},
-				data: {
-					deleted_at: deletedAt
-				}
-			});
+			if (deleteBookRevisions.length > 0) {
+				const revisionIds = deleteBookRevisions.map((item) => item.id);
+				await tx.book_revisions.updateMany({
+					where: {
+						book_id: req.bookId,
+						deleted_at: null
+					},
+					data: {
+						deleted_at: deletedAt
+					}
+				});
+				await tx.book_covers.updateMany({
+					where: {
+						revision_id: { in: revisionIds },
+						deleted_at: null
+					},
+					data: {
+						deleted_at: deletedAt
+					}
+				});
+				await tx.book_contents.updateMany({
+					where: {
+						revision_id: { in: revisionIds },
+						deleted_at: null
+					},
+					data: {
+						deleted_at: deletedAt
+					}
+				});
+			}
 		})
 		.catch(() => {
 			dbError ??= new Error(`Failed to delete book. Book ID=${req.bookId}`);

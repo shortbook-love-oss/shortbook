@@ -87,8 +87,8 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 					id: true
 				}
 			});
-			const deleteBookIds = deleteBooks.map((item) => item.id);
-			if (deleteBookIds.length) {
+			if (deleteBooks.length > 0) {
+				const deleteBookIds = deleteBooks.map((item) => item.id);
 				await tx.books.updateMany({
 					where: {
 						user_id: req.userId,
@@ -96,23 +96,29 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 					},
 					data: { deleted_at: deletedAt }
 				});
+				await tx.book_revisions.updateMany({
+					where: {
+						book_id: { in: deleteBookIds },
+						deleted_at: null
+					},
+					data: { deleted_at: deletedAt }
+				});
 				await tx.book_covers.updateMany({
 					where: {
-						book_id: { in: deleteBookIds },
+						book_revision: {
+							book_id: { in: deleteBookIds },
+							deleted_at: null
+						},
 						deleted_at: null
 					},
 					data: { deleted_at: deletedAt }
 				});
-				await tx.book_languages.updateMany({
+				await tx.book_contents.updateMany({
 					where: {
-						book_id: { in: deleteBookIds },
-						deleted_at: null
-					},
-					data: { deleted_at: deletedAt }
-				});
-				await tx.book_tags.updateMany({
-					where: {
-						book_id: { in: deleteBookIds },
+						book_revision: {
+							book_id: { in: deleteBookIds },
+							deleted_at: null
+						},
 						deleted_at: null
 					},
 					data: { deleted_at: deletedAt }

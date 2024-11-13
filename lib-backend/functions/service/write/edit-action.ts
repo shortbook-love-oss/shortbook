@@ -4,7 +4,7 @@ import { dbBookList } from '$lib-backend/model/book/list';
 export async function isExistBookUrlSlug(userId: string, inputSlug: string, editingBookId: string) {
 	const { books, dbError: dbBookListError } = await dbBookList({
 		userId,
-		isIncludeDraft: true
+		statuses: [1]
 	});
 	if (!books || dbBookListError) {
 		return error(500, { message: dbBookListError?.message ?? '' });
@@ -13,7 +13,7 @@ export async function isExistBookUrlSlug(userId: string, inputSlug: string, edit
 		if (editingBookId && editingBookId === book.id) {
 			continue;
 		}
-		if (book.url_slug === inputSlug) {
+		if (book.revisions[0]?.url_slug === inputSlug) {
 			return true;
 		}
 	}

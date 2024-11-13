@@ -14,8 +14,6 @@ export const load = async ({ locals }) => {
 
 	const form = await superValidate(zod(schema));
 
-	form.data.keyHandle = signInUser.keyHandle;
-
 	return { form };
 };
 

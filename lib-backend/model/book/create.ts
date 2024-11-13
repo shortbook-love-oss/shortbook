@@ -2,13 +2,16 @@ import prisma from '$lib-backend/database/connect';
 
 export interface DbBookCreateRequest {
 	userId: string;
-	status: number; // 0: Draft 1: Public 2: Fan club only
+	status: number; // 0: Draft 1: Public
 	targetLanguage: string;
 	title: string;
 	subtitle: string;
-	prologue: string;
-	content: string;
-	salesMessage: string;
+	freeArea: string;
+	hasFreeArea: boolean;
+	paidArea: string;
+	hasPaidArea: boolean;
+	salesArea: string;
+	hasSalesArea: boolean;
 	urlSlug: string;
 	buyPoint: number;
 	baseColorStart: string;
@@ -32,33 +35,42 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 			const book = await tx.books.create({
 				data: {
 					user_id: req.userId,
-					url_slug: req.urlSlug,
-					status: req.status,
-					buy_point: req.buyPoint,
-					cover: {
+					revisions: {
 						create: {
-							base_color_start: req.baseColorStart,
-							base_color_end: req.baseColorEnd,
-							base_color_direction: req.baseColorDirection,
-							title_font_size: req.titleFontSize,
-							title_align: req.titleAlign,
-							title_color: req.titleColor,
-							subtitle_font_size: req.subtitleFontSize,
-							subtitle_align: req.subtitleAlign,
-							subtitle_color: req.subtitleColor,
-							writer_align: req.writerAlign,
-							writer_color: req.writerColor
-						}
-					},
-					languages: {
-						create: {
-							target_language: req.targetLanguage,
-							thumbnail_url: '',
-							title: req.title,
-							subtitle: req.subtitle,
-							prologue: req.prologue,
-							content: req.content,
-							sales_message: req.salesMessage
+							number: 1,
+							status: req.status,
+							url_slug: req.urlSlug,
+							buy_point: req.buyPoint,
+							native_language: req.targetLanguage,
+							has_free_area: req.hasFreeArea,
+							has_paid_area: req.hasPaidArea,
+							has_sales_area: req.hasSalesArea,
+							cover: {
+								create: {
+									base_color_start: req.baseColorStart,
+									base_color_end: req.baseColorEnd,
+									base_color_direction: req.baseColorDirection,
+									title_font_size: req.titleFontSize,
+									title_align: req.titleAlign,
+									title_color: req.titleColor,
+									subtitle_font_size: req.subtitleFontSize,
+									subtitle_align: req.subtitleAlign,
+									subtitle_color: req.subtitleColor,
+									writer_align: req.writerAlign,
+									writer_color: req.writerColor
+								}
+							},
+							contents: {
+								create: {
+									target_language: req.targetLanguage,
+									thumbnail_url: '',
+									title: req.title,
+									subtitle: req.subtitle,
+									free_area: req.freeArea,
+									paid_area: req.paidArea,
+									sales_area: req.salesArea
+								}
+							}
 						}
 					}
 				}

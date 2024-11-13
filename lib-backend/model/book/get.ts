@@ -15,7 +15,7 @@ type IdExclusiveProps =
 
 type DbBookGetRequest = IdExclusiveProps & {
 	userId?: string;
-	isIncludeDraft?: boolean;
+	statuses?: number[]; // 0: Draft 1: Published
 	isIncludeDelete?: boolean;
 };
 
@@ -23,39 +23,57 @@ export async function dbBookGet(req: DbBookGetRequest) {
 	let dbError: Error | undefined;
 
 	const whereByCond: Prisma.booksWhereInput = {};
-	if (req.isIncludeDraft) {
-		whereByCond.status = { in: [0, 1] };
-	} else {
-		whereByCond.status = { in: [1] };
+	if (req.statuses != null || (req.userKeyHandle && req.bookUrlSlug)) {
+		whereByCond.revisions = {
+			some: {
+				status: req.statuses != null ? { in: req.statuses } : undefined,
+				url_slug: req.bookUrlSlug
+			}
+		};
+		whereByCond.user = {
+			key_handle: req.userKeyHandle
+		};
 	}
-
+	const revisionWhereByCond: Prisma.book_revisionsWhereInput = {};
+	if (req.statuses) {
+		revisionWhereByCond.status = { in: req.statuses };
+	}
 	const whereCondDelete: { deleted_at?: null } = {};
 	if (!req.isIncludeDelete) {
 		whereCondDelete.deleted_at = null;
 	}
 
+	let getRevisionsCount = 1;
+	if (req.statuses == undefined || req.statuses.some((status) => status !== 1)) {
+		// Get latest draft and previos published
+		getRevisionsCount = 2;
+	}
+
 	const book = await prisma.books
 		.findFirst({
 			where: {
-				id: req.bookId,
-				url_slug: req.bookUrlSlug,
 				...whereByCond,
 				...whereCondDelete,
-				user: {
-					key_handle: req.userKeyHandle,
-					...whereCondDelete
-				}
+				id: req.bookId
 			},
 			include: {
-				cover: {
-					where: { ...whereCondDelete }
-				},
-				languages: {
-					where: { ...whereCondDelete }
-				},
-				tags: {
-					where: { ...whereCondDelete },
-					orderBy: { sort: 'asc' }
+				revisions: {
+					where: {
+						...revisionWhereByCond,
+						...whereCondDelete
+					},
+					orderBy: {
+						number: 'desc'
+					},
+					take: getRevisionsCount,
+					include: {
+						cover: {
+							where: { ...whereCondDelete }
+						},
+						contents: {
+							where: { ...whereCondDelete }
+						}
+					}
 				},
 				user: {
 					select: {
@@ -94,5 +112,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			return undefined;
 		});
 
-	return { book, dbError };
+	const bookRevision = book?.revisions[0];
+
+	return { book, bookRevision, dbError };
 }

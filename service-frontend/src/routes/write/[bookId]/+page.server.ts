@@ -1,13 +1,13 @@
-import { fail, error, redirect } from '@sveltejs/kit';
-import { superValidate, message } from 'sveltekit-superforms';
+import { error, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { initEditorState, type EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 import { bookCreateUrlParam } from '$lib/utilities/book';
 import { setLanguageTagToPath } from '$lib/utilities/url';
-import { schema } from '$lib/validation/schema/book/update';
-import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
+import { schema } from '$lib/validation/schema/book/draft-create';
 import { dbBookDelete } from '$lib-backend/model/book/delete';
 import { dbBookGet } from '$lib-backend/model/book/get';
-import { dbBookUpdate } from '$lib-backend/model/book/update';
+import { dbBookRevisionList } from '$lib-backend/model/book/revision-list';
 
 export const load = async ({ locals, params }) => {
 	const signInUser = locals.signInUser;
@@ -17,93 +17,67 @@ export const load = async ({ locals, params }) => {
 
 	const form = await superValidate(zod(schema));
 
-	let bookStatus = 0; // 0: Draft 1: Public 2: Fan club only
+	let freeArea = initEditorState;
+	let paidArea = initEditorState;
+	let salesArea = initEditorState;
+
+	let bookId = '';
+	let bookStatus = 0;
 	let updatedAt: Date | null = null;
+	let initTitle = '';
+	let initUrlSlug = '';
+	let hasPublishedRevision = false;
 
 	if (params.bookId !== bookCreateUrlParam) {
-		const { book, dbError } = await dbBookGet({
+		const { book, bookRevision, dbError } = await dbBookGet({
 			bookId: params.bookId,
-			userId: signInUser.id,
-			isIncludeDraft: true
+			userId: signInUser.id
 		});
-		if (!book || !book.cover || dbError) {
+		if (!book || !bookRevision || dbError) {
 			return error(500, { message: dbError?.message ?? '' });
 		}
 
-		const bookLang = book.languages[0];
+		// If the latest version is a draft, check for exist published revision
+		hasPublishedRevision = bookRevision.status === 1;
+		if (!hasPublishedRevision) {
+			const { revisions, dbError } = await dbBookRevisionList({ bookId: book.id });
+			if (!revisions || dbError) {
+				return error(500, { message: dbError?.message ?? '' });
+			}
+			hasPublishedRevision = revisions.some((revision) => {
+				return revision.status === 1;
+			});
+		}
+
+		const bookLang = bookRevision.contents[0];
 		form.data.title = bookLang.title;
 		form.data.subtitle = bookLang.subtitle;
-		form.data.content = bookLang.content;
+		freeArea = JSON.parse(bookLang.free_area) as EditorState;
+		paidArea = JSON.parse(bookLang.paid_area) as EditorState;
+		salesArea = JSON.parse(bookLang.sales_area) as EditorState;
 
-		bookStatus = book.status;
-		updatedAt = book.updated_at;
+		bookId = book.id;
+		bookStatus = bookRevision.status;
+		updatedAt = bookRevision.updated_at;
+		initTitle = bookLang.title;
+		initUrlSlug = bookRevision.url_slug;
 	}
 
-	const initTitle = form.data.title;
-
-	return { form, bookStatus, updatedAt, initTitle };
+	return {
+		form,
+		freeArea,
+		paidArea,
+		salesArea,
+		bookId,
+		bookStatus,
+		updatedAt,
+		initTitle,
+		initUrlSlug,
+		hasPublishedRevision
+	};
 };
 
 export const actions = {
-	update: async ({ request, url, locals, params }) => {
-		const signInUser = locals.signInUser;
-		if (!signInUser) {
-			return error(401, { message: 'Unauthorized' });
-		}
-		const bookIdParam = params.bookId;
-
-		const form = await superValidate(request, zod(schema));
-		if (form.valid) {
-			const isExist = await isExistBookUrlSlug(signInUser.id, form.data.urlSlug, bookIdParam);
-			if (isExist) {
-				form.valid = false;
-				form.errors.urlSlug = form.errors.urlSlug ?? [];
-				form.errors.urlSlug.push('There is a book with the same URL.');
-			}
-		}
-		if (!form.valid) {
-			message(form, 'There was an error. please check your input and resubmit.');
-			return fail(400, { form });
-		}
-
-		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
-			bookId: bookIdParam,
-			userId: signInUser.id,
-			status: 1,
-			...form.data
-		});
-		if (!book || dbBookUpdateError) {
-			return error(500, { message: dbBookUpdateError?.message ?? '' });
-		}
-
-		redirect(303, setLanguageTagToPath(`/write/${book.id}/publish`, url));
-	},
-
-	draft: async ({ request, url, locals, params }) => {
-		const signInUser = locals.signInUser;
-		if (!signInUser) {
-			return error(401, { message: 'Unauthorized' });
-		}
-
-		const form = await superValidate(request, zod(schema));
-		if (!form.valid) {
-			message(form, 'There was an error. please check your input and resubmit.');
-			return fail(400, { form });
-		}
-
-		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
-			bookId: params.bookId,
-			userId: signInUser.id,
-			status: 0,
-			...form.data
-		});
-		if (!book || dbBookUpdateError) {
-			return error(500, { message: dbBookUpdateError?.message ?? '' });
-		}
-
-		redirect(303, setLanguageTagToPath(`/write`, url));
-	},
-
 	delete: async ({ url, locals, params }) => {
 		const signInUser = locals.signInUser;
 		if (!signInUser) {

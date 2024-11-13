@@ -47,8 +47,8 @@
 				imageSrc={book.userImage}
 				className="min-w-0"
 			/>
-			<time datetime={book.publishedAt.toISOString()} class="text-nowrap pb-0.5 text-stone-600"
-				>{toLocaleDate(book.publishedAt, requestLang)}</time
+			<time datetime={book.updatedAt.toISOString()} class="text-nowrap pb-0.5 text-stone-600"
+				>{toLocaleDate(book.updatedAt, requestLang)}</time
 			>
 		</div>
 	</div>

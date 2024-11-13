@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { type BookDetail, getBookCover, contentsToMarkdown } from '$lib/utilities/book';
+import { getBookCover, type BookDetail } from '$lib/utilities/book';
 import {
 	currencySupports,
 	defaultCurrencyCode,
@@ -20,23 +20,29 @@ import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
 import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
 import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
+import { fromEditorStateToHtml } from '$lib-backend/utilities/book';
 
 export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { book, dbError: dbBookGetError } = await dbBookGet({
+	// Get a book even if it's a draft, and filter it later
+	const {
+		book,
+		bookRevision,
+		dbError: dbBookGetError
+	} = await dbBookGet({
 		bookUrlSlug: params.bookKey,
 		userKeyHandle: params.userKey,
-		isIncludeDraft: true,
+		statuses: [1],
 		isIncludeDelete: true
 	});
-	if (!book || !book.cover || dbBookGetError) {
+	if (!book || !bookRevision?.cover || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
-	if (!bookLang && book.languages.length) {
-		bookLang = book.languages[0];
+	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+	if (!bookLang) {
+		bookLang = bookRevision.contents[0];
 	}
 	if (!bookLang) {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
@@ -52,7 +58,7 @@ export const load = async ({ url, locals, params }) => {
 	}
 
 	// Check buy book if it's paid and written by another
-	const buyPoint = book.buy_point;
+	const buyPoint = bookRevision.buy_point;
 	const isOwn = signInUser?.id === book.user_id;
 	let isBoughtBook = false;
 	// Can user buy books using only the points have
@@ -77,7 +83,7 @@ export const load = async ({ url, locals, params }) => {
 		userPoint = currentPoint;
 	}
 
-	if (book.status === 0 && !isOwn) {
+	if (bookRevision.status === 0 && !isOwn) {
 		return error(404, { message: 'Not found' });
 	}
 	if (book.deleted_at != null && !isBoughtBook && !isOwn) {
@@ -160,46 +166,58 @@ export const load = async ({ url, locals, params }) => {
 	const bookCover = getBookCover({
 		title: bookLang?.title ?? '',
 		subtitle: bookLang?.subtitle ?? '',
-		baseColorStart: book.cover.base_color_start,
-		baseColorEnd: book.cover.base_color_end,
-		baseColorDirection: book.cover.base_color_direction,
-		titleFontSize: book.cover.title_font_size,
-		titleAlign: book.cover.title_align,
-		titleColor: book.cover.title_color,
-		subtitleFontSize: book.cover.subtitle_font_size,
-		subtitleAlign: book.cover.subtitle_align,
-		subtitleColor: book.cover.subtitle_color,
-		writerAlign: book.cover.writer_align,
-		writerColor: book.cover.writer_color
+		baseColorStart: bookRevision.cover.base_color_start,
+		baseColorEnd: bookRevision.cover.base_color_end,
+		baseColorDirection: bookRevision.cover.base_color_direction,
+		titleFontSize: bookRevision.cover.title_font_size,
+		titleAlign: bookRevision.cover.title_align,
+		titleColor: bookRevision.cover.title_color,
+		subtitleFontSize: bookRevision.cover.subtitle_font_size,
+		subtitleAlign: bookRevision.cover.subtitle_align,
+		subtitleColor: bookRevision.cover.subtitle_color,
+		writerAlign: bookRevision.cover.writer_align,
+		writerColor: bookRevision.cover.writer_color
 	});
 	const bookDetail: BookDetail = {
 		...bookCover,
 		id: book.id,
 		userId: book.user_id,
-		status: book.status,
+		status: bookRevision.status,
 		buyPoint,
 		title: bookLang.title,
 		subtitle: bookLang.subtitle,
-		publishedAt: book.published_at,
-		updatedAt: book.updated_at,
-		bookUrlSlug: book.url_slug,
+		updatedAt: bookRevision.updated_at,
+		bookUrlSlug: bookRevision.url_slug,
 		userKeyHandle: book.user.key_handle,
 		penName: book.user.pen_name,
 		userImage: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + book.user.image_src,
-		prologue: await contentsToMarkdown(bookLang.prologue),
-		content: '',
-		salesMessage: '',
+		freeArea: '',
+		paidArea: '',
+		salesArea: '',
 		isBookDeleted: book.deleted_at != null
 	};
 
+	if (bookRevision.has_free_area) {
+		const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.free_area));
+		bookDetail.freeArea = html;
+	}
+	const hasPaidArea = bookRevision.has_paid_area;
+
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
-		bookDetail.content = await contentsToMarkdown(bookLang.content);
+		if (hasPaidArea) {
+			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.paid_area));
+			bookDetail.paidArea = html;
+		}
 	} else {
-		bookDetail.salesMessage = await contentsToMarkdown(bookLang.sales_message);
+		if (bookRevision.has_sales_area) {
+			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.sales_area));
+			bookDetail.salesArea = html;
+		}
 	}
 
 	return {
 		bookDetail,
+		hasPaidArea,
 		requestLang,
 		userLang,
 		isOwn,

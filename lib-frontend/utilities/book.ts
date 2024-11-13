@@ -23,11 +23,11 @@ export interface MyBookItem extends BookCover {
 	id: string;
 	userId: string;
 	status: number;
-	publishedAt: Date;
 	updatedAt: Date;
+	hasPublishedRevision: boolean;
 }
 
-export interface BookItem extends MyBookItem {
+export interface BookItem extends Omit<MyBookItem, 'hasPublishedRevision'> {
 	bookUrlSlug: string;
 	userKeyHandle: string;
 	penName: string;
@@ -36,10 +36,14 @@ export interface BookItem extends MyBookItem {
 
 export interface BookDetail extends BookItem {
 	buyPoint: number;
-	prologue: string;
-	content: string;
-	salesMessage: string;
+	freeArea: string;
+	paidArea: string;
+	salesArea: string;
 	isBookDeleted: boolean;
+}
+
+export interface BookDraftUpdateResult {
+	bookId: string;
 }
 
 // text-align: ***;
@@ -52,11 +56,11 @@ export const bookTextAlignSelect = [
 export type BookTextAlignSelectValues = (typeof bookTextAlignSelect)[number]['value'];
 
 export const bookPointSelect: SelectItemSingle[] = [
+	{ value: 100, label: '100' },
 	{ value: 200, label: '200' },
 	{ value: 300, label: '300' },
 	{ value: 500, label: '500' },
-	{ value: 1000, label: '1000' },
-	{ value: 2000, label: '2000' }
+	{ value: 1000, label: '1000' }
 ];
 
 export const bookCreateUrlParam = 'new';

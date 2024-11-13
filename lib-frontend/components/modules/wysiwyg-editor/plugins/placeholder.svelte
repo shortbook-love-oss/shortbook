@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LexicalEditor } from 'lexical';
 	import { onMount } from 'svelte';
-	import { isEditorEmpty } from '$lib/components/modules/wysiwyg-editor/editor';
+	import { isShowEditorPlaceholder } from '$lib/components/modules/wysiwyg-editor/editor';
 
 	type Props = {
 		editor: LexicalEditor;
@@ -14,7 +14,7 @@
 	onMount(() => {
 		const removeListener = editor.registerUpdateListener(() => {
 			editor.read(() => {
-				isEmpty = isEditorEmpty();
+				isEmpty = isShowEditorPlaceholder();
 			});
 		});
 

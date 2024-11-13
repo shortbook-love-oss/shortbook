@@ -121,7 +121,7 @@
 
 	let selectedLanguage = $state<CodeLanguageItem>(codeLanguageSelect[0]);
 
-	const insertImageSelectDialogName = 'album_image_insert';
+	const insertImageSelectDialogName = `album_image_insert_${editor.getKey()}`;
 
 	function setControllerState() {
 		const selection = getSelection();
@@ -317,7 +317,7 @@
 	>
 		<div class="relative">
 			<Dropdown
-				name="editor_control_heading_select"
+				name="editor_control_heading_select_{editor.getKey()}"
 				openerClass="h-full rounded-md"
 				dropdownClass="bottom-14"
 			>
@@ -396,7 +396,7 @@
 		{#if isInCodeBlock}
 			<div class="relative">
 				<Dropdown
-					name="editor_control_code_lang_select"
+					name="editor_control_code_lang_select_{editor.getKey()}"
 					openerClass="h-full rounded-md"
 					dropdownClass="bottom-14"
 				>
@@ -430,7 +430,7 @@
 		{/if}
 		<div class="relative ms-1 border-s-2 border-stone-300 ps-1">
 			<Dropdown
-				name="editor_control_insert"
+				name="editor_control_insert_{editor.getKey()}"
 				openerClass="h-full rounded-md"
 				dropdownClass="bottom-14 end-0"
 			>

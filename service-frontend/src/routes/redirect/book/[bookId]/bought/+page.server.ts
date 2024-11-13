@@ -52,18 +52,22 @@ export const load = async ({ url }) => {
 		return error(500, { message: 'Invalid URL parameter of book-info' });
 	}
 
-	const { book, dbError: dbBookGetError } = await dbBookGet({
+	const {
+		book,
+		bookRevision,
+		dbError: dbBookGetError
+	} = await dbBookGet({
 		bookId: bookPaymentInfo.bookId,
-		isIncludeDraft: true,
+		statuses: [1],
 		isIncludeDelete: true
 	});
-	if (!book?.user || dbBookGetError) {
+	if (!book?.user || !bookRevision || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 
 	const afterUrl = new URL(
 		url.origin +
-			setLanguageTagToPath(`/@${book.user.key_handle}/book/${book.url_slug}`, requestLang)
+			setLanguageTagToPath(`/@${book.user.key_handle}/book/${bookRevision.url_slug}`, requestLang)
 	);
 	const paymentCheckoutRequest: DbUserPaymentCheckoutCreateRequest = {
 		provider: 'stripe',
@@ -78,29 +82,6 @@ export const load = async ({ url }) => {
 	});
 	if (dbBookBuyGetError) {
 		return error(500, { message: dbBookBuyGetError.message });
-	}
-
-	if (book.status === 0 || book.deleted_at != null || bookBuy) {
-		// If the book is deleted or draft, return as point
-		// If already bought same book, return as point (this occurs due to multiple tab payments)
-		const { dbError } = await dbUserPointCreate({
-			userId: bookPaymentInfo.userId,
-			paymentCheckoutId: bookPaymentInfo.payment?.sessionId,
-			amount: bookPaymentInfo.pointSpend,
-			payment: paymentCheckoutRequest
-		});
-		if (dbError) {
-			return error(500, { message: dbError.message });
-		}
-		redirect(303, afterUrl);
-	}
-
-	const { dbError: dbBookBuyCreateError } = await dbBookBuyCreate({
-		...bookPaymentInfo,
-		payment: paymentCheckoutRequest
-	});
-	if (dbBookBuyCreateError) {
-		return error(500, { message: dbBookBuyCreateError?.message ?? '' });
 	}
 
 	if (currency) {
@@ -122,6 +103,29 @@ export const load = async ({ url }) => {
 		if (dbContractError) {
 			return error(500, { message: dbContractError?.message ?? '' });
 		}
+	}
+
+	if (book.deleted_at != null || bookBuy) {
+		// If the book is deleted or draft, return as point
+		// If already bought same book, return as point (this occurs due to multiple tab payments)
+		const { dbError } = await dbUserPointCreate({
+			userId: bookPaymentInfo.userId,
+			paymentCheckoutId: bookPaymentInfo.payment?.sessionId,
+			amount: bookPaymentInfo.pointSpend,
+			payment: paymentCheckoutRequest
+		});
+		if (dbError) {
+			return error(500, { message: dbError.message });
+		}
+		redirect(303, afterUrl);
+	}
+
+	const { dbError: dbBookBuyCreateError } = await dbBookBuyCreate({
+		...bookPaymentInfo,
+		payment: paymentCheckoutRequest
+	});
+	if (dbBookBuyCreateError) {
+		return error(500, { message: dbBookBuyCreateError?.message ?? '' });
 	}
 
 	redirect(303, afterUrl);

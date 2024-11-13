@@ -6,6 +6,19 @@ export interface SelectedFile {
 	key: number;
 }
 
+export const imageExtensionMIME: Record<AllowedFromExtension, string> = {
+	png: 'image/png',
+	jpg: 'image/jpeg',
+	jpeg: 'image/jpeg',
+	gif: 'image/gif',
+	webp: 'image/webp',
+	avif: 'image/avif',
+	tiff: 'image/tiff',
+	bmp: 'image/bmp',
+	ico: 'image/vnd.microsoft.icon',
+	svg: 'image/svg+xml'
+};
+
 export const imageMIMEextension: Record<string, AllowedFromExtension> = {
 	'image/png': 'png',
 	'image/jpeg': 'jpg',
@@ -41,11 +54,7 @@ export function getUnitByteLength(byteLength: number, decimalPoint: number) {
 	return `${unitAmountFixed} ${sizeUnits[sizeUnitIndex]}`;
 }
 
-export async function uploadFiles<R extends Record<string, any>>(
-	actionUrl: string,
-	files: FileList,
-	uploadProp: string
-) {
+export async function uploadFiles<R>(actionUrl: string, files: FileList, uploadProp: string) {
 	const body = new FormData();
 	for (let i = 0; i < files.length; i++) {
 		body.append(uploadProp, files[i]);

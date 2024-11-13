@@ -1,12 +1,27 @@
-import type { SerializedCodeNode } from '@lexical/code';
-import type { SerializedLinkNode } from '@lexical/link';
-import type { SerializedListItemNode, SerializedListNode } from '@lexical/list';
+import {
+	$isCodeNode,
+	CodeHighlightNode,
+	CodeNode,
+	registerCodeHighlighting,
+	type SerializedCodeNode
+} from '@lexical/code';
+import { registerDragonSupport } from '@lexical/dragon';
+import { createEmptyHistoryState, registerHistory } from '@lexical/history';
+import { AutoLinkNode, LinkNode, type SerializedLinkNode } from '@lexical/link';
+import {
+	$isListNode,
+	ListItemNode,
+	ListNode,
+	type SerializedListItemNode,
+	type SerializedListNode
+} from '@lexical/list';
+import { $isQuoteNode, HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
 import {
 	$isHeadingNode,
 	type SerializedHeadingNode,
 	type SerializedQuoteNode
 } from '@lexical/rich-text';
-import { $insertNodeToNearestRoot } from '@lexical/utils';
+import { $insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
 import {
 	$createNodeSelection,
 	$getRoot,
@@ -18,6 +33,8 @@ import {
 	$setSelection,
 	DecoratorNode,
 	ElementNode,
+	type CreateEditorArgs,
+	type LexicalEditor,
 	type LexicalNode,
 	type NodeKey,
 	type RangeSelection,
@@ -27,9 +44,25 @@ import {
 	type SerializedTextNode
 } from 'lexical';
 import { writable } from 'svelte/store';
-import type { SerializedImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
-import type { SerializedImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
-import type { SerializedDividerNode } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
+import {
+	ImageNode,
+	type SerializedImageNode
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
+import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
+import {
+	ImageUploadingNode,
+	type SerializedImageUploadingNode
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
+import { registerImageUploaderPlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/plugin';
+import {
+	DividerNode,
+	type SerializedDividerNode
+} from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
+import { registerDividerBlock } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
+import { registerDecoratorNodeBase } from '$lib/components/modules/wysiwyg-editor/blocks/decorator-node-base';
+import { registerListItemEscape } from '$lib/components/modules/wysiwyg-editor/plugins/list-item-escape';
+import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
+import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
 import type { SelectItemSingle } from '$lib/utilities/select';
 import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
@@ -54,6 +87,26 @@ export type EditorState = SerializedEditorState<
 export const editorImageMaxWidth: (typeof allowedSize)[number] = 768;
 
 export const lastActiveEditor = writable('');
+
+export const initEditorConfig: CreateEditorArgs = {
+	nodes: [
+		CodeHighlightNode,
+		CodeNode,
+		HeadingNode,
+		LinkNode,
+		AutoLinkNode,
+		ListNode,
+		ListItemNode,
+		QuoteNode,
+		ImageNode,
+		ImageUploadingNode,
+		DividerNode
+	],
+	onError: (error: Error) => {
+		throw error;
+	},
+	theme
+};
 
 export const initEditorState: EditorState = {
 	root: {
@@ -80,6 +133,7 @@ export const initEditorState: EditorState = {
 export const codeLanguageSelect = [
 	{ value: 'plain', label: 'Select language' },
 	{ value: 'c', label: 'C' },
+	{ value: 'csharp', label: 'C#' },
 	{ value: 'cpp', label: 'C++' },
 	{ value: 'css', label: 'CSS' },
 	{ value: 'd', label: 'D' },
@@ -93,8 +147,11 @@ export const codeLanguageSelect = [
 	{ value: 'java', label: 'Java' },
 	{ value: 'js', label: 'JavaScript' },
 	{ value: 'json', label: 'JSON' },
+	{ value: 'makefile', label: 'Makefile' },
 	{ value: 'markdown', label: 'Markdown' },
+	{ value: 'mathml', label: 'MathML' },
 	{ value: 'objc', label: 'Objective-C' },
+	{ value: 'php', label: 'PHP' },
 	{ value: 'powershell', label: 'PowerShell' },
 	{ value: 'pug', label: 'Pug' },
 	{ value: 'py', label: 'Python' },
@@ -104,29 +161,69 @@ export const codeLanguageSelect = [
 	{ value: 'regex', label: 'Regex' },
 	{ value: 'ruby', label: 'Ruby' },
 	{ value: 'rust', label: 'Rust' },
+	{ value: 'scala', label: 'Scala' },
 	{ value: 'scss', label: 'Sass (SCSS)' },
 	{ value: 'sql', label: 'SQL' },
+	{ value: 'svg', label: 'SVG' },
 	{ value: 'swift', label: 'Swift' },
 	{ value: 'toml', label: 'TOML' },
 	{ value: 'typescript', label: 'TypeScript' },
+	{ value: 'xml', label: 'XML' },
 	{ value: 'yaml', label: 'YAML' }
 ] as const satisfies SelectItemSingle<string>[];
 export type CodeLanguageItem = (typeof codeLanguageSelect)[number];
 
-// Find block node of lexical editor state, not text node in the block node
-export function findSelectedStartBlock(selection: RangeSelection) {
-	return selection.anchor.getNode().getTopLevelElement();
+export function registerEditorPlugins(editor: LexicalEditor) {
+	return mergeRegister(
+		registerRichText(editor),
+		registerCodeHighlighting(editor),
+		registerDragonSupport(editor),
+		registerHistory(editor, createEmptyHistoryState(), 300),
+		registerPluginPasteLinkReplacer(editor),
+		registerListItemEscape(editor),
+		registerDecoratorNodeBase(editor),
+		registerImagePlugin(editor),
+		registerImageUploaderPlugin(editor),
+		registerDividerBlock(editor)
+	);
 }
 
-// If only exist an empty paragraph / heading node, the editor consider to be empty
-export function isEditorEmpty() {
+// If only exist an empty paragraph / heading node, the editor appears to have no input
+export function isShowEditorPlaceholder() {
 	const rootNode = $getRoot();
-	if (rootNode.getTextContentSize() === 0 && rootNode.getChildrenSize() === 1) {
+	if (rootNode.getChildrenSize() === 1 && rootNode.getTextContentSize() === 0) {
 		const firstBlockNode = rootNode.getFirstChild();
 		return $isParagraphNode(firstBlockNode) || $isHeadingNode(firstBlockNode);
 	} else {
 		return false;
 	}
+}
+
+// Indicates that the editor does not contain any meaningful content
+export function isEditorEmpty(editor: LexicalEditor) {
+	const nodeMap = editor.getEditorState()._nodeMap;
+	for (const item of nodeMap) {
+		const node = item.length >= 2 ? item[1] : null;
+		if (
+			$isParagraphNode(node) ||
+			$isCodeNode(node) ||
+			$isHeadingNode(node) ||
+			$isListNode(node) ||
+			$isQuoteNode(node)
+		) {
+			if (node.getTextContentSize() !== 0) {
+				return false;
+			}
+		} else if (node instanceof ImageNode) {
+			return false;
+		}
+	}
+	return true;
+}
+
+// Find block node of lexical editor state, not text node in the block node
+export function findSelectedStartBlock(selection: RangeSelection) {
+	return selection.anchor.getNode().getTopLevelElement();
 }
 
 export function getSelectedBlock() {

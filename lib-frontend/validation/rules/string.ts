@@ -4,6 +4,7 @@ export function validateOnlyVisibleChar(value: string) {
 	if (!value) {
 		return true;
 	}
+	// eslint-disable-next-line no-control-regex
 	const visibleChars = value.match(/[^\s\u{200B}\u{2060}\u{0000}-\u{001F}\u{007F}]/gu);
 	return !!visibleChars;
 }

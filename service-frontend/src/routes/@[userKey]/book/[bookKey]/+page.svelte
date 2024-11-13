@@ -4,7 +4,7 @@
 	import IconWarning from '~icons/mdi/warning';
 	import { page } from '$app/stores';
 	import { toLocaleDate } from '$lib/utilities/date';
-	import { inquiryCategoryParam } from '$lib/utilities/url';
+	import { callbackParam, inquiryCategoryParam } from '$lib/utilities/url';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
@@ -13,7 +13,12 @@
 
 	let { data } = $props();
 
-	const publishedAt = toLocaleDate(data.bookDetail.publishedAt, data.requestLang);
+	const updatedAt = toLocaleDate(data.bookDetail.updatedAt, data.requestLang);
+
+	const editUrl = $derived.by(() => {
+		const searchParams = new URLSearchParams({ [callbackParam]: $page.url.pathname });
+		return `/write/${data.bookDetail.id}?${searchParams.toString()}`;
+	});
 </script>
 
 <svelte:head>
@@ -50,7 +55,7 @@
 			{/if}
 		</div>
 	</div>
-	<div class="w-full min-w-0 max-w-2xl break-words">
+	<div class="w-full min-w-0 max-w-[640px] break-words">
 		<div class="-mx-4 mb-8 px-4">
 			<h1
 				class="whitespace-pre-wrap text-[2.25rem] font-semibold leading-tight xs:text-[3.25rem] {data
@@ -77,11 +82,11 @@
 				</ProfileCard>
 			</div>
 			<div class="flex items-center gap-4">
-				<time datetime={data.bookDetail.publishedAt.toISOString()} class="text-stone-600"
-					>{publishedAt}</time
+				<time datetime={data.bookDetail.updatedAt.toISOString()} class="text-stone-600"
+					>{updatedAt}</time
 				>
 				{#if data.isOwn && !data.bookDetail.isBookDeleted}
-					<NavLinkSmall name="Edit" href="/write/{data.bookDetail.id}" className="w-fit">
+					<NavLinkSmall name="Edit" href={editUrl} className="w-fit">
 						<IconWrite width="20" height="20" className="-me-1" />
 					</NavLinkSmall>
 				{/if}
@@ -114,18 +119,24 @@
 			</div>
 		{/if}
 		<hr class="my-8 border-stone-300" />
-		{#if data.bookDetail.prologue}
-			<section class="article_content mb-8 text-xl">
-				{@html data.bookDetail.prologue}
+		{#if data.bookDetail.freeArea}
+			<section class="mb-8 text-[1.375rem] leading-[1.625]">
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html data.bookDetail.freeArea}
 			</section>
 		{/if}
-		{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
-			<section class="article_content text-xl">
-				{@html data.bookDetail.content}
-			</section>
-		{:else}
-			<SalesMessage imageSrc={data.bookDetail.userImage} message={data.bookDetail.salesMessage}>
-				{#snippet action()}
+		{#if data.hasPaidArea}
+			{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
+				<section class="text-[1.375rem] leading-[1.625]">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+					{@html data.bookDetail.paidArea}
+				</section>
+			{:else}
+				<SalesMessage imageSrc={data.bookDetail.userImage}>
+					<section class="mb-4 text-[1.375rem] leading-[1.625]">
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						{@html data.bookDetail.salesArea}
+					</section>
 					{#if data.hasEnoughPoint}
 						<a
 							href="/redirect/book/{data.bookDetail.id}/buy"
@@ -140,8 +151,8 @@
 							primaryCurrency={data.primaryCurrency}
 						/>
 					{/if}
-				{/snippet}
-			</SalesMessage>
+				</SalesMessage>
+			{/if}
 		{/if}
 	</div>
 	<div class="hidden shrink-0 pt-1.5 lg:block lg:w-48">

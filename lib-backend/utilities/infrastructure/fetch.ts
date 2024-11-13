@@ -2,30 +2,32 @@ import https from 'https';
 
 interface FechJsonSuccess<T> {
 	data: T[];
-	errorMessage?: never;
+	contentType: string;
+	error?: never;
 }
 interface FechJsonError {
 	data?: never;
-	errorMessage: string;
+	contentType?: never;
+	error: Error;
 }
 
 export function fetchGet<T>(url: string | URL, expectContentType: string) {
 	return fetchBase<T>(url, 'GET', undefined, expectContentType);
 }
 
-export function fetchByJson<T>(url: string | URL, body: Record<string, any>) {
+export function fetchByJson<T>(url: string | URL, body: unknown) {
 	return fetchBase<T>(url, 'POST', body, 'application/json');
 }
 
 async function fetchBase<T>(
 	url: string | URL,
 	method: string,
-	body: Record<string, any> | undefined,
+	body: unknown | undefined,
 	expectContentType: string
 ): Promise<FechJsonSuccess<T> | FechJsonError> {
-	let errorMessage = '';
+	let contentType = '';
 
-	const data: T[] | null = await new Promise((resolve, reject) => {
+	const data: T[] | Error = await new Promise((resolve, reject) => {
 		const dataChunks: T[] = [];
 		const reqHeader: Record<string, string> = {
 			'user-agent': 'ShortBook Paid-Article Writing Platform'
@@ -40,6 +42,10 @@ async function fetchBase<T>(
 				headers: reqHeader
 			},
 			(res) => {
+				const rawContentType = res.headers['content-type'];
+				if (rawContentType) {
+					contentType = rawContentType.replace(/[^\w+/.-].*/, '');
+				}
 				res.on('data', (chunk: T) => {
 					dataChunks.push(chunk);
 				});
@@ -52,8 +58,7 @@ async function fetchBase<T>(
 			console.error(
 				`Error in fetchData, reason: ${error.message}, url: ${url}, body: ${JSON.stringify(body)}`
 			);
-			errorMessage = error.message;
-			reject(null);
+			reject(error);
 		});
 		if (body) {
 			req.write(JSON.stringify(body));
@@ -61,8 +66,8 @@ async function fetchBase<T>(
 		req.end();
 	});
 
-	if (!data || errorMessage) {
-		return { errorMessage };
+	if (data instanceof Error) {
+		return { error: data };
 	}
-	return { data };
+	return { data, contentType };
 }

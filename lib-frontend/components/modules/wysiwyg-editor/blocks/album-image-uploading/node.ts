@@ -53,7 +53,7 @@ export class ImageUploadingNode extends DecoratorNode<HTMLElement> {
 		fileInfoWrap.className = 'relative flex items-center justify-center flex-1 p-4 bg-stone-100/80';
 		const fileInfo = document.createElement('p');
 		fileInfo.className = 'break-words [word-break:break-word]';
-		fileInfo.innerText = `Uploading "${this.getFileName()}" ...`;
+		fileInfo.textContent = `Uploading "${this.getFileName()}" ...`;
 		fileInfoWrap.appendChild(fileInfo);
 
 		nodeRoot.appendChild(fileInfoWrap);

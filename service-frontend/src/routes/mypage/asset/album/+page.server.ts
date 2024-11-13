@@ -12,7 +12,7 @@ import { uploadToAlbum } from '$lib-backend/functions/service/album/upload';
 import { dbUserAlbumImageList } from '$lib-backend/model/user/album/image-list';
 import { getExtensionForAll } from '$lib-backend/utilities/infrastructure/image';
 
-export const load = async ({ url, locals }) => {
+export const load = async ({ locals }) => {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });

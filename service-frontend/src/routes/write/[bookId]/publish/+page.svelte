@@ -2,18 +2,20 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
+	import IconArrowLeft from '~icons/mdi/arrow-left';
 	import IconDelete from '~icons/mdi/trash-can-outline';
 	import { page } from '$app/stores';
-	import { initEditorState, type EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/book/update';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
+	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
+	import Number from '$lib/components/modules/form/number.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
 	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
 	import SubmitText from '$lib/components/modules/form/submit-text.svelte';
-	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
+	import MessageInfo from '$lib/components/modules/information/message-info.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
 	import InputPoint from '$lib/components/service/write/input-point.svelte';
@@ -25,8 +27,6 @@
 
 	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
-
-	let outputStateJson = $state<EditorState>(initEditorState);
 
 	const { form, enhance, validateForm, submitting, message, errors } = superForm(data.form, {
 		resetForm: false, // Prevents reverting to initial value after submission
@@ -46,10 +46,6 @@
 	});
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
-
-	function applyChildChange(book: typeof $form) {
-		form.set({ ...book });
-	}
 </script>
 
 <svelte:head>
@@ -59,146 +55,137 @@
 </svelte:head>
 
 <LayoutRule>
-	{#snippet header()}{/snippet}
+	{#snippet header()}
+		<HeaderArea>
+			<a
+				href="/write/{$page.params.bookId}{$page.url.search}"
+				class="flex shrink-0 items-center gap-2 rounded-ee-[0.4375rem] p-3 hover:bg-stone-200 focus:bg-stone-200"
+				title="Back to book contents editor"
+			>
+				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
+				<p class="text-lg leading-none">Back to edit</p>
+			</a>
+		</HeaderArea>
+	{/snippet}
 
 	<!-- Edit area -->
 	{#snippet contents()}
-		<div class="py-12">
-			<Form
-				method="POST"
-				action="{$page.url.pathname}?/update"
-				{enhance}
-				hasInvalid={!hasVaild}
-				isLoading={$submitting}
-				successMessage={$page.status === 200 ? $message : ''}
-				errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
-				className="contents"
-			>
-				<div
-					class="mb-8 flex flex-col items-center justify-center gap-x-16 gap-y-8 lg:flex-row lg:items-stretch"
+		<div class="flex flex-col items-center px-4 pb-24 pt-16">
+			<div class="w-full max-w-[640px]">
+				<Form
+					method="POST"
+					action="{$page.url.pathname}?/update"
+					{enhance}
+					hasInvalid={!hasVaild}
+					isLoading={$submitting}
+					successMessage={$page.status === 200 ? $message : ''}
+					errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
+					className="contents"
 				>
-					<div class="w-full max-w-xl shrink-0 text-lg lg:w-48 lg:justify-end">
-						<p>Editing</p>
-						<h1 class="whitespace-pre-wrap break-words text-xl font-semibold">
-							{data.initTitle}
-						</h1>
-					</div>
-					<div class="w-full max-w-xl">
-						<TextField
-							bind:value={$form.title}
-							name="title"
-							required={true}
-							label="Title"
-							errorMessages={$errors.title}
-							className="mb-8"
-						/>
-						<TextField
-							bind:value={$form.subtitle}
-							name="subtitle"
-							label="Subtitle"
-							errorMessages={$errors.subtitle}
-							className="mb-8"
-						/>
-						<Select
-							bind:value={$form.targetLanguage as string}
-							name="targetLanguage"
-							list={data.langTags}
-							required={true}
-							label="Native language"
-							errorMessages={$errors.targetLanguage}
-							className="mb-8 max-w-72"
-						/>
-						<TextArea
-							bind:value={$form.prologue}
-							name="prologue"
-							label="Prologue"
-							errorMessages={$errors.prologue}
-							className="mb-8"
-						/>
-						<TextArea
-							bind:value={$form.content}
-							name="content"
-							required={true}
-							label="Main content"
-							errorMessages={$errors.content}
-							className="mb-8"
-						/>
-						<TextArea
-							bind:value={$form.salesMessage}
-							name="salesMessage"
-							label="&quot;Read this!&quot; appeal"
-							errorMessages={$errors.salesMessage}
-							className="mb-8"
-						/>
-						<TextField
-							bind:value={$form.urlSlug}
-							name="urlSlug"
-							required={true}
-							label="URL string"
-							errorMessages={$errors.urlSlug}
-							className="mb-1"
-						/>
-						<p class="mb-8 break-words">
-							{$page.url.origin}/@{$page.data.signInUser.keyHandle}/book/{$form.urlSlug}
-						</p>
-						<InputPoint
-							bind:point={$form.buyPoint}
-							errorMessages={$errors.buyPoint}
-							className="mb-8"
-						/>
+					<p class="text-lg">Publish setting of</p>
+					<h1 class="mb-8 whitespace-pre-wrap break-words text-3xl font-semibold">
+						"{data.initTitle}"
+					</h1>
+					<Select
+						bind:value={$form.targetLanguage as string}
+						name="targetLanguage"
+						list={data.langTags}
+						required={true}
+						label="Native language"
+						errorMessages={$errors.targetLanguage}
+						className="mb-8 max-w-72"
+					/>
+					<TextField
+						bind:value={$form.urlSlug}
+						name="urlSlug"
+						required={true}
+						label="URL string"
+						errorMessages={$errors.urlSlug}
+						className="mb-1"
+					/>
+					<p class="mb-8 break-words">
+						{$page.url.origin}/@{$page.data.signInUser.keyHandle}/book/{$form.urlSlug}
+					</p>
+					<InputPoint
+						bind:point={$form.buyPoint}
+						errorMessages={$errors.buyPoint}
+						className="mb-8 {data.hasPaidArea ? '' : 'hidden'}"
+					/>
+					{#if data.hasPaidArea}
 						<PricePreview
 							point={$form.buyPoint}
 							userCurrencyCode={data.userCurrencyCode}
 							currencyRates={data.currencyRateIndex}
+							className="mb-8"
 						/>
-					</div>
-					<div class="shrink-0 lg:w-48">
-						<div class="w-fit lg:-mx-4 lg:-mt-3">
-							<BookCoverEdit
-								book={$form}
-								penName={$page.data.signInUser.penName}
-								errors={$errors}
-								oninput={applyChildChange}
-							/>
+					{:else}
+						<Number
+							value={0}
+							label="Selling point amount"
+							name=""
+							disabled={true}
+							className="mb-2 w-48"
+						/>
+						<MessageInfo
+							message="This book has no paid content. Publish as a free book."
+							className="mb-8"
+						/>
+					{/if}
+					<BookCoverEdit
+						bind:baseColorStart={$form.baseColorStart}
+						bind:baseColorEnd={$form.baseColorEnd}
+						bind:baseColorDirection={$form.baseColorDirection}
+						bind:titleFontSize={$form.titleFontSize}
+						bind:titleAlign={$form.titleAlign}
+						bind:titleColor={$form.titleColor}
+						bind:subtitleFontSize={$form.subtitleFontSize}
+						bind:subtitleAlign={$form.subtitleAlign}
+						bind:subtitleColor={$form.subtitleColor}
+						bind:writerAlign={$form.writerAlign}
+						bind:writerColor={$form.writerColor}
+						title={data.initTitle}
+						subtitle={data.initSubtitle}
+						penName={$page.data.signInUser.penName}
+						errors={$errors}
+						className="mb-12 mx-auto w-fit"
+					/>
+					{#snippet submit()}
+						<div class="flex flex-wrap items-center gap-4">
+							<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
+								{data.status === 0 ? 'Publish book' : 'Republish book'}
+							</SubmitButton>
+							<SubmitText
+								formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
+								hasInvalid={!hasVaild && isEnableJS}
+								isLoading={$submitting}>Save draft</SubmitText
+							>
+							<Dialog name="delete" openerClass="rounded-lg" dialogSizeClass="max-w-fit">
+								{#snippet opener()}
+									<NavLinkSmall name="Delete" className="text-red-800">
+										<IconDelete width="24" height="24" />
+									</NavLinkSmall>
+								{/snippet}
+								<p>Do you want to delete it?</p>
+								{#snippet actions()}
+									<SubmitText
+										form="book_item_delete_form"
+										isLoading={$submitting}
+										className="mx-auto"
+									>
+										<span class="text-red-800">Delete</span>
+									</SubmitText>
+								{/snippet}
+							</Dialog>
 						</div>
-					</div>
-				</div>
-				<div class="flex justify-center gap-x-16">
-					<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
-					<div class="flex w-full max-w-xl flex-wrap items-center gap-4">
-						<SubmitButton hasInvalid={!hasVaild && isEnableJS} isLoading={$submitting}>
-							{data.status === 0 ? 'Publish book' : 'Republish book'}
-						</SubmitButton>
-						<SubmitText
-							formaction="{removeLanguageTagFromPath($page.url.pathname)}?/draft"
-							hasInvalid={!hasVaild && isEnableJS}
-							isLoading={$submitting}>Save draft</SubmitText
-						>
-						<Dialog name="delete" openerClass="rounded-lg" dialogSizeClass="max-w-fit">
-							{#snippet opener()}
-								<NavLinkSmall name="Delete" className="text-red-800">
-									<IconDelete width="24" height="24" />
-								</NavLinkSmall>
-							{/snippet}
-							<p>Do you want to delete it?</p>
-							{#snippet actions()}
-								<SubmitText
-									formaction="{removeLanguageTagFromPath($page.url.pathname)}?/delete"
-									hasInvalid={!hasVaild && isEnableJS}
-									isLoading={$submitting}
-									className="mx-auto"
-								>
-									<span class="text-red-800">Delete</span>
-								</SubmitText>
-							{/snippet}
-						</Dialog>
-					</div>
-					<div class="hidden w-48 shrink-0 lg:block" aria-hidden="true"></div>
-				</div>
-				{#snippet submit()}
-					<div></div>
-				{/snippet}
-			</Form>
+					{/snippet}
+				</Form>
+				<form
+					method="POST"
+					action="/write/{$page.params.bookId}?/delete"
+					id="book_item_delete_form"
+					class="hidden"
+				></form>
+			</div>
 		</div>
 	{/snippet}
 	{#snippet footerNav()}{/snippet}

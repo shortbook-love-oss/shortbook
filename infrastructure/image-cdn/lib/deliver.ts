@@ -1,10 +1,7 @@
 'use strict';
 
-import { fetchByJson } from "$lib-backend/utilities/infrastructure/fetch";
-import {
-	imageExtensionMIME,
-	type ImageConvertOption
-} from '$lib-backend/utilities/infrastructure/image';
+import { fetchByJson } from '$lib-backend/utilities/infrastructure/fetch';
+import type { ImageConvertOption } from '$lib-backend/utilities/infrastructure/image';
 import { env } from './env';
 
 type ResponseConvertAndSaveSuccess = {
@@ -21,11 +18,13 @@ type ResponseConvertAndSaveError = {
 export async function convertAndSave(
 	reqOption: ImageConvertOption
 ): Promise<ResponseConvertAndSaveSuccess | ResponseConvertAndSaveError> {
-	const contentType = imageExtensionMIME[reqOption.toExtension];
-	const { data, errorMessage } = await fetchByJson<Buffer>(`${env.PUBLIC_ORIGIN}/api/image/deliver`, reqOption);
+	const { data, contentType, error } = await fetchByJson<Buffer>(
+		`${env.PUBLIC_ORIGIN}/api/image/deliver`,
+		reqOption
+	);
 
-	if (!data || errorMessage) {
-		return { errorMessage };
+	if (!data || error) {
+		return { errorMessage: error.message };
 	}
 	return { image: Buffer.concat(data), contentType };
 }

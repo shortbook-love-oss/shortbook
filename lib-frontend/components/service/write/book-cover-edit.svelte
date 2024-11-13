@@ -15,28 +15,58 @@
 	}
 
 	type Props = {
-		oninput: Function;
-		book: BookCoverProp;
 		penName: string;
 		errors?: Errors;
 		className?: string;
-	};
-	let { oninput, book, penName, errors = {}, className = '' }: Props = $props();
+	} & BookCoverProp;
+	let {
+		baseColorStart = $bindable(),
+		baseColorEnd = $bindable(),
+		baseColorDirection = $bindable(),
+		titleFontSize = $bindable(),
+		titleAlign = $bindable(),
+		titleColor = $bindable(),
+		subtitleFontSize = $bindable(),
+		subtitleAlign = $bindable(),
+		subtitleColor = $bindable(),
+		writerAlign = $bindable(),
+		writerColor = $bindable(),
+		title,
+		subtitle,
+		penName,
+		errors = {},
+		className = ''
+	}: Props = $props();
 
 	let previewWidth = $state(256);
 
-	function applyChanges() {
-		requestAnimationFrame(() => {
-			oninput(book);
-		});
-	}
+	let bookCover = $derived<BookCoverProp>({
+		baseColorStart,
+		baseColorEnd,
+		baseColorDirection,
+		titleFontSize,
+		titleAlign,
+		titleColor,
+		subtitleFontSize,
+		subtitleAlign,
+		subtitleColor,
+		writerAlign,
+		writerColor,
+		title,
+		subtitle
+	});
 </script>
 
-<Dialog name="book-preview" title="Cover editor" dialogSizeClass="max-w-3xl">
+<Dialog
+	name="book-preview"
+	title="Cover editor"
+	openerClass={className}
+	dialogSizeClass="max-w-3xl"
+>
 	{#snippet opener()}
-		<div class="flex flex-col items-center gap-4 p-4 sm:flex-row lg:flex-col {className}">
-			<div class="mx-auto" aria-hidden="true">
-				<BookCover {book} {penName} width={160} />
+		<div class="flex flex-col items-center gap-4 p-4 xs:flex-row">
+			<div class="mx-auto cursor-pointer" aria-hidden="true">
+				<BookCover book={bookCover} {penName} width={160} />
 			</div>
 			<div class="mx-auto w-fit rounded-lg border-2 border-primary-700">
 				<NavLinkSmall name="Edit cover">
@@ -46,129 +76,108 @@
 		</div>
 	{/snippet}
 
-	<div class="flex flex-col gap-8 sm:flex-row">
+	<div class="flex flex-wrap gap-8">
 		<div
 			class="w-64 flex-1 md:w-96 lg:w-[32rem]"
 			bind:clientWidth={previewWidth}
 			aria-hidden="true"
 		>
-			<BookCover {book} {penName} width={previewWidth} />
+			<BookCover book={bookCover} {penName} width={previewWidth} />
 		</div>
 		<div>
 			<!-- Background -->
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Range
 				min="0"
 				max="360"
 				step="3"
-				bind:value={book.baseColorDirection}
+				bind:value={baseColorDirection}
 				name="baseColorDirection"
 				label="Gradation direction"
 				errorMessages={errors.baseColorDirection}
 				className="mb-4"
 				inputClass="min-w-60"
-				oninput={applyChanges}
 			/>
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
-				bind:value={book.baseColorStart}
+				bind:value={baseColorStart}
 				name="baseColorStart"
 				label="Background color start"
 				errorMessages={errors.baseColorStart}
 				className="mb-4"
-				oninput={applyChanges}
 			/>
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
-				bind:value={book.baseColorEnd}
+				bind:value={baseColorEnd}
 				name="baseColorEnd"
 				label="Background color end"
 				errorMessages={errors.baseColorEnd}
 				className="mb-4"
-				oninput={applyChanges}
 			/>
 			<!-- Title -->
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Range
 				min="32"
 				max="256"
-				bind:value={book.titleFontSize}
+				bind:value={titleFontSize}
 				name="titleFontSize"
 				label="Title font size"
 				errorMessages={errors.titleFontSize}
 				className="mb-4"
 				inputClass="min-w-60"
-				oninput={applyChanges}
 			/>
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.titleAlign as string | number}
+				bind:value={titleAlign as string | number}
 				name="titleAlign"
 				list={bookTextAlignSelect}
 				label="Title align"
 				errorMessages={errors.titleAlign}
 				className="mb-4"
-				oninput={applyChanges}
 			/>
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
-				bind:value={book.titleColor}
+				bind:value={titleColor}
 				name="titleColor"
 				label="Title text color"
 				errorMessages={errors.titleColor}
 				className="mb-4"
-				oninput={applyChanges}
 			/>
 			<!-- Subtitle -->
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Range
 				min="32"
 				max="128"
-				bind:value={book.subtitleFontSize}
+				bind:value={subtitleFontSize}
 				name="subtitleFontSize"
 				label="Subtitle font size"
 				errorMessages={errors.subtitleFontSize}
 				className="mb-4"
 				inputClass="min-w-60"
-				oninput={applyChanges}
 			/>
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Select
-				bind:value={book.subtitleAlign as string | number}
+				bind:value={subtitleAlign as string | number}
 				name="subtitleAlign"
 				list={bookTextAlignSelect}
 				label="Subtitle align"
 				errorMessages={errors.subtitleAlign}
 				className="mb-4"
-				oninput={applyChanges}
 			/>
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
-				bind:value={book.subtitleColor}
+				bind:value={subtitleColor}
 				name="subtitleColor"
 				label="Subtitle text color"
 				errorMessages={errors.subtitleColor}
 				className="mb-4"
-				oninput={applyChanges}
 			/>
-			<!-- svelte-ignore binding_property_non_reactive -->
+			<!-- Pen name -->
 			<Select
-				bind:value={book.writerAlign as string | number}
+				bind:value={writerAlign as string | number}
 				name="writerAlign"
 				list={bookTextAlignSelect}
 				label="Pen name align"
 				errorMessages={errors.writerAlign}
 				className="mb-4"
-				oninput={applyChanges}
 			/>
-			<!-- svelte-ignore binding_property_non_reactive -->
 			<Color
-				bind:value={book.writerColor}
+				bind:value={writerColor}
 				name="writerColor"
 				label="Pen name text color"
 				errorMessages={errors.writerColor}
 				className="mb-4"
-				oninput={applyChanges}
 			/>
 		</div>
 	</div>

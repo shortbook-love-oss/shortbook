@@ -1,24 +1,11 @@
 <script lang="ts">
-	import { CodeHighlightNode, CodeNode, registerCodeHighlighting } from '@lexical/code';
-	import { registerDragonSupport } from '@lexical/dragon';
-	import { createEmptyHistoryState, registerHistory } from '@lexical/history';
-	import { AutoLinkNode, LinkNode } from '@lexical/link';
-	import { ListItemNode, ListNode } from '@lexical/list';
-	import { HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
-	import { mergeRegister } from '@lexical/utils';
-	import { createEditor, type CreateEditorArgs } from 'lexical';
+	import { createEditor } from 'lexical';
 	import { onMount } from 'svelte';
-	import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
-	import { ImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
-	import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
-	import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
-	import { registerImageUploaderPlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/plugin';
-	import { DividerNode } from '$lib/components/modules/wysiwyg-editor/blocks/divider/node';
-	import { registerDividerBlock } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
-	import { registerDecoratorNodeBase } from '$lib/components/modules/wysiwyg-editor/blocks/decorator-node-base';
-	import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 	import {
+		initEditorConfig,
+		isEditorEmpty,
 		lastActiveEditor,
+		registerEditorPlugins,
 		type EditorState
 	} from '$lib/components/modules/wysiwyg-editor/editor';
 	import AlbumDragUploader from '$lib/components/modules/wysiwyg-editor/plugins/album-drag-uploader.svelte';
@@ -28,56 +15,36 @@
 
 	type Props = {
 		value: EditorState;
+		hasContent: boolean;
 		namespace: string;
 		placeholder?: string;
-		onInput?: (value: EditorState) => void;
+		onInput?: () => void;
 	};
-	let { value = $bindable(), namespace, placeholder = '', onInput }: Props = $props();
+	let {
+		value = $bindable(),
+		hasContent = $bindable(),
+		namespace,
+		placeholder = '',
+		onInput
+	}: Props = $props();
 
 	let editorRootElem = $state<HTMLElement | null>(null);
 	let isActive = $state(false);
 
-	const initialConfig: CreateEditorArgs = {
-		namespace,
-		nodes: [
-			CodeHighlightNode,
-			CodeNode,
-			HeadingNode,
-			LinkNode,
-			AutoLinkNode,
-			ListNode,
-			ListItemNode,
-			QuoteNode,
-			ImageNode,
-			ImageUploadingNode,
-			DividerNode
-		],
-		onError: (error: Error) => {
-			throw error;
-		},
-		theme
-	};
-	const editor = createEditor(initialConfig);
+	const editor = createEditor({ ...initEditorConfig, namespace });
 
 	onMount(() => {
 		editor.setRootElement(editorRootElem);
 
 		// Registring editor plugins
-		const removePluginListener = mergeRegister(
-			registerRichText(editor),
-			registerCodeHighlighting(editor),
-			registerDragonSupport(editor),
-			registerHistory(editor, createEmptyHistoryState(), 300),
-			registerPluginPasteLinkReplacer(editor),
-			registerDecoratorNodeBase(editor),
-			registerImagePlugin(editor),
-			registerImageUploaderPlugin(editor),
-			registerDividerBlock(editor)
-		);
+		const removePluginListener = registerEditorPlugins(editor);
 
 		if (value) {
 			const parsedEditorState = editor.parseEditorState(value);
 			editor.setEditorState(parsedEditorState, { tag: 'history-merge' });
+			editor.read(() => {
+				hasContent = !isEditorEmpty(editor);
+			});
 		}
 
 		const removeUpdateListener = editor.registerUpdateListener(({ editorState, dirtyElements }) => {
@@ -85,7 +52,10 @@
 			if (dirtyElements.size > 0) {
 				// Runs only when node adds / changes / removes, not on selection change or focus
 				value = editorState.toJSON() as EditorState;
-				onInput?.(value);
+				onInput?.();
+				editor.read(() => {
+					hasContent = !isEditorEmpty(editor);
+				});
 			}
 		});
 
@@ -106,7 +76,11 @@
 	<div class="relative">
 		<Placeholder {editor} {placeholder} />
 	</div>
-	<div bind:this={editorRootElem} contenteditable></div>
+	<div
+		bind:this={editorRootElem}
+		contenteditable
+		class="min-h-36 flex-1 font-sans text-[1.375rem] leading-[1.625] tracking-wider text-stone-950 underline-offset-[0.15em] outline-none"
+	></div>
 	<div class="contents" class:hidden={!isActive}>
 		<Toolbar {editor} className="self-center" />
 		<LinkEditor {editor} />

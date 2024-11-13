@@ -1,5 +1,5 @@
 import prisma from '$lib-backend/database/connect';
-import type { DbBookCreateRequest } from './create';
+import type { DbBookCreateRequest } from '$lib-backend/model/book/create';
 
 export interface DbBookUpdateRequest extends DbBookCreateRequest {
 	bookId: string;
@@ -10,8 +10,7 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 
 	const bookBeforeEdit = await prisma.books.findUnique({
 		select: {
-			user_id: true,
-			published_at: true
+			user_id: true
 		},
 		where: {
 			id: req.bookId,
@@ -26,65 +25,116 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 		return { dbError };
 	}
 
-	let publishedAt = new Date();
-	if (req.status === 0) {
-		publishedAt = bookBeforeEdit.published_at;
-	}
-
 	const book = await prisma
 		.$transaction(async (tx) => {
-			const book = await tx.books.update({
+			const book = await tx.books.findUnique({
 				where: {
 					id: req.bookId,
 					deleted_at: null
-				},
-				data: {
-					url_slug: req.urlSlug,
-					status: req.status,
-					buy_point: req.buyPoint,
-					published_at: publishedAt
 				}
 			});
-			if (!book?.id) {
+			if (!book) {
 				dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
 				throw dbError;
 			}
 
-			await tx.book_covers.update({
+			const latestRevision = await tx.book_revisions.findFirst({
 				where: {
-					book_id: book.id
+					book_id: book.id,
+					deleted_at: null
 				},
-				data: {
-					base_color_start: req.baseColorStart,
-					base_color_end: req.baseColorEnd,
-					base_color_direction: req.baseColorDirection,
-					title_font_size: req.titleFontSize,
-					title_align: req.titleAlign,
-					title_color: req.titleColor,
-					subtitle_font_size: req.subtitleFontSize,
-					subtitle_align: req.subtitleAlign,
-					subtitle_color: req.subtitleColor,
-					writer_align: req.writerAlign,
-					writer_color: req.writerColor
+				orderBy: {
+					number: 'desc'
+				},
+				take: 1,
+				select: {
+					id: true,
+					number: true,
+					status: true
 				}
+			});
+			if (latestRevision == null) {
+				dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
+				throw dbError;
+			}
+
+			let revisionId = latestRevision.id;
+			if (latestRevision.status !== 0) {
+				// If the book isn't "draft", create new revision
+				const newRevision = await tx.book_revisions.create({
+					data: {
+						book_id: book.id,
+						number: latestRevision.number + 1,
+						status: req.status,
+						url_slug: req.urlSlug,
+						buy_point: req.buyPoint,
+						native_language: req.targetLanguage,
+						has_free_area: req.hasFreeArea,
+						has_paid_area: req.hasPaidArea,
+						has_sales_area: req.hasSalesArea
+					}
+				});
+				if (!newRevision) {
+					dbError ??= new Error(`Can't create a new revision. Book ID=${req.bookId}`);
+					throw dbError;
+				}
+				revisionId = newRevision.id;
+			} else {
+				// If the book is "draft", update latest revision
+				await tx.book_revisions.update({
+					where: { id: latestRevision.id },
+					data: {
+						status: req.status,
+						url_slug: req.urlSlug,
+						buy_point: req.buyPoint,
+						native_language: req.targetLanguage,
+						has_free_area: req.hasFreeArea,
+						has_paid_area: req.hasPaidArea,
+						has_sales_area: req.hasSalesArea
+					}
+				});
+			}
+
+			const bookCoverData = {
+				base_color_start: req.baseColorStart,
+				base_color_end: req.baseColorEnd,
+				base_color_direction: req.baseColorDirection,
+				title_font_size: req.titleFontSize,
+				title_align: req.titleAlign,
+				title_color: req.titleColor,
+				subtitle_font_size: req.subtitleFontSize,
+				subtitle_align: req.subtitleAlign,
+				subtitle_color: req.subtitleColor,
+				writer_align: req.writerAlign,
+				writer_color: req.writerColor
+			};
+			await tx.book_covers.upsert({
+				where: {
+					revision_id: revisionId
+				},
+				create: {
+					...bookCoverData,
+					revision_id: revisionId
+				},
+				update: bookCoverData
 			});
 
-			await tx.book_languages.deleteMany({
+			await tx.book_contents.deleteMany({
 				where: {
-					book_id: book.id
+					revision_id: revisionId
 				}
 			});
-			await tx.book_languages.createMany({
+			await tx.book_contents.createMany({
 				data: [
 					{
-						book_id: book.id,
+						revision_id: revisionId,
 						target_language: req.targetLanguage,
 						thumbnail_url: '',
 						title: req.title,
 						subtitle: req.subtitle,
-						prologue: req.prologue,
-						content: req.content,
-						sales_message: req.salesMessage
+						free_area: req.freeArea,
+						paid_area: req.paidArea,
+						sales_area: req.salesArea
 					}
 				]
 			});

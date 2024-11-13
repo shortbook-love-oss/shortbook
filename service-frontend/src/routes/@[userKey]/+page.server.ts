@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { env as envPublic } from '$env/dynamic/public';
-import { type BookItem, contentsToMarkdown, getBookCover } from '$lib/utilities/book';
+import { contentsToMarkdown, getBookCover, type BookItem } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookList } from '$lib-backend/model/book/list';
 import { dbUserGetByKeyHandle } from '$lib-backend/model/user/get-by-key-handle';
@@ -16,7 +16,10 @@ export const load = async ({ url, params }) => {
 		user.image_src = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image_src;
 	}
 
-	const { books, dbError: bookDbError } = await dbBookList({ userId: user.id });
+	const { books, dbError: bookDbError } = await dbBookList({
+		userId: user.id,
+		statuses: [1]
+	});
 	if (!books || bookDbError) {
 		return error(500, { message: bookDbError?.message ?? '' });
 	}
@@ -28,38 +31,41 @@ export const load = async ({ url, params }) => {
 
 	const bookList: BookItem[] = [];
 	for (const book of books) {
-		let bookLang = book.languages.find((lang) => lang.target_language === requestLang);
-		if (!bookLang && book.languages.length) {
-			bookLang = book.languages[0];
+		const bookRevision = book.revisions[0];
+		if (!bookRevision?.cover || bookRevision.contents.length === 0) {
+			continue;
 		}
-		if (!book.user || !userLang || !book.cover || !bookLang) {
+		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+		if (!bookLang) {
+			bookLang = bookRevision.contents[0];
+		}
+		if (!book.user || !userLang || !bookLang) {
 			continue;
 		}
 		const bookCover = getBookCover({
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
-			baseColorStart: book.cover.base_color_start,
-			baseColorEnd: book.cover.base_color_end,
-			baseColorDirection: book.cover.base_color_direction,
-			titleFontSize: book.cover.title_font_size,
-			titleAlign: book.cover.title_align,
-			titleColor: book.cover.title_color,
-			subtitleFontSize: book.cover.subtitle_font_size,
-			subtitleAlign: book.cover.subtitle_align,
-			subtitleColor: book.cover.subtitle_color,
-			writerAlign: book.cover.writer_align,
-			writerColor: book.cover.writer_color
+			baseColorStart: bookRevision.cover.base_color_start,
+			baseColorEnd: bookRevision.cover.base_color_end,
+			baseColorDirection: bookRevision.cover.base_color_direction,
+			titleFontSize: bookRevision.cover.title_font_size,
+			titleAlign: bookRevision.cover.title_align,
+			titleColor: bookRevision.cover.title_color,
+			subtitleFontSize: bookRevision.cover.subtitle_font_size,
+			subtitleAlign: bookRevision.cover.subtitle_align,
+			subtitleColor: bookRevision.cover.subtitle_color,
+			writerAlign: bookRevision.cover.writer_align,
+			writerColor: bookRevision.cover.writer_color
 		});
 		bookList.push({
 			...bookCover,
 			id: book.id,
 			userId: book.user_id,
-			status: book.status,
+			status: bookRevision.status,
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
-			publishedAt: book.published_at,
-			updatedAt: book.updated_at,
-			bookUrlSlug: book.url_slug,
+			updatedAt: bookRevision.updated_at,
+			bookUrlSlug: bookRevision.url_slug,
 			userKeyHandle: user.key_handle,
 			penName: user.pen_name,
 			userImage: user.image_src

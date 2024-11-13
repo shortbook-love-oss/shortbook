@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
 	import IconCheck from '~icons/mdi/check';
-	import IconWarning from '~icons/mdi/warning';
-	import IconError from '~icons/mdi/warning-circle';
 	import { enhance as kitEnhance } from '$app/forms';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
-	import SubmitButton from './submit-button.svelte';
+	import SubmitButton from '$lib/components/modules/form/submit-button.svelte';
+	import MessageError from '$lib/components/modules/information/message-error.svelte';
+	import MessageSuccess from '$lib/components/modules/information/message-success.svelte';
+	import MessageWarning from '$lib/components/modules/information/message-warning.svelte';
 
 	type Props = {
 		children: Snippet;
@@ -41,38 +42,11 @@
 </script>
 
 <form use:enhance action={removeLanguageTagFromPath(action)} {...restProps}>
-	{#if warnMessage}
-		<div
-			class="mb-6 flex items-center gap-2 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
-		>
-			<IconWarning width="24" height="24" class="shrink-0" />
-			<p class="text-lg leading-snug">
-				{warnMessage}
-			</p>
-		</div>
-	{/if}
-	{#if successMessage}
-		<noscript>
-			<div
-				class="mb-6 flex items-center gap-2 rounded-lg border-2 border-emerald-600 bg-emerald-50 p-4 text-emerald-950"
-			>
-				<IconCheck width="24" height="24" class="shrink-0" />
-				<p class="text-lg leading-snug">
-					{successMessage}
-				</p>
-			</div>
-		</noscript>
-	{/if}
-	{#if errorMessage}
-		<div
-			class="mb-6 flex items-center gap-2 rounded-lg border-2 border-red-700 bg-red-100 p-4 text-red-900"
-		>
-			<IconError width="24" height="24" class="shrink-0" />
-			<p class="text-lg leading-snug">
-				{errorMessage}
-			</p>
-		</div>
-	{/if}
+	<noscript>
+		<MessageSuccess message={successMessage} className="mb-6" />
+	</noscript>
+	<MessageError message={errorMessage} className="mb-6" />
+	<MessageWarning message={warnMessage} className="mb-6" />
 
 	<fieldset class="w-full {className}" disabled={isLoading ? true : undefined}>
 		{@render children()}
