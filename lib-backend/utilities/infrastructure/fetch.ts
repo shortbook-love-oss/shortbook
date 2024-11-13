@@ -15,14 +15,14 @@ export function fetchGet<T>(url: string | URL, expectContentType: string) {
 	return fetchBase<T>(url, 'GET', undefined, expectContentType);
 }
 
-export function fetchByJson<T>(url: string | URL, body: Record<string, any>) {
+export function fetchByJson<T>(url: string | URL, body: unknown) {
 	return fetchBase<T>(url, 'POST', body, 'application/json');
 }
 
 async function fetchBase<T>(
 	url: string | URL,
 	method: string,
-	body: Record<string, any> | undefined,
+	body: unknown | undefined,
 	expectContentType: string
 ): Promise<FechJsonSuccess<T> | FechJsonError> {
 	let contentType = '';

@@ -2,8 +2,7 @@ import {
 	DecoratorNode,
 	type DOMExportOutput,
 	type NodeKey,
-	type SerializedLexicalNode,
-	type Spread
+	type SerializedLexicalNode
 } from 'lexical';
 import { createDeviderNodeDOM } from '$lib/components/modules/wysiwyg-editor/blocks/divider/dom';
 import type { BlockNode } from '$lib/components/modules/wysiwyg-editor/editor';

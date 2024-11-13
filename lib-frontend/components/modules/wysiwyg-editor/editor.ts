@@ -1,4 +1,5 @@
 import {
+	$isCodeNode,
 	CodeHighlightNode,
 	CodeNode,
 	registerCodeHighlighting,
@@ -8,12 +9,13 @@ import { registerDragonSupport } from '@lexical/dragon';
 import { createEmptyHistoryState, registerHistory } from '@lexical/history';
 import { AutoLinkNode, LinkNode, type SerializedLinkNode } from '@lexical/link';
 import {
+	$isListNode,
 	ListItemNode,
 	ListNode,
 	type SerializedListItemNode,
 	type SerializedListNode
 } from '@lexical/list';
-import { HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
+import { $isQuoteNode, HeadingNode, QuoteNode, registerRichText } from '@lexical/rich-text';
 import {
 	$isHeadingNode,
 	type SerializedHeadingNode,
@@ -31,7 +33,6 @@ import {
 	$setSelection,
 	DecoratorNode,
 	ElementNode,
-	ParagraphNode,
 	type CreateEditorArgs,
 	type LexicalEditor,
 	type LexicalNode,
@@ -201,11 +202,14 @@ export function isShowEditorPlaceholder() {
 // Indicates that the editor does not contain any meaningful content
 export function isEditorEmpty(editor: LexicalEditor) {
 	const nodeMap = editor.getEditorState()._nodeMap;
-	for (const [_, node] of nodeMap) {
+	for (const item of nodeMap) {
+		const node = item.length >= 2 ? item[1] : null;
 		if (
-			[ParagraphNode, CodeNode, HeadingNode, ListNode, QuoteNode].some(
-				(instance) => node instanceof instance
-			)
+			$isParagraphNode(node) ||
+			$isCodeNode(node) ||
+			$isHeadingNode(node) ||
+			$isListNode(node) ||
+			$isQuoteNode(node)
 		) {
 			if (node.getTextContentSize() !== 0) {
 				return false;

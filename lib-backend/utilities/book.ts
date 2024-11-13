@@ -9,13 +9,13 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 	const dom = new JSDOM();
 	const _window = global.window;
 	const _document = global.document;
-	// @ts-expect-error
+	// @ts-expect-error "Lexical editor requires JSDOM to run on the server side"
 	global.window = dom.window;
 	global.document = dom.window.document;
 
 	const editor = createEditor(initEditorConfig);
 	const { html, hasContent } = await new Promise<{ html: string; hasContent: boolean }>(
-		async (resolve, reject) => {
+		(resolve, reject) => {
 			try {
 				const parsedEditorState = editor.parseEditorState(serializedState);
 				editor.setEditorState(parsedEditorState);

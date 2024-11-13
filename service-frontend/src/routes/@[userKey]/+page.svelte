@@ -54,6 +54,7 @@
 		<div
 			class="article_content h-full overflow-y-hidden whitespace-pre-wrap break-words rounded bg-white p-3"
 		>
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html data.userSelfIntro}
 		</div>
 	</div>

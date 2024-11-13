@@ -2,6 +2,7 @@
 	import IconEdit from '~icons/mdi/edit-outline';
 	import { bookTextAlignSelect } from '$lib/utilities/book';
 	import type { BookCover as BookCoverProp } from '$lib/utilities/book';
+	import { schema } from '$lib/validation/schema/book/update';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import Color from '$lib/components/modules/form/color.svelte';
 	import Range from '$lib/components/modules/form/range.svelte';
@@ -15,8 +16,8 @@
 	}
 
 	type Props = {
-		oninput: Function;
-		book: Omit<BookCoverProp, 'title' | 'subtitle'>;
+		oninput: (book: typeof schema._type) => void;
+		book: typeof schema._type;
 		title: string;
 		subtitle: string;
 		penName: string;

@@ -121,17 +121,20 @@
 		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.freeArea}
 			<section class="mb-8 text-[1.375rem] leading-[1.625]">
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html data.bookDetail.freeArea}
 			</section>
 		{/if}
 		{#if data.hasPaidArea}
 			{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
 				<section class="text-[1.375rem] leading-[1.625]">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html data.bookDetail.paidArea}
 				</section>
 			{:else}
 				<SalesMessage imageSrc={data.bookDetail.userImage}>
 					<section class="mb-4 text-[1.375rem] leading-[1.625]">
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html data.bookDetail.salesArea}
 					</section>
 					{#if data.hasEnoughPoint}

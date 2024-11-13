@@ -47,7 +47,7 @@
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
 
-	function applyChildChange(book: typeof $form) {
+	function applyChildChange(book: typeof schema._type) {
 		form.set({ ...book });
 	}
 </script>
