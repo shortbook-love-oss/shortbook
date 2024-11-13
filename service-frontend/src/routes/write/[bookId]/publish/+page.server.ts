@@ -68,7 +68,7 @@ export const load = async ({ url, locals, params }) => {
 			form.data[prop] = bookCover[prop] as never;
 		}
 	}
-	form.data.targetLanguage = bookLang.target_language as AvailableLanguageTag;
+	form.data.targetLanguage = bookRevision.native_language as AvailableLanguageTag;
 	form.data.urlSlug = bookRevision.url_slug;
 	form.data.buyPoint = bookRevision.buy_point;
 
