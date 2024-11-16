@@ -4,9 +4,10 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "npm run schema-generate-dev && vite dev",
-		"build": "npm run schema-generate-dev && vite build",
+		"dev": "vite dev",
+		"build": "vite build",
 		"preview": "vite preview",
+		"lang-compile": "paraglide-js compile --project ./i18n/service.inlang --outdir ./i18n/output",
 		"schema-generate-dev": "prisma generate --schema=./lib-backend/database/schema.prisma",
 		"schema-generate": "npx prisma generate --schema=./lib-backend/database/schema.prisma",
 		"premigrate-dev": "node ./lib-backend/database/set_charset.js utf8mb4 utf8mb4_unicode_ci",
