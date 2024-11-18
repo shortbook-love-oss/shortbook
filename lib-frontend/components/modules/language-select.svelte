@@ -2,9 +2,14 @@
 	import IconArrow from '~icons/mdi/chevron-down';
 	import { page } from '$app/stores';
 	import { languageTag } from '$i18n/output/runtime';
-	import { languageSelect } from '$lib/utilities/language';
+	import { languageSelect, type AvailableLanguageTags } from '$lib/utilities/language';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
+
+	function getActualLength(value: string, lang: AvailableLanguageTags) {
+		const segmenter = new Intl.Segmenter(lang, { granularity: 'grapheme' });
+		return [...segmenter.segment(value)].length;
+	}
 </script>
 
 <Dialog name="lang_select" title="Change language" openerClass="w-fit" dialogSizeClass="max-w-xl">
@@ -22,8 +27,8 @@
 	</div>
 	<ul class="grid grid-cols-2 gap-x-3 gap-y-4 py-2 xs:px-3">
 		{#each languageSelect as lang}
-			{#if lang.value !== languageTag()}
-				<li class={lang.label.length >= 14 ? 'max-sm:col-span-2' : ''}>
+			{#if lang.value && lang.value !== languageTag()}
+				<li class={getActualLength(lang.label, lang.value) >= 14 ? 'max-xs:col-span-2' : ''}>
 					<a
 						href={removeLanguageTagFromPath($page.url.pathname + $page.url.search)}
 						hreflang={lang.value}
