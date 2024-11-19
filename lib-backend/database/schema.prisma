@@ -270,12 +270,14 @@ model book_contents {
   id                      String              @id @db.VarChar(30) @default(cuid())
   revision_id             String
   target_language         String              @db.VarChar(5)
-  thumbnail_url           String              @db.VarChar(255)
   title                   String              @db.VarChar(1400) // Max length is 200
   subtitle                String              @db.VarChar(1400) // Max length is 200
   free_area               String              @db.LongText
   paid_area               String              @db.LongText
   sales_area              String              @db.LongText
+  free_area_html          String              @db.LongText
+  paid_area_html          String              @db.LongText
+  sales_area_html         String              @db.LongText
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

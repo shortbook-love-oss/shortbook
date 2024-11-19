@@ -26,13 +26,13 @@ export async function POST({ request, url, locals }) {
 	}
 
 	const urlSlug = getRandom(16);
-	const { hasContent: hasFreeArea } = await fromEditorStateToHtml(
+	const { html: freeAreaHtml, hasContent: hasFreeArea } = await fromEditorStateToHtml(
 		form.data.freeArea as unknown as SerializedEditorState
 	);
-	const { hasContent: hasPaidArea } = await fromEditorStateToHtml(
+	const { html: paidAreaHtml, hasContent: hasPaidArea } = await fromEditorStateToHtml(
 		form.data.paidArea as unknown as SerializedEditorState
 	);
-	const { hasContent: hasSalesArea } = await fromEditorStateToHtml(
+	const { html: salesAreaHtml, hasContent: hasSalesArea } = await fromEditorStateToHtml(
 		form.data.salesArea as unknown as SerializedEditorState
 	);
 	const { book, dbError: dbBookUpdateError } = await dbBookCreate({
@@ -43,10 +43,13 @@ export async function POST({ request, url, locals }) {
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
-		hasFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
-		hasPaidArea,
 		salesArea: JSON.stringify(form.data.salesArea),
+		freeAreaHtml,
+		paidAreaHtml,
+		salesAreaHtml,
+		hasFreeArea,
+		hasPaidArea,
 		hasSalesArea,
 		urlSlug,
 		buyPoint: 200
@@ -92,13 +95,13 @@ export async function PUT({ request, url, locals }) {
 		bookLang = bookRevision.contents[0];
 	}
 
-	const { hasContent: hasFreeArea } = await fromEditorStateToHtml(
+	const { html: freeAreaHtml, hasContent: hasFreeArea } = await fromEditorStateToHtml(
 		form.data.freeArea as unknown as SerializedEditorState
 	);
-	const { hasContent: hasPaidArea } = await fromEditorStateToHtml(
+	const { html: paidAreaHtml, hasContent: hasPaidArea } = await fromEditorStateToHtml(
 		form.data.paidArea as unknown as SerializedEditorState
 	);
-	const { hasContent: hasSalesArea } = await fromEditorStateToHtml(
+	const { html: salesAreaHtml, hasContent: hasSalesArea } = await fromEditorStateToHtml(
 		form.data.salesArea as unknown as SerializedEditorState
 	);
 	const { dbError: dbBookUpdateError } = await dbBookUpdate({
@@ -110,10 +113,13 @@ export async function PUT({ request, url, locals }) {
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
-		hasFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
-		hasPaidArea,
 		salesArea: JSON.stringify(form.data.salesArea),
+		freeAreaHtml,
+		paidAreaHtml,
+		salesAreaHtml,
+		hasFreeArea,
+		hasPaidArea,
 		hasSalesArea,
 		urlSlug: bookRevision.url_slug,
 		buyPoint: bookRevision.buy_point

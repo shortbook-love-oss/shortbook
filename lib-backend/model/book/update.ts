@@ -1,9 +1,13 @@
 import prisma from '$lib-backend/database/connect';
-import type { DbBookCreateRequest } from '$lib-backend/model/book/create';
+import type {
+	BookContentsCreateProp,
+	BookOverviewCreateProp
+} from '$lib-backend/model/book/create';
 
-export interface DbBookUpdateRequest extends DbBookCreateRequest {
-	bookId: string;
-}
+export type DbBookUpdateRequest = BookOverviewCreateProp &
+	BookContentsCreateProp & {
+		bookId: string;
+	};
 
 export async function dbBookUpdate(req: DbBookUpdateRequest) {
 	let dbError: Error | undefined;
@@ -129,12 +133,14 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 					{
 						revision_id: revisionId,
 						target_language: req.targetLanguage,
-						thumbnail_url: '',
 						title: req.title,
 						subtitle: req.subtitle,
 						free_area: req.freeArea,
 						paid_area: req.paidArea,
-						sales_area: req.salesArea
+						sales_area: req.salesArea,
+						free_area_html: req.freeAreaHtml,
+						paid_area_html: req.paidAreaHtml,
+						sales_area_html: req.salesAreaHtml
 					}
 				]
 			});

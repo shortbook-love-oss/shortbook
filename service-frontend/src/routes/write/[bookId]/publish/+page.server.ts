@@ -134,10 +134,13 @@ export const actions = {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			freeArea: bookLang.free_area,
-			hasFreeArea: bookRevision.has_free_area,
 			paidArea: bookLang.paid_area,
-			hasPaidArea: bookRevision.has_paid_area,
 			salesArea: bookLang.sales_area,
+			freeAreaHtml: bookLang.free_area_html,
+			paidAreaHtml: bookLang.paid_area_html,
+			salesAreaHtml: bookLang.sales_area_html,
+			hasFreeArea: bookRevision.has_free_area,
+			hasPaidArea: bookRevision.has_paid_area,
 			hasSalesArea: bookRevision.has_sales_area
 		});
 		if (!book || dbBookUpdateError) {
@@ -200,10 +203,13 @@ export const actions = {
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,
 			freeArea: bookLang.free_area,
-			hasFreeArea: bookRevision.has_free_area,
 			paidArea: bookLang.paid_area,
-			hasPaidArea: bookRevision.has_paid_area,
 			salesArea: bookLang.sales_area,
+			freeAreaHtml: bookLang.free_area_html,
+			paidAreaHtml: bookLang.paid_area_html,
+			salesAreaHtml: bookLang.sales_area_html,
+			hasFreeArea: bookRevision.has_free_area,
+			hasPaidArea: bookRevision.has_paid_area,
 			hasSalesArea: bookRevision.has_sales_area
 		});
 		if (!book || dbBookUpdateError) {

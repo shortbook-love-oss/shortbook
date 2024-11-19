@@ -1,17 +1,11 @@
 import prisma from '$lib-backend/database/connect';
 
-export interface DbBookCreateRequest {
+export type BookOverviewCreateProp = {
 	userId: string;
 	status: number; // 0: Draft 1: Public
 	targetLanguage: string;
 	title: string;
 	subtitle: string;
-	freeArea: string;
-	hasFreeArea: boolean;
-	paidArea: string;
-	hasPaidArea: boolean;
-	salesArea: string;
-	hasSalesArea: boolean;
 	urlSlug: string;
 	buyPoint: number;
 	baseColorStart: string;
@@ -25,9 +19,21 @@ export interface DbBookCreateRequest {
 	subtitleColor: string;
 	writerAlign: string;
 	writerColor: string;
-}
+};
 
-export async function dbBookCreate(req: DbBookCreateRequest) {
+export type BookContentsCreateProp = {
+	freeArea: string;
+	paidArea: string;
+	salesArea: string;
+	freeAreaHtml: string;
+	paidAreaHtml: string;
+	salesAreaHtml: string;
+	hasFreeArea: boolean;
+	hasPaidArea: boolean;
+	hasSalesArea: boolean;
+};
+
+export async function dbBookCreate(req: BookOverviewCreateProp & BookContentsCreateProp) {
 	let dbError: Error | undefined;
 
 	const book = await prisma
@@ -63,12 +69,14 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 							contents: {
 								create: {
 									target_language: req.targetLanguage,
-									thumbnail_url: '',
 									title: req.title,
 									subtitle: req.subtitle,
 									free_area: req.freeArea,
 									paid_area: req.paidArea,
-									sales_area: req.salesArea
+									sales_area: req.salesArea,
+									free_area_html: req.freeAreaHtml,
+									paid_area_html: req.paidAreaHtml,
+									sales_area_html: req.salesAreaHtml
 								}
 							}
 						}
