@@ -17,13 +17,14 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 	const { html, hasContent } = await new Promise<{ html: string; hasContent: boolean }>(
 		(resolve, reject) => {
 			try {
-				const parsedEditorState = editor.parseEditorState(serializedState);
-				editor.setEditorState(parsedEditorState);
+				editor.setEditorState(editor.parseEditorState(serializedState));
 				editor.read(() => {
 					const hasContent = !isEditorEmpty(editor);
 					if (hasContent) {
 						resolve({
-							html: DOMPurify.sanitize($generateHtmlFromNodes(editor)),
+							html: DOMPurify.sanitize(
+								$generateHtmlFromNodes(editor).replace(/\sstyle="white-space:\s?pre-wrap;"/g, '')
+							),
 							hasContent
 						});
 					} else {
