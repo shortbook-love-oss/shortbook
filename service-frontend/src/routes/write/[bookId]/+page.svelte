@@ -5,7 +5,7 @@
 	import { page } from '$app/stores';
 	import { bookCreateUrlParam, type BookDraftUpdateResult } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
-	import { callbackParam, getLanguageTagFromUrl } from '$lib/utilities/url';
+	import { callbackParam, getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 	import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import TextAreaSingle from '$lib/components/modules/form/text-area-single.svelte';
@@ -81,7 +81,7 @@
 			await save();
 		}
 		if (bookId !== '' && bookId !== bookCreateUrlParam) {
-			const url = `/write/${bookId}/publish${$page.url.search}`;
+			const url = setLanguageTagToPath(`/write/${bookId}/publish${$page.url.search}`, $page.url);
 			if (event.shiftKey || event.ctrlKey) {
 				window.open(url, '_blank', 'noreferrer');
 			} else {
@@ -112,7 +112,8 @@
 					isAutoSaved = false;
 				}, 2000);
 				if (bookId !== result.bookId) {
-					replaceState(`/write/${result.bookId}`, {});
+					const replaceUrl = setLanguageTagToPath(`/write/${result.bookId}`, $page.url);
+					replaceState(replaceUrl, {});
 				}
 				bookId = result.bookId;
 				return result;
