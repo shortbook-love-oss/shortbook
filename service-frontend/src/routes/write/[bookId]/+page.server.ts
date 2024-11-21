@@ -5,9 +5,9 @@ import { initEditorState, type EditorState } from '$lib/components/modules/wysiw
 import { bookCreateUrlParam } from '$lib/utilities/book';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/draft-create';
+import { dbBookRevisionList } from '$lib-backend/model/book/revision/list';
 import { dbBookDelete } from '$lib-backend/model/book/delete';
 import { dbBookGet } from '$lib-backend/model/book/get';
-import { dbBookRevisionList } from '$lib-backend/model/book/revision-list';
 
 export const load = async ({ locals, params }) => {
 	const signInUser = locals.signInUser;

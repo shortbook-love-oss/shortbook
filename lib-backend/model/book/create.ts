@@ -4,10 +4,11 @@ export type BookOverviewCreateProp = {
 	userId: string;
 	status: number; // 0: Draft 1: Public
 	targetLanguage: string;
-	title: string;
-	subtitle: string;
 	urlSlug: string;
 	buyPoint: number;
+};
+
+export type BookCoverCreateProp = {
 	baseColorStart: string;
 	baseColorEnd: string;
 	baseColorDirection: number;
@@ -21,7 +22,9 @@ export type BookOverviewCreateProp = {
 	writerColor: string;
 };
 
-export type BookContentsCreateProp = {
+export type BookContentCreateProp = {
+	title: string;
+	subtitle: string;
 	freeArea: string;
 	paidArea: string;
 	salesArea: string;
@@ -33,7 +36,9 @@ export type BookContentsCreateProp = {
 	hasSalesArea: boolean;
 };
 
-export async function dbBookCreate(req: BookOverviewCreateProp & BookContentsCreateProp) {
+export async function dbBookCreate(
+	req: BookOverviewCreateProp & BookCoverCreateProp & BookContentCreateProp
+) {
 	let dbError: Error | undefined;
 
 	const book = await prisma

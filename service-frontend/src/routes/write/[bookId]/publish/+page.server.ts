@@ -95,7 +95,6 @@ export const actions = {
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
-		const requestLang = getLanguageTagFromUrl(url);
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
@@ -111,37 +110,11 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
-			bookId: params.bookId,
-			userId: signInUser.id
-		});
-		if (!bookRevision || dbBookGetError) {
-			return error(500, { message: dbBookGetError?.message ?? '' });
-		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!bookLang) {
-			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
-		}
-
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			userId: signInUser.id,
 			status: 1,
-			...form.data,
-			title: bookLang.title,
-			subtitle: bookLang.subtitle,
-			freeArea: bookLang.free_area,
-			paidArea: bookLang.paid_area,
-			salesArea: bookLang.sales_area,
-			freeAreaHtml: bookLang.free_area_html,
-			paidAreaHtml: bookLang.paid_area_html,
-			salesAreaHtml: bookLang.sales_area_html,
-			hasFreeArea: bookRevision.has_free_area,
-			hasPaidArea: bookRevision.has_paid_area,
-			hasSalesArea: bookRevision.has_sales_area
+			...form.data
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
@@ -155,7 +128,6 @@ export const actions = {
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
-		const requestLang = getLanguageTagFromUrl(url);
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
@@ -181,36 +153,11 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
-			bookId: params.bookId,
-			userId: signInUser.id
-		});
-		if (!bookRevision || dbBookGetError) {
-			return error(500, { message: dbBookGetError?.message ?? '' });
-		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!bookLang) {
-			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
-		}
 		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			userId: signInUser.id,
 			status: 0,
-			...form.data,
-			title: bookLang.title,
-			subtitle: bookLang.subtitle,
-			freeArea: bookLang.free_area,
-			paidArea: bookLang.paid_area,
-			salesArea: bookLang.sales_area,
-			freeAreaHtml: bookLang.free_area_html,
-			paidAreaHtml: bookLang.paid_area_html,
-			salesAreaHtml: bookLang.sales_area_html,
-			hasFreeArea: bookRevision.has_free_area,
-			hasPaidArea: bookRevision.has_paid_area,
-			hasSalesArea: bookRevision.has_sales_area
+			...form.data
 		});
 		if (!book || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });

@@ -1,13 +1,7 @@
 import prisma from '$lib-backend/database/connect';
-import type {
-	BookContentsCreateProp,
-	BookOverviewCreateProp
-} from '$lib-backend/model/book/create';
+import type { BookCoverCreateProp, BookOverviewCreateProp } from '$lib-backend/model/book/create';
 
-export type DbBookUpdateRequest = BookOverviewCreateProp &
-	BookContentsCreateProp & {
-		bookId: string;
-	};
+export type DbBookUpdateRequest = BookOverviewCreateProp & BookCoverCreateProp & { bookId: string };
 
 export async function dbBookUpdate(req: DbBookUpdateRequest) {
 	let dbError: Error | undefined;
@@ -50,55 +44,19 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				orderBy: {
 					number: 'desc'
 				},
-				take: 1,
-				select: {
-					id: true,
-					number: true,
-					status: true
-				}
+				take: 1
 			});
 			if (latestRevision == null) {
 				dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
 				throw dbError;
 			}
 
-			let revisionId = latestRevision.id;
-			if (latestRevision.status !== 0) {
-				// If the book isn't "draft", create new revision
-				const newRevision = await tx.book_revisions.create({
-					data: {
-						book_id: book.id,
-						number: latestRevision.number + 1,
-						status: req.status,
-						url_slug: req.urlSlug,
-						buy_point: req.buyPoint,
-						native_language: req.targetLanguage,
-						has_free_area: req.hasFreeArea,
-						has_paid_area: req.hasPaidArea,
-						has_sales_area: req.hasSalesArea
-					}
-				});
-				if (!newRevision) {
-					dbError ??= new Error(`Can't create a new revision. Book ID=${req.bookId}`);
-					throw dbError;
-				}
-				revisionId = newRevision.id;
-			} else {
-				// If the book is "draft", update latest revision
-				await tx.book_revisions.update({
-					where: { id: latestRevision.id },
-					data: {
-						status: req.status,
-						url_slug: req.urlSlug,
-						buy_point: req.buyPoint,
-						native_language: req.targetLanguage,
-						has_free_area: req.hasFreeArea,
-						has_paid_area: req.hasPaidArea,
-						has_sales_area: req.hasSalesArea
-					}
-				});
-			}
-
+			const bookOverviewData = {
+				status: req.status,
+				url_slug: req.urlSlug,
+				buy_point: req.buyPoint,
+				native_language: req.targetLanguage
+			};
 			const bookCoverData = {
 				base_color_start: req.baseColorStart,
 				base_color_end: req.baseColorEnd,
@@ -112,40 +70,79 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				writer_align: req.writerAlign,
 				writer_color: req.writerColor
 			};
+
+			let revisionId = latestRevision.id;
+			if (latestRevision.status !== 0) {
+				// If the book isn't "draft", create new revision
+				const latestContent = await tx.book_contents.findUnique({
+					where: {
+						revision_id_target_language: {
+							revision_id: latestRevision.id,
+							target_language: latestRevision.native_language
+						}
+					}
+				});
+				if (latestContent == null) {
+					dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
+					throw dbError;
+				}
+				const newRevision = await tx.book_revisions.create({
+					data: {
+						book_id: book.id,
+						number: latestRevision.number + 1,
+						...bookOverviewData,
+						has_free_area: latestRevision.has_free_area,
+						has_paid_area: latestRevision.has_paid_area,
+						has_sales_area: latestRevision.has_sales_area,
+						contents: {
+							create: {
+								target_language: req.targetLanguage,
+								title: latestContent.title,
+								subtitle: latestContent.subtitle,
+								free_area: latestContent.free_area,
+								paid_area: latestContent.paid_area,
+								sales_area: latestContent.sales_area,
+								free_area_html: latestContent.free_area_html,
+								paid_area_html: latestContent.paid_area_html,
+								sales_area_html: latestContent.sales_area_html
+							}
+						}
+					}
+				});
+				if (!newRevision) {
+					dbError ??= new Error(`Can't create a new revision. Book ID=${req.bookId}`);
+					throw dbError;
+				}
+				revisionId = newRevision.id;
+			} else {
+				// If the book is "draft", update latest revision
+				await tx.book_revisions.update({
+					where: { id: latestRevision.id },
+					data: bookOverviewData
+				});
+				await tx.book_contents.update({
+					where: {
+						revision_id_target_language: {
+							revision_id: latestRevision.id,
+							target_language: latestRevision.native_language
+						}
+					},
+					data: { target_language: req.targetLanguage }
+				});
+			}
+
 			await tx.book_covers.upsert({
 				where: {
 					revision_id: revisionId
 				},
 				create: {
-					...bookCoverData,
-					revision_id: revisionId
+					revision_id: revisionId,
+					...bookCoverData
 				},
 				update: bookCoverData
 			});
 
-			await tx.book_contents.deleteMany({
-				where: {
-					revision_id: revisionId
-				}
-			});
-			await tx.book_contents.createMany({
-				data: [
-					{
-						revision_id: revisionId,
-						target_language: req.targetLanguage,
-						title: req.title,
-						subtitle: req.subtitle,
-						free_area: req.freeArea,
-						paid_area: req.paidArea,
-						sales_area: req.salesArea,
-						free_area_html: req.freeAreaHtml,
-						paid_area_html: req.paidAreaHtml,
-						sales_area_html: req.salesAreaHtml
-					}
-				]
-			});
-
-			return book;
+			if (book) return book;
 		})
 		.catch(() => {
 			dbError ??= new Error(`Failed to get book. Book ID=${req.bookId}`);

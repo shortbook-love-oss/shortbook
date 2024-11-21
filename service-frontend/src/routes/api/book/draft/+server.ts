@@ -7,9 +7,14 @@ import { getRandom } from '$lib/utilities/crypto';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema as createSchema } from '$lib/validation/schema/book/draft-create';
 import { schema as updateSchema } from '$lib/validation/schema/book/draft-update';
-import { dbBookCreate } from '$lib-backend/model/book/create';
+import { dbBookRevisionCreate } from '$lib-backend/model/book/revision/create';
+import { dbBookRevisionUpdate } from '$lib-backend/model/book/revision/update';
+import {
+	dbBookCreate,
+	type BookContentCreateProp,
+	type BookOverviewCreateProp
+} from '$lib-backend/model/book/create';
 import { dbBookGet } from '$lib-backend/model/book/get';
-import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { fromEditorStateToHtml } from '$lib-backend/utilities/book';
 
 export async function POST({ request, url, locals }) {
@@ -40,6 +45,8 @@ export async function POST({ request, url, locals }) {
 		userId: signInUser.id,
 		status: 0,
 		targetLanguage: requestLang,
+		urlSlug,
+		buyPoint: 200,
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
@@ -50,17 +57,13 @@ export async function POST({ request, url, locals }) {
 		salesAreaHtml,
 		hasFreeArea,
 		hasPaidArea,
-		hasSalesArea,
-		urlSlug,
-		buyPoint: 200
+		hasSalesArea
 	});
 	if (!book || dbBookUpdateError) {
 		return error(500, { message: dbBookUpdateError?.message ?? '' });
 	}
 
-	const responseData: BookDraftUpdateResult = {
-		bookId: book.id
-	};
+	const responseData: BookDraftUpdateResult = { bookId: book.id };
 	const response = new Response(JSON.stringify(responseData));
 	response.headers.set('content-type', 'application/json');
 	return response;
@@ -104,12 +107,13 @@ export async function PUT({ request, url, locals }) {
 	const { html: salesAreaHtml, hasContent: hasSalesArea } = await fromEditorStateToHtml(
 		form.data.salesArea as unknown as SerializedEditorState
 	);
-	const { dbError: dbBookUpdateError } = await dbBookUpdate({
-		...getBookCover({}),
-		bookId: currentBook.id,
+
+	const bookRevisionUpsertParam: BookOverviewCreateProp & BookContentCreateProp = {
 		userId: signInUser.id,
 		status: 0,
 		targetLanguage: requestLang,
+		urlSlug: bookRevision.url_slug,
+		buyPoint: bookRevision.buy_point,
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
@@ -120,17 +124,27 @@ export async function PUT({ request, url, locals }) {
 		salesAreaHtml,
 		hasFreeArea,
 		hasPaidArea,
-		hasSalesArea,
-		urlSlug: bookRevision.url_slug,
-		buyPoint: bookRevision.buy_point
-	});
-	if (dbBookUpdateError) {
-		return error(500, { message: dbBookUpdateError?.message ?? '' });
+		hasSalesArea
+	};
+	if (bookRevision.status !== 0) {
+		const { dbError: dbRevCreateError } = await dbBookRevisionCreate({
+			...bookRevisionUpsertParam,
+			bookId: currentBook.id
+		});
+		if (dbRevCreateError) {
+			return error(500, { message: dbRevCreateError.message });
+		}
+	} else {
+		const { dbError: dbRevUpdateError } = await dbBookRevisionUpdate({
+			...bookRevisionUpsertParam,
+			revisionId: bookRevision.id
+		});
+		if (dbRevUpdateError) {
+			return error(500, { message: dbRevUpdateError.message });
+		}
 	}
 
-	const responseData: BookDraftUpdateResult = {
-		bookId: form.data.bookId
-	};
+	const responseData: BookDraftUpdateResult = { bookId: form.data.bookId };
 	const response = new Response(JSON.stringify(responseData));
 	response.headers.set('content-type', 'application/json');
 	return response;
