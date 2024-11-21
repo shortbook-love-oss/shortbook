@@ -21,16 +21,10 @@ export const load = async ({ url, locals }) => {
 		if (!bookRevision?.cover || bookRevision.contents.length === 0) {
 			continue;
 		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!bookLang) {
-			continue;
-		}
+
 		const bookCover = getBookCover({
-			title: bookLang.title,
-			subtitle: bookLang.subtitle,
+			title: bookRevision.title,
+			subtitle: bookRevision.subtitle,
 			baseColorStart: bookRevision.cover.base_color_start,
 			baseColorEnd: bookRevision.cover.base_color_end,
 			baseColorDirection: bookRevision.cover.base_color_direction,

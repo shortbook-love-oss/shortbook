@@ -93,10 +93,6 @@ export async function PUT({ request, url, locals }) {
 	if (!currentBook || !bookRevision || bookRevision.contents.length === 0 || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-	if (!bookLang) {
-		bookLang = bookRevision.contents[0];
-	}
 
 	const { html: freeAreaHtml, hasContent: hasFreeArea } = await fromEditorStateToHtml(
 		form.data.freeArea as unknown as SerializedEditorState

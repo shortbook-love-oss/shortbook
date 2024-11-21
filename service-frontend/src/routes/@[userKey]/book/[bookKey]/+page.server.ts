@@ -164,8 +164,8 @@ export const load = async ({ url, locals, params }) => {
 	}
 
 	const bookCover = getBookCover({
-		title: bookLang?.title ?? '',
-		subtitle: bookLang?.subtitle ?? '',
+		title: bookLang.title,
+		subtitle: bookLang.subtitle,
 		baseColorStart: bookRevision.cover.base_color_start,
 		baseColorEnd: bookRevision.cover.base_color_end,
 		baseColorDirection: bookRevision.cover.base_color_direction,
@@ -198,19 +198,19 @@ export const load = async ({ url, locals, params }) => {
 	};
 
 	if (bookRevision.has_free_area) {
-		const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.free_area));
+		const { html } = await fromEditorStateToHtml(JSON.parse(bookRevision.free_area));
 		bookDetail.freeArea = html;
 	}
 	const hasPaidArea = bookRevision.has_paid_area;
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		if (hasPaidArea) {
-			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.paid_area));
+			const { html } = await fromEditorStateToHtml(JSON.parse(bookRevision.paid_area));
 			bookDetail.paidArea = html;
 		}
 	} else {
 		if (bookRevision.has_sales_area) {
-			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.sales_area));
+			const { html } = await fromEditorStateToHtml(JSON.parse(bookRevision.sales_area));
 			bookDetail.salesArea = html;
 		}
 	}

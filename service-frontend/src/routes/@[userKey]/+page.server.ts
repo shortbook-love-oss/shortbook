@@ -39,7 +39,7 @@ export const load = async ({ url, params }) => {
 		if (!bookLang) {
 			bookLang = bookRevision.contents[0];
 		}
-		if (!book.user || !userLang || !bookLang) {
+		if (!book.user || !bookLang) {
 			continue;
 		}
 		const bookCover = getBookCover({

@@ -28,6 +28,11 @@ export async function dbBookRevisionList(req: DbBookRevisionListRequest) {
 			},
 			orderBy: {
 				number: 'desc'
+			},
+			omit: {
+				free_area: true,
+				paid_area: true,
+				sales_area: true
 			}
 		})
 		.catch(() => {

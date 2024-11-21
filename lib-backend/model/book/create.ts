@@ -53,9 +53,24 @@ export async function dbBookCreate(
 							url_slug: req.urlSlug,
 							buy_point: req.buyPoint,
 							native_language: req.targetLanguage,
+							title: req.title,
+							subtitle: req.subtitle,
+							free_area: req.freeArea,
+							paid_area: req.paidArea,
+							sales_area: req.salesArea,
 							has_free_area: req.hasFreeArea,
 							has_paid_area: req.hasPaidArea,
 							has_sales_area: req.hasSalesArea,
+							contents: {
+								create: {
+									target_language: req.targetLanguage,
+									title: req.title,
+									subtitle: req.subtitle,
+									free_area_html: req.freeAreaHtml,
+									paid_area_html: req.paidAreaHtml,
+									sales_area_html: req.salesAreaHtml
+								}
+							},
 							cover: {
 								create: {
 									base_color_start: req.baseColorStart,
@@ -69,19 +84,6 @@ export async function dbBookCreate(
 									subtitle_color: req.subtitleColor,
 									writer_align: req.writerAlign,
 									writer_color: req.writerColor
-								}
-							},
-							contents: {
-								create: {
-									target_language: req.targetLanguage,
-									title: req.title,
-									subtitle: req.subtitle,
-									free_area: req.freeArea,
-									paid_area: req.paidArea,
-									sales_area: req.salesArea,
-									free_area_html: req.freeAreaHtml,
-									paid_area_html: req.paidAreaHtml,
-									sales_area_html: req.salesAreaHtml
 								}
 							}
 						}

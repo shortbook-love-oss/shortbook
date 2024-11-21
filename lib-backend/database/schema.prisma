@@ -230,6 +230,11 @@ model book_revisions {
   url_slug                String              @db.VarChar(100) // Length 1 - 100
   buy_point               Int
   native_language         String              @db.VarChar(5)
+  title                   String              @db.VarChar(1400) // Max length is 200
+  subtitle                String              @db.VarChar(1400) // Max length is 200
+  free_area               String              @db.LongText
+  paid_area               String              @db.LongText
+  sales_area              String              @db.LongText
   has_free_area           Boolean
   has_paid_area           Boolean
   has_sales_area          Boolean
@@ -237,10 +242,28 @@ model book_revisions {
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
-  cover                   book_covers?
   contents                book_contents[]
+  cover                   book_covers?
 
   @@unique([book_id, number])
+}
+
+model book_contents {
+  book_revision           book_revisions      @relation(fields: [revision_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @db.VarChar(30) @default(cuid())
+  revision_id             String
+  target_language         String              @db.VarChar(5)
+  title                   String              @db.VarChar(1400) // Max length is 200
+  subtitle                String              @db.VarChar(1400) // Max length is 200
+  free_area_html          String              @db.LongText
+  paid_area_html          String              @db.LongText
+  sales_area_html         String              @db.LongText
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+
+  @@unique([revision_id, target_language])
 }
 
 model book_covers {
@@ -262,27 +285,6 @@ model book_covers {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
-}
-
-model book_contents {
-  book_revision           book_revisions      @relation(fields: [revision_id], references: [id], onUpdate: Cascade)
-
-  id                      String              @id @db.VarChar(30) @default(cuid())
-  revision_id             String
-  target_language         String              @db.VarChar(5)
-  title                   String              @db.VarChar(1400) // Max length is 200
-  subtitle                String              @db.VarChar(1400) // Max length is 200
-  free_area               String              @db.LongText
-  paid_area               String              @db.LongText
-  sales_area              String              @db.LongText
-  free_area_html          String              @db.LongText
-  paid_area_html          String              @db.LongText
-  sales_area_html         String              @db.LongText
-  created_at              DateTime            @default(now())
-  updated_at              DateTime            @updatedAt
-  deleted_at              DateTime?
-
-  @@unique([revision_id, target_language])
 }
 
 model book_buys {

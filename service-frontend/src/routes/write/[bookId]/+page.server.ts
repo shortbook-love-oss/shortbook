@@ -49,17 +49,16 @@ export const load = async ({ locals, params }) => {
 			});
 		}
 
-		const bookLang = bookRevision.contents[0];
-		form.data.title = bookLang.title;
-		form.data.subtitle = bookLang.subtitle;
-		freeArea = JSON.parse(bookLang.free_area) as EditorState;
-		paidArea = JSON.parse(bookLang.paid_area) as EditorState;
-		salesArea = JSON.parse(bookLang.sales_area) as EditorState;
+		form.data.title = bookRevision.title;
+		form.data.subtitle = bookRevision.subtitle;
+		freeArea = JSON.parse(bookRevision.free_area) as EditorState;
+		paidArea = JSON.parse(bookRevision.paid_area) as EditorState;
+		salesArea = JSON.parse(bookRevision.sales_area) as EditorState;
 
 		bookId = book.id;
 		bookStatus = bookRevision.status;
 		updatedAt = bookRevision.updated_at;
-		initTitle = bookLang.title;
+		initTitle = bookRevision.title;
 		initUrlSlug = bookRevision.url_slug;
 	}
 

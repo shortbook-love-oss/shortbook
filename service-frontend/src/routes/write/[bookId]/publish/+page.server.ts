@@ -4,7 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { AvailableLanguageTag } from '$i18n/output/runtime';
 import { getBookCover } from '$lib/utilities/book';
 import { languageSelect } from '$lib/utilities/language';
-import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
+import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
@@ -13,12 +13,11 @@ import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
 
-export const load = async ({ url, locals, params }) => {
+export const load = async ({ locals, params }) => {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(zod(schema));
 	const langTags = languageSelect;
@@ -33,13 +32,9 @@ export const load = async ({ url, locals, params }) => {
 	if (!book || !bookRevision?.cover || bookRevision.contents.length === 0) {
 		return error(500, { message: `Can't find book. Book ID=${params.bookId}` });
 	}
-	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-	if (!bookLang) {
-		bookLang = bookRevision.contents[0];
-	}
 
 	if (
-		!validateOnlyVisibleChar(bookLang.title) ||
+		!validateOnlyVisibleChar(bookRevision.title) ||
 		!(bookRevision.has_free_area || bookRevision.has_paid_area)
 	) {
 		redirect(303, `/write/${book.id}`);
@@ -48,8 +43,8 @@ export const load = async ({ url, locals, params }) => {
 	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
 	const bookCover = getBookCover({
-		title: bookLang.title,
-		subtitle: bookLang.subtitle,
+		title: bookRevision.title,
+		subtitle: bookRevision.subtitle,
 		baseColorStart: bookRevision.cover.base_color_start,
 		baseColorEnd: bookRevision.cover.base_color_end,
 		baseColorDirection: bookRevision.cover.base_color_direction,
@@ -72,8 +67,8 @@ export const load = async ({ url, locals, params }) => {
 	form.data.urlSlug = bookRevision.url_slug;
 	form.data.buyPoint = bookRevision.buy_point;
 
-	const initTitle = bookLang.title;
-	const initSubtitle = bookLang.subtitle;
+	const initTitle = bookRevision.title;
+	const initSubtitle = bookRevision.subtitle;
 	const status = bookRevision.status;
 	const hasPaidArea = bookRevision.has_paid_area;
 

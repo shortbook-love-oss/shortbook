@@ -13,10 +13,6 @@ export const load = async ({ url }) => {
 
 	const bookList: BookItem[] = [];
 	for (const book of books) {
-		let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
-		if (!userLang && book.user.languages.length) {
-			userLang = book.user.languages[0];
-		}
 		const bookRevision = book.revisions[0];
 		if (book.revisions.length === 0 || bookRevision.contents.length === 0 || !bookRevision.cover) {
 			continue;
@@ -25,7 +21,7 @@ export const load = async ({ url }) => {
 		if (!bookLang) {
 			bookLang = bookRevision.contents[0];
 		}
-		if (!userLang || !bookLang) {
+		if (!bookLang) {
 			continue;
 		}
 

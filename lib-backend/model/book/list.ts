@@ -57,17 +57,23 @@ export async function dbBookList(req: DbBookListRequest) {
 						number: 'desc'
 					},
 					take: getRevisionsCount,
+					// Omit + include is work, but these props doesn't omit by type definition
+					omit: {
+						free_area: true,
+						paid_area: true,
+						sales_area: true
+					},
 					include: {
-						cover: {
-							where: { ...whereCondDelete }
-						},
 						contents: {
 							where: { ...whereCondDelete },
-							omit: {
-								free_area: true,
-								paid_area: true,
-								sales_area: true
+							select: {
+								target_language: true,
+								title: true,
+								subtitle: true
 							}
+						},
+						cover: {
+							where: { ...whereCondDelete }
 						}
 					}
 				},
@@ -78,9 +84,7 @@ export async function dbBookList(req: DbBookListRequest) {
 						image_src: true,
 						languages: {
 							where: { ...whereCondDelete },
-							select: {
-								target_language: true
-							}
+							select: { target_language: true }
 						}
 					}
 				}

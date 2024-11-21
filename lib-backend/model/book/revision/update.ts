@@ -44,6 +44,11 @@ export async function dbBookRevisionUpdate(req: DbBookRevisionUpdateRequest) {
 					url_slug: req.urlSlug,
 					buy_point: req.buyPoint,
 					native_language: req.targetLanguage,
+					title: req.title,
+					subtitle: req.subtitle,
+					free_area: req.freeArea,
+					paid_area: req.paidArea,
+					sales_area: req.salesArea,
 					has_free_area: req.hasFreeArea,
 					has_paid_area: req.hasPaidArea,
 					has_sales_area: req.hasSalesArea
@@ -66,9 +71,6 @@ export async function dbBookRevisionUpdate(req: DbBookRevisionUpdateRequest) {
 					revision_id: req.revisionId,
 					title: req.title,
 					subtitle: req.subtitle,
-					free_area: req.freeArea,
-					paid_area: req.paidArea,
-					sales_area: req.salesArea,
 					free_area_html: req.freeAreaHtml,
 					paid_area_html: req.paidAreaHtml,
 					sales_area_html: req.salesAreaHtml

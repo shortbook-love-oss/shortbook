@@ -67,10 +67,10 @@ export async function dbBookGet(req: DbBookGetRequest) {
 					},
 					take: getRevisionsCount,
 					include: {
-						cover: {
+						contents: {
 							where: { ...whereCondDelete }
 						},
-						contents: {
+						cover: {
 							where: { ...whereCondDelete }
 						}
 					}
