@@ -137,7 +137,7 @@
 <HeaderArea>
 	<a
 		href={callbackUrl || '/write'}
-		class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200"
+		class="block shrink-0 p-2.5 hover:bg-stone-200 focus:bg-stone-200"
 		title="Back to my articles list"
 	>
 		<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
@@ -156,7 +156,7 @@
 			{isAutoSaved ? 'Saved' : 'Auto save'}
 		</p>
 	</div>
-	<div class="relative mx-1.5">
+	<div class="relative mx-1">
 		<button
 			type="button"
 			disabled={unpublishableReasons.length > 0}
@@ -164,7 +164,7 @@
 			onclick={finish}>{bookStatus === 1 ? 'Republish' : 'Publish'}</button
 		>
 		<div
-			class="absolute -left-4 top-12 hidden min-w-56 flex-col gap-3 rounded-lg border border-stone-300 bg-white px-4 py-3 text-lg text-red-700 peer-[:hover:disabled]:flex"
+			class="absolute -left-16 top-12 hidden min-w-56 flex-col gap-3 rounded-lg border border-stone-300 bg-white px-4 py-3 text-lg text-red-700 peer-[:hover:disabled]:flex xs:-left-2.5"
 		>
 			{#each unpublishableReasons as reason}
 				<p>{reason}</p>

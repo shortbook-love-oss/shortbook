@@ -59,7 +59,7 @@
 		<HeaderArea>
 			<a
 				href="/write/{$page.params.bookId}{$page.url.search}"
-				class="flex shrink-0 items-center gap-2 rounded-ee-[0.4375rem] p-3 hover:bg-stone-200 focus:bg-stone-200"
+				class="flex shrink-0 items-center gap-2 rounded-ee-[0.4375rem] p-2.5 hover:bg-stone-200 focus:bg-stone-200"
 				title="Back to book contents editor"
 			>
 				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
