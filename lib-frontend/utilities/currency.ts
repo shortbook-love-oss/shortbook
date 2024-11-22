@@ -38,44 +38,6 @@ export function getCurrencyData(key: string) {
 	return null;
 }
 
-export function guessCurrencyByLang(langTag: AvailableLanguageTags) {
-	let suggestCurrency: CurrencySupportCodes = defaultCurrencyCode;
-	switch (langTag) {
-		case 'en':
-			suggestCurrency = 'usd';
-			break;
-		case 'fr':
-		case 'de':
-		case 'es':
-		case 'it':
-			suggestCurrency = 'eur';
-			break;
-		case 'ar-ae':
-			suggestCurrency = 'aed';
-			break;
-		case 'hi':
-			suggestCurrency = 'inr';
-			break;
-		case 'zh-cn':
-			suggestCurrency = 'cny';
-			break;
-		case 'zh-tw':
-			suggestCurrency = 'twd';
-			break;
-		case 'ja':
-			suggestCurrency = 'jpy';
-			break;
-		case 'ru':
-			suggestCurrency = 'rub';
-			break;
-		case 'pt-br':
-			suggestCurrency = 'brl';
-			break;
-	}
-
-	return suggestCurrency;
-}
-
 // USD 1.49 → 1.49 (ok)
 // USD 1.493 → 1.49 (should be to two decimal places)
 // JPY 78.9 → 78 (not allow decimal)
@@ -98,4 +60,69 @@ export function formatPrice(
 		currency,
 		minimumFractionDigits: 0
 	}).format(amount);
+}
+
+export function guessCurrencyByLang(langTag: AvailableLanguageTags) {
+	let suggestCurrency: CurrencySupportCodes = defaultCurrencyCode;
+	switch (langTag) {
+		case 'en':
+			suggestCurrency = 'usd';
+			break;
+		case 'ar':
+			suggestCurrency = 'aed';
+			break;
+		case 'nb':
+			suggestCurrency = 'nok';
+			break;
+		case 'sv':
+			suggestCurrency = 'sek';
+			break;
+		case 'fi':
+		case 'et':
+		case 'es':
+		case 'fr':
+		case 'it':
+		case 'nl':
+		case 'de':
+			suggestCurrency = 'eur';
+			break;
+		case 'da':
+			suggestCurrency = 'dkk';
+			break;
+		case 'cs':
+			suggestCurrency = 'czk';
+			break;
+		case 'hu':
+			suggestCurrency = 'huf';
+			break;
+		case 'uk':
+			suggestCurrency = 'uah';
+			break;
+		case 'ru':
+			suggestCurrency = 'rub';
+			break;
+		case 'pt-br':
+			suggestCurrency = 'brl';
+			break;
+		case 'hi':
+			suggestCurrency = 'inr';
+			break;
+		case 'zh-cn':
+			suggestCurrency = 'cny';
+			break;
+		case 'zh-tw':
+			suggestCurrency = 'twd';
+			break;
+		case 'ja':
+			suggestCurrency = 'jpy';
+			break;
+		case 'ko':
+			suggestCurrency = 'krw';
+			break;
+		case 'id':
+			suggestCurrency = 'idr';
+			break;
+	}
+
+	return suggestCurrency;
 }
