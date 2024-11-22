@@ -20,7 +20,6 @@ import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
 import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
 import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
-import { fromEditorStateToHtml } from '$lib-backend/utilities/book';
 
 export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
@@ -198,20 +197,17 @@ export const load = async ({ url, locals, params }) => {
 	};
 
 	if (bookRevision.has_free_area) {
-		const { html } = await fromEditorStateToHtml(JSON.parse(bookRevision.free_area));
-		bookDetail.freeArea = html;
+		bookDetail.freeArea = bookLang.free_area_html;
 	}
 	const hasPaidArea = bookRevision.has_paid_area;
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		if (hasPaidArea) {
-			const { html } = await fromEditorStateToHtml(JSON.parse(bookRevision.paid_area));
-			bookDetail.paidArea = html;
+			bookDetail.paidArea = bookLang.paid_area_html;
 		}
 	} else {
 		if (bookRevision.has_sales_area) {
-			const { html } = await fromEditorStateToHtml(JSON.parse(bookRevision.sales_area));
-			bookDetail.salesArea = html;
+			bookDetail.salesArea = bookLang.sales_area_html;
 		}
 	}
 
