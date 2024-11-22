@@ -40,8 +40,7 @@ export const CHANGE_IMAGE_BLOCK_COMMAND: LexicalCommand<AlbumImageNodeItem> = cr
 );
 
 function getImageSrc(albumImage: AlbumImageItem) {
-	const imageSize = getImageSizeForSrc(albumImage.width, editorImageMaxWidth);
-	return `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.filePath}?ext=${albumImage.toExtension}&${imageSize}q=60`;
+	return `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.filePath}`;
 }
 
 function insertImage(albumImage: AlbumImageItem) {
@@ -56,6 +55,7 @@ function insertImage(albumImage: AlbumImageItem) {
 		albumImage.alt,
 		albumImage.width,
 		albumImage.height,
+		albumImage.toExtension,
 		''
 	);
 	insertBlockNodeToNext(selectedBlock, imageNode);
@@ -73,8 +73,10 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 	// By doing so, switch quickly to image node
 	const albumImage = imageItem.albumImage;
 	const imageSrc = getImageSrc(albumImage);
+	const imageSize = getImageSizeForSrc(albumImage.width, editorImageMaxWidth);
+
 	const imgCacher = document.createElement('img');
-	imgCacher.src = imageSrc;
+	imgCacher.src = `${imageSrc}?ext=${albumImage.toExtension}&${imageSize}q=60`;
 	imgCacher.onload = () => {
 		editor.update(
 			() => {
@@ -85,6 +87,7 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 					albumImage.alt,
 					albumImage.width,
 					albumImage.height,
+					albumImage.toExtension,
 					''
 				);
 				imageUploaderNode.replace(imageNode);
@@ -92,6 +95,7 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 			{ tag: 'history-merge' }
 		);
 	};
+
 	return true;
 }
 

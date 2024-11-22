@@ -5,9 +5,12 @@ import {
 	type NodeKey
 } from 'lexical';
 import { ImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
-import { editorImageMaxWidth } from '$lib/components/modules/wysiwyg-editor/editor';
+import {
+	editorImageMaxWidth,
+	editorImageMaxWidthNarrow,
+	getImageSizeForSrc
+} from '$lib/components/modules/wysiwyg-editor/editor';
 import { getUrlObject } from '$lib/utilities/url';
-import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
 export const imageNodeAttr = 'data-lexical-node-image';
 export const imageNodeActivatorAttr = 'data-lexical-node-image-activator';
@@ -25,21 +28,26 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 	imageWrap.className = 'block mx-[calc(50%-50vw)]';
 
 	const narrowVer = document.createElement('source');
-	const narrowSrc = getUrlObject(node.getSrc());
-	if (node.getWidth() > 448 && narrowSrc) {
+	const narrowImageSize = getImageSizeForSrc(node.getWidth(), editorImageMaxWidthNarrow);
+	const narrowSrc = getUrlObject(
+		`${node.getSrc()}?ext=${node.getToExtension()}&${narrowImageSize}q=60`
+	);
+	if (node.getWidth() > editorImageMaxWidthNarrow && narrowSrc) {
 		// If narrow device and large image, show small-resized image
-		narrowVer.media = '(max-width: 448px)';
+		narrowVer.media = `(max-width: ${editorImageMaxWidthNarrow}px)`;
 		// Max-width of narrow image is 480 - margins (16*2)
-		const narrowImageWidth: (typeof allowedSize)[number] = 448;
-		narrowSrc.searchParams.set('w', narrowImageWidth + '');
+		narrowSrc.searchParams.set('w', editorImageMaxWidthNarrow + '');
 		narrowSrc.searchParams.delete('h');
 		narrowVer.srcset = narrowSrc.href;
 		imageWrap.appendChild(narrowVer);
 	}
 
+	const imageSize = getImageSizeForSrc(node.getWidth(), editorImageMaxWidth);
 	const image = document.createElement('img');
-	image.src = node.getSrc();
-	image.alt = node.getAlt();
+	image.src = `${node.getSrc()}?ext=${node.getToExtension()}&${imageSize}q=60`;
+	if (node.getAlt()) {
+		image.alt = node.getAlt();
+	}
 	image.width = node.getWidth();
 	image.height = node.getHeight();
 	image.decoding = 'async';

@@ -7,6 +7,7 @@ import {
 } from 'lexical';
 import { createImageNodeDOM } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/dom';
 import type { BlockNode } from '$lib/components/modules/wysiwyg-editor/editor';
+import type { AllowedToExtension } from '$lib-backend/utilities/infrastructure/image';
 
 export type SerializedImageNode = Spread<
 	{
@@ -15,6 +16,7 @@ export type SerializedImageNode = Spread<
 		alt: string;
 		width: number;
 		height: number;
+		toExtension: AllowedToExtension;
 		caption: string;
 	},
 	SerializedLexicalNode
@@ -26,6 +28,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 	__alt: string;
 	__width: number;
 	__height: number;
+	__toExtension: AllowedToExtension;
 	__caption: string;
 
 	static getType(): string {
@@ -39,6 +42,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 			node.__alt,
 			node.__width,
 			node.__height,
+			node.__toExtension,
 			node.__caption,
 			node.__key
 		);
@@ -50,6 +54,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 		alt: string,
 		width: number,
 		height: number,
+		toExtension: AllowedToExtension,
 		caption: string,
 		key?: NodeKey
 	) {
@@ -60,6 +65,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 		this.__alt = alt;
 		this.__width = width;
 		this.__height = height;
+		this.__toExtension = toExtension;
 		this.__caption = caption;
 	}
 
@@ -90,6 +96,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 			serializedNode.alt,
 			serializedNode.width,
 			serializedNode.height,
+			serializedNode.toExtension,
 			serializedNode.caption
 		);
 	}
@@ -103,6 +110,7 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 			alt: this.getAlt(),
 			width: this.getWidth(),
 			height: this.getHeight(),
+			toExtension: this.getToExtension(),
 			caption: this.getCaption()
 		};
 	}
@@ -131,6 +139,10 @@ export class ImageNode extends DecoratorNode<HTMLElement> {
 		return this.__height;
 	}
 
+	getToExtension(): AllowedToExtension {
+		return this.__toExtension;
+	}
+
 	getCaption(): string {
 		return this.__caption;
 	}
@@ -147,9 +159,10 @@ export function $createImageNode(
 	alt: string,
 	width: number,
 	height: number,
+	toExtension: AllowedToExtension,
 	caption: string
 ): ImageNode {
-	return new ImageNode(imageId, src, alt, width, height, caption);
+	return new ImageNode(imageId, src, alt, width, height, toExtension, caption);
 }
 
 export function $isImageNode(node: BlockNode | null) {

@@ -44,6 +44,8 @@ export const allowedSize = [
 	480, 512, 576, 672, 768, 896, 1024, 1080, 1152, 1280, 1440, 1536, 1600, 1920, 2160, 2400, 2560,
 	3384, 3440, 3840, 4096, 4320, 6016, 7680
 ] as const;
+export type AllowedSize = (typeof allowedSize)[number];
+
 export const allowedResizeFit = [
 	'contain',
 	'cover',
@@ -51,7 +53,9 @@ export const allowedResizeFit = [
 	'inside',
 	'outside'
 ] as ImageFitOption[];
+
 export const allowedQuality = [10, 20, 40, 60, 80, 90, 100];
+export type AllowedQuality = (typeof allowedQuality)[number];
 
 export const defaultExtension: AllowedToExtension = 'png';
 export const defaultResizeFit: ImageFitOption = 'cover';
