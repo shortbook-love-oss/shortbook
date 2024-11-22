@@ -21,7 +21,7 @@
 		>
 	{/if}
 	<Dialog
-		name="lang_select"
+		name="buy_currency_select"
 		title="Buy in your currency"
 		openerColorClass=""
 		dialogSizeClass="max-w-xl"

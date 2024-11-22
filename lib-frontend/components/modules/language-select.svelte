@@ -12,7 +12,12 @@
 	}
 </script>
 
-<Dialog name="lang_select" title="Change language" openerClass="w-fit" dialogSizeClass="max-w-xl">
+<Dialog
+	name="base_language_select"
+	title="Change language"
+	openerClass="w-fit"
+	dialogSizeClass="max-w-xl"
+>
 	{#snippet opener()}
 		<div class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
 			<p class="inline-block px-1">Change language</p>
