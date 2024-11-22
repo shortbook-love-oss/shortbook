@@ -1,6 +1,6 @@
 import { $generateHtmlFromNodes } from '@lexical/html';
-import { JSDOM } from 'jsdom';
 import DOMPurify from 'isomorphic-dompurify';
+import { JSDOM } from 'jsdom';
 import { createEditor, type SerializedEditorState } from 'lexical';
 import { initEditorConfig, isEditorEmpty } from '$lib/components/modules/wysiwyg-editor/editor';
 
@@ -9,9 +9,13 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 	const dom = new JSDOM();
 	const _window = global.window;
 	const _document = global.document;
+	const _DOMParser = global.DOMParser;
+	const _HTMLElement = global.HTMLElement;
 	// @ts-expect-error "Lexical editor requires JSDOM to run on the server side"
 	global.window = dom.window;
 	global.document = dom.window.document;
+	global.DOMParser = dom.window.DOMParser;
+	global.HTMLElement = dom.window.HTMLElement;
 
 	const editor = createEditor(initEditorConfig);
 	const { html, hasContent } = await new Promise<{ html: string; hasContent: boolean }>(
@@ -21,10 +25,13 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 				editor.read(() => {
 					const hasContent = !isEditorEmpty(editor);
 					if (hasContent) {
+						const contentDom = new DOMParser().parseFromString(
+							DOMPurify.sanitize($generateHtmlFromNodes(editor)),
+							'text/html'
+						);
+						normalizeBookContentDom(contentDom.body);
 						resolve({
-							html: DOMPurify.sanitize(
-								$generateHtmlFromNodes(editor).replace(/\sstyle="white-space:\s?pre-wrap;"/g, '')
-							),
+							html: contentDom.body.innerHTML,
 							hasContent
 						});
 					} else {
@@ -40,6 +47,61 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 
 	global.window = _window;
 	global.document = _document;
+	global.DOMParser = _DOMParser;
+	global.HTMLElement = _HTMLElement;
 
 	return { html, hasContent };
+}
+
+function normalizeBookContentDom(rootElem: HTMLElement) {
+	// <p><span style="white-space: pre-wrap">FooBar</span></p> → <p>FooBar</p>
+	const unnecessaryTextWrappers = rootElem.querySelectorAll(
+		':not(pre[data-highlight-language])>span[style="white-space: pre-wrap;"]'
+	);
+	unnecessaryTextWrappers.forEach((elem) => {
+		elem.outerHTML = elem.innerHTML;
+	});
+
+	// <pre><span style="white-space: pre-wrap">CodeAlice</span></pre>
+	// → <pre translate="no" style="white-space: pre-wrap"><span>CodeAlice</span></pre>
+	const unnecessaryStyles = rootElem.querySelectorAll(
+		':where(pre[data-highlight-language]>span, code, strong, b, em, i)[style="white-space: pre-wrap;"]'
+	);
+	unnecessaryStyles.forEach((elem) => {
+		if (elem instanceof HTMLElement) {
+			elem.style.whiteSpace = '';
+			if (elem.getAttribute('style') === '') {
+				elem.removeAttribute('style');
+			}
+		}
+	});
+	const codeBlocks = rootElem.querySelectorAll('pre[data-highlight-language]');
+	codeBlocks.forEach((elem) => {
+		if (elem instanceof HTMLElement) {
+			elem.translate = false;
+			elem.style.whiteSpace = 'pre-wrap';
+		}
+	});
+
+	// <code>FooBar</code> → <code translate="no">FooBar</code>
+	const inlineCodes = rootElem.querySelectorAll('code');
+	inlineCodes.forEach((elem) => {
+		if (elem instanceof HTMLElement) {
+			elem.translate = false;
+		}
+	});
+
+	// Need to show pseudo elements for line number
+	// <pre><span>Line 1</span><br><br><span>Line 3</span></pre>
+	// → <pre><span>Line 1</span><br><span></span><br><span>Line 3</span></pre>
+	const codeLineBreaks = rootElem.querySelectorAll('pre[data-highlight-language]>br');
+	codeLineBreaks.forEach((elem) => {
+		if (
+			elem.parentElement instanceof HTMLElement &&
+			elem.previousElementSibling?.localName === 'br'
+		) {
+			const emptyLineElem = document.createElement('span');
+			elem.parentElement.insertBefore(emptyLineElem, elem);
+		}
+	});
 }
