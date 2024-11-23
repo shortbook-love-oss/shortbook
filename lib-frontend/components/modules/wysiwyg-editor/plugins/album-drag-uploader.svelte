@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { $getNodeByKey as getNodeByKey, type LexicalEditor } from 'lexical';
-	import { CHANGE_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
+	import { CHANGE_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/album-image/plugin';
 	import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 	import {
 		INSERT_IMAGE_UPLOADER_BLOCK_COMMAND,

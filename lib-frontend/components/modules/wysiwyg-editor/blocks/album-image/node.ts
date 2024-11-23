@@ -5,7 +5,7 @@ import {
 	type SerializedLexicalNode,
 	type Spread
 } from 'lexical';
-import { createImageNodeDOM } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/dom';
+import { createImageNodeDOM } from '$lib/components/modules/wysiwyg-editor/blocks/album-image/dom';
 import type { BlockNode } from '$lib/components/modules/wysiwyg-editor/editor';
 import type { AllowedToExtension } from '$lib-backend/utilities/infrastructure/image';
 

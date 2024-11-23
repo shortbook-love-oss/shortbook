@@ -4,7 +4,7 @@ import {
 	getNearestEditorFromDOMNode,
 	type NodeKey
 } from 'lexical';
-import { ImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
+import { ImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image/node';
 import {
 	editorImageMaxWidth,
 	editorImageMaxWidthNarrow,

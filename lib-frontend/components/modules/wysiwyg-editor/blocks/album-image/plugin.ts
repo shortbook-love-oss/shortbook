@@ -12,11 +12,11 @@ import { env as envPublic } from '$env/dynamic/public';
 import {
 	imageNodeActivatorAttr,
 	imageNodeAttr
-} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/dom';
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image/dom';
 import {
 	$createImageNode,
 	$isImageNode
-} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image/node';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 import {
 	editorImageMaxWidth,

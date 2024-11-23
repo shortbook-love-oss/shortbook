@@ -47,8 +47,8 @@ import { writable } from 'svelte/store';
 import {
 	ImageNode,
 	type SerializedImageNode
-} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
-import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image/node';
+import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image/plugin';
 import {
 	ImageUploadingNode,
 	type SerializedImageUploadingNode
