@@ -13,6 +13,7 @@
 	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
 	import MessageWarning from '$lib/components/modules/information/message-warning.svelte';
+	import '$src/styles/book/content.scss';
 
 	let { data } = $props();
 

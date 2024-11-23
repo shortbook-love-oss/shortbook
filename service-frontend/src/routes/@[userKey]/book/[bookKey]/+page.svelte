@@ -10,6 +10,7 @@
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
 	import PaymentAction from '$lib/components/service/read/payment-action.svelte';
 	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
+	import '$src/styles/book/content.scss';
 
 	let { data } = $props();
 
@@ -120,20 +121,20 @@
 		{/if}
 		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.freeArea}
-			<section class="mb-8 text-[1.375rem] leading-[1.625]">
+			<section class="sb_bc__root mb-8">
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html data.bookDetail.freeArea}
 			</section>
 		{/if}
 		{#if data.hasPaidArea}
 			{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
-				<section class="text-[1.375rem] leading-[1.625]">
+				<section class="sb_bc__root">
 					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html data.bookDetail.paidArea}
 				</section>
 			{:else}
 				<SalesMessage imageSrc={data.bookDetail.userImage}>
-					<section class="mb-4 text-[1.375rem] leading-[1.625]">
+					<section class="sb_bc__root mb-4">
 						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html data.bookDetail.salesArea}
 					</section>

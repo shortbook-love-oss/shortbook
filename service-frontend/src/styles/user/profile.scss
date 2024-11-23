@@ -1,0 +1,58 @@
+.profile_intro {
+	> * {
+		line-height: 1.625;
+		margin-bottom: 32px;
+		white-space: pre-wrap;
+	}
+
+	a {
+		color: #924240;
+		display: inline-block;
+		margin-bottom: 0;
+		text-decoration-line: underline;
+	}
+
+	ul,
+	ol {
+		white-space: normal;
+		padding-left: 2em;
+	}
+	ul {
+		list-style: disc;
+	}
+	ol {
+		list-style: decimal;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	em,
+	b,
+	strong {
+		font-weight: 600;
+	}
+
+	h1,
+	h2 {
+		font-size: 2.25rem;
+		line-height: 1.25;
+	}
+	h3 {
+		font-size: 1.875rem;
+		line-height: 1.375;
+	}
+	h4 {
+		font-size: 1.5rem;
+		line-height: 1.5;
+	}
+	h5 {
+		font-size: 1.25rem;
+	}
+	h6 {
+		font-size: 1.125rem;
+	}
+}

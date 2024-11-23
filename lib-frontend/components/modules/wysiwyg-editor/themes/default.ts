@@ -1,7 +1,7 @@
 import type { EditorThemeClasses } from 'lexical';
 
 export const theme: EditorThemeClasses = {
-	code: 'my-4 block bg-slate-100 ps-14 pe-3 py-2 text-[0.75em] tracking-wide [counter-reset:code-row] [counter-increment:code-row] [&>br]:[counter-increment:code-row] [&>span:first-child]:before:[content:counter(code-row)] [&>span:first-child]:before:-ms-11 [&>span:first-child]:before:w-11 [&>span:first-child]:before:inline-block [&>span:first-child]:before:text-stone-400 [&>br+span]:before:[content:counter(code-row)] [&>br+span]:before:-ms-11 [&>br+span]:before:w-11 [&>br+span]:before:inline-block [&>br+span]:before:text-stone-400',
+	code: 'sb_bc__code',
 	codeHighlight: {
 		atrule: 'text-[#07a]',
 		attr: 'text-[#07a]',
@@ -47,8 +47,7 @@ export const theme: EditorThemeClasses = {
 		ol: 'my-4 list-decimal ps-8',
 		ul: 'my-4 list-disc ps-6'
 	},
-	quote:
-		"relative my-4 rounded-2xl bg-stone-200/70 px-4 py-10 text-[1.25em] sm:px-14 before:absolute before:left-1 before:top-1 before:font-title before:text-[3em] before:leading-none before:text-stone-400/70 before:content-['“'] after:absolute after:bottom-2 after:right-1 after:font-title after:text-[3em] after:leading-none after:text-stone-400/70 after:content-['„']",
+	quote: 'sb_bc__quote',
 	text: {
 		bold: 'font-bold',
 		code: 'bg-slate-100 p-1 text-[0.875em] tracking-wide',
