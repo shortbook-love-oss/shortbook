@@ -7,7 +7,7 @@ import {
 } from '@lexical/code';
 import { registerDragonSupport } from '@lexical/dragon';
 import { createEmptyHistoryState, registerHistory } from '@lexical/history';
-import { AutoLinkNode, LinkNode, type SerializedLinkNode } from '@lexical/link';
+import { LinkNode, type SerializedLinkNode } from '@lexical/link';
 import {
 	$isListNode,
 	ListItemNode,
@@ -95,7 +95,6 @@ export const initEditorConfig: CreateEditorArgs = {
 		CodeNode,
 		HeadingNode,
 		LinkNode,
-		AutoLinkNode,
 		ListNode,
 		ListItemNode,
 		QuoteNode,
