@@ -17,15 +17,21 @@ export const imageNodeActivatorAttr = 'data-lexical-node-image-activator';
 
 export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 	const nodeRoot = document.createElement('figure');
-	nodeRoot.className = 'my-4 text-center';
+	nodeRoot.className = 'sb_bc__image';
 	if (isEditPage) {
 		nodeRoot.setAttribute(imageNodeAttr, node.getKey());
 		nodeRoot.contentEditable = 'false';
 	}
 
 	// -------------------- Image area --------------------
+	const link = document.createElement('a');
+	if (isEditPage) {
+		link.addEventListener('click', (ev) => ev.preventDefault());
+	} else {
+		link.href = `${node.getSrc()}?ext=${node.getToExtension()}`;
+	}
+
 	const imageWrap = document.createElement('picture');
-	imageWrap.className = 'block mx-[calc(50%-50vw)]';
 
 	const narrowVer = document.createElement('source');
 	const narrowImageSize = getImageSizeForSrc(node.getWidth(), editorImageMaxWidthNarrow);
@@ -51,21 +57,20 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 	image.width = node.getWidth();
 	image.height = node.getHeight();
 	image.decoding = 'async';
-	image.className = 'inline-block';
 	if (isEditPage) {
 		image.setAttribute(imageNodeActivatorAttr, node.getKey());
 		image.draggable = false;
 	}
-	image.style.maxWidth = `min(${editorImageMaxWidth}px, 100%)`;
 	imageWrap.appendChild(image);
 
-	nodeRoot.appendChild(imageWrap);
+	link.appendChild(imageWrap);
+	nodeRoot.appendChild(link);
 
 	if (isEditPage) {
 		// -------------------- Caption area --------------------
 		const caption = document.createElement('figcaption');
 		caption.className =
-			'mt-2 min-h-[1.5em] text-[1.25rem] leading-[1.5] text-stone-600 outline-none before:text-stone-400 empty:[&:not(:focus)]:before:content-[attr(placeholder)]';
+			'min-h-[1.5em] outline-none before:text-stone-400 empty:[&:not(:focus)]:before:content-[attr(placeholder)]';
 		caption.setAttribute('placeholder', 'Add caption ...');
 		caption.contentEditable = 'true';
 		caption.textContent = node.getCaption();
@@ -124,7 +129,6 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 	} else {
 		if (node.getCaption()) {
 			const caption = document.createElement('figcaption');
-			caption.className = 'mt-2 text-[1.25rem] leading-[1.5] text-stone-600';
 			caption.textContent = node.getCaption();
 			nodeRoot.appendChild(caption);
 		}

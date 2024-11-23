@@ -192,4 +192,37 @@
 	&__t_strikethrough {
 		text-decoration-line: line-through;
 	}
+
+	// ---------------------- Custom node styles ----------------------
+
+	&__divider {
+		@apply border-stone-300;
+		margin-block: 2rem;
+	}
+
+	&__image {
+		margin-block: 1rem;
+		text-align: center;
+
+		> a {
+			display: inline-block;
+			margin-inline: calc(50% - 50vw);
+			max-width: max(768px, 100%);
+
+			> picture {
+				display: inline-block;
+
+				> img {
+					display: inline-block;
+				}
+			}
+		}
+
+		> figcaption {
+			@apply text-stone-600;
+			font-size: 0.9em;
+			line-height: 1.5;
+			margin-block-start: 0.5rem;
+		}
+	}
 }
