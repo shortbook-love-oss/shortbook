@@ -1,4 +1,9 @@
-import { LinkNode, TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
+import {
+	LinkNode,
+	TOGGLE_LINK_COMMAND,
+	$toggleLink as toggleLink,
+	type LinkAttributes
+} from '@lexical/link';
 import { mergeRegister, objectKlassEquals } from '@lexical/utils';
 import {
 	COMMAND_PRIORITY_LOW,
@@ -24,11 +29,15 @@ export function registerPluginPasteLinkReplacer(editor: LexicalEditor) {
 					if (!urlObject) {
 						return false;
 					}
-					toggleLink(urlObject.href, { target: '_blank', rel: 'noreferrer nofollow' });
+					if (location.origin === urlObject.origin) {
+						toggleLink(urlObject.href);
+					} else {
+						toggleLink(urlObject.href, { target: '_blank', rel: 'noreferrer ugc' });
+					}
 					return true;
 				} else {
 					const { url, target, rel, title } = payload;
-					toggleLink(url, { rel, target, title });
+					toggleLink(url, { target, rel, title });
 					return true;
 				}
 			},
@@ -51,13 +60,15 @@ export function registerPluginPasteLinkReplacer(editor: LexicalEditor) {
 				if (!urlObject) {
 					return false;
 				}
+				let linkAttribute: LinkAttributes | undefined = undefined;
+				if (location.origin !== urlObject.origin) {
+					linkAttribute = { target: '_blank', rel: 'noreferrer ugc' };
+				}
 
 				if (selection.isCollapsed()) {
 					// If not selected, just paste the URL as link node
 					selection.insertNodes([
-						new LinkNode(urlObject.href, { target: '_blank', rel: 'noreferrer nofollow' }).append(
-							new TextNode(urlObject.href)
-						)
+						new LinkNode(urlObject.href, linkAttribute).append(new TextNode(urlObject.href))
 					]);
 					event.preventDefault();
 					return true;
@@ -67,8 +78,7 @@ export function registerPluginPasteLinkReplacer(editor: LexicalEditor) {
 					// If we select nodes that are elements then avoid applying the link
 					editor.dispatchCommand(TOGGLE_LINK_COMMAND, {
 						url: urlObject.href,
-						target: '_blank',
-						rel: 'noreferrer nofollow'
+						...linkAttribute
 					});
 					event.preventDefault();
 					return true;

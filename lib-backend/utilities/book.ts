@@ -11,11 +11,13 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 	const _document = global.document;
 	const _DOMParser = global.DOMParser;
 	const _HTMLElement = global.HTMLElement;
+	const _HTMLAnchorElement = global.HTMLAnchorElement;
 	// @ts-expect-error "Lexical editor requires JSDOM to run on the server side"
 	global.window = dom.window;
 	global.document = dom.window.document;
 	global.DOMParser = dom.window.DOMParser;
 	global.HTMLElement = dom.window.HTMLElement;
+	global.HTMLAnchorElement = dom.window.HTMLAnchorElement;
 
 	const editor = createEditor(initEditorConfig);
 	const { html, hasContent } = await new Promise<{ html: string; hasContent: boolean }>(
@@ -49,6 +51,7 @@ export async function fromEditorStateToHtml(serializedState: SerializedEditorSta
 	global.document = _document;
 	global.DOMParser = _DOMParser;
 	global.HTMLElement = _HTMLElement;
+	global.HTMLAnchorElement = _HTMLAnchorElement;
 
 	return { html, hasContent };
 }
@@ -102,6 +105,14 @@ function normalizeBookContentDom(rootElem: HTMLElement) {
 		) {
 			const emptyLineElem = document.createElement('span');
 			elem.parentElement.insertBefore(emptyLineElem, elem);
+		}
+	});
+
+	// Lexical maybe can't add the "target" attribute on SSR
+	const extraLinks = rootElem.querySelectorAll('a[rel="noreferrer ugc"]');
+	extraLinks.forEach((elem) => {
+		if (elem instanceof HTMLAnchorElement) {
+			elem.target = '_blank';
 		}
 	});
 }
