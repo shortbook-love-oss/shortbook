@@ -90,12 +90,12 @@
 					bind:value={buyCurrencySelected as string}
 					name="buyCurrency"
 					list={currencySupportsWithCode}
-					className="w-64 text-lg shrink-0"
+					className="w-60 text-lg shrink-0"
 				/>
 			</div>
 		{/if}
 		<div class="mb-4">
-			Total service fee and transaction fee is <span class="font-semibold">{chargeFee}%</span>
+			Total service fee and transaction fee is <span class="text-2xl font-semibold">{chargeFee}%</span>
 		</div>
 		{#if earnPrice != undefined}
 			<p class="mb-4">
