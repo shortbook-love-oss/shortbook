@@ -103,7 +103,7 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 					},
 					data: { deleted_at: deletedAt }
 				});
-				await tx.book_covers.updateMany({
+				await tx.book_translate_languages.updateMany({
 					where: {
 						book_revision: {
 							book_id: { in: deleteBookIds },
@@ -114,6 +114,16 @@ export async function dbUserDelete(req: DbUserDeleteRequest) {
 					data: { deleted_at: deletedAt }
 				});
 				await tx.book_contents.updateMany({
+					where: {
+						book_revision: {
+							book_id: { in: deleteBookIds },
+							deleted_at: null
+						},
+						deleted_at: null
+					},
+					data: { deleted_at: deletedAt }
+				});
+				await tx.book_covers.updateMany({
 					where: {
 						book_revision: {
 							book_id: { in: deleteBookIds },
