@@ -62,11 +62,12 @@ export async function dbBookGet(req: DbBookGetRequest) {
 						...revisionWhereByCond,
 						...whereCondDelete
 					},
-					orderBy: {
-						number: 'desc'
-					},
+					orderBy: { number: 'desc' },
 					take: getRevisionsCount,
 					include: {
+						translate_languages: {
+							where: { ...whereCondDelete }
+						},
 						contents: {
 							where: { ...whereCondDelete }
 						},

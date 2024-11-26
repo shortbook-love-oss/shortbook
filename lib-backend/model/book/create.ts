@@ -1,11 +1,14 @@
 import prisma from '$lib-backend/database/connect';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 export type BookOverviewCreateProp = {
 	userId: string;
 	status: number; // 0: Draft 1: Public
-	targetLanguage: string;
 	urlSlug: string;
 	buyPoint: number;
+	targetLanguage: string;
+	isTranslateToAll: boolean;
+	translateLanguages: AvailableLanguageTags[];
 };
 
 export type BookCoverCreateProp = {
@@ -53,6 +56,7 @@ export async function dbBookCreate(
 							url_slug: req.urlSlug,
 							buy_point: req.buyPoint,
 							native_language: req.targetLanguage,
+							is_translate_to_all: req.isTranslateToAll,
 							title: req.title,
 							subtitle: req.subtitle,
 							free_area: req.freeArea,
@@ -61,6 +65,13 @@ export async function dbBookCreate(
 							has_free_area: req.hasFreeArea,
 							has_paid_area: req.hasPaidArea,
 							has_sales_area: req.hasSalesArea,
+							translate_languages: {
+								createMany: {
+									data: req.translateLanguages.map((langTag) => ({
+										target_language: langTag
+									}))
+								}
+							},
 							contents: {
 								create: {
 									target_language: req.targetLanguage,

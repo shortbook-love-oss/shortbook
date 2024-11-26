@@ -230,6 +230,7 @@ model book_revisions {
   url_slug                String              @db.VarChar(100) // Length 1 - 100
   buy_point               Int
   native_language         String              @db.VarChar(5)
+  is_translate_to_all     Boolean
   title                   String              @db.VarChar(1400) // Max length is 200
   subtitle                String              @db.VarChar(1400) // Max length is 200
   free_area               String              @db.LongText
@@ -242,10 +243,22 @@ model book_revisions {
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
+  translate_languages     book_translate_languages[]
   contents                book_contents[]
   cover                   book_covers?
 
   @@unique([book_id, number])
+}
+
+model book_translate_languages {
+  book_revision           book_revisions      @relation(fields: [revision_id], references: [id], onUpdate: Cascade)
+
+  id                      String              @id @db.VarChar(30) @default(cuid())
+  revision_id             String
+  target_language         String              @db.VarChar(5)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
 }
 
 model book_contents {

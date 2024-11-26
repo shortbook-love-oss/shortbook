@@ -63,9 +63,13 @@ export const load = async ({ locals, params }) => {
 			form.data[prop] = bookCover[prop] as never;
 		}
 	}
-	form.data.targetLanguage = bookRevision.native_language as AvailableLanguageTag;
 	form.data.urlSlug = bookRevision.url_slug;
 	form.data.buyPoint = bookRevision.buy_point;
+	form.data.targetLanguage = bookRevision.native_language as AvailableLanguageTag;
+	form.data.isTranslateToAll = bookRevision.is_translate_to_all;
+	form.data.translateLanguages = bookRevision.translate_languages.map(
+		(lang) => lang.target_language as AvailableLanguageTag
+	);
 
 	const initTitle = bookRevision.title;
 	const initSubtitle = bookRevision.subtitle;

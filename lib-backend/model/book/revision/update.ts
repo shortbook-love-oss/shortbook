@@ -44,6 +44,7 @@ export async function dbBookRevisionUpdate(req: DbBookRevisionUpdateRequest) {
 					url_slug: req.urlSlug,
 					buy_point: req.buyPoint,
 					native_language: req.targetLanguage,
+					is_translate_to_all: req.isTranslateToAll,
 					title: req.title,
 					subtitle: req.subtitle,
 					free_area: req.freeArea,

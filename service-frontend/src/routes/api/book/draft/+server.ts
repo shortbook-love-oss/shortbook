@@ -4,6 +4,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { getBookCover, type BookDraftUpdateResult } from '$lib/utilities/book';
 import { getRandom } from '$lib/utilities/crypto';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema as createSchema } from '$lib/validation/schema/book/draft-create';
 import { schema as updateSchema } from '$lib/validation/schema/book/draft-update';
@@ -44,9 +45,11 @@ export async function POST({ request, url, locals }) {
 		...getBookCover({}),
 		userId: signInUser.id,
 		status: 0,
-		targetLanguage: requestLang,
 		urlSlug,
 		buyPoint: 200,
+		targetLanguage: requestLang,
+		isTranslateToAll: true,
+		translateLanguages: [],
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
@@ -107,9 +110,13 @@ export async function PUT({ request, url, locals }) {
 	const bookRevisionUpsertParam: BookOverviewCreateProp & BookContentCreateProp = {
 		userId: signInUser.id,
 		status: 0,
-		targetLanguage: requestLang,
 		urlSlug: bookRevision.url_slug,
 		buyPoint: bookRevision.buy_point,
+		targetLanguage: requestLang,
+		isTranslateToAll: bookRevision.is_translate_to_all,
+		translateLanguages: bookRevision.translate_languages.map(
+			(lang) => lang.target_language as AvailableLanguageTags
+		),
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),

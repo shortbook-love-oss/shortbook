@@ -1,5 +1,6 @@
 import prisma from '$lib-backend/database/connect';
 import type { BookCoverCreateProp, BookOverviewCreateProp } from '$lib-backend/model/book/create';
+import { isArrayHaveSameValues } from '$lib/utilities/array';
 
 export type DbBookUpdateRequest = BookOverviewCreateProp & BookCoverCreateProp & { bookId: string };
 
@@ -55,7 +56,8 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				status: req.status,
 				url_slug: req.urlSlug,
 				buy_point: req.buyPoint,
-				native_language: req.targetLanguage
+				native_language: req.targetLanguage,
+				is_translate_to_all: req.isTranslateToAll
 			};
 			const bookCoverData = {
 				base_color_start: req.baseColorStart,
@@ -99,6 +101,13 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 						has_free_area: latestRevision.has_free_area,
 						has_paid_area: latestRevision.has_paid_area,
 						has_sales_area: latestRevision.has_sales_area,
+						translate_languages: {
+							createMany: {
+								data: req.translateLanguages.map((langTag) => ({
+									target_language: langTag
+								}))
+							}
+						},
 						contents: {
 							create: {
 								target_language: req.targetLanguage,
@@ -111,17 +120,34 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 						}
 					}
 				});
-				if (!newRevision) {
-					dbError ??= new Error(`Can't create a new revision. Book ID=${req.bookId}`);
-					throw dbError;
-				}
 				revisionId = newRevision.id;
 			} else {
 				// If the book is "draft", update latest revision
-				await tx.book_revisions.update({
+				const revision = await tx.book_revisions.update({
 					where: { id: latestRevision.id },
-					data: bookOverviewData
+					data: bookOverviewData,
+					select: {
+						translate_languages: {
+							select: { target_language: true }
+						}
+					}
 				});
+				const translateLangTags = revision.translate_languages.map((lang) => lang.target_language);
+				if (!isArrayHaveSameValues(translateLangTags, req.translateLanguages)) {
+					if (translateLangTags.length > 0) {
+						await tx.book_translate_languages.deleteMany({
+							where: { revision_id: latestRevision.id }
+						});
+					}
+					if (req.translateLanguages.length > 0) {
+						await tx.book_translate_languages.createMany({
+							data: req.translateLanguages.map((langTag) => ({
+								revision_id: latestRevision.id,
+								target_language: langTag
+							}))
+						});
+					}
+				}
 				await tx.book_contents.update({
 					where: {
 						revision_id_target_language: {
