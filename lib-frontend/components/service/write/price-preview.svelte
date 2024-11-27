@@ -95,7 +95,9 @@
 			</div>
 		{/if}
 		<div class="mb-4">
-			Total service fee and transaction fee is <span class="text-2xl font-semibold">{chargeFee}%</span>
+			Total service fee and transaction fee is <span class="text-2xl font-semibold"
+				>{chargeFee}%</span
+			>
 		</div>
 		{#if earnPrice != undefined}
 			<p class="mb-4">

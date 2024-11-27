@@ -21,7 +21,7 @@
 	{#snippet opener()}
 		<div class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
 			<p class="inline-block px-1">Change language</p>
-			<IconArrow width="28" height="28" class="peer-checked/common_footer_lang_open:rotate-180" />
+			<IconArrow width="28" height="28" />
 		</div>
 	{/snippet}
 	<div class="mb-3 border-b border-stone-300 pb-4 xs:px-3">
