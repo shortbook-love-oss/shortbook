@@ -1,10 +1,12 @@
 import { Prisma } from '@prisma/client';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import prisma from '$lib-backend/database/connect';
 
 export interface DbBookListRequest {
 	bookIds?: string[];
 	userId?: string;
 	statuses?: number[]; // 0: Draft 1: Published
+	contentsLanguage?: AvailableLanguageTags;
 	isIncludeDelete?: boolean;
 }
 
@@ -65,7 +67,10 @@ export async function dbBookList(req: DbBookListRequest) {
 					},
 					include: {
 						contents: {
-							where: { ...whereCondDelete },
+							where: {
+								...whereCondDelete,
+								target_language: req.contentsLanguage
+							},
 							select: {
 								target_language: true,
 								title: true,

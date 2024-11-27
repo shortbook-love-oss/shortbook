@@ -18,7 +18,8 @@ export const load = async ({ url, params }) => {
 
 	const { books, dbError: bookDbError } = await dbBookList({
 		userId: user.id,
-		statuses: [1]
+		statuses: [1],
+		contentsLanguage: requestLang
 	});
 	if (!books || bookDbError) {
 		return error(500, { message: bookDbError?.message ?? '' });
@@ -32,16 +33,11 @@ export const load = async ({ url, params }) => {
 	const bookList: BookItem[] = [];
 	for (const book of books) {
 		const bookRevision = book.revisions[0];
-		if (!bookRevision?.cover || bookRevision.contents.length === 0) {
+		if (!book.user || !bookRevision?.cover || bookRevision.contents.length === 0) {
 			continue;
 		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!book.user || !bookLang) {
-			continue;
-		}
+		const bookLang = bookRevision.contents[0];
+
 		const bookCover = getBookCover({
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,

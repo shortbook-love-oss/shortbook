@@ -8,17 +8,20 @@ export const load = async ({ url, locals }) => {
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
+	const requestLang = getLanguageTagFromUrl(url);
 
-	const { books, dbError } = await dbBookList({ userId: signInUser.id });
+	const { books, dbError } = await dbBookList({
+		userId: signInUser.id,
+		contentsLanguage: requestLang
+	});
 	if (!books || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const bookList: MyBookItem[] = [];
 	for (const book of books) {
 		const bookRevision = book.revisions[0];
-		if (!bookRevision?.cover || bookRevision.contents.length === 0) {
+		if (!bookRevision?.cover) {
 			continue;
 		}
 
