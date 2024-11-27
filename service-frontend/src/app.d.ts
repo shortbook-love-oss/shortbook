@@ -1,5 +1,5 @@
 import 'unplugin-icons/types/svelte';
-import type { AvailableLanguageTag } from '$lib/paraglide/runtime';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
@@ -13,7 +13,7 @@ declare global {
 				penName: string;
 				email: string;
 				imageSrc: string;
-				nativeLanguage: AvailableLanguageTag;
+				nativeLanguage: AvailableLanguageTags;
 			} | null;
 		}
 		// interface PageData {}
