@@ -1,9 +1,8 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { AvailableLanguageTag } from '$i18n/output/runtime';
 import { getBookCover } from '$lib/utilities/book';
-import { languageSelect } from '$lib/utilities/language';
+import { languageSelect, type AvailableLanguageTags } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
@@ -29,7 +28,7 @@ export const load = async ({ locals, params }) => {
 	if (dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	if (!book || !bookRevision?.cover || bookRevision.contents.length === 0) {
+	if (!book || !bookRevision?.cover) {
 		return error(500, { message: `Can't find book. Book ID=${params.bookId}` });
 	}
 
@@ -65,10 +64,10 @@ export const load = async ({ locals, params }) => {
 	}
 	form.data.urlSlug = bookRevision.url_slug;
 	form.data.buyPoint = bookRevision.buy_point;
-	form.data.targetLanguage = bookRevision.native_language as AvailableLanguageTag;
+	form.data.targetLanguage = bookRevision.native_language as AvailableLanguageTags;
 	form.data.isTranslateToAll = bookRevision.is_translate_to_all;
 	form.data.translateLanguages = bookRevision.translate_languages.map(
-		(lang) => lang.target_language as AvailableLanguageTag
+		(lang) => lang.target_language as AvailableLanguageTags
 	);
 
 	const initTitle = bookRevision.title;

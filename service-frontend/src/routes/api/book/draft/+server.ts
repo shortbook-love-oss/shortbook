@@ -93,7 +93,7 @@ export async function PUT({ request, url, locals }) {
 		bookId: form.data.bookId,
 		userId: signInUser.id
 	});
-	if (!currentBook || !bookRevision || bookRevision.contents.length === 0 || dbBookGetError) {
+	if (!currentBook || !bookRevision || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 

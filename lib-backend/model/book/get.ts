@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import prisma from '$lib-backend/database/connect';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 type IdExclusiveProps =
 	| {
@@ -16,6 +17,7 @@ type IdExclusiveProps =
 type DbBookGetRequest = IdExclusiveProps & {
 	userId?: string;
 	statuses?: number[]; // 0: Draft 1: Published
+	contentsLanguage?: AvailableLanguageTags;
 	isIncludeDelete?: boolean;
 };
 
@@ -68,9 +70,14 @@ export async function dbBookGet(req: DbBookGetRequest) {
 						translate_languages: {
 							where: { ...whereCondDelete }
 						},
-						contents: {
-							where: { ...whereCondDelete }
-						},
+						contents: req.contentsLanguage
+							? {
+									where: {
+										...whereCondDelete,
+										target_language: req.contentsLanguage
+									}
+								}
+							: undefined,
 						cover: {
 							where: { ...whereCondDelete }
 						}

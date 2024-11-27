@@ -34,15 +34,13 @@ export const load = async ({ url, locals, params }) => {
 		bookUrlSlug: params.bookKey,
 		userKeyHandle: params.userKey,
 		statuses: [1],
+		contentsLanguage: requestLang,
 		isIncludeDelete: true
 	});
 	if (!book || !bookRevision?.cover || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-	if (!bookLang) {
-		bookLang = bookRevision.contents[0];
-	}
+	const bookLang = bookRevision.contents[0];
 	if (!bookLang) {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
 	}
