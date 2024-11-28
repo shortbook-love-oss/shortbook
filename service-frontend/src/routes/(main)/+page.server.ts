@@ -17,11 +17,11 @@ export const load = async ({ url }) => {
 
 	const bookList: BookItem[] = [];
 	for (const book of books) {
-		const bookRevision = book.revisions[0];
-		if (book.revisions.length === 0 || bookRevision.contents.length === 0 || !bookRevision.cover) {
+		const bookRevision = book.revisions.at(0);
+		const bookLang = bookRevision?.contents.at(0);
+		if (bookRevision?.contents.length === 0 || !bookRevision?.cover || !bookLang) {
 			continue;
 		}
-		const bookLang = bookRevision.contents[0];
 
 		const bookCover = getBookCover({
 			title: bookLang.title,

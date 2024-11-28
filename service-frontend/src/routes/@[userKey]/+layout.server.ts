@@ -17,7 +17,7 @@ export const load = async ({ url, params, locals }) => {
 
 	let userLang = user.languages.find((lang) => lang.target_language === requestLang);
 	if (!userLang && user.languages.length) {
-		userLang = user.languages[0];
+		userLang = user.languages.at(0);
 	}
 
 	const isOwn = user.id === signInUser?.id;

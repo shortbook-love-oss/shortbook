@@ -27,7 +27,7 @@ export const load = async ({ url, locals, params }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 
 	// Get a book even if it's a draft, and filter it later
-	let {
+	const {
 		book,
 		bookRevision,
 		dbError: dbBookGetError
@@ -43,7 +43,7 @@ export const load = async ({ url, locals, params }) => {
 	}
 
 	let bookFallbackLangage: AvailableLanguageTags | '' = '';
-	let bookLang = bookRevision.contents[0];
+	let bookLang = bookRevision.contents.at(0);
 	if (!bookLang) {
 		const { bookRevision: nativeBookRevision, dbError: dbBookGetError } = await dbBookGet({
 			bookId: book.id,
@@ -55,7 +55,7 @@ export const load = async ({ url, locals, params }) => {
 			return error(500, { message: dbBookGetError?.message ?? '' });
 		}
 		bookFallbackLangage = bookRevision.native_language as AvailableLanguageTags;
-		bookLang = nativeBookRevision.contents[0];
+		bookLang = nativeBookRevision.contents.at(0);
 	}
 	if (!bookLang) {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
@@ -63,7 +63,7 @@ export const load = async ({ url, locals, params }) => {
 
 	let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
 	if (!userLang && book.user.languages.length) {
-		userLang = book.user.languages[0];
+		userLang = book.user.languages.at(0);
 	}
 	if (!userLang) {
 		return error(500, {

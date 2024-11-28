@@ -20,7 +20,7 @@ export const load = async ({ url, locals }) => {
 
 	const bookList: MyBookItem[] = [];
 	for (const book of books) {
-		const bookRevision = book.revisions[0];
+		const bookRevision = book.revisions.at(0);
 		if (!bookRevision?.cover) {
 			continue;
 		}

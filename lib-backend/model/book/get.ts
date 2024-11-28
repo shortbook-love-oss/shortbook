@@ -120,7 +120,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			return undefined;
 		});
 
-	const bookRevision = book?.revisions[0];
+	const bookRevision = book?.revisions.at(0);
 
 	return { book, bookRevision, dbError };
 }

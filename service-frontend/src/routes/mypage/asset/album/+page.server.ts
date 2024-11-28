@@ -32,7 +32,7 @@ export const load = async ({ locals }) => {
 			const editForm = await superValidate(zod(schemaEdit), { id: getRandom(15) });
 			editForm.data.name = image.name;
 			editForm.data.alt = image.alt;
-			editForm.data.languageInImage = image.language_in_image;
+			editForm.data.languageInImage = image.language_in_image as AvailableLanguageTags | '';
 			editForm.data.place = image.place;
 			editForm.data.copyrightOwner = image.license?.copyright_owner ?? '';
 			editForm.data.targetInImage = image.license?.target_in_image ?? '';

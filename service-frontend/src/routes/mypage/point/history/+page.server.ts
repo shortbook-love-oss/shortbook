@@ -64,13 +64,13 @@ export const load = async ({ url, locals }) => {
 	const pointList: PointListItem[] = userPointHistories.map((point) => {
 		let bookTitle = '';
 		const book = pointBooksMap[point.book_id];
-		const bookRevision = book?.revisions[0];
-		if (point.book_id && book && bookRevision.contents.length > 0) {
+		const bookRevision = book.revisions.at(0);
+		if (point.book_id && book && bookRevision) {
 			let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
 			if (!bookLang) {
-				bookLang = bookRevision.contents[0];
+				bookLang = bookRevision.contents.at(0);
 			}
-			if (bookLang.title) {
+			if (bookLang?.title) {
 				bookTitle = bookLang.title;
 			}
 		}

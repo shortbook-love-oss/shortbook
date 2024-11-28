@@ -114,7 +114,7 @@ export const load = async ({ url, params, locals }) => {
 		return error(500, { message: dbContractGetError?.message ?? '' });
 	}
 	const paymentCustomerId = decryptFromFlat(
-		paymentContracts[0]?.provider_customer_id ?? '',
+		paymentContracts.at(0)?.provider_customer_id ?? '',
 		env.ENCRYPT_PAYMENT_CUSTOMER_ID,
 		env.ENCRYPT_SALT
 	);

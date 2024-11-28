@@ -32,10 +32,6 @@ export async function prepareSignIn(
 	}
 
 	const requestLang = getLanguageTagFromUrl(requestUrl);
-	let profileLang = user.languages.find((lang) => lang.target_language === requestLang);
-	if (!profileLang && user.languages.length) {
-		profileLang = user.languages[0];
-	}
 
 	// 5. Send magic link by email
 	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');

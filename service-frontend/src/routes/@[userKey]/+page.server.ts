@@ -27,16 +27,16 @@ export const load = async ({ url, params }) => {
 
 	let userLang = user.languages.find((lang) => lang.target_language === requestLang);
 	if (!userLang && user.languages.length) {
-		userLang = user.languages[0];
+		userLang = user.languages.at(0);
 	}
 
 	const bookList: BookItem[] = [];
 	for (const book of books) {
-		const bookRevision = book.revisions[0];
-		if (!book.user || !bookRevision?.cover || bookRevision.contents.length === 0) {
+		const bookRevision = book.revisions.at(0);
+		const bookLang = bookRevision?.contents.at(0);
+		if (!bookRevision?.cover || bookRevision.contents.length === 0 || !bookLang) {
 			continue;
 		}
-		const bookLang = bookRevision.contents[0];
 
 		const bookCover = getBookCover({
 			title: bookLang.title,

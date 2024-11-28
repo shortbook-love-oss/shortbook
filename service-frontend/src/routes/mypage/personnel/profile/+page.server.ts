@@ -19,7 +19,7 @@ export const load = async ({ locals }) => {
 	if (!user || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const userLangs = user.languages[0];
+	const userLangs = user.languages.at(0);
 
 	form.data.keyHandle = user.key_handle;
 	form.data.nativeLanguage = user.native_language as AvailableLanguageTags;

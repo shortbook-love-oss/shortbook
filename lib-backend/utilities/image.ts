@@ -97,15 +97,15 @@ export async function getActualImageData(
 	}
 }
 
-export function getLargestImageFromIco(images: ImageDataIco[]): ImageDataIco | undefined {
+export function getLargestImageFromIco(images: ImageDataIco[]) {
 	let largestSize = 0;
 	let largestIndex = 0;
-	for (let i = 0; i < images.length; i++) {
-		if (images[i].data.byteLength > largestSize) {
-			largestSize = images[i].data.byteLength;
+	images.forEach((image, i) => {
+		if (image.data.byteLength > largestSize) {
+			largestSize = image.data.byteLength;
 			largestIndex = i;
 		}
-	}
+	});
 
-	return images[largestIndex];
+	return images.at(largestIndex);
 }

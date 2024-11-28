@@ -59,7 +59,7 @@ export async function dbBookRevisionCreate(req: DbBookRevisionCreateRequest) {
 				throw dbError;
 			}
 
-			const latestRevision = book.revisions[0];
+			const latestRevision = book.revisions.at(0);
 			const latestCover = latestRevision?.cover;
 			if (latestRevision == null || latestCover == null) {
 				dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);

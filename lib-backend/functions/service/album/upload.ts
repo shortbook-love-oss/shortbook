@@ -48,7 +48,7 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 		const uploadResultsSquad = await Promise.allSettled(
 			imageResults.map(async (imageResult, i) => {
 				const saveFilePath = `album-${getRandom(24)}`;
-				const fileName = imageFileNames[i] ?? saveFilePath;
+				const fileName = imageFileNames.at(i) ?? saveFilePath;
 				const {
 					isSuccessUpload,
 					checksum,

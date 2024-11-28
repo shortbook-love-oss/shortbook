@@ -61,7 +61,7 @@ export async function dbBookRevisionUpdate(req: DbBookRevisionUpdateRequest) {
 				}
 			});
 
-			const bookContent = bookRevision.contents[0];
+			const bookContent = bookRevision.contents.at(0);
 			if (!bookContent) {
 				dbError ??= new Error(`Can't find the book content. Book-revision ID=${req.revisionId}`);
 				throw dbError;
