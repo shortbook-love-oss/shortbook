@@ -3,9 +3,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import IconArrowLeft from '~icons/mdi/arrow-left';
-	import IconArrowDownThin from '~icons/mdi/arrow-down-thin';
 	import IconDelete from '~icons/mdi/trash-can-outline';
-	import IconTranslate from '~icons/mdi/translate';
 	import { page } from '$app/stores';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
 	import { schema } from '$lib/validation/schema/book/update';

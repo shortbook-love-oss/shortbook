@@ -8,6 +8,7 @@ import {
 	guessCurrencyByLang,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import {
 	chargeFee,
 	getAccuratePaymentPrice,
@@ -26,7 +27,7 @@ export const load = async ({ url, locals, params }) => {
 	const requestLang = getLanguageTagFromUrl(url);
 
 	// Get a book even if it's a draft, and filter it later
-	const {
+	let {
 		book,
 		bookRevision,
 		dbError: dbBookGetError
@@ -40,10 +41,26 @@ export const load = async ({ url, locals, params }) => {
 	if (!book || !bookRevision?.cover || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	const bookLang = bookRevision.contents[0];
+
+	let bookFallbackLangage: AvailableLanguageTags | '' = '';
+	let bookLang = bookRevision.contents[0];
+	if (!bookLang) {
+		const { bookRevision: nativeBookRevision, dbError: dbBookGetError } = await dbBookGet({
+			bookId: book.id,
+			statuses: [1],
+			contentsLanguage: bookRevision.native_language as AvailableLanguageTags,
+			isIncludeDelete: true
+		});
+		if (!nativeBookRevision || dbBookGetError) {
+			return error(500, { message: dbBookGetError?.message ?? '' });
+		}
+		bookFallbackLangage = bookRevision.native_language as AvailableLanguageTags;
+		bookLang = nativeBookRevision.contents[0];
+	}
 	if (!bookLang) {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
 	}
+
 	let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
 	if (!userLang && book.user.languages.length) {
 		userLang = book.user.languages[0];
@@ -212,13 +229,13 @@ export const load = async ({ url, locals, params }) => {
 	return {
 		bookDetail,
 		hasPaidArea,
-		requestLang,
 		userLang,
 		isOwn,
 		isBoughtBook,
 		hasEnoughPoint,
 		userPoint,
 		currencyList,
-		primaryCurrency
+		primaryCurrency,
+		bookFallbackLangage
 	};
 };

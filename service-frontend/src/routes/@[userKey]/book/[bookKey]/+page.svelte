@@ -1,10 +1,11 @@
 <script lang="ts">
 	import IconCheck from '~icons/mdi/check';
 	import IconWrite from '~icons/mdi/pencil-plus';
-	import IconWarning from '~icons/mdi/warning';
 	import { page } from '$app/stores';
 	import { toLocaleDate } from '$lib/utilities/date';
-	import { callbackParam, inquiryCategoryParam } from '$lib/utilities/url';
+	import { getLanguageItem } from '$lib/utilities/language';
+	import { callbackParam, getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
+	import MessageWarning from '$lib/components/modules/information/message-warning.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
@@ -14,7 +15,10 @@
 
 	let { data } = $props();
 
-	const updatedAt = toLocaleDate(data.bookDetail.updatedAt, data.requestLang);
+	const requestLang = getLanguageTagFromUrl($page.url);
+	const updatedAt = toLocaleDate(data.bookDetail.updatedAt, requestLang);
+	const requestLangItem = getLanguageItem(requestLang);
+	const bookFallbackLangItem = getLanguageItem(data.bookFallbackLangage);
 
 	const editUrl = $derived.by(() => {
 		const searchParams = new URLSearchParams({ [callbackParam]: $page.url.pathname });
@@ -99,25 +103,28 @@
 			</div>
 		</div>
 		{#if data.bookDetail.isBookDeleted}
-			<div
-				class="mb-8 flex items-center gap-3 rounded-lg border-2 border-amber-600 bg-amber-100 p-4 text-amber-950"
-			>
-				<IconWarning width="24" height="24" class="shrink-0" />
-				<div class="text-lg leading-snug">
-					<p>This book has been deleted.</p>
-					{#if data.isOwn}
-						<p>Bought users can still read this book.</p>
-						<p>
-							If you accidentally deleted it, <a
-								href="{$page.url.origin}/support/contact?{inquiryCategoryParam}=other"
-								class="underline">please contact support.</a
-							>
-						</p>
-					{:else if data.isBoughtBook}
-						<p>You bought it so you can read it.</p>
-					{/if}
-				</div>
-			</div>
+			<MessageWarning className="mb-6">
+				<p>This book has been deleted.</p>
+				{#if data.isOwn}
+					<p>Bought users can still read this book.</p>
+					<p>
+						If you accidentally deleted it, <a
+							href="{$page.url.origin}/support/contact?{inquiryCategoryParam}=other"
+							class="underline">please contact support.</a
+						>
+					</p>
+				{:else if data.isBoughtBook}
+					<p>You bought it so you can read it.</p>
+				{/if}
+			</MessageWarning>
+		{/if}
+		{#if data.bookFallbackLangage !== '' && requestLangItem && bookFallbackLangItem}
+			<MessageWarning className="mb-6">
+				<p>
+					This book is written in {bookFallbackLangItem.english} and has not been translated into
+					{requestLangItem.english}.
+				</p>
+			</MessageWarning>
 		{/if}
 		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.freeArea}

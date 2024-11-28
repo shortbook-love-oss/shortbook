@@ -37,3 +37,7 @@ export const languageAndNotSelect: LanguageSelect[] = [
 	{ value: '', label: 'Select language', english: 'Select language' },
 	...languageSelect
 ];
+
+export function getLanguageItem(langTag: AvailableLanguageTags | '') {
+	return languageSelect.find((lang) => lang.value === langTag);
+}
