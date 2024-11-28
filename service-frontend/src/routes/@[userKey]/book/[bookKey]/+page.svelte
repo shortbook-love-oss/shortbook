@@ -30,35 +30,14 @@
 	<title>{data.bookDetail.title} | {data.bookDetail.penName}</title>
 </svelte:head>
 
-<article class="flex flex-col items-center justify-center gap-16 lg:flex-row lg:items-stretch">
-	<div
-		class="hidden w-full max-w-2xl shrink-0 gap-8 break-words pt-2 lg:flex lg:w-48 lg:justify-end"
-	>
-		<div class="max-w-full">
-			<a
-				href="/@{data.bookDetail.userKeyHandle}"
-				class="peer mb-2 inline-block"
-				aria-label="{data.bookDetail.penName} profile icon"
-			>
-				<picture>
-					<source srcset="{data.bookDetail.userImage}?ext=avif&w=64&h=64&q=80" type="image/avif" />
-					<img
-						src="{data.bookDetail.userImage}?ext=png&w=64&h=64&q=80"
-						alt="{data.bookDetail.penName} profile icon"
-						class="h-16 w-16 rounded bg-white align-middle"
-					/>
-				</picture>
-			</a>
-			<a
-				href="/@{data.bookDetail.userKeyHandle}"
-				class="mb-2 block whitespace-pre-wrap text-[1.25rem] leading-tight hover:underline peer-hover:underline"
-			>
-				{data.bookDetail.penName}
-			</a>
-			{#if data.userLang?.headline}
-				<p class="whitespace-pre-wrap">{data.userLang.headline}</p>
-			{/if}
-		</div>
+<article class="flex flex-col items-center justify-center gap-16 xl:flex-row xl:items-stretch">
+	<div class="hidden shrink-0 pt-1.5 xl:block xl:w-56">
+		<BookCover
+			book={data.bookDetail}
+			penName={data.bookDetail.penName}
+			width={216}
+			className="mb-4"
+		/>
 	</div>
 	<div class="w-full min-w-0 max-w-[640px] break-words">
 		<div class="-mx-4 mb-8 px-4">
@@ -75,7 +54,7 @@
 					{data.bookDetail.subtitle}
 				</p>
 			{/if}
-			<div class="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2 lg:hidden">
+			<div class="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2">
 				<ProfileCard
 					name={data.bookDetail.penName}
 					keyHandle={data.bookDetail.userKeyHandle}
@@ -163,12 +142,5 @@
 			{/if}
 		{/if}
 	</div>
-	<div class="hidden shrink-0 pt-1.5 lg:block lg:w-48">
-		<BookCover
-			book={data.bookDetail}
-			penName={data.bookDetail.penName}
-			width={160}
-			className="mb-4"
-		/>
-	</div>
+	<div class="hidden shrink-0 xl:block xl:w-56" aria-hidden="true"></div>
 </article>
