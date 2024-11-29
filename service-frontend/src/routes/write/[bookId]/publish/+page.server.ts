@@ -6,8 +6,8 @@ import { languageSelect, type AvailableLanguageTags } from '$lib/utilities/langu
 import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
-import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
-import { editLoad } from '$lib-backend/functions/service/write/edit-load';
+import { isExistBookUrlSlug } from '$lib-backend/functions/service/book/edit-action';
+import { editLoad } from '$lib-backend/functions/service/book/edit-load';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
