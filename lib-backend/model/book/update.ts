@@ -5,41 +5,23 @@ import { isArrayHaveSameValues } from '$lib/utilities/array';
 export type DbBookUpdateRequest = BookOverviewCreateProp & BookCoverCreateProp & { bookId: string };
 
 export async function dbBookUpdate(req: DbBookUpdateRequest) {
-	let dbError: Error | undefined;
-
-	const bookBeforeEdit = await prisma.books.findUnique({
-		select: {
-			user_id: true
-		},
-		where: {
-			id: req.bookId,
-			deleted_at: null
-		}
-	});
-	if (!bookBeforeEdit) {
-		dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
-		return { dbError };
-	} else if (bookBeforeEdit.user_id !== req.userId) {
-		dbError ??= new Error(`Can't edit book written by other writer. Book ID=${req.bookId}`);
-		return { dbError };
-	}
-
-	const book = await prisma
+	const { bookRevision, dbError } = await prisma
 		.$transaction(async (tx) => {
-			const book = await tx.books.findUnique({
+			const bookBeforeEdit = await prisma.books.findUnique({
 				where: {
 					id: req.bookId,
 					deleted_at: null
 				}
 			});
-			if (!book) {
-				dbError ??= new Error(`Can't find book. Book ID=${req.bookId}`);
-				throw dbError;
+			if (!bookBeforeEdit) {
+				throw new Error(`Can't find book. Book ID=${req.bookId}`);
+			} else if (bookBeforeEdit.user_id !== req.userId) {
+				throw new Error(`Can't edit book written by other writer. Book ID=${req.bookId}`);
 			}
 
 			const latestRevision = await tx.book_revisions.findFirst({
 				where: {
-					book_id: book.id,
+					book_id: bookBeforeEdit.id,
 					deleted_at: null
 				},
 				orderBy: {
@@ -48,9 +30,9 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				take: 1
 			});
 			if (latestRevision == null) {
-				dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
-				throw dbError;
+				throw new Error(`Can't find book revision. Book ID=${req.bookId}`);
 			}
+			let bookRevision = latestRevision;
 
 			const bookOverviewData = {
 				status: req.status,
@@ -85,12 +67,11 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 					}
 				});
 				if (latestContent == null) {
-					dbError ??= new Error(`Can't find book revision. Book ID=${req.bookId}`);
-					throw dbError;
+					throw new Error(`Can't find book revision. Book ID=${req.bookId}`);
 				}
-				const newRevision = await tx.book_revisions.create({
+				bookRevision = await tx.book_revisions.create({
 					data: {
-						book_id: book.id,
+						book_id: bookBeforeEdit.id,
 						number: latestRevision.number + 1,
 						...bookOverviewData,
 						title: latestContent.title,
@@ -120,7 +101,7 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 						}
 					}
 				});
-				revisionId = newRevision.id;
+				revisionId = bookRevision.id;
 			} else {
 				// If the book is "draft", update latest revision
 				const revision = await tx.book_revisions.update({
@@ -170,12 +151,13 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				update: bookCoverData
 			});
 
-			if (book) return book;
+			return { bookRevision, dbError: undefined };
 		})
-		.catch(() => {
-			dbError ??= new Error(`Failed to get book. Book ID=${req.bookId}`);
-			return undefined;
+		.catch((e: Error) => {
+			console.error(e);
+			const dbError = new Error(`Failed to get the book. Book ID=${req.bookId}`);
+			return { bookRevision: undefined, dbError };
 		});
 
-	return { book, dbError };
+	return { bookRevision, dbError };
 }
