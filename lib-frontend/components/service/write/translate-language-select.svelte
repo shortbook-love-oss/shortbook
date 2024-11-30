@@ -34,7 +34,7 @@
 	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
-	const translateLangs = $state(languageSelect.filter((lang) => lang.value !== nativaLanguage));
+	const translateLangs = $derived(languageSelect.filter((lang) => lang.value !== nativaLanguage));
 
 	const languageDecorates: LanguageDecorate[] = [
 		{ label: 'Spread to the world', languageTag: 'en', className: 'left-0 top-0' },
