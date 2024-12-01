@@ -75,7 +75,7 @@
 			<div class="w-full max-w-[640px]">
 				<Form
 					method="POST"
-					action="{$page.url.pathname}?/update"
+					action="{$page.url.pathname}?/publish"
 					{enhance}
 					hasInvalid={!hasVaild}
 					isLoading={$submitting}

@@ -1,6 +1,7 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { availableLanguageTags } from '$i18n/output/runtime';
 import { getBookCover } from '$lib/utilities/book';
 import { languageSelect, type AvailableLanguageTags } from '$lib/utilities/language';
 import { setLanguageTagToPath } from '$lib/utilities/url';
@@ -8,6 +9,7 @@ import { schema } from '$lib/validation/schema/book/update';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/book/edit-action';
 import { editLoad } from '$lib-backend/functions/service/book/edit-load';
+import { translateBookFreeContents } from '$lib-backend/functions/service/book/translate-to-other';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
@@ -88,7 +90,7 @@ export const load = async ({ locals, params }) => {
 };
 
 export const actions = {
-	update: async ({ request, url, locals, params }) => {
+	publish: async ({ request, url, locals, params }) => {
 		const signInUser = locals.signInUser;
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
@@ -108,14 +110,27 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
+		const { bookRevision, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			userId: signInUser.id,
 			status: 1,
 			...form.data
 		});
-		if (!book || dbBookUpdateError) {
+		if (!bookRevision || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
+		}
+
+		const bookNativeLang = bookRevision.native_language as AvailableLanguageTags;
+		let outputLangs = availableLanguageTags.filter((langTag) => {
+			return langTag !== bookNativeLang;
+		});
+		if (!bookRevision.is_translate_to_all) {
+			outputLangs = form.data.translateLanguages.filter((langTag) => {
+				return langTag !== bookNativeLang;
+			});
+		}
+		if (outputLangs.length > 0) {
+			await translateBookFreeContents(bookRevision.id, bookNativeLang, outputLangs);
 		}
 
 		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${form.data.urlSlug}`, url));
@@ -151,13 +166,13 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
+		const { dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			userId: signInUser.id,
 			status: 0,
 			...form.data
 		});
-		if (!book || dbBookUpdateError) {
+		if (dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
 		}
 
