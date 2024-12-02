@@ -104,16 +104,15 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				revisionId = bookRevision.id;
 			} else {
 				// If the book is "draft", update latest revision
-				const revision = await tx.book_revisions.update({
+				bookRevision = await tx.book_revisions.update({
 					where: { id: latestRevision.id },
-					data: bookOverviewData,
-					select: {
-						translate_languages: {
-							select: { target_language: true }
-						}
-					}
+					data: bookOverviewData
 				});
-				const translateLangTags = revision.translate_languages.map((lang) => lang.target_language);
+				const translateLanguages = await tx.book_translate_languages.findMany({
+					where: { revision_id: latestRevision.id },
+					select: { target_language: true }
+				});
+				const translateLangTags = translateLanguages.map((lang) => lang.target_language);
 				if (!isArrayHaveSameValues(translateLangTags, req.translateLanguages)) {
 					if (translateLangTags.length > 0) {
 						await tx.book_translate_languages.deleteMany({
