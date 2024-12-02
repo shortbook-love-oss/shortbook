@@ -22,6 +22,7 @@
 		"test:unit": "vitest"
 	},
 	"dependencies": {
+		"@google-cloud/translate": "^8.5.0",
 		"@inlang/paraglide-js": "^1.11.3",
 		"@inlang/paraglide-sveltekit": "^0.12.1",
 		"@lexical/code": "^0.20.1",
@@ -31,6 +32,7 @@
 		"@lexical/list": "^0.20.1",
 		"@lexical/rich-text": "^0.20.1",
 		"@prisma/client": "^6.0.0",
+		"deepl-node": "^1.15.0",
 		"file-type": "^19.6.0",
 		"isomorphic-dompurify": "^2.17.0",
 		"jsdom": "^25.0.1",

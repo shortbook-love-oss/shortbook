@@ -4,6 +4,7 @@ export function arrayToSquads<T>(items: T[], memberCount: number) {
 	for (let i = 0; i < items.length; i += memberCount) {
 		squads.push(items.slice(i, i + memberCount));
 	}
+
 	return squads;
 }
 
@@ -25,4 +26,29 @@ export function isArrayHaveSameValues<T = unknown>(source: T[], compare: T[]) {
 	}
 
 	return true;
+}
+
+// Fillter truly values only and return excluded values too
+// ['foo', undefined, 'baz'] → { filtered: ['foo', 'baz'], excluded: { 1: undefined } }
+export function packArray<T = string>(items: Readonly<T[]>) {
+	const filtered = items.filter((item) => item);
+	const excluded = new Map<number, T>();
+	items.forEach((item, i) => {
+		if (!item) {
+			excluded.set(i, item);
+		}
+	});
+
+	return { filtered, excluded };
+}
+
+// Rewind of packArray
+// ['foo', 'baz'], { 1: undefined } → ['foo', undefined, 'baz']
+export function rewindArray<T = string>(filtered: Readonly<T[]>, excluded: Map<number, T>) {
+	const items = filtered.slice();
+	excluded.forEach((value, insertIndex) => {
+		items.splice(insertIndex, 0, value);
+	});
+
+	return items;
 }
