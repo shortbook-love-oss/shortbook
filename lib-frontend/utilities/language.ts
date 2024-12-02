@@ -3,11 +3,11 @@ import type { SelectItemSingle } from '$lib/utilities/select';
 
 export type AvailableLanguageTags = (typeof availableLanguageTags)[number];
 
-export interface LanguageSelect extends SelectItemSingle<AvailableLanguageTags | ''> {
+export interface LanguageSelect<T> extends SelectItemSingle<T> {
 	english: string;
 }
 
-export const languageSelect: LanguageSelect[] = [
+export const languageSelect: LanguageSelect<AvailableLanguageTags>[] = [
 	{ value: 'en', label: 'English', english: 'English' },
 	{ value: 'ar', label: 'اَلْعَرَبِيَّةُ', english: 'Arabic' },
 	{ value: 'nb', label: 'Norsk bokmål', english: 'Norwegian (bokmål)' },
@@ -33,7 +33,7 @@ export const languageSelect: LanguageSelect[] = [
 	{ value: 'id', label: 'Bahasa Indonesia', english: 'Indonesian' }
 ];
 
-export const languageAndNotSelect: LanguageSelect[] = [
+export const languageAndNotSelect: LanguageSelect<AvailableLanguageTags | ''>[] = [
 	{ value: '', label: 'Select language', english: 'Select language' },
 	...languageSelect
 ];

@@ -11,7 +11,7 @@
 		allCheckerName: string;
 		isAllChecked: boolean;
 		eachCheckerName: string;
-		translateLanguages: AvailableLanguageTags[];
+		selectedLanguages: AvailableLanguageTags[];
 		nativaLanguage: AvailableLanguageTags;
 		className?: string;
 	};
@@ -20,7 +20,7 @@
 		allCheckerName = '',
 		isAllChecked = $bindable(),
 		eachCheckerName = '',
-		translateLanguages = $bindable(),
+		selectedLanguages = $bindable(),
 		nativaLanguage,
 		className = ''
 	}: Props = $props();
@@ -34,7 +34,10 @@
 	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
 
-	const translateLangs = $derived(languageSelect.filter((lang) => lang.value !== nativaLanguage));
+	const otherLanguages = $derived(languageSelect.filter((lang) => lang.value !== nativaLanguage));
+	const translateLanguages = $derived(
+		otherLanguages.filter((lang) => selectedLanguages.includes(lang.value))
+	);
 
 	const languageDecorates: LanguageDecorate[] = [
 		{ label: 'Spread to the world', languageTag: 'en', className: 'left-0 top-0' },
@@ -81,7 +84,7 @@
 			/>
 			<div>
 				<p class="text-[1.5rem] leading-tight">Translate to all</p>
-				<p>{translateLangs.length} languages</p>
+				<p>{otherLanguages.length} languages</p>
 			</div>
 		</label>
 		{#each languageDecorates as decorate (decorate.languageTag)}
@@ -100,13 +103,13 @@
 				</p>
 			{/snippet}
 			<div class="flex flex-wrap items-center gap-2">
-				{#each translateLangs as lang}
+				{#each otherLanguages as lang}
 					<label class="relative inline-block">
 						<input
 							type="checkbox"
 							name={eachCheckerName}
 							value={lang.value}
-							bind:group={translateLanguages}
+							bind:group={selectedLanguages}
 							class="peer absolute left-0 top-0 h-full w-full appearance-none"
 						/>
 						<p class="rounded-md px-3 py-2 peer-checked:bg-primary-200">{lang.english}</p>
