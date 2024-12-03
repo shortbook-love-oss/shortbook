@@ -14,6 +14,10 @@ import {
 	type GoogleSourceLangKey,
 	type GoogleTargetLangKey
 } from '$lib-backend/functions/api/translate/translate';
+import {
+	dbBookContentCreate,
+	type DbBookContentCreateProp
+} from '$lib-backend/model/book/content/create';
 import { dbBookContentGet } from '$lib-backend/model/book/content/get';
 
 type TranslateContentResult = {
@@ -91,22 +95,16 @@ export async function translateBookFreeContents(
 				});
 			}
 			if (langResults == undefined) {
-				console.error(
-					new Error(
-						`Unsupportted language to translate. revisionId=${revisionId}, source=${sourceLang}, target=${targetLang}`
-					)
+				throw new Error(
+					`Unsupportted language to translate. revisionId=${revisionId}, source=${sourceLang}, target=${targetLang}`
 				);
-				return undefined;
 			} else if (
 				langResults[0].length !== textTranslateContents.length ||
 				langResults[1].length !== htmlTranslateContents.length
 			) {
-				console.error(
-					new Error(
-						`Unsupportted language to translate. revisionId=${revisionId}, source=${sourceLang}, target=${targetLang}`
-					)
+				throw new Error(
+					`Unsupportted language to translate. revisionId=${revisionId}, source=${sourceLang}, target=${targetLang}`
 				);
-				return undefined;
 			}
 
 			results[targetLang] = {
@@ -120,6 +118,18 @@ export async function translateBookFreeContents(
 	).catch((e: Error) => {
 		console.error(e);
 		return undefined;
+	});
+
+	const saveContents: DbBookContentCreateProp[] = Object.entries(results).map(
+		([targetLang, result]) => ({
+			...result,
+			targetLanguage: targetLang as AvailableLanguageTags,
+			paidArea: ''
+		})
+	);
+	await dbBookContentCreate({
+		revisionId,
+		contents: saveContents
 	});
 
 	return results;
