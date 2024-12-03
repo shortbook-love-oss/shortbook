@@ -84,7 +84,7 @@ export async function translateContentByDeepl(
 
 	const { filtered, excluded } = packArray(contents);
 	const results = await translator
-		.translateText(filtered, source, target, isHtml ? { tagHandling: 'html' } : {})
+		.translateText(filtered, null, target, isHtml ? { tagHandling: 'html' } : {})
 		.then((results) => results.map((result) => result.text));
 
 	return rewindArray(results, excluded);
@@ -113,7 +113,6 @@ export async function translateContentByGoogle(
 		parent: `projects/${env.GOOGLE_CLOUD_PROJECT_ID}/locations/global`,
 		contents: filtered,
 		mimeType: isHtml ? 'text/html' : 'text/plain',
-		sourceLanguageCode: source,
 		targetLanguageCode: target
 	});
 	if (response.translations == null) {
