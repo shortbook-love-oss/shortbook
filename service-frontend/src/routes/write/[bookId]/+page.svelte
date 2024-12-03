@@ -21,6 +21,7 @@
 
 	let bookId = $state(data.bookId);
 	let bookStatus = $state(data.bookStatus);
+	let nativeLanguage = $state(data.nativeLanguage);
 	let title = $state(data.form.data.title);
 	let subtitle = $state(data.form.data.subtitle);
 	let freeArea = $state(data.freeArea);
@@ -96,6 +97,7 @@
 			method: bookId ? 'PUT' : 'POST',
 			body: JSON.stringify({
 				bookId,
+				nativeLanguage,
 				title,
 				subtitle,
 				freeArea,

@@ -3,13 +3,14 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { initEditorState, type EditorState } from '$lib/components/modules/wysiwyg-editor/editor';
 import { bookCreateUrlParam } from '$lib/utilities/book';
-import { setLanguageTagToPath } from '$lib/utilities/url';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
+import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/draft-create';
 import { dbBookRevisionList } from '$lib-backend/model/book/revision/list';
 import { dbBookDelete } from '$lib-backend/model/book/delete';
 import { dbBookGet } from '$lib-backend/model/book/get';
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
@@ -23,6 +24,7 @@ export const load = async ({ locals, params }) => {
 
 	let bookId = '';
 	let bookStatus = 0;
+	let nativeLanguage = getLanguageTagFromUrl(url);
 	let updatedAt: Date | null = null;
 	let initTitle = '';
 	let initUrlSlug = '';
@@ -57,6 +59,7 @@ export const load = async ({ locals, params }) => {
 
 		bookId = book.id;
 		bookStatus = bookRevision.status;
+		nativeLanguage = bookRevision.native_language as AvailableLanguageTags;
 		updatedAt = bookRevision.updated_at;
 		initTitle = bookRevision.title;
 		initUrlSlug = bookRevision.url_slug;
@@ -69,6 +72,7 @@ export const load = async ({ locals, params }) => {
 		salesArea,
 		bookId,
 		bookStatus,
+		nativeLanguage,
 		updatedAt,
 		initTitle,
 		initUrlSlug,

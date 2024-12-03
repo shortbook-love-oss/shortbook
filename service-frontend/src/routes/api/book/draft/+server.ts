@@ -5,7 +5,6 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { getBookCover, type BookDraftUpdateResult } from '$lib/utilities/book';
 import { getRandom } from '$lib/utilities/crypto';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { schema as createSchema } from '$lib/validation/schema/book/draft-create';
 import { schema as updateSchema } from '$lib/validation/schema/book/draft-update';
 import { dbBookRevisionCreate } from '$lib-backend/model/book/revision/create';
@@ -18,12 +17,11 @@ import {
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { fromEditorStateToHtml } from '$lib-backend/utilities/book';
 
-export async function POST({ request, url, locals }) {
+export async function POST({ request, locals }) {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(await request.json(), zod(createSchema));
 	if (!form.valid) {
@@ -47,7 +45,7 @@ export async function POST({ request, url, locals }) {
 		status: 0,
 		urlSlug,
 		buyPoint: 200,
-		targetLanguage: requestLang,
+		targetLanguage: form.data.nativeLanguage,
 		isTranslateToAll: true,
 		translateLanguages: [],
 		title: form.data.title,
@@ -72,12 +70,11 @@ export async function POST({ request, url, locals }) {
 	return response;
 }
 
-export async function PUT({ request, url, locals }) {
+export async function PUT({ request, locals }) {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(await request.json(), zod(updateSchema));
 	if (!form.valid) {
@@ -112,7 +109,7 @@ export async function PUT({ request, url, locals }) {
 		status: 0,
 		urlSlug: bookRevision.url_slug,
 		buyPoint: bookRevision.buy_point,
-		targetLanguage: requestLang,
+		targetLanguage: form.data.nativeLanguage,
 		isTranslateToAll: bookRevision.is_translate_to_all,
 		translateLanguages: bookRevision.translate_languages.map(
 			(lang) => lang.target_language as AvailableLanguageTags
