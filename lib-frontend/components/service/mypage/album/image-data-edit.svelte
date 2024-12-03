@@ -6,6 +6,7 @@
 	import {
 		albumImageAiSelect,
 		albumImageSensitiveSelect,
+		getAlbumImagePath,
 		type AlbumImageEditItem
 	} from '$lib/utilities/album';
 	import { getUnitByteLength } from '$lib/utilities/file';
@@ -41,6 +42,8 @@
 	const formObserver = form.subscribe(() => validateBackground());
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
+
+	const imageFilePath = getAlbumImagePath(imageData.userId, imageData.savedFileName);
 </script>
 
 <svelte:head>
@@ -56,7 +59,7 @@
 	{#snippet opener()}
 		<div class="relative">
 			<img
-				src="{imageData.filePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
+				src="{imageFilePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
 				alt={imageData.alt}
 				width="144"
 				height="144"
@@ -73,13 +76,13 @@
 			class="top-0 flex shrink-0 flex-wrap items-start gap-x-4 gap-y-8 py-2 sm:sticky sm:flex-col"
 		>
 			<a
-				href="{imageData.filePath}?ext={imageData.toExtension}&q=100"
+				href="{imageFilePath}?ext={imageData.toExtension}&q=100"
 				target="_blank"
 				aria-label="Show image by original size"
 				class="relative inline-block"
 			>
 				<img
-					src="{imageData.filePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
+					src="{imageFilePath}?ext={imageData.toExtension}&w=144&h=144&q=80"
 					alt={imageData.alt}
 					width="144"
 					height="144"

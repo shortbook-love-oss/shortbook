@@ -10,12 +10,15 @@ import {
 	editorImageMaxWidthNarrow,
 	getImageSizeForSrc
 } from '$lib/components/modules/wysiwyg-editor/editor';
+import { getAlbumImagePath } from '$lib/utilities/album';
 import { getUrlObject } from '$lib/utilities/url';
 
 export const imageNodeAttr = 'data-lexical-node-image';
 export const imageNodeActivatorAttr = 'data-lexical-node-image-activator';
 
 export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
+	const imageFilePath = getAlbumImagePath(node.getUserId(), node.getFileName());
+
 	const nodeRoot = document.createElement('figure');
 	nodeRoot.className = 'sb_bc__image';
 	if (isEditPage) {
@@ -28,7 +31,7 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 	if (isEditPage) {
 		link.addEventListener('click', (ev) => ev.preventDefault());
 	} else {
-		link.href = `${node.getSrc()}?ext=${node.getToExtension()}`;
+		link.href = `${imageFilePath}?ext=${node.getToExtension()}`;
 	}
 
 	const imageWrap = document.createElement('picture');
@@ -36,7 +39,7 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 	const narrowVer = document.createElement('source');
 	const narrowImageSize = getImageSizeForSrc(node.getWidth(), editorImageMaxWidthNarrow);
 	const narrowSrc = getUrlObject(
-		`${node.getSrc()}?ext=${node.getToExtension()}&${narrowImageSize}q=60`
+		`${imageFilePath}?ext=${node.getToExtension()}&${narrowImageSize}q=60`
 	);
 	if (node.getWidth() > editorImageMaxWidthNarrow && narrowSrc) {
 		// If narrow device and large image, show small-resized image
@@ -50,7 +53,7 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 
 	const imageSize = getImageSizeForSrc(node.getWidth(), editorImageMaxWidth);
 	const image = document.createElement('img');
-	image.src = `${node.getSrc()}?ext=${node.getToExtension()}&${imageSize}q=60`;
+	image.src = `${imageFilePath}?ext=${node.getToExtension()}&${imageSize}q=60`;
 	if (node.getAlt()) {
 		image.alt = node.getAlt();
 	}

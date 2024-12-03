@@ -2,8 +2,11 @@
 	import { onMount } from 'svelte';
 	import IconReload from '~icons/mdi/reload';
 	import IconUpload from '~icons/mdi/tray-upload';
-	import { env as envPublic } from '$env/dynamic/public';
-	import type { AlbumImageGetResult, AlbumImageItem } from '$lib/utilities/album';
+	import {
+		getAlbumImagePath,
+		type AlbumImageGetResult,
+		type AlbumImageItem
+	} from '$lib/utilities/album';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 
 	type Props = {
@@ -36,7 +39,7 @@
 	}
 
 	function getImageSrc(image: AlbumImageItem, isAvif: boolean) {
-		const filePath = `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${image.userId}/${image.savedFileName}`;
+		const filePath = getAlbumImagePath(image.userId, image.savedFileName);
 		const ext = isAvif ? 'avif' : image.toExtension;
 		const search = `?ext=${ext}&${getImageSizeSpecify(image.width, image.height)}fit=inside&q=60`;
 		return filePath + search;

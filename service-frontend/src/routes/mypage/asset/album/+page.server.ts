@@ -1,7 +1,6 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { env as envPublic } from '$env/dynamic/public';
 import type { AlbumImageEditItem } from '$lib/utilities/album';
 import { getRandom } from '$lib/utilities/crypto';
 import { imageMIMEextension } from '$lib/utilities/file';
@@ -48,7 +47,6 @@ export const load = async ({ locals }) => {
 				name: image.name,
 				alt: image.alt,
 				languageInImage: image.language_in_image as AvailableLanguageTags | '',
-				filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${signInUser.id}/${image.property?.saved_file_name}`,
 				savedFileName: image.property?.saved_file_name ?? '',
 				byteLength: image.property?.byte_length ?? 0,
 				width: image.property?.width ?? 0,

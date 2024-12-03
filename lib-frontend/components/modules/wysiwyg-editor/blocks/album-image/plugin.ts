@@ -8,7 +8,6 @@ import {
 	type LexicalCommand,
 	type LexicalEditor
 } from 'lexical';
-import { env as envPublic } from '$env/dynamic/public';
 import {
 	imageNodeActivatorAttr,
 	imageNodeAttr
@@ -25,7 +24,7 @@ import {
 	insertBlockNodeToNext,
 	selectSingleNode
 } from '$lib/components/modules/wysiwyg-editor/editor';
-import type { AlbumImageItem } from '$lib/utilities/album';
+import { getAlbumImagePath, type AlbumImageItem } from '$lib/utilities/album';
 
 export interface AlbumImageNodeItem {
 	nodeKey: string;
@@ -39,10 +38,6 @@ export const CHANGE_IMAGE_BLOCK_COMMAND: LexicalCommand<AlbumImageNodeItem> = cr
 	'CHANGE_IMAGE_BLOCK_COMMAND'
 );
 
-function getImageSrc(albumImage: AlbumImageItem) {
-	return `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.savedFileName}`;
-}
-
 function insertImage(albumImage: AlbumImageItem) {
 	const { selectedBlock } = getSelectedBlock();
 	if (!selectedBlock) {
@@ -51,7 +46,8 @@ function insertImage(albumImage: AlbumImageItem) {
 
 	const imageNode = $createImageNode(
 		albumImage.id,
-		getImageSrc(albumImage),
+		albumImage.userId,
+		albumImage.savedFileName,
 		albumImage.alt,
 		albumImage.width,
 		albumImage.height,
@@ -72,7 +68,7 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 	// First, cache the image by CDN
 	// By doing so, switch quickly to image node
 	const albumImage = imageItem.albumImage;
-	const imageSrc = getImageSrc(albumImage);
+	const imageSrc = getAlbumImagePath(albumImage.userId, albumImage.savedFileName);
 	const imageSize = getImageSizeForSrc(albumImage.width, editorImageMaxWidth);
 
 	const imgCacher = document.createElement('img');
@@ -83,7 +79,8 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 				URL.revokeObjectURL(imageUploaderNode.getDataUrl());
 				const imageNode = $createImageNode(
 					albumImage.id,
-					imageSrc,
+					albumImage.userId,
+					albumImage.savedFileName,
 					albumImage.alt,
 					albumImage.width,
 					albumImage.height,
