@@ -5,7 +5,12 @@
 	import { page } from '$app/stores';
 	import { bookCreateUrlParam, type BookDraftUpdateResult } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
-	import { callbackParam, getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
+	import {
+		callbackParam,
+		getLanguageTagFromUrl,
+		removeLanguageTagFromPath,
+		setLanguageTagToPath
+	} from '$lib/utilities/url';
 	import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import TextAreaSingle from '$lib/components/modules/form/text-area-single.svelte';
@@ -37,7 +42,9 @@
 	let lastUpdatedAt = $state(data.updatedAt);
 	let isAutoSaved = $state(false);
 
-	const callbackUrl = $derived($page.url.searchParams.get(callbackParam) ?? '');
+	const callbackUrl = $derived(
+		removeLanguageTagFromPath($page.url.searchParams.get(callbackParam) ?? '')
+	);
 
 	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
 	const unpublishableReasons = $derived.by(() => {
