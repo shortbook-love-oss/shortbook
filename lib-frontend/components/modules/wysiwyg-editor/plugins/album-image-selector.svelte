@@ -36,10 +36,10 @@
 	}
 
 	function getImageSrc(image: AlbumImageItem, isAvif: boolean) {
-		const base = `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${image.userId}/${image.filePath}`;
+		const filePath = `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${image.userId}/${image.savedFileName}`;
 		const ext = isAvif ? 'avif' : image.toExtension;
 		const search = `?ext=${ext}&${getImageSizeSpecify(image.width, image.height)}fit=inside&q=60`;
-		return base + search;
+		return filePath + search;
 	}
 
 	function getImageSizeSpecify(width: number, height: number) {

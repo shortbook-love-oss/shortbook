@@ -67,7 +67,7 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 				const { albumImage, dbError } = await dbUserAlbumImageCreate({
 					userId,
 					name: fileName,
-					filePath: saveFilePath,
+					saveFileName: saveFilePath,
 					byteLength: imageResult.value.byteLength,
 					width: imageResult.value.width,
 					height: imageResult.value.height,
@@ -84,7 +84,7 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 					name: albumImage.name,
 					alt: albumImage.alt,
 					languageInImage: albumImage.language_in_image as AvailableLanguageTags | '',
-					filePath: saveFilePath,
+					savedFileName: saveFilePath,
 					byteLength: imageResult.value.byteLength,
 					width: imageResult.value.width,
 					height: imageResult.value.height,

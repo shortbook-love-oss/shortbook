@@ -163,7 +163,7 @@ model user_image_properties {
 
   id                      String              @id @db.VarChar(36) @default(uuid(7))
   image_id                String              @unique @db.VarChar(36)
-  file_path               String              @db.VarChar(31)
+  saved_file_name         String              @db.VarChar(31)
   byte_length             Int
   width                   Int
   height                  Int

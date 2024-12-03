@@ -9,7 +9,7 @@ export interface AlbumImageItem {
 	name: string;
 	alt: string;
 	languageInImage: AvailableLanguageTags | '';
-	filePath: string;
+	savedFileName: string;
 	byteLength: number;
 	width: number;
 	height: number;

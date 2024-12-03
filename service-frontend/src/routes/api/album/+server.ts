@@ -42,7 +42,7 @@ export async function GET({ url, locals }) {
 			name: albumImage.name,
 			alt: albumImage.alt,
 			languageInImage: albumImage.language_in_image as AvailableLanguageTags | '',
-			filePath: albumImage.property?.file_path ?? '',
+			savedFileName: albumImage.property?.saved_file_name ?? '',
 			byteLength: albumImage.property?.byte_length ?? 0,
 			width: albumImage.property?.width ?? 0,
 			height: albumImage.property?.height ?? 0,

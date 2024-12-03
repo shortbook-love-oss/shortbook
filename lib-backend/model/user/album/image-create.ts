@@ -3,7 +3,7 @@ import prisma from '$lib-backend/database/connect';
 export interface DbUserAlbumImageCreateRequest {
 	userId: string;
 	name: string;
-	filePath: string;
+	saveFileName: string;
 	byteLength: number;
 	width: number;
 	height: number;
@@ -27,7 +27,7 @@ export async function dbUserAlbumImageCreate(req: DbUserAlbumImageCreateRequest)
 				is_ai: 0,
 				property: {
 					create: {
-						file_path: req.filePath,
+						saved_file_name: req.saveFileName,
 						byte_length: req.byteLength,
 						width: req.width,
 						height: req.height,

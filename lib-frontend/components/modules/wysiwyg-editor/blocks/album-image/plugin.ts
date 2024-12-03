@@ -40,7 +40,7 @@ export const CHANGE_IMAGE_BLOCK_COMMAND: LexicalCommand<AlbumImageNodeItem> = cr
 );
 
 function getImageSrc(albumImage: AlbumImageItem) {
-	return `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.filePath}`;
+	return `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.savedFileName}`;
 }
 
 function insertImage(albumImage: AlbumImageItem) {
