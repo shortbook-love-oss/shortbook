@@ -123,38 +123,35 @@
 							className="mb-12"
 						/>
 					{/if}
-					{#if data.hasPaidArea}
-						<section class="mb-12">
-							<h2 class="mb-2 text-lg font-semibold">Reach it to the world!</h2>
-							<TranslateLanguageSelect
-								allCheckerName="isTranslateToAll"
-								bind:isAllChecked={$form.isTranslateToAll}
-								eachCheckerName="translateLanguages"
-								bind:selectedLanguages={$form.translateLanguages}
-								nativaLanguage={$form.targetLanguage}
-							>
-								{#snippet sourceLanguage()}
-									<Select
-										bind:value={$form.targetLanguage as string}
-										name="targetLanguage"
-										list={data.langTags}
-										label="Native language"
-										errorMessages={$errors.targetLanguage}
-										className="max-w-52"
-									/>
-								{/snippet}
-							</TranslateLanguageSelect>
-						</section>
-					{:else}
-						<Select
-							bind:value={$form.targetLanguage as string}
-							name="targetLanguage"
-							list={data.langTags}
-							label="Native language"
-							errorMessages={$errors.targetLanguage}
-							className="mb-12 max-w-72"
-						/>
-					{/if}
+					<section class="mb-12" class:hidden={!data.hasPaidArea}>
+						<h2 class="mb-2 text-lg font-semibold">Reach it to the world!</h2>
+						<TranslateLanguageSelect
+							allCheckerName="isTranslateToAll"
+							bind:isAllChecked={$form.isTranslateToAll}
+							eachCheckerName="translateLanguages"
+							bind:selectedLanguages={$form.translateLanguages}
+							nativaLanguage={$form.targetLanguage}
+						>
+							{#snippet sourceLanguage()}
+								<Select
+									bind:value={$form.targetLanguage as string}
+									name="targetLanguage"
+									list={data.langTags}
+									label="Native language"
+									errorMessages={$errors.targetLanguage}
+									className="max-w-52"
+								/>
+							{/snippet}
+						</TranslateLanguageSelect>
+					</section>
+					<Select
+						bind:value={$form.targetLanguage as string}
+						name="targetLanguage"
+						list={data.langTags}
+						label="Native language"
+						errorMessages={$errors.targetLanguage}
+						className="mb-12 max-w-72 {data.hasPaidArea ? 'hidden' : ''}"
+					/>
 					<BookCoverEdit
 						bind:baseColorStart={$form.baseColorStart}
 						bind:baseColorEnd={$form.baseColorEnd}
