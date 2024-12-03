@@ -129,7 +129,8 @@ export const actions = {
 				return langTag !== bookNativeLang;
 			});
 		}
-		if (outputLangs.length > 0) {
+		// Translate only a paid book
+		if (bookRevision.has_paid_area && outputLangs.length > 0) {
 			await translateBookFreeContents(bookRevision.id, bookNativeLang, outputLangs);
 		}
 
