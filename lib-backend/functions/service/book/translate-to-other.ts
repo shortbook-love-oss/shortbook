@@ -24,6 +24,7 @@ type TranslateContentResult = {
 	title: string;
 	subtitle: string;
 	freeArea: string;
+	paidArea: string;
 	salesArea: string;
 };
 
@@ -40,7 +41,7 @@ function initTranslator() {
 	return { dTranslator, gTranslator };
 }
 
-export async function translateBookFreeContents(
+export async function translateBookContents(
 	revisionId: string,
 	sourceLang: AvailableLanguageTags,
 	targetLangs: AvailableLanguageTags[]
@@ -62,7 +63,11 @@ export async function translateBookFreeContents(
 	await Promise.all(
 		targetLangs.map(async (targetLang) => {
 			const textTranslateContents = [bookContent.title, bookContent.subtitle];
-			const htmlTranslateContents = [bookContent.free_area_html, bookContent.sales_area_html];
+			const htmlTranslateContents = [
+				bookContent.free_area_html,
+				bookContent.paid_area_html,
+				bookContent.sales_area_html
+			];
 			let langResults;
 			// If translate into/from language that DeepL doesn't support, use Google Translate instead
 			if (
@@ -114,7 +119,8 @@ export async function translateBookFreeContents(
 				title: langResults[0][0],
 				subtitle: langResults[0][1],
 				freeArea: langResults[1][0],
-				salesArea: langResults[1][1]
+				paidArea: langResults[1][1],
+				salesArea: langResults[1][2]
 			};
 			return true;
 		})
@@ -126,8 +132,7 @@ export async function translateBookFreeContents(
 	const saveContents: DbBookContentCreateProp[] = Object.entries(results).map(
 		([targetLang, result]) => ({
 			...result,
-			targetLanguage: targetLang as AvailableLanguageTags,
-			paidArea: ''
+			targetLanguage: targetLang as AvailableLanguageTags
 		})
 	);
 	const { dbError: dbContentCreateError } = await dbBookContentCreate({
@@ -139,63 +144,4 @@ export async function translateBookFreeContents(
 	}
 
 	return results;
-}
-
-export async function translateBookPaidContent(
-	revisionId: string,
-	sourceLang: AvailableLanguageTags,
-	targetLang: AvailableLanguageTags
-) {
-	const { bookContent, dbError: dbBookGetError } = await dbBookContentGet({
-		revisionId,
-		targetLanguage: sourceLang,
-		isIncludeDelete: true
-	});
-	if (dbBookGetError) {
-		throw dbBookGetError;
-	} else if (!bookContent) {
-		throw new Error(`Can't find book content. revisionId=${revisionId}, sourceLang=${sourceLang}`);
-	}
-
-	const { dTranslator, gTranslator } = initTranslator();
-
-	const htmlTranslateContents = [bookContent.paid_area_html];
-	let langResults;
-	// If translate into/from language that DeepL doesn't support, use Google Translate instead
-	if (
-		googleSourceLangKeys.includes(sourceLang as GoogleSourceLangKey) ||
-		googleTargetLangKeys.includes(targetLang as GoogleTargetLangKey)
-	) {
-		langResults = await translateContentByGoogle(
-			htmlTranslateContents,
-			gTranslator,
-			sourceLang,
-			targetLang,
-			true
-		).catch((error: Error) => {
-			console.error(error);
-			return undefined;
-		});
-	} else if (
-		deeplSourceLangKeys.includes(sourceLang as DeeplSourceLangKey) &&
-		deeplTargetLangKeys.includes(targetLang as DeeplTargetLangKey)
-	) {
-		langResults = await translateContentByDeepl(
-			htmlTranslateContents,
-			dTranslator,
-			sourceLang,
-			targetLang,
-			true
-		).catch((e: Error) => {
-			console.error(e);
-			return undefined;
-		});
-	}
-	if (langResults == undefined || langResults.length !== htmlTranslateContents.length) {
-		throw new Error(
-			`Unsupportted language to translate. revisionId=${revisionId}, source=${sourceLang}, target=${targetLang}`
-		);
-	}
-
-	return langResults[0];
 }

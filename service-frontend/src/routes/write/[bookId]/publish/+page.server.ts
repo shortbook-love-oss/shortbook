@@ -9,7 +9,7 @@ import { schema } from '$lib/validation/schema/book/update';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 import { isExistBookUrlSlug } from '$lib-backend/functions/service/book/edit-action';
 import { editLoad } from '$lib-backend/functions/service/book/edit-load';
-import { translateBookFreeContents } from '$lib-backend/functions/service/book/translate-to-other';
+import { translateBookContents } from '$lib-backend/functions/service/book/translate-to-other';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
@@ -132,7 +132,7 @@ export const actions = {
 		// Translate only a paid book
 		if (bookRevision.has_paid_area && outputLangs.length > 0) {
 			// Paid area will withhold translation until someone buy the book
-			await translateBookFreeContents(bookRevision.id, bookNativeLang, outputLangs);
+			await translateBookContents(bookRevision.id, bookNativeLang, outputLangs);
 		}
 
 		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${form.data.urlSlug}`, url));
