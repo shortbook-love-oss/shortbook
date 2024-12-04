@@ -31,14 +31,6 @@ export const load = async ({ url }) => {
 		return error(404, { message: 'Not found' });
 	}
 
-	const { paymentSessionId, currency, amount, customerId, isCreateCustomer, isAvailable } =
-		await checkPaymentStatus(paymentSessionIdRaw);
-	if (!isAvailable) {
-		return error(402, {
-			message: "Can't complete payment process, because your payment funds aren't yet available."
-		});
-	}
-
 	// After charging points, create book bought history
 	let bookPaymentInfo: DbBookBuyCreateRequest;
 	try {
@@ -52,58 +44,68 @@ export const load = async ({ url }) => {
 		return error(500, { message: 'Invalid URL parameter of book-info' });
 	}
 
-	const {
-		book,
-		bookRevision,
-		dbError: dbBookGetError
-	} = await dbBookGet({
-		bookId: bookPaymentInfo.bookId,
-		statuses: [1],
-		isIncludeDelete: true
+	const getResult = await Promise.all([
+		(async () => {
+			const { paymentSessionId, currency, amount, customerId, isCreateCustomer, isAvailable } =
+				await checkPaymentStatus(paymentSessionIdRaw);
+			if (!isAvailable) {
+				throw new Error(
+					"Can't complete payment process, because your payment funds aren't yet available."
+				);
+			}
+			return { paymentSessionId, currency, amount, customerId, isCreateCustomer };
+		})(),
+
+		(async () => {
+			const {
+				book,
+				bookRevision,
+				dbError: dbBookGetError
+			} = await dbBookGet({
+				bookId: bookPaymentInfo.bookId,
+				statuses: [1],
+				isIncludeDelete: true
+			});
+			if (!book?.user || !bookRevision || dbBookGetError) {
+				throw new Error(dbBookGetError?.message ?? '');
+			}
+			return { book, bookRevision };
+		})(),
+
+		(async () => {
+			const { bookBuy, dbError: dbBookBuyGetError } = await dbBookBuyGet({
+				bookId: bookPaymentInfo.bookId,
+				userId: bookPaymentInfo.userId
+			});
+			if (dbBookBuyGetError) {
+				throw new Error(dbBookBuyGetError.message);
+			}
+			return { bookBuy };
+		})()
+	]).catch((error: Error) => {
+		console.error(error.message);
+		return error;
 	});
-	if (!book?.user || !bookRevision || dbBookGetError) {
-		return error(500, { message: dbBookGetError?.message ?? '' });
+	if (getResult instanceof Error) {
+		return error(500, { message: getResult.message });
 	}
 
-	const afterUrl = new URL(
-		url.origin +
-			setLanguageTagToPath(`/@${book.user.key_handle}/book/${bookRevision.url_slug}`, requestLang)
-	);
+	const [
+		{ paymentSessionId, currency, amount, customerId, isCreateCustomer },
+		{ book, bookRevision },
+		{ bookBuy }
+	] = getResult;
+
 	const paymentCheckoutRequest: DbUserPaymentCheckoutCreateRequest = {
 		provider: 'stripe',
 		sessionId: encryptAndFlat(paymentSessionId, env.ENCRYPT_PAYMENT_SESSION_ID, env.ENCRYPT_SALT),
 		currency,
 		amount
 	};
-
-	const { bookBuy, dbError: dbBookBuyGetError } = await dbBookBuyGet({
-		bookId: bookPaymentInfo.bookId,
-		userId: bookPaymentInfo.userId
-	});
-	if (dbBookBuyGetError) {
-		return error(500, { message: dbBookBuyGetError.message });
-	}
-
-	if (currency) {
-		const { dbError } = await dbUserPaymentSettingUpsert({
-			userId: bookPaymentInfo.userId,
-			currencyCode: currency
-		});
-		if (dbError) {
-			return error(500, { message: dbError.message });
-		}
-	}
-
-	if (isCreateCustomer) {
-		const { dbError: dbContractError } = await dbUserPaymentContractCreate({
-			userId: bookPaymentInfo.userId,
-			providerKey: 'stripe',
-			customerId: encryptAndFlat(customerId, env.ENCRYPT_PAYMENT_CUSTOMER_ID, env.ENCRYPT_SALT)
-		});
-		if (dbContractError) {
-			return error(500, { message: dbContractError?.message ?? '' });
-		}
-	}
+	const afterUrl = new URL(
+		url.origin +
+			setLanguageTagToPath(`/@${book.user.key_handle}/book/${bookRevision.url_slug}`, requestLang)
+	);
 
 	if (book.deleted_at != null || bookBuy) {
 		// If the book is deleted or draft, return as point
@@ -120,12 +122,47 @@ export const load = async ({ url }) => {
 		redirect(303, afterUrl);
 	}
 
-	const { dbError: dbBookBuyCreateError } = await dbBookBuyCreate({
-		...bookPaymentInfo,
-		payment: paymentCheckoutRequest
+	const saveResult = await Promise.all([
+		(async () => {
+			if (currency) {
+				const { dbError } = await dbUserPaymentSettingUpsert({
+					userId: bookPaymentInfo.userId,
+					currencyCode: currency
+				});
+				if (dbError) {
+					throw new Error(dbError.message);
+				}
+			}
+		})(),
+
+		(async () => {
+			if (isCreateCustomer) {
+				const { dbError: dbContractError } = await dbUserPaymentContractCreate({
+					userId: bookPaymentInfo.userId,
+					providerKey: 'stripe',
+					customerId: encryptAndFlat(customerId, env.ENCRYPT_PAYMENT_CUSTOMER_ID, env.ENCRYPT_SALT)
+				});
+				if (dbContractError) {
+					throw new Error(dbContractError.message);
+				}
+			}
+		})(),
+
+		(async () => {
+			const { dbError: dbBookBuyCreateError } = await dbBookBuyCreate({
+				...bookPaymentInfo,
+				payment: paymentCheckoutRequest
+			});
+			if (dbBookBuyCreateError) {
+				throw new Error(dbBookBuyCreateError.message);
+			}
+		})()
+	]).catch((error: Error) => {
+		console.error(error.message);
+		return error;
 	});
-	if (dbBookBuyCreateError) {
-		return error(500, { message: dbBookBuyCreateError?.message ?? '' });
+	if (saveResult instanceof Error) {
+		return error(500, { message: saveResult.message });
 	}
 
 	redirect(303, afterUrl);
