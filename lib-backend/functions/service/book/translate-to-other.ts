@@ -27,6 +27,19 @@ type TranslateContentResult = {
 	salesArea: string;
 };
 
+function initTranslator() {
+	const dTranslator = new deeplTranslator(env.DEEPL_TRANSLATE_API_KEY_SECRET);
+	const gTranslator = new gcTranslate.TranslationServiceClient({
+		credentials: {
+			type: 'service_account',
+			private_key: env.GOOGLE_TRANSLATE_SA_PRIVATE_KEY,
+			client_email: env.GOOGLE_TRANSLATE_SA_CLIENT_EMAIL
+		}
+	});
+
+	return { dTranslator, gTranslator };
+}
+
 export async function translateBookFreeContents(
 	revisionId: string,
 	sourceLang: AvailableLanguageTags,
@@ -43,14 +56,7 @@ export async function translateBookFreeContents(
 		throw new Error(`Can't find book content. revisionId=${revisionId}, sourceLang=${sourceLang}`);
 	}
 
-	const dTranslator = new deeplTranslator(env.DEEPL_TRANSLATE_API_KEY_SECRET);
-	const gTranslator = new gcTranslate.TranslationServiceClient({
-		credentials: {
-			type: 'service_account',
-			private_key: env.GOOGLE_TRANSLATE_SA_PRIVATE_KEY,
-			client_email: env.GOOGLE_TRANSLATE_SA_CLIENT_EMAIL
-		}
-	});
+	const { dTranslator, gTranslator } = initTranslator();
 
 	const results: Partial<Record<AvailableLanguageTags, TranslateContentResult>> = {};
 	await Promise.all(
@@ -94,11 +100,8 @@ export async function translateBookFreeContents(
 					return undefined;
 				});
 			}
-			if (langResults == undefined) {
-				throw new Error(
-					`Unsupportted language to translate. revisionId=${revisionId}, source=${sourceLang}, target=${targetLang}`
-				);
-			} else if (
+			if (
+				langResults == undefined ||
 				langResults[0].length !== textTranslateContents.length ||
 				langResults[1].length !== htmlTranslateContents.length
 			) {
@@ -127,10 +130,72 @@ export async function translateBookFreeContents(
 			paidArea: ''
 		})
 	);
-	await dbBookContentCreate({
+	const { dbError: dbContentCreateError } = await dbBookContentCreate({
 		revisionId,
 		contents: saveContents
 	});
+	if (dbContentCreateError) {
+		throw dbContentCreateError;
+	}
 
 	return results;
+}
+
+export async function translateBookPaidContent(
+	revisionId: string,
+	sourceLang: AvailableLanguageTags,
+	targetLang: AvailableLanguageTags
+) {
+	const { bookContent, dbError: dbBookGetError } = await dbBookContentGet({
+		revisionId,
+		targetLanguage: sourceLang,
+		isIncludeDelete: true
+	});
+	if (dbBookGetError) {
+		throw dbBookGetError;
+	} else if (!bookContent) {
+		throw new Error(`Can't find book content. revisionId=${revisionId}, sourceLang=${sourceLang}`);
+	}
+
+	const { dTranslator, gTranslator } = initTranslator();
+
+	const htmlTranslateContents = [bookContent.paid_area_html];
+	let langResults;
+	// If translate into/from language that DeepL doesn't support, use Google Translate instead
+	if (
+		googleSourceLangKeys.includes(sourceLang as GoogleSourceLangKey) ||
+		googleTargetLangKeys.includes(targetLang as GoogleTargetLangKey)
+	) {
+		langResults = await translateContentByGoogle(
+			htmlTranslateContents,
+			gTranslator,
+			sourceLang,
+			targetLang,
+			true
+		).catch((error: Error) => {
+			console.error(error);
+			return undefined;
+		});
+	} else if (
+		deeplSourceLangKeys.includes(sourceLang as DeeplSourceLangKey) &&
+		deeplTargetLangKeys.includes(targetLang as DeeplTargetLangKey)
+	) {
+		langResults = await translateContentByDeepl(
+			htmlTranslateContents,
+			dTranslator,
+			sourceLang,
+			targetLang,
+			true
+		).catch((e: Error) => {
+			console.error(e);
+			return undefined;
+		});
+	}
+	if (langResults == undefined || langResults.length !== htmlTranslateContents.length) {
+		throw new Error(
+			`Unsupportted language to translate. revisionId=${revisionId}, source=${sourceLang}, target=${targetLang}`
+		);
+	}
+
+	return langResults[0];
 }

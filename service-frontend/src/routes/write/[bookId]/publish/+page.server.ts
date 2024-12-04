@@ -131,6 +131,7 @@ export const actions = {
 		}
 		// Translate only a paid book
 		if (bookRevision.has_paid_area && outputLangs.length > 0) {
+			// Paid area will withhold translation until someone buy the book
 			await translateBookFreeContents(bookRevision.id, bookNativeLang, outputLangs);
 		}
 

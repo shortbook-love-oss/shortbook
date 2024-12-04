@@ -78,14 +78,21 @@ export async function translateContentByDeepl(
 ) {
 	const source = deeplSourceLangIndex[sourceLang as DeeplSourceLangKey];
 	const target = deeplTargetLangIndex[targetLang as DeeplTargetLangKey];
-	if (!source || !target) {
-		return contents.map(() => '');
+	if (!source) {
+		throw new Error(`Unsupported source language (${sourceLang})`);
+	} else if (!target) {
+		throw new Error(`Unsupported target language (${targetLang})`);
 	}
 
 	const { filtered, excluded } = packArray(contents);
 	const results = await translator
-		.translateText(filtered, null, target, isHtml ? { tagHandling: 'html' } : {})
-		.then((results) => results.map((result) => result.text));
+		.translateText(filtered, source, target, isHtml ? { tagHandling: 'html' } : {})
+		.then((results) => results.map((result) => result.text))
+		.catch((e: Error) => e);
+	if (results instanceof Error) {
+		console.error(results);
+		throw new Error('Translation failed due to API error.');
+	}
 
 	return rewindArray(results, excluded);
 }
@@ -104,8 +111,10 @@ export async function translateContentByGoogle(
 	const target =
 		googleTargetLangIndex[targetLang as GoogleTargetLangKey] ??
 		deeplTargetLangIndex[targetLang as DeeplTargetLangKey];
-	if (!source || !target) {
-		return contents.map(() => '');
+	if (!source) {
+		throw new Error(`Unsupported source language (sourceLang=${sourceLang})`);
+	} else if (!target) {
+		throw new Error(`Unsupported target language (targetLang=${targetLang})`);
 	}
 
 	const { filtered, excluded } = packArray(contents);
@@ -113,10 +122,11 @@ export async function translateContentByGoogle(
 		parent: `projects/${env.GOOGLE_CLOUD_PROJECT_ID}/locations/global`,
 		contents: filtered,
 		mimeType: isHtml ? 'text/html' : 'text/plain',
+		sourceLanguageCode: source,
 		targetLanguageCode: target
 	});
 	if (response.translations == null) {
-		return contents.map(() => '');
+		throw new Error(`No response after translate (isHtml=${isHtml})`);
 	}
 	const results = response.translations?.map((result) => result.translatedText ?? '');
 

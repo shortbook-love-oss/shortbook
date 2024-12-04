@@ -64,7 +64,7 @@ export const load = async ({ url, locals }) => {
 	const pointList: PointListItem[] = userPointHistories.map((point) => {
 		let bookTitle = '';
 		const book = pointBooksMap[point.book_id];
-		const bookRevision = book.revisions.at(0);
+		const bookRevision = book?.revisions.at(0);
 		if (point.book_id && book && bookRevision) {
 			let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
 			if (!bookLang) {

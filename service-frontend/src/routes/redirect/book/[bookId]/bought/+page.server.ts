@@ -1,11 +1,14 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import {
 	getLanguageTagFromUrl,
 	paymentBookInfoParam,
 	paymentSessionIdParam,
 	setLanguageTagToPath
 } from '$lib/utilities/url';
+import { translateBookPaidContent } from '$lib-backend/functions/service/book/translate-to-other';
+import { dbBookContentUpdate } from '$lib-backend/model/book/content/update';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookBuyCreate, type DbBookBuyCreateRequest } from '$lib-backend/model/book-buy/create';
 import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
@@ -64,12 +67,14 @@ export const load = async ({ url }) => {
 			} = await dbBookGet({
 				bookId: bookPaymentInfo.bookId,
 				statuses: [1],
+				contentsLanguage: requestLang,
 				isIncludeDelete: true
 			});
 			if (!book?.user || !bookRevision || dbBookGetError) {
 				throw new Error(dbBookGetError?.message ?? '');
 			}
-			return { book, bookRevision };
+			const bookContent = bookRevision.contents.at(0);
+			return { book, bookRevision, bookContent };
 		})(),
 
 		(async () => {
@@ -92,7 +97,7 @@ export const load = async ({ url }) => {
 
 	const [
 		{ paymentSessionId, currency, amount, customerId, isCreateCustomer },
-		{ book, bookRevision },
+		{ book, bookRevision, bookContent },
 		{ bookBuy }
 	] = getResult;
 
@@ -130,7 +135,7 @@ export const load = async ({ url }) => {
 					currencyCode: currency
 				});
 				if (dbError) {
-					throw new Error(dbError.message);
+					throw dbError;
 				}
 			}
 		})(),
@@ -143,7 +148,7 @@ export const load = async ({ url }) => {
 					customerId: encryptAndFlat(customerId, env.ENCRYPT_PAYMENT_CUSTOMER_ID, env.ENCRYPT_SALT)
 				});
 				if (dbContractError) {
-					throw new Error(dbContractError.message);
+					throw dbContractError;
 				}
 			}
 		})(),
@@ -154,7 +159,38 @@ export const load = async ({ url }) => {
 				payment: paymentCheckoutRequest
 			});
 			if (dbBookBuyCreateError) {
-				throw new Error(dbBookBuyCreateError.message);
+				throw dbBookBuyCreateError;
+			}
+		})(),
+
+		(async () => {
+			if (
+				bookRevision.native_language === requestLang ||
+				!bookRevision.has_paid_area ||
+				!bookContent ||
+				bookContent.paid_area_html !== ''
+			) {
+				return undefined;
+			}
+			// When the first time someone bought in that language, the paid-area content is empty
+			// So translate from native-version to the language
+			const result = await translateBookPaidContent(
+				bookRevision.id,
+				bookRevision.native_language as AvailableLanguageTags,
+				requestLang
+			).catch((error: Error) => {
+				return error;
+			});
+			if (result instanceof Error) {
+				throw result;
+			}
+			const { dbError: dbContentUpdateError } = await dbBookContentUpdate({
+				contentId: bookContent.id,
+				paidArea: result,
+				isIncludeDelete: true
+			});
+			if (dbContentUpdateError) {
+				throw dbContentUpdateError;
 			}
 		})()
 	]).catch((error: Error) => {
