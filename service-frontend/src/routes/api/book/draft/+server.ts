@@ -46,7 +46,7 @@ export async function POST({ request, locals }) {
 		urlSlug,
 		buyPoint: 200,
 		targetLanguage: form.data.nativeLanguage,
-		isTranslateToAll: true,
+		isTranslateToAll: false,
 		translateLanguages: [],
 		title: form.data.title,
 		subtitle: form.data.subtitle,

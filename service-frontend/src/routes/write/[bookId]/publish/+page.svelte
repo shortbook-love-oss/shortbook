@@ -123,7 +123,7 @@
 							className="mb-12"
 						/>
 					{/if}
-					<section class="mb-12" class:hidden={!data.hasPaidArea}>
+					<section class="mb-10">
 						<h2 class="mb-2 text-lg font-semibold">Reach it to the world!</h2>
 						<TranslateLanguageSelect
 							allCheckerName="isTranslateToAll"
@@ -144,14 +144,6 @@
 							{/snippet}
 						</TranslateLanguageSelect>
 					</section>
-					<Select
-						bind:value={$form.targetLanguage as string}
-						name="targetLanguage"
-						list={data.langTags}
-						label="Native language"
-						errorMessages={$errors.targetLanguage}
-						className="mb-12 max-w-72 {data.hasPaidArea ? 'hidden' : ''}"
-					/>
 					<BookCoverEdit
 						bind:baseColorStart={$form.baseColorStart}
 						bind:baseColorEnd={$form.baseColorEnd}
