@@ -3,8 +3,8 @@
 	import IconArrowDownThin from '~icons/mdi/arrow-down-thin';
 	import IconCheck from '~icons/mdi/check-bold';
 	import IconTranslate from '~icons/mdi/translate';
-	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import { languageSelect, type AvailableLanguageTags } from '$lib/utilities/language';
+	import Dialog from '$lib/components/layouts/dialog.svelte';
 
 	type Props = {
 		sourceLanguage: Snippet;
@@ -43,9 +43,7 @@
 		{ label: 'Spread to the world', languageTag: 'en', className: 'left-0 top-0' },
 		{ label: 'نشرها للعالم', languageTag: 'ar', className: 'right-0 top-1' },
 		{ label: 'दुनिया भर में फैलाना', languageTag: 'hi', className: 'left-2 top-8' },
-		{ label: '向世界传播', languageTag: 'zh-cn', className: 'right-4 top-9' },
-		{ label: '世界に発信', languageTag: 'ja', className: 'left-0 top-16' },
-		{ label: 'Maailmale levitamine', languageTag: 'et', className: 'right-0 top-[4.25rem]' }
+		{ label: '世界に発信', languageTag: 'ja', className: 'right-4 top-9' }
 	];
 </script>
 
@@ -63,11 +61,11 @@
 	<div class="flex flex-col items-end gap-4">
 		{@render sourceLanguage()}
 	</div>
-	<div class="flex items-center sm:mt-8 sm:flex-col">
+	<div class="flex items-center sm:mt-7 sm:flex-col">
 		<IconTranslate width="24" height="24" class="max-sm:-me-5 max-sm:mb-3 sm:-mb-6 sm:me-5" />
 		<IconArrowDownThin width="72" height="72" class="sm:-rotate-90 sm:rtl:rotate-90" />
 	</div>
-	<div class="relative w-72 sm:-mt-8 sm:pt-[6.5rem]">
+	<div class="relative w-72 sm:-mt-7 sm:pt-[4.25rem]">
 		<label
 			class="peer relative flex items-center gap-3 rounded-xl border border-stone-700 px-4 py-2 has-[:checked]:border-primary-700 has-[:checked]:bg-primary-200"
 		>
