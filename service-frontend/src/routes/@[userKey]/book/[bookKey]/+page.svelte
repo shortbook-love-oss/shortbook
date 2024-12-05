@@ -6,7 +6,7 @@
 	import { toLocaleDate } from '$lib/utilities/date';
 	import { getLanguageItem } from '$lib/utilities/language';
 	import {
-		callbackParam,
+		redirectParam,
 		getLanguageTagFromUrl,
 		inquiryCategoryParam,
 		removeLanguageTagFromPath
@@ -29,7 +29,7 @@
 	const bookNativeLangItem = getLanguageItem(data.bookNativeLang);
 
 	const editUrl = $derived.by(() => {
-		const searchParams = new URLSearchParams({ [callbackParam]: $page.url.pathname });
+		const searchParams = new URLSearchParams({ [redirectParam]: $page.url.pathname });
 		return `/write/${data.bookDetail.id}?${searchParams.toString()}`;
 	});
 </script>

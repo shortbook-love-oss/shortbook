@@ -6,7 +6,7 @@
 	import { bookCreateUrlParam, type BookDraftUpdateResult } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
 	import {
-		callbackParam,
+		redirectParam,
 		getLanguageTagFromUrl,
 		removeLanguageTagFromPath,
 		setLanguageTagToPath
@@ -42,8 +42,8 @@
 	let lastUpdatedAt = $state(data.updatedAt);
 	let isAutoSaved = $state(false);
 
-	const callbackUrl = $derived(
-		removeLanguageTagFromPath($page.url.searchParams.get(callbackParam) ?? '')
+	const redirectUrl = $derived(
+		removeLanguageTagFromPath($page.url.searchParams.get(redirectParam) ?? '')
 	);
 
 	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
@@ -146,7 +146,7 @@
 
 <HeaderArea>
 	<a
-		href={callbackUrl || '/write'}
+		href={redirectUrl || '/write'}
 		class="block shrink-0 p-2.5 hover:bg-stone-200 focus:bg-stone-200"
 		title="Back to my articles list"
 	>

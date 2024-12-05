@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import * as m from '$i18n/output/messages';
-	import { callbackParam } from '$lib/utilities/url';
+	import { redirectParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 	import NavLink from '$lib/components/service/navigation/nav-link.svelte';
@@ -56,10 +56,10 @@
 				</li>
 			{:else}
 				<li>
-					<NavLink name={m.signin_label()} href="/signin?{callbackParam}={redirectUrl}" />
+					<NavLink name={m.signin_label()} href="/signin?{redirectParam}={redirectUrl}" />
 				</li>
 				<li>
-					<NavLink name={m.signup_label()} href="/signup?{callbackParam}={redirectUrl}" />
+					<NavLink name={m.signup_label()} href="/signup?{redirectParam}={redirectUrl}" />
 				</li>
 			{/if}
 		</ul>

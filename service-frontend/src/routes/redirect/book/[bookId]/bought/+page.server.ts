@@ -70,8 +70,7 @@ export const load = async ({ url }) => {
 			if (!book?.user || !bookRevision || dbBookGetError) {
 				throw new Error(dbBookGetError?.message ?? '');
 			}
-			const bookContent = bookRevision.contents.at(0);
-			return { book, bookRevision, bookContent };
+			return { book, bookRevision };
 		})(),
 
 		(async () => {
@@ -94,7 +93,7 @@ export const load = async ({ url }) => {
 
 	const [
 		{ paymentSessionId, currency, amount, customerId, isCreateCustomer },
-		{ book, bookRevision, bookContent },
+		{ book, bookRevision },
 		{ bookBuy }
 	] = getResult;
 

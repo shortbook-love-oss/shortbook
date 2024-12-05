@@ -7,7 +7,7 @@
 	import IconSignup from '~icons/mdi/register-outline';
 	import { page } from '$app/stores';
 	import * as m from '$i18n/output/messages';
-	import { callbackParam } from '$lib/utilities/url';
+	import { redirectParam } from '$lib/utilities/url';
 	import Dropdown from '$lib/components/layouts/dropdown.svelte';
 	import Signout from '$lib/components/service/auth/signout.svelte';
 	import NavLinkSp from '$lib/components/service/navigation/nav-link-sp.svelte';
@@ -39,12 +39,12 @@
 				</li>
 			{:else}
 				<li>
-					<NavLinkSp name={m.signin_label()} href="/signin?{callbackParam}={redirectPathname}">
+					<NavLinkSp name={m.signin_label()} href="/signin?{redirectParam}={redirectPathname}">
 						<IconSignin width="30" height="30" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name={m.signup_label()} href="/signup?{callbackParam}={redirectPathname}">
+					<NavLinkSp name={m.signup_label()} href="/signup?{redirectParam}={redirectPathname}">
 						<IconSignup width="30" height="30" />
 					</NavLinkSp>
 				</li>

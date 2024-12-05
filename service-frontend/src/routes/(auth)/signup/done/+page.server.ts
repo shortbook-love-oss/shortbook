@@ -1,5 +1,5 @@
 import { error, redirect } from '@sveltejs/kit';
-import { callbackParam, getSafetyUrl } from '$lib/utilities/url';
+import { redirectParam, getSafetyUrl } from '$lib/utilities/url';
 import { finalizeSign } from '$lib-backend/functions/service/auth/finalize-sign';
 
 export async function load({ cookies, url, locals, getClientAddress }) {
@@ -14,6 +14,6 @@ export async function load({ cookies, url, locals, getClientAddress }) {
 		return error(404, { message: finalizeError.message });
 	}
 
-	const callbackUrl = getSafetyUrl(url.searchParams.get(callbackParam) ?? url.origin, url.origin);
-	redirect(303, callbackUrl);
+	const redirectUrl = getSafetyUrl(url.searchParams.get(redirectParam) ?? url.origin, url.origin);
+	redirect(303, redirectUrl);
 }

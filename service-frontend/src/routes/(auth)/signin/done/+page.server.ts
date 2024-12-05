@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { finalizeSign } from '$lib-backend/functions/service/auth/finalize-sign';
-import { callbackParam, getSafetyUrl } from '$lib/utilities/url';
+import { redirectParam, getSafetyUrl } from '$lib/utilities/url';
 
 export async function load({ cookies, url, locals, getClientAddress }) {
 	if (locals.signInUser) {
@@ -14,8 +14,8 @@ export async function load({ cookies, url, locals, getClientAddress }) {
 		return error(404, { message: finalizeError.message });
 	}
 
-	const maybeCallbackUrl = url.searchParams.get(callbackParam) ?? '';
-	const callbackUrl = getSafetyUrl(maybeCallbackUrl, url.origin);
+	const maybeRedirectUrl = url.searchParams.get(redirectParam) ?? '';
+	const redirectUrl = getSafetyUrl(maybeRedirectUrl, url.origin);
 
-	redirect(303, callbackUrl);
+	redirect(303, redirectUrl);
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import * as m from '$i18n/output/messages';
-	import { callbackParam } from '$lib/utilities/url';
+	import { redirectParam } from '$lib/utilities/url';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 
 	type Props = {
@@ -22,7 +22,7 @@
 	{#snippet actions()}
 		<div class="flex justify-center">
 			<a
-				href="/signout?{callbackParam}={redirectUrl}"
+				href="/signout?{redirectParam}={redirectUrl}"
 				data-sveltekit-reload
 				class="rounded-lg px-3 py-2 text-lg text-red-800 hover:bg-stone-200 focus:bg-stone-200"
 				>{m.signout_label()}
