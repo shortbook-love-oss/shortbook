@@ -1,10 +1,17 @@
 <script lang="ts">
+	import IconArrowRight from '~icons/mdi/arrow-right';
 	import IconCheck from '~icons/mdi/check';
 	import IconWrite from '~icons/mdi/pencil-plus';
 	import { page } from '$app/stores';
 	import { toLocaleDate } from '$lib/utilities/date';
 	import { getLanguageItem } from '$lib/utilities/language';
-	import { callbackParam, getLanguageTagFromUrl, inquiryCategoryParam } from '$lib/utilities/url';
+	import {
+		callbackParam,
+		getLanguageTagFromUrl,
+		inquiryCategoryParam,
+		removeLanguageTagFromPath
+	} from '$lib/utilities/url';
+	import MessageInfo from '$lib/components/modules/information/message-info.svelte';
 	import MessageWarning from '$lib/components/modules/information/message-warning.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
@@ -18,7 +25,8 @@
 	const requestLang = getLanguageTagFromUrl($page.url);
 	const updatedAt = toLocaleDate(data.bookDetail.updatedAt, requestLang);
 	const requestLangItem = getLanguageItem(requestLang);
-	const bookFallbackLangItem = getLanguageItem(data.bookFallbackLangage);
+	const userNativeLangItem = getLanguageItem(data.userNativeLang);
+	const bookNativeLangItem = getLanguageItem(data.bookNativeLang);
 
 	const editUrl = $derived.by(() => {
 		const searchParams = new URLSearchParams({ [callbackParam]: $page.url.pathname });
@@ -97,13 +105,25 @@
 				{/if}
 			</MessageWarning>
 		{/if}
-		{#if data.bookFallbackLangage !== '' && requestLangItem && bookFallbackLangItem}
+		{#if data.isFallbackBookLang && requestLangItem && bookNativeLangItem}
 			<MessageWarning className="mb-6">
 				<p>
-					This book is written in {bookFallbackLangItem.english} and has not been translated into
+					This book is written in {bookNativeLangItem.english} and has not been translated into
 					{requestLangItem.english}.
 				</p>
 			</MessageWarning>
+		{:else if userNativeLangItem != undefined && userNativeLangItem.value !== requestLang}
+			<MessageInfo className="mb-6">
+				<p class="mb-1">Want to read it in {userNativeLangItem.english}?</p>
+				<a
+					href={removeLanguageTagFromPath($page.url.pathname + $page.url.search)}
+					hreflang={userNativeLangItem.value}
+					class="inline-flex items-center gap-1 rounded-md border border-stone-300 bg-white px-3 py-2 hover:bg-stone-100 focus:bg-stone-100"
+				>
+					<span>Switch language</span>
+					<IconArrowRight width="24" height="24" />
+				</a>
+			</MessageInfo>
 		{/if}
 		<hr class="my-8 border-stone-300" />
 		{#if data.bookDetail.freeArea}

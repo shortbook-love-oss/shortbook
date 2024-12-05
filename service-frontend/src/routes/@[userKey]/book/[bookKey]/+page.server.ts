@@ -42,7 +42,8 @@ export const load = async ({ url, locals, params }) => {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 
-	let bookFallbackLangage: AvailableLanguageTags | '' = '';
+	const bookNativeLang = bookRevision.native_language as AvailableLanguageTags;
+	let isFallbackBookLang = false;
 	let bookLang = bookRevision.contents.at(0);
 	if (!bookLang) {
 		const { bookRevision: nativeBookRevision, dbError: dbBookGetError } = await dbBookGet({
@@ -54,13 +55,14 @@ export const load = async ({ url, locals, params }) => {
 		if (!nativeBookRevision || dbBookGetError) {
 			return error(500, { message: dbBookGetError?.message ?? '' });
 		}
-		bookFallbackLangage = bookRevision.native_language as AvailableLanguageTags;
+		isFallbackBookLang = true;
 		bookLang = nativeBookRevision.contents.at(0);
 	}
 	if (!bookLang) {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
 	}
 
+	const userNativeLang = signInUser?.nativeLanguage ?? ('' as const);
 	let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
 	if (!userLang && book.user.languages.length) {
 		userLang = book.user.languages.at(0);
@@ -211,10 +213,10 @@ export const load = async ({ url, locals, params }) => {
 		isBookDeleted: book.deleted_at != null
 	};
 
-	if (bookRevision.has_free_area) {
+	const hasPaidArea = bookRevision.has_paid_area;
+	if (hasPaidArea) {
 		bookDetail.freeArea = bookLang.free_area_html;
 	}
-	const hasPaidArea = bookRevision.has_paid_area;
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		if (hasPaidArea) {
@@ -229,13 +231,15 @@ export const load = async ({ url, locals, params }) => {
 	return {
 		bookDetail,
 		hasPaidArea,
+		bookNativeLang,
+		isFallbackBookLang,
+		userNativeLang,
 		userLang,
 		isOwn,
 		isBoughtBook,
 		hasEnoughPoint,
 		userPoint,
 		currencyList,
-		primaryCurrency,
-		bookFallbackLangage
+		primaryCurrency
 	};
 };

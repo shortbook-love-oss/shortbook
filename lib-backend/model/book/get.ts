@@ -87,6 +87,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 					select: {
 						key_handle: true,
 						pen_name: true,
+						native_language: true,
 						image_src: true,
 						languages: {
 							where: { ...whereCondDelete },
