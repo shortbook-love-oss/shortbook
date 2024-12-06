@@ -2,13 +2,21 @@ import { Prisma } from '@prisma/client';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import prisma from '$lib-backend/database/connect';
 
-export interface DbBookListRequest {
-	bookIds?: string[];
-	userId?: string;
+type IdExclusiveProps =
+	| {
+			bookIds?: string[];
+			userId?: never;
+	  }
+	| {
+			bookIds?: never;
+			userId?: string;
+	  };
+
+export type DbBookListRequest = IdExclusiveProps & {
 	statuses?: number[]; // 0: Draft 1: Published
 	contentsLanguage?: AvailableLanguageTags;
 	isIncludeDelete?: boolean;
-}
+};
 
 export async function dbBookList(req: DbBookListRequest) {
 	let dbError: Error | undefined;
@@ -55,9 +63,7 @@ export async function dbBookList(req: DbBookListRequest) {
 						...revisionWhereByCond,
 						...whereCondDelete
 					},
-					orderBy: {
-						number: 'desc'
-					},
+					orderBy: { number: 'desc' },
 					take: getRevisionsCount,
 					// Omit + include is work, but these props doesn't omit by type definition
 					omit: {

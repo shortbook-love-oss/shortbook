@@ -1,5 +1,6 @@
 import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SelectItemSingle } from '$lib/utilities/select';
 
 export interface BookCover {
@@ -35,6 +36,7 @@ export interface BookItem extends BookItemBase {
 
 export interface MyBookItem extends BookItemBase {
 	hasPublishedRevision: boolean;
+	translateLanguages: AvailableLanguageTags[];
 }
 
 export interface BookDetail extends BookItem {
