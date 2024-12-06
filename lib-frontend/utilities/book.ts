@@ -19,19 +19,22 @@ export interface BookCover {
 	writerColor: string;
 }
 
-export interface MyBookItem extends BookCover {
+interface BookItemBase extends BookCover {
 	id: string;
 	userId: string;
 	status: number;
 	updatedAt: Date;
-	hasPublishedRevision: boolean;
 }
 
-export interface BookItem extends Omit<MyBookItem, 'hasPublishedRevision'> {
+export interface BookItem extends BookItemBase {
 	bookUrlSlug: string;
 	userKeyHandle: string;
 	penName: string;
 	userImage: string;
+}
+
+export interface MyBookItem extends BookItemBase {
+	hasPublishedRevision: boolean;
 }
 
 export interface BookDetail extends BookItem {
