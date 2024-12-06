@@ -24,7 +24,7 @@ export const categories: MypageItem[] = [
 		childs: [{ name: 'Album', href: 'album' }]
 	},
 	{
-		name: 'Sign in & security',
+		name: 'Security',
 		href: 'security',
 		childs: [
 			{ name: 'Email', href: 'email' },

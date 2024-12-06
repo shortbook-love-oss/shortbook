@@ -26,9 +26,9 @@
 			<p class="pe-4 text-xl">Mypage</p>
 		</div>
 	{/snippet}
-	<div class="justify-center gap-12 sm:flex">
-		<div class="shrink-0 max-sm:hidden">
-			<a href="/" class="mb-6 flex items-center gap-1 gap-3">
+	<div class="justify-center gap-16 sm:flex">
+		<div class="max-w-40 shrink-0 max-sm:hidden">
+			<a href="/" class="mb-6 flex items-center gap-2">
 				<IconArrowLeft width="24" height="24" class="-mx-1 shrink-0" />
 				<p class="text-lg font-semibold">Back to home</p>
 			</a>
