@@ -213,10 +213,10 @@ export const load = async ({ url, locals, params }) => {
 		isBookDeleted: book.deleted_at != null
 	};
 
-	const hasPaidArea = bookRevision.has_paid_area;
-	if (hasPaidArea) {
+	if (bookRevision.has_free_area) {
 		bookDetail.freeArea = bookLang.free_area_html;
 	}
+	const hasPaidArea = bookRevision.has_paid_area;
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		if (hasPaidArea) {
