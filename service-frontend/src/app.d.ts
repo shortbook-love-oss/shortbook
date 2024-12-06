@@ -15,6 +15,7 @@ declare global {
 				imageSrc: string;
 				nativeLanguage: AvailableLanguageTags;
 			} | null;
+			isMypage: boolean;
 		}
 		// interface PageData {}
 		// interface PageState {}

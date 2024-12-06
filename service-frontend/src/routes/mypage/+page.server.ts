@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
 
-export const load = function (param) {
-	redirect(302, param.url.pathname + '/personnel/profile');
+export const load = function ({ url }) {
+	redirect(302, `${url.pathname}/personnel/profile${url.search}`);
 };

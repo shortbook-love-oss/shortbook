@@ -11,8 +11,15 @@
 	};
 	let { className = '' }: Props = $props();
 
-	// After sign-in/sign-up redirect to
-	const redirectUrl = $derived(encodeURIComponent($page.url.href));
+	// After redirect to... (also possible redirect to another domain)
+	const redirectUrl = $derived.by(() => {
+		const redirectTo = $page.url.searchParams.get(redirectParam);
+		if ($page.data.isMypage && redirectTo) {
+			return encodeURIComponent(redirectTo);
+		} else {
+			return encodeURIComponent($page.url.href);
+		}
+	});
 </script>
 
 <header class="fixed start-0 top-0 z-10 flex items-center {className}">
@@ -36,7 +43,7 @@
 					<NavLink name={m.header_write()} href="/write" />
 				</li>
 				<li>
-					<NavLink name={m.header_mypage()} href="/mypage" />
+					<NavLink name={m.header_mypage()} href="/mypage?{redirectParam}={redirectUrl}" />
 				</li>
 				<li class="relative">
 					<Dropdown

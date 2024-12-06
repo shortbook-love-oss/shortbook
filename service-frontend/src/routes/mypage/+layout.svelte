@@ -1,12 +1,26 @@
 <script lang="ts">
 	import IconArrowLeft from '~icons/mdi/arrow-left';
+	import { page } from '$app/stores';
+	import { getUrlObject, redirectParam, removeLanguageTagFromPath } from '$lib/utilities/url';
 	import Overlay from '$lib/components/layouts/overlay.svelte';
 	import Nav from '$lib/components/service/mypage/nav.svelte';
+	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import Header from '$lib/components/service/header.svelte';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
 
 	let { children } = $props();
+
+	const redirectUrl = $derived.by(() => {
+		const redirectTo = getUrlObject($page.url.searchParams.get(redirectParam) ?? '');
+		if (!redirectTo) {
+			return '/';
+		} else if ($page.url.origin === redirectTo.origin) {
+			return removeLanguageTagFromPath(redirectTo.pathname + redirectTo.search);
+		} else {
+			return redirectTo.href;
+		}
+	});
 </script>
 
 <svelte:head>
@@ -27,11 +41,10 @@
 		</div>
 	{/snippet}
 	<div class="justify-center gap-16 sm:flex">
-		<div class="max-w-40 shrink-0 max-sm:hidden">
-			<a href="/" class="mb-6 flex items-center gap-2">
+		<div class="w-40 shrink-0 max-sm:hidden">
+			<NavLinkSmall name="Back" href={redirectUrl} className="-mx-3 mb-4">
 				<IconArrowLeft width="24" height="24" class="-mx-1 shrink-0" />
-				<p class="text-lg font-semibold">Back to home</p>
-			</a>
+			</NavLinkSmall>
 			<nav class="-mx-4 px-4">
 				<Nav />
 			</nav>

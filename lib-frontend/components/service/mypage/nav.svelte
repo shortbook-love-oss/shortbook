@@ -30,7 +30,7 @@
 				<li class="-mx-3" aria-current={isMatchPath(category.href, item.href) ? 'page' : undefined}>
 					<NavLinkSmall
 						name={item.name}
-						href="/mypage/{category.href}/{item.href}"
+						href="/mypage/{category.href}/{item.href}{$page.url.search}"
 						className={isMatchPath(category.href, item.href) ? 'bg-primary-200' : ''}
 					/>
 				</li>
