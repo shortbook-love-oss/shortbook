@@ -8,7 +8,7 @@ export interface LanguageSelect<T> extends SelectItemSingle<T> {
 }
 
 export const languageSelect: LanguageSelect<AvailableLanguageTags>[] = [
-	{ value: 'en', label: 'English', english: 'English' },
+	{ value: 'en-US', label: 'English', english: 'English' },
 	{ value: 'ar', label: 'اَلْعَرَبِيَّةُ', english: 'Arabic' },
 	{ value: 'nb', label: 'Norsk bokmål', english: 'Norwegian (bokmål)' },
 	{ value: 'sv', label: 'Svenska', english: 'Swedish' },
@@ -24,10 +24,10 @@ export const languageSelect: LanguageSelect<AvailableLanguageTags>[] = [
 	{ value: 'hu', label: 'Magyar nyelv', english: 'Hungarian' },
 	{ value: 'uk', label: 'Українська мова', english: 'Ukrainian' },
 	{ value: 'ru', label: 'Русский язык', english: 'Russian' },
-	{ value: 'pt-br', label: 'Português (Brasil)', english: 'Portuguese (Brazil)' },
+	{ value: 'pt-BR', label: 'Português (Brasil)', english: 'Portuguese (Brazil)' },
 	{ value: 'hi', label: 'हिन्दी', english: 'Hindi' },
-	{ value: 'zh-cn', label: '简体字', english: 'Chinese (Beijing)' },
-	{ value: 'zh-tw', label: '繁體字', english: 'Chinese (Taiwan)' },
+	{ value: 'zh-CN', label: '简体字', english: 'Chinese (Beijing)' },
+	{ value: 'zh-TW', label: '繁體字', english: 'Chinese (Taiwan)' },
 	{ value: 'ja', label: '日本語', english: 'Japanese' },
 	{ value: 'ko', label: '한국어', english: 'Korean' },
 	{ value: 'id', label: 'Bahasa Indonesia', english: 'Indonesian' }

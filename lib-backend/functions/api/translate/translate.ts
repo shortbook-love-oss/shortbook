@@ -1,15 +1,11 @@
 import { v3 as gcTranslate } from '@google-cloud/translate';
-import {
-	Translator as DeeplTranslator,
-	type SourceLanguageCode,
-	type TargetLanguageCode
-} from 'deepl-node';
+import { Translator as DeeplTranslator, type SourceLanguageCode } from 'deepl-node';
 import { env } from '$env/dynamic/private';
 import { packArray, rewindArray } from '$lib/utilities/array';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 const deeplSourceLangIndex = {
-	en: 'en',
+	'en-US': 'en',
 	ar: 'ar',
 	nb: 'nb',
 	sv: 'sv',
@@ -25,63 +21,30 @@ const deeplSourceLangIndex = {
 	hu: 'hu',
 	uk: 'uk',
 	ru: 'ru',
-	'pt-br': 'pt',
+	'pt-BR': 'pt',
 	ja: 'ja',
 	ko: 'ko',
 	id: 'id'
 } as const satisfies Partial<Record<AvailableLanguageTags, SourceLanguageCode>>;
-export type DeeplSourceLangKey = keyof typeof deeplSourceLangIndex;
-export const deeplSourceLangKeys = Object.keys(deeplSourceLangIndex) as DeeplSourceLangKey[];
-const deeplTargetLangIndex = {
-	en: 'en-US',
-	ar: 'ar',
-	nb: 'nb',
-	sv: 'sv',
-	fi: 'fi',
-	et: 'et',
-	es: 'es',
-	fr: 'fr',
-	it: 'it',
-	nl: 'nl',
-	de: 'de',
-	da: 'da',
-	cs: 'cs',
-	hu: 'hu',
-	uk: 'uk',
-	ru: 'ru',
-	'pt-br': 'pt-BR',
-	ja: 'ja',
-	ko: 'ko',
-	id: 'id'
-} as const satisfies Partial<Record<AvailableLanguageTags, TargetLanguageCode>>;
-export type DeeplTargetLangKey = keyof typeof deeplTargetLangIndex;
-export const deeplTargetLangKeys = Object.keys(deeplTargetLangIndex) as DeeplTargetLangKey[];
+export type DeeplLangKey = keyof typeof deeplSourceLangIndex;
+export const deeplLangKeys = Object.keys(deeplSourceLangIndex) as DeeplLangKey[];
 
-const googleSourceLangIndex = {
-	hi: 'hi',
-	'zh-cn': 'zh-CN',
-	'zh-tw': 'zh-TW'
-} as const satisfies Partial<Record<AvailableLanguageTags, string>>;
-export type GoogleSourceLangKey = keyof typeof googleSourceLangIndex;
-export const googleSourceLangKeys = Object.keys(googleSourceLangIndex) as GoogleSourceLangKey[];
-const googleTargetLangIndex = googleSourceLangIndex;
-export type GoogleTargetLangKey = GoogleSourceLangKey;
-export const googleTargetLangKeys = googleSourceLangKeys;
+const googleLangIndex = ['hi', 'zh-CN', 'zh-TW'] as const satisfies AvailableLanguageTags[];
+export type GoogleLangKey = keyof typeof googleLangIndex;
+export const googleLangKeys = Object.keys(googleLangIndex) as GoogleLangKey[];
 
 // Main engine to translate
 export async function translateContentByDeepl(
 	contents: string[],
 	translator: DeeplTranslator,
-	sourceLang: AvailableLanguageTags,
-	targetLang: AvailableLanguageTags,
+	sourceLang: DeeplLangKey,
+	targetLang: DeeplLangKey,
 	isHtml: boolean
 ) {
-	const source = deeplSourceLangIndex[sourceLang as DeeplSourceLangKey];
-	const target = deeplTargetLangIndex[targetLang as DeeplTargetLangKey];
+	const source = deeplSourceLangIndex[sourceLang as DeeplLangKey];
+	const target = targetLang as DeeplLangKey;
 	if (!source) {
 		throw new Error(`Unsupported source language (${sourceLang})`);
-	} else if (!target) {
-		throw new Error(`Unsupported target language (${targetLang})`);
 	}
 
 	const { filtered, excluded } = packArray(contents);
@@ -101,22 +64,10 @@ export async function translateContentByDeepl(
 export async function translateContentByGoogle(
 	contents: string[],
 	translator: gcTranslate.TranslationServiceClient,
-	sourceLang: AvailableLanguageTags,
-	targetLang: AvailableLanguageTags,
+	source: AvailableLanguageTags,
+	target: AvailableLanguageTags,
 	isHtml: boolean
 ) {
-	const source =
-		googleSourceLangIndex[sourceLang as GoogleSourceLangKey] ??
-		deeplSourceLangIndex[sourceLang as DeeplSourceLangKey];
-	const target =
-		googleTargetLangIndex[targetLang as GoogleTargetLangKey] ??
-		deeplTargetLangIndex[targetLang as DeeplTargetLangKey];
-	if (!source) {
-		throw new Error(`Unsupported source language (sourceLang=${sourceLang})`);
-	} else if (!target) {
-		throw new Error(`Unsupported target language (targetLang=${targetLang})`);
-	}
-
 	const { filtered, excluded } = packArray(contents);
 	const [response] = await translator.translateText({
 		parent: `projects/${env.GOOGLE_CLOUD_PROJECT_ID}/locations/global`,

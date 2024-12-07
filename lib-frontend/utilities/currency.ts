@@ -65,7 +65,7 @@ export function formatPrice(
 export function guessCurrencyByLang(langTag: AvailableLanguageTags) {
 	let suggestCurrency: CurrencySupportCodes = defaultCurrencyCode;
 	switch (langTag) {
-		case 'en':
+		case 'en-US':
 			suggestCurrency = 'usd';
 			break;
 		case 'ar':
@@ -101,16 +101,16 @@ export function guessCurrencyByLang(langTag: AvailableLanguageTags) {
 		case 'ru':
 			suggestCurrency = 'rub';
 			break;
-		case 'pt-br':
+		case 'pt-BR':
 			suggestCurrency = 'brl';
 			break;
 		case 'hi':
 			suggestCurrency = 'inr';
 			break;
-		case 'zh-cn':
+		case 'zh-CN':
 			suggestCurrency = 'cny';
 			break;
-		case 'zh-tw':
+		case 'zh-TW':
 			suggestCurrency = 'twd';
 			break;
 		case 'ja':

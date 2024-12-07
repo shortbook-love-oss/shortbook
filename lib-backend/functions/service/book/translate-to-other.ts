@@ -3,16 +3,12 @@ import { Translator as deeplTranslator } from 'deepl-node';
 import { env } from '$env/dynamic/private';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import {
-	deeplSourceLangKeys,
-	deeplTargetLangKeys,
-	googleSourceLangKeys,
-	googleTargetLangKeys,
+	deeplLangKeys,
+	googleLangKeys,
 	translateContentByDeepl,
 	translateContentByGoogle,
-	type DeeplSourceLangKey,
-	type DeeplTargetLangKey,
-	type GoogleSourceLangKey,
-	type GoogleTargetLangKey
+	type DeeplLangKey,
+	type GoogleLangKey
 } from '$lib-backend/functions/api/translate/translate';
 import {
 	dbBookContentCreate,
@@ -71,8 +67,8 @@ export async function translateBookContents(
 			let langResults;
 			// If translate into/from language that DeepL doesn't support, use Google Translate instead
 			if (
-				googleSourceLangKeys.includes(sourceLang as GoogleSourceLangKey) ||
-				googleTargetLangKeys.includes(targetLang as GoogleTargetLangKey)
+				googleLangKeys.includes(sourceLang as GoogleLangKey) ||
+				googleLangKeys.includes(targetLang as GoogleLangKey)
 			) {
 				langResults = await Promise.all([
 					translateContentByGoogle(
@@ -88,18 +84,24 @@ export async function translateBookContents(
 					return undefined;
 				});
 			} else if (
-				deeplSourceLangKeys.includes(sourceLang as DeeplSourceLangKey) &&
-				deeplTargetLangKeys.includes(targetLang as DeeplTargetLangKey)
+				deeplLangKeys.includes(sourceLang as DeeplLangKey) &&
+				deeplLangKeys.includes(targetLang as DeeplLangKey)
 			) {
 				langResults = await Promise.all([
 					translateContentByDeepl(
 						textTranslateContents,
 						dTranslator,
-						sourceLang,
-						targetLang,
+						sourceLang as DeeplLangKey,
+						targetLang as DeeplLangKey,
 						false
 					),
-					translateContentByDeepl(htmlTranslateContents, dTranslator, sourceLang, targetLang, true)
+					translateContentByDeepl(
+						htmlTranslateContents,
+						dTranslator,
+						sourceLang as DeeplLangKey,
+						targetLang as DeeplLangKey,
+						true
+					)
 				]).catch((e: Error) => {
 					console.error(e);
 					return undefined;

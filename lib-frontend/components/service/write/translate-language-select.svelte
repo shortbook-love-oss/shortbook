@@ -40,7 +40,7 @@
 	);
 
 	const languageDecorates: LanguageDecorate[] = [
-		{ label: 'Spread to the world', languageTag: 'en', className: 'left-0 top-0' },
+		{ label: 'Spread to the world', languageTag: 'en-US', className: 'left-0 top-0' },
 		{ label: 'نشرها للعالم', languageTag: 'ar', className: 'right-0 top-1' },
 		{ label: 'दुनिया भर में फैलाना', languageTag: 'hi', className: 'left-2 top-8' },
 		{ label: '世界に発信', languageTag: 'ja', className: 'right-4 top-9' }
