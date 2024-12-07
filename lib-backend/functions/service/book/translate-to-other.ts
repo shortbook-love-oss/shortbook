@@ -55,7 +55,7 @@ export async function translateBookContents(
 
 	const { dTranslator, gTranslator } = initTranslator();
 
-	const results: Partial<Record<AvailableLanguageTags, TranslateContentResult>> = {};
+	const results = new Map<AvailableLanguageTags, TranslateContentResult>();
 	await Promise.all(
 		targetLangs.map(async (targetLang) => {
 			const textTranslateContents = [bookContent.title, bookContent.subtitle];
@@ -117,13 +117,13 @@ export async function translateBookContents(
 				);
 			}
 
-			results[targetLang] = {
+			results.set(targetLang, {
 				title: langResults[0][0],
 				subtitle: langResults[0][1],
 				freeArea: langResults[1][0],
 				paidArea: langResults[1][1],
 				salesArea: langResults[1][2]
-			};
+			});
 			return true;
 		})
 	).catch((e: Error) => {
