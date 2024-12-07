@@ -31,7 +31,7 @@ export const load = async ({ locals }) => {
 			const editForm = await superValidate(zod(schemaEdit), { id: getRandom(15) });
 			editForm.data.name = image.name;
 			editForm.data.alt = image.alt;
-			editForm.data.languageInImage = image.language_in_image as AvailableLanguageTags | '';
+			editForm.data.inImageLanguage = image.in_image_language_tag as AvailableLanguageTags | '';
 			editForm.data.place = image.place;
 			editForm.data.copyrightOwner = image.license?.copyright_owner ?? '';
 			editForm.data.targetInImage = image.license?.target_in_image ?? '';
@@ -46,7 +46,7 @@ export const load = async ({ locals }) => {
 				userId: signInUser.id,
 				name: image.name,
 				alt: image.alt,
-				languageInImage: image.language_in_image as AvailableLanguageTags | '',
+				imageLanguage: image.in_image_language_tag as AvailableLanguageTags | '',
 				savedFileName: image.property?.saved_file_name ?? '',
 				byteLength: image.property?.byte_length ?? 0,
 				width: image.property?.width ?? 0,

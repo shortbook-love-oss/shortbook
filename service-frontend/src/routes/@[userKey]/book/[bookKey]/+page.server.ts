@@ -42,14 +42,14 @@ export const load = async ({ url, locals, params }) => {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
 
-	const bookNativeLang = bookRevision.native_language as AvailableLanguageTags;
+	const bookNativeLang = bookRevision.native_language_tag as AvailableLanguageTags;
 	let isFallbackBookLang = false;
 	let bookLang = bookRevision.contents.at(0);
 	if (!bookLang) {
 		const { bookRevision: nativeBookRevision, dbError: dbBookGetError } = await dbBookGet({
 			bookId: book.id,
 			statuses: [1],
-			contentsLanguage: bookRevision.native_language as AvailableLanguageTags,
+			contentsLanguage: bookRevision.native_language_tag as AvailableLanguageTags,
 			isIncludeDelete: true
 		});
 		if (!nativeBookRevision || dbBookGetError) {
@@ -63,7 +63,7 @@ export const load = async ({ url, locals, params }) => {
 	}
 
 	const userNativeLang = signInUser?.nativeLanguage ?? ('' as const);
-	let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
+	let userLang = book.user.languages.find((lang) => lang.language_tag === requestLang);
 	if (!userLang && book.user.languages.length) {
 		userLang = book.user.languages.at(0);
 	}

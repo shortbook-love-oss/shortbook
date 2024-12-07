@@ -66,7 +66,7 @@ export const load = async ({ url, locals }) => {
 		const book = pointBooksMap[point.book_id];
 		const bookRevision = book?.revisions.at(0);
 		if (point.book_id && book && bookRevision) {
-			let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+			let bookLang = bookRevision.contents.find((lang) => lang.language_tag === requestLang);
 			if (!bookLang) {
 				bookLang = bookRevision.contents.at(0);
 			}

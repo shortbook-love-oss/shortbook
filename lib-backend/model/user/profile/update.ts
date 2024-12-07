@@ -22,7 +22,7 @@ export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 				data: {
 					key_handle: req.keyHandle,
 					pen_name: req.penName,
-					native_language: req.nativeLanguage
+					native_language_tag: req.nativeLanguage
 				}
 			});
 
@@ -35,7 +35,7 @@ export async function dbUserProfileUpdate(req: DbUserProfileUpdateRequest) {
 				data: [
 					{
 						user_id: req.userId,
-						target_language: req.nativeLanguage,
+						language_tag: req.nativeLanguage,
 						headline: req.headline,
 						self_introduction: req.selfIntroduction
 					}

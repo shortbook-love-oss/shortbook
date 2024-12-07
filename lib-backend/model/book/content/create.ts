@@ -20,7 +20,7 @@ export async function dbBookContentCreate(req: DbBookContentCreateRequest) {
 		.createMany({
 			data: req.contents.map((content) => ({
 				revision_id: req.revisionId,
-				target_language: content.targetLanguage,
+				language_tag: content.targetLanguage,
 				title: content.title,
 				subtitle: content.subtitle,
 				free_area_html: content.freeArea,

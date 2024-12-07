@@ -46,7 +46,7 @@ export const load = async ({ url, locals }) => {
 			updatedAt: bookRevision.updated_at,
 			hasPublishedRevision: book.revisions.some((rev) => rev.status === 1),
 			translateLanguages: bookRevision.contents.map(
-				(lang) => lang.target_language as AvailableLanguageTags
+				(lang) => lang.language_tag as AvailableLanguageTags
 			)
 		});
 	}

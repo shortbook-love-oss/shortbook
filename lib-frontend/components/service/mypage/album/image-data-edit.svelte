@@ -127,11 +127,11 @@
 				className="mb-8"
 			/>
 			<Select
-				bind:value={$form.languageInImage as string}
-				name="languageInImage"
+				bind:value={$form.inImageLanguage as string}
+				name="inImageLanguage"
 				list={languageAndNotSelect}
 				label="Language used in the image"
-				errorMessages={$errors.languageInImage}
+				errorMessages={$errors.inImageLanguage}
 				className="mb-8 max-w-72"
 			/>
 			<TextField

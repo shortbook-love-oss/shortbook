@@ -6,7 +6,7 @@ export type BookOverviewCreateProp = {
 	status: number; // 0: Draft 1: Public
 	urlSlug: string;
 	buyPoint: number;
-	targetLanguage: string;
+	nativeLanguage: AvailableLanguageTags;
 	isTranslateToAll: boolean;
 	translateLanguages: AvailableLanguageTags[];
 };
@@ -55,7 +55,7 @@ export async function dbBookCreate(
 							status: req.status,
 							url_slug: req.urlSlug,
 							buy_point: req.buyPoint,
-							native_language: req.targetLanguage,
+							native_language_tag: req.nativeLanguage,
 							is_translate_to_all: req.isTranslateToAll,
 							title: req.title,
 							subtitle: req.subtitle,
@@ -68,13 +68,13 @@ export async function dbBookCreate(
 							translate_languages: {
 								createMany: {
 									data: req.translateLanguages.map((langTag) => ({
-										target_language: langTag
+										language_tag: langTag
 									}))
 								}
 							},
 							contents: {
 								create: {
-									target_language: req.targetLanguage,
+									language_tag: req.nativeLanguage,
 									title: req.title,
 									subtitle: req.subtitle,
 									free_area_html: req.freeAreaHtml,

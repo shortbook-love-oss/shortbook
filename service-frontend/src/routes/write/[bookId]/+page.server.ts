@@ -59,7 +59,7 @@ export const load = async ({ url, locals, params }) => {
 
 		bookId = book.id;
 		bookStatus = bookRevision.status;
-		nativeLanguage = bookRevision.native_language as AvailableLanguageTags;
+		nativeLanguage = bookRevision.native_language_tag as AvailableLanguageTags;
 		updatedAt = bookRevision.updated_at;
 		initTitle = bookRevision.title;
 		initUrlSlug = bookRevision.url_slug;

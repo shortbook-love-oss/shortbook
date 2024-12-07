@@ -41,7 +41,7 @@ export async function GET({ url, locals }) {
 			userId: albumImage.user_id,
 			name: albumImage.name,
 			alt: albumImage.alt,
-			languageInImage: albumImage.language_in_image as AvailableLanguageTags | '',
+			imageLanguage: albumImage.in_image_language_tag as AvailableLanguageTags | '',
 			savedFileName: albumImage.property?.saved_file_name ?? '',
 			byteLength: albumImage.property?.byte_length ?? 0,
 			width: albumImage.property?.width ?? 0,

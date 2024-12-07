@@ -25,7 +25,7 @@ export const load = async ({ url, params }) => {
 		return error(500, { message: bookDbError?.message ?? '' });
 	}
 
-	let userLang = user.languages.find((lang) => lang.target_language === requestLang);
+	let userLang = user.languages.find((lang) => lang.language_tag === requestLang);
 	if (!userLang && user.languages.length) {
 		userLang = user.languages.at(0);
 	}

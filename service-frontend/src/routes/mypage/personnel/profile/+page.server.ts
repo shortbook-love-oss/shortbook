@@ -22,7 +22,7 @@ export const load = async ({ locals }) => {
 	const userLangs = user.languages.at(0);
 
 	form.data.keyHandle = user.key_handle;
-	form.data.nativeLanguage = user.native_language as AvailableLanguageTags;
+	form.data.nativeLanguage = user.native_language_tag as AvailableLanguageTags;
 	form.data.penName = user.pen_name;
 	form.data.headline = userLangs?.headline ?? '';
 	form.data.selfIntroduction = userLangs?.self_introduction ?? '';

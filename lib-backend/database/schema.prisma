@@ -18,7 +18,7 @@ model users {
   pen_name                String              @db.VarChar(210) // Length 1 - 50
   email                   String              @db.VarChar(510) // Encrypted
   email_hash              String              @unique @db.VarChar(127)
-  native_language         String              @db.VarChar(5)
+  native_language_tag     String              @db.VarChar(5)
   image_src               String              @db.VarChar(510)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
@@ -54,14 +54,14 @@ model user_languages {
 
   id                      String              @id @db.VarChar(36) @default(uuid(7))
   user_id                 String              @db.VarChar(36)
-  target_language         String              @db.VarChar(5)
+  language_tag            String              @db.VarChar(5)
   headline                String              @db.VarChar(210) // Length 1 - 50
   self_introduction       String              @db.MediumText
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
-  @@unique([user_id, target_language])
+  @@unique([user_id, language_tag])
 }
 
 model user_points {
@@ -145,7 +145,7 @@ model user_images {
   name                    String              @db.VarChar(1400) // Length 0 - 250
   alt                     String              @db.VarChar(1000) // Length 0 - 150
   image_created_at        DateTime?           @db.Date() // Filmed date or drew date, not published date
-  language_in_image       String              @db.VarChar(5)
+  in_image_language_tag   String              @db.VarChar(5)
   place                   String              @db.VarChar(255)
   is_sensitive            Int                 @db.SmallInt // 0: No 1: Yes
   is_ai                   Int                 @db.SmallInt // 0: No 1: Yes (edited) 2: Yes (generated)
@@ -229,7 +229,7 @@ model book_revisions {
   status                  Int                 @db.SmallInt // 0: Draft 1: Published
   url_slug                String              @db.VarChar(100) // Length 1 - 100
   buy_point               Int
-  native_language         String              @db.VarChar(5)
+  native_language_tag     String              @db.VarChar(5)
   is_translate_to_all     Boolean
   title                   String              @db.VarChar(1400) // Max length is 200
   subtitle                String              @db.VarChar(1400) // Max length is 200
@@ -255,7 +255,7 @@ model book_translate_languages {
 
   id                      String              @id @db.VarChar(36) @default(uuid(7))
   revision_id             String              @db.VarChar(36)
-  target_language         String              @db.VarChar(5)
+  language_tag            String              @db.VarChar(5)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
@@ -266,7 +266,7 @@ model book_contents {
 
   id                      String              @id @db.VarChar(36) @default(uuid(7))
   revision_id             String              @db.VarChar(36)
-  target_language         String              @db.VarChar(5)
+  language_tag            String              @db.VarChar(5)
   title                   String              @db.VarChar(1400) // Max length is 200
   subtitle                String              @db.VarChar(1400) // Max length is 200
   free_area_html          String              @db.LongText
@@ -276,7 +276,7 @@ model book_contents {
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
 
-  @@unique([revision_id, target_language])
+  @@unique([revision_id, language_tag])
 }
 
 model book_covers {
@@ -323,7 +323,7 @@ model tickets {
   category_key_name       String              @db.VarChar(31)
   email                   String              @db.VarChar(510) // Encrypted
   description             String              @db.LongText
-  from_language           String              @db.VarChar(5)
+  from_language_tag       String              @db.VarChar(5)
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?
@@ -369,9 +369,25 @@ model log_actions {
 }
 
 // -----------------------------------------------------------------------
-// Reference: Currency rate from 1 USD
+// Translated contents
 // -----------------------------------------------------------------------
 
+model translated_contents {
+  id                      String              @id @db.VarChar(36) @default(uuid(7))
+  user_id                 String              @db.VarChar(36)
+  language_tag            String              @db.VarChar(5)
+  checksum                String              @db.VarChar(44) @unique // SHA-256
+  text                    String              @db.LongText
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+  deleted_at              DateTime?
+}
+
+// -----------------------------------------------------------------------
+// Reference
+// -----------------------------------------------------------------------
+
+// Currency rate from 1 USD
 model currency_rates {
   currency                String              @id @db.VarChar(3)
   rate                    Decimal

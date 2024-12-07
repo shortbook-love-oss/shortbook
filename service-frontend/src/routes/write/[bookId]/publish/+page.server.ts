@@ -66,10 +66,10 @@ export const load = async ({ locals, params }) => {
 	}
 	form.data.urlSlug = bookRevision.url_slug;
 	form.data.buyPoint = bookRevision.buy_point;
-	form.data.targetLanguage = bookRevision.native_language as AvailableLanguageTags;
+	form.data.nativeLanguage = bookRevision.native_language_tag as AvailableLanguageTags;
 	form.data.isTranslateToAll = bookRevision.is_translate_to_all;
 	form.data.translateLanguages = bookRevision.translate_languages.map(
-		(lang) => lang.target_language as AvailableLanguageTags
+		(lang) => lang.language_tag as AvailableLanguageTags
 	);
 
 	const initTitle = bookRevision.title;
@@ -120,7 +120,7 @@ export const actions = {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
 		}
 
-		const bookNativeLang = bookRevision.native_language as AvailableLanguageTags;
+		const bookNativeLang = bookRevision.native_language_tag as AvailableLanguageTags;
 		let outputLangs = availableLanguageTags.filter((langTag) => {
 			return langTag !== bookNativeLang;
 		});

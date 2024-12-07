@@ -83,7 +83,7 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 					userId,
 					name: albumImage.name,
 					alt: albumImage.alt,
-					languageInImage: albumImage.language_in_image as AvailableLanguageTags | '',
+					imageLanguage: albumImage.in_image_language_tag as AvailableLanguageTags | '',
 					savedFileName: saveFilePath,
 					byteLength: imageResult.value.byteLength,
 					width: imageResult.value.width,

@@ -48,7 +48,7 @@ export async function translateBookContents(
 ) {
 	const { bookContent, dbError: dbBookGetError } = await dbBookContentGet({
 		revisionId,
-		targetLanguage: sourceLang,
+		language: sourceLang,
 		isIncludeDelete: true
 	});
 	if (dbBookGetError) {

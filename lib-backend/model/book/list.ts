@@ -50,6 +50,16 @@ export async function dbBookList(req: DbBookListRequest) {
 		getRevisionsCount = 2;
 	}
 
+	prisma.translated_contents.findMany({
+		where: {
+			user_id: req.userId,
+			language_tag: req.contentsLanguage,
+			checksum: {
+				in: ['8yeufhjd', 'ehbrijre']
+			}
+		}
+	});
+
 	const books = await prisma.books
 		.findMany({
 			where: {
@@ -75,10 +85,10 @@ export async function dbBookList(req: DbBookListRequest) {
 						contents: {
 							where: {
 								...whereCondDelete,
-								target_language: req.contentsLanguage
+								language_tag: req.contentsLanguage
 							},
 							select: {
-								target_language: true,
+								language_tag: true,
 								title: true,
 								subtitle: true
 							}
@@ -95,7 +105,7 @@ export async function dbBookList(req: DbBookListRequest) {
 						image_src: true,
 						languages: {
 							where: { ...whereCondDelete },
-							select: { target_language: true }
+							select: { language_tag: true }
 						}
 					}
 				}

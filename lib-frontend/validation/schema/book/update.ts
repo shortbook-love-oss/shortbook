@@ -18,7 +18,7 @@ export const schemaPartUrlSlug = z.object({
 export const schema = z
 	.object({
 		buyPoint: z.number().min(70, { message: 'Please specify 70 points or more' }).max(1_000_000),
-		targetLanguage: z.enum(availableLanguageTags, { message: 'Please select language' }),
+		nativeLanguage: z.enum(availableLanguageTags, { message: 'Please select language' }),
 		isTranslateToAll: z.boolean(),
 		translateLanguages: z
 			.enum(availableLanguageTags, { message: 'Please select language' })

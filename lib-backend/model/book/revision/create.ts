@@ -73,7 +73,7 @@ export async function dbBookRevisionCreate(req: DbBookRevisionCreateRequest) {
 					status: req.status,
 					url_slug: req.urlSlug,
 					buy_point: req.buyPoint,
-					native_language: req.targetLanguage,
+					native_language_tag: req.nativeLanguage,
 					is_translate_to_all: req.isTranslateToAll,
 					title: req.title,
 					subtitle: req.subtitle,
@@ -86,13 +86,13 @@ export async function dbBookRevisionCreate(req: DbBookRevisionCreateRequest) {
 					translate_languages: {
 						createMany: {
 							data: req.translateLanguages.map((langTag) => ({
-								target_language: langTag
+								language_tag: langTag
 							}))
 						}
 					},
 					contents: {
 						create: {
-							target_language: req.targetLanguage,
+							language_tag: req.nativeLanguage,
 							title: req.title,
 							subtitle: req.subtitle,
 							free_area_html: req.freeAreaHtml,

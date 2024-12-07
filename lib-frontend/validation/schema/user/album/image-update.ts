@@ -10,7 +10,7 @@ export const schema = z.object({
 	alt: z.string().max(150).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),
-	languageInImage: z.enum(['', ...availableLanguageTags], { message: 'Please select language' }),
+	inImageLanguage: z.enum(['', ...availableLanguageTags], { message: 'Please select language' }),
 	place: z.string().max(40).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),

@@ -45,7 +45,7 @@ export async function POST({ request, locals }) {
 		status: 0,
 		urlSlug,
 		buyPoint: 200,
-		targetLanguage: form.data.nativeLanguage,
+		nativeLanguage: form.data.nativeLanguage,
 		isTranslateToAll: false,
 		translateLanguages: [],
 		title: form.data.title,
@@ -109,10 +109,10 @@ export async function PUT({ request, locals }) {
 		status: 0,
 		urlSlug: bookRevision.url_slug,
 		buyPoint: bookRevision.buy_point,
-		targetLanguage: form.data.nativeLanguage,
+		nativeLanguage: form.data.nativeLanguage,
 		isTranslateToAll: bookRevision.is_translate_to_all,
 		translateLanguages: bookRevision.translate_languages.map(
-			(lang) => lang.target_language as AvailableLanguageTags
+			(lang) => lang.language_tag as AvailableLanguageTags
 		),
 		title: form.data.title,
 		subtitle: form.data.subtitle,

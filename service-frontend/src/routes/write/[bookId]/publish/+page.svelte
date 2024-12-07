@@ -130,15 +130,15 @@
 							bind:isAllChecked={$form.isTranslateToAll}
 							eachCheckerName="translateLanguages"
 							bind:selectedLanguages={$form.translateLanguages}
-							nativaLanguage={$form.targetLanguage}
+							nativaLanguage={$form.nativeLanguage}
 						>
 							{#snippet sourceLanguage()}
 								<Select
-									bind:value={$form.targetLanguage as string}
-									name="targetLanguage"
+									bind:value={$form.nativeLanguage as string}
+									name="nativeLanguage"
 									list={data.langTags}
 									label="Native language"
-									errorMessages={$errors.targetLanguage}
+									errorMessages={$errors.nativeLanguage}
 									className="max-w-52"
 								/>
 							{/snippet}

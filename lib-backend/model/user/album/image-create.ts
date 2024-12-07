@@ -21,7 +21,7 @@ export async function dbUserAlbumImageCreate(req: DbUserAlbumImageCreateRequest)
 				name: req.name,
 				alt: '',
 				image_created_at: null,
-				language_in_image: '',
+				in_image_language_tag: '',
 				place: '',
 				is_sensitive: 0,
 				is_ai: 0,

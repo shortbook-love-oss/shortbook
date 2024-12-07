@@ -74,7 +74,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 							? {
 									where: {
 										...whereCondDelete,
-										target_language: req.contentsLanguage
+										language_tag: req.contentsLanguage
 									}
 								}
 							: undefined,
@@ -87,12 +87,12 @@ export async function dbBookGet(req: DbBookGetRequest) {
 					select: {
 						key_handle: true,
 						pen_name: true,
-						native_language: true,
+						native_language_tag: true,
 						image_src: true,
 						languages: {
 							where: { ...whereCondDelete },
 							select: {
-								target_language: true,
+								language_tag: true,
 								headline: true
 							}
 						}

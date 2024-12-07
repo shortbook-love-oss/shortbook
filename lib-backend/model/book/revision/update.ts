@@ -43,7 +43,7 @@ export async function dbBookRevisionUpdate(req: DbBookRevisionUpdateRequest) {
 					status: req.status,
 					url_slug: req.urlSlug,
 					buy_point: req.buyPoint,
-					native_language: req.targetLanguage,
+					native_language_tag: req.nativeLanguage,
 					is_translate_to_all: req.isTranslateToAll,
 					title: req.title,
 					subtitle: req.subtitle,

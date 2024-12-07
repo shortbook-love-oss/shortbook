@@ -38,7 +38,7 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				status: req.status,
 				url_slug: req.urlSlug,
 				buy_point: req.buyPoint,
-				native_language: req.targetLanguage,
+				native_language_tag: req.nativeLanguage,
 				is_translate_to_all: req.isTranslateToAll
 			};
 			const bookCoverData = {
@@ -60,9 +60,9 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				// If the book isn't "draft", create new revision
 				const latestContent = await tx.book_contents.findUnique({
 					where: {
-						revision_id_target_language: {
+						revision_id_language_tag: {
 							revision_id: latestRevision.id,
-							target_language: latestRevision.native_language
+							language_tag: latestRevision.native_language_tag
 						}
 					}
 				});
@@ -85,13 +85,13 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 						translate_languages: {
 							createMany: {
 								data: req.translateLanguages.map((langTag) => ({
-									target_language: langTag
+									language_tag: langTag
 								}))
 							}
 						},
 						contents: {
 							create: {
-								target_language: req.targetLanguage,
+								language_tag: req.nativeLanguage,
 								title: latestContent.title,
 								subtitle: latestContent.subtitle,
 								free_area_html: latestContent.free_area_html,
@@ -110,9 +110,9 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 				});
 				const translateLanguages = await tx.book_translate_languages.findMany({
 					where: { revision_id: latestRevision.id },
-					select: { target_language: true }
+					select: { language_tag: true }
 				});
-				const translateLangTags = translateLanguages.map((lang) => lang.target_language);
+				const translateLangTags = translateLanguages.map((lang) => lang.language_tag);
 				if (!isArrayHaveSameValues(translateLangTags, req.translateLanguages)) {
 					if (translateLangTags.length > 0) {
 						await tx.book_translate_languages.deleteMany({
@@ -123,19 +123,19 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 						await tx.book_translate_languages.createMany({
 							data: req.translateLanguages.map((langTag) => ({
 								revision_id: latestRevision.id,
-								target_language: langTag
+								language_tag: langTag
 							}))
 						});
 					}
 				}
 				await tx.book_contents.update({
 					where: {
-						revision_id_target_language: {
+						revision_id_language_tag: {
 							revision_id: latestRevision.id,
-							target_language: latestRevision.native_language
+							language_tag: latestRevision.native_language_tag
 						}
 					},
-					data: { target_language: req.targetLanguage }
+					data: { language_tag: req.nativeLanguage }
 				});
 			}
 
