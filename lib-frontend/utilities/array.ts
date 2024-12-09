@@ -30,12 +30,17 @@ export function isArrayHaveSameValues<T = unknown>(source: T[], compare: T[]) {
 
 // Fillter truly values only and return excluded values too
 // ['foo', undefined, 'baz'] → { filtered: ['foo', 'baz'], excluded: { 1: undefined } }
-export function packArray<T = string>(items: Readonly<T[]>) {
-	const filtered = items.filter((item) => item);
+export function packArray<T = string>(
+	items: Readonly<T[]>,
+	filterCond?: (item: T, index: number) => boolean
+) {
+	const filtered: T[] = [];
 	const excluded = new Map<number, T>();
 	items.forEach((item, i) => {
-		if (!item) {
+		if (filterCond ? !filterCond(item, i) : !item) {
 			excluded.set(i, item);
+		} else {
+			filtered.push(item);
 		}
 	});
 
