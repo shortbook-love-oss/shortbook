@@ -5,7 +5,7 @@ import type { AvailableLanguageTags } from '$lib/utilities/language';
 type DbBookRevisionGetCompareRequest = {
 	newerRevisionId: string;
 	statuses?: number[];
-	contentsLanguage: AvailableLanguageTags;
+	contentsLanguage?: AvailableLanguageTags;
 	isIncludeDelete?: boolean;
 };
 
@@ -30,24 +30,20 @@ export async function dbBookRevisionGetCompare(req: DbBookRevisionGetCompareRequ
 				...whereByCond,
 				...whereCondDelete
 			},
-			orderBy: {
-				number: 'desc'
-			},
+			orderBy: [{ book_id: 'desc' }, { number: 'desc' }],
 			cursor: { id: req.newerRevisionId },
 			take: 2,
 			select: {
 				id: true,
 				number: true,
-				translate_languages: {
-					where: { ...whereCondDelete },
-                    select: { language_tag: true }
-				},
+				native_language_tag: true,
 				contents: {
 					where: {
-						language_tag: req.contentsLanguage,
-						...whereCondDelete
+						...whereCondDelete,
+						language_tag: req.contentsLanguage
 					},
 					select: {
+						language_tag: true,
 						title: true,
 						subtitle: true,
 						free_area_html: true,

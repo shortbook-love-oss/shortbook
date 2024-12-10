@@ -30,8 +30,8 @@ export type DeeplLangKey = keyof typeof deeplSourceLangIndex;
 export const deeplLangKeys = Object.keys(deeplSourceLangIndex) as DeeplLangKey[];
 
 const googleLangIndex = ['hi', 'zh-CN', 'zh-TW'] as const satisfies AvailableLanguageTags[];
-export type GoogleLangKey = keyof typeof googleLangIndex;
-export const googleLangKeys = Object.keys(googleLangIndex) as GoogleLangKey[];
+export type GoogleLangKey = (typeof googleLangIndex)[number];
+export const googleLangKeys = googleLangIndex as GoogleLangKey[];
 
 // Main engine to translate
 export async function translateContentByDeepl(
@@ -48,6 +48,10 @@ export async function translateContentByDeepl(
 	}
 
 	const { filtered, excluded } = packArray(contents);
+	if (filtered.length === 0) {
+		return new Array(contents.length).fill('');
+	}
+
 	const results = await translator
 		.translateText(filtered, source, target, isHtml ? { tagHandling: 'html' } : {})
 		.then((results) => results.map((result) => result.text))
@@ -69,6 +73,10 @@ export async function translateContentByGoogle(
 	isHtml: boolean
 ) {
 	const { filtered, excluded } = packArray(contents);
+	if (filtered.length === 0) {
+		return new Array(contents.length).fill('');
+	}
+
 	const [response] = await translator.translateText({
 		parent: `projects/${env.GOOGLE_CLOUD_PROJECT_ID}/locations/global`,
 		contents: filtered,
