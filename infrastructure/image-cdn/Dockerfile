@@ -1,5 +1,5 @@
 # Ubuntu Node.js
-FROM node:22.11.0
+FROM node:22.12.0
 
 WORKDIR /home/node
 
