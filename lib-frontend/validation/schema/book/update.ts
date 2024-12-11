@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isAvailableLanguageTag } from '$i18n/output/runtime';
+import { availableLanguageTags } from '$i18n/output/runtime';
 import { validateBookTextAlign } from '$lib/validation/rules/book';
 import { validateColor } from '$lib/validation/rules/string';
 
@@ -17,10 +17,12 @@ export const schemaPartUrlSlug = z.object({
 
 export const schema = z
 	.object({
-		targetLanguage: z.string().max(5).refine(isAvailableLanguageTag, {
-			message: 'Please select language'
-		}),
 		buyPoint: z.number().min(70, { message: 'Please specify 70 points or more' }).max(1_000_000),
+		nativeLanguage: z.enum(availableLanguageTags, { message: 'Please select language' }),
+		isTranslateToAll: z.boolean(),
+		translateLanguages: z
+			.enum(availableLanguageTags, { message: 'Please select language' })
+			.array(),
 		// For book cover design
 		baseColorStart: z.string().max(15).refine(validateColor, {
 			message: 'Please specify valid color (e.g. #01FC78)'

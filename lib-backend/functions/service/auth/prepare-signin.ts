@@ -6,7 +6,7 @@ import { sendEmail } from '$lib-backend/utilities/email';
 import { signInTokenName } from '$lib-backend/utilities/verification-token';
 import { escapeHTML } from '$lib/utilities/html';
 import {
-	callbackParam,
+	redirectParam,
 	getLanguageTagFromUrl,
 	setLanguageTagToPath,
 	signConfirmTokenParam
@@ -32,17 +32,13 @@ export async function prepareSignIn(
 	}
 
 	const requestLang = getLanguageTagFromUrl(requestUrl);
-	let profileLang = user.languages.find((lang) => lang.target_language === requestLang);
-	if (!profileLang && user.languages.length) {
-		profileLang = user.languages[0];
-	}
 
 	// 5. Send magic link by email
-	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
+	const afterRedirectUrl = encodeURIComponent(requestUrl.searchParams.get(redirectParam) ?? '');
 	const signInConfirmUrl =
 		requestUrl.origin +
 		setLanguageTagToPath(
-			`/signin/done?${signConfirmTokenParam}=${encodeURIComponent(signInConfirmToken)}&${callbackParam}=${afterCallbackUrl}`,
+			`/signin/done?${signConfirmTokenParam}=${encodeURIComponent(signInConfirmToken)}&${redirectParam}=${afterRedirectUrl}`,
 			requestLang
 		);
 	const { sendEmailError } = await sendEmail(

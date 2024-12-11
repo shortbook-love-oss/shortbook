@@ -2,35 +2,30 @@ import { error } from '@sveltejs/kit';
 import { getBookCover, type MyBookItem } from '$lib/utilities/book';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookList } from '$lib-backend/model/book/list';
+import type { AvailableLanguageTags } from '$lib/utilities/language.js';
 
 export const load = async ({ url, locals }) => {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
+	const requestLang = getLanguageTagFromUrl(url);
 
 	const { books, dbError } = await dbBookList({ userId: signInUser.id });
 	if (!books || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const bookList: MyBookItem[] = [];
 	for (const book of books) {
-		const bookRevision = book.revisions[0];
-		if (!bookRevision?.cover || bookRevision.contents.length === 0) {
+		const bookRevision = book.revisions.at(0);
+		if (!bookRevision?.cover) {
 			continue;
 		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!bookLang) {
-			continue;
-		}
+
 		const bookCover = getBookCover({
-			title: bookLang.title,
-			subtitle: bookLang.subtitle,
+			title: bookRevision.title,
+			subtitle: bookRevision.subtitle,
 			baseColorStart: bookRevision.cover.base_color_start,
 			baseColorEnd: bookRevision.cover.base_color_end,
 			baseColorDirection: bookRevision.cover.base_color_direction,
@@ -49,7 +44,10 @@ export const load = async ({ url, locals }) => {
 			userId: book.user_id,
 			status: bookRevision.status,
 			updatedAt: bookRevision.updated_at,
-			hasPublishedRevision: book.revisions.some((rev) => rev.status === 1)
+			hasPublishedRevision: book.revisions.some((rev) => rev.status === 1),
+			translateLanguages: bookRevision.contents.map(
+				(lang) => lang.language_tag as AvailableLanguageTags
+			)
 		});
 	}
 

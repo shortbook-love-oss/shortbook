@@ -3,6 +3,6 @@ import { schema as createSchema } from '$lib/validation/schema/book/draft-create
 
 export const schema = z
 	.object({
-		bookId: z.string().cuid()
+		bookId: z.string().uuid()
 	})
 	.merge(createSchema);

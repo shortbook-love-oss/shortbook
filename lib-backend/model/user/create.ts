@@ -23,10 +23,10 @@ export async function dbUserCreate(req: DbUserCreateRequest) {
 				email: req.emailEncrypt,
 				email_hash: req.emailHash,
 				image_src: req.imageSrc,
-				native_language: req.nativeLanguage,
+				native_language_tag: req.nativeLanguage,
 				languages: {
 					create: {
-						target_language: '',
+						language_tag: '',
 						headline: '',
 						self_introduction: ''
 					}

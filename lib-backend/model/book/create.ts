@@ -1,19 +1,17 @@
 import prisma from '$lib-backend/database/connect';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
-export interface DbBookCreateRequest {
+export type BookOverviewCreateProp = {
 	userId: string;
 	status: number; // 0: Draft 1: Public
-	targetLanguage: string;
-	title: string;
-	subtitle: string;
-	freeArea: string;
-	hasFreeArea: boolean;
-	paidArea: string;
-	hasPaidArea: boolean;
-	salesArea: string;
-	hasSalesArea: boolean;
 	urlSlug: string;
 	buyPoint: number;
+	nativeLanguage: AvailableLanguageTags;
+	isTranslateToAll: boolean;
+	translateLanguages: AvailableLanguageTags[];
+};
+
+export type BookCoverCreateProp = {
 	baseColorStart: string;
 	baseColorEnd: string;
 	baseColorDirection: number;
@@ -25,9 +23,25 @@ export interface DbBookCreateRequest {
 	subtitleColor: string;
 	writerAlign: string;
 	writerColor: string;
-}
+};
 
-export async function dbBookCreate(req: DbBookCreateRequest) {
+export type BookContentCreateProp = {
+	title: string;
+	subtitle: string;
+	freeArea: string;
+	paidArea: string;
+	salesArea: string;
+	freeAreaHtml: string;
+	paidAreaHtml: string;
+	salesAreaHtml: string;
+	hasFreeArea: boolean;
+	hasPaidArea: boolean;
+	hasSalesArea: boolean;
+};
+
+export async function dbBookCreate(
+	req: BookOverviewCreateProp & BookCoverCreateProp & BookContentCreateProp
+) {
 	let dbError: Error | undefined;
 
 	const book = await prisma
@@ -41,10 +55,33 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 							status: req.status,
 							url_slug: req.urlSlug,
 							buy_point: req.buyPoint,
-							native_language: req.targetLanguage,
+							native_language_tag: req.nativeLanguage,
+							is_translate_to_all: req.isTranslateToAll,
+							title: req.title,
+							subtitle: req.subtitle,
+							free_area: req.freeArea,
+							paid_area: req.paidArea,
+							sales_area: req.salesArea,
 							has_free_area: req.hasFreeArea,
 							has_paid_area: req.hasPaidArea,
 							has_sales_area: req.hasSalesArea,
+							translate_languages: {
+								createMany: {
+									data: req.translateLanguages.map((langTag) => ({
+										language_tag: langTag
+									}))
+								}
+							},
+							contents: {
+								create: {
+									language_tag: req.nativeLanguage,
+									title: req.title,
+									subtitle: req.subtitle,
+									free_area_html: req.freeAreaHtml,
+									paid_area_html: req.paidAreaHtml,
+									sales_area_html: req.salesAreaHtml
+								}
+							},
 							cover: {
 								create: {
 									base_color_start: req.baseColorStart,
@@ -58,17 +95,6 @@ export async function dbBookCreate(req: DbBookCreateRequest) {
 									subtitle_color: req.subtitleColor,
 									writer_align: req.writerAlign,
 									writer_color: req.writerColor
-								}
-							},
-							contents: {
-								create: {
-									target_language: req.targetLanguage,
-									thumbnail_url: '',
-									title: req.title,
-									subtitle: req.subtitle,
-									free_area: req.freeArea,
-									paid_area: req.paidArea,
-									sales_area: req.salesArea
 								}
 							}
 						}

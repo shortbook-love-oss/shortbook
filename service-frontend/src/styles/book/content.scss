@@ -1,0 +1,228 @@
+.sb_bc {
+	&__root {
+		@apply font-sans;
+		font-size: 1.375rem;
+		letter-spacing: 0.05em;
+		line-height: 1.625;
+		text-underline-offset: 0.15em;
+	}
+
+	&__code {
+		@apply bg-slate-100;
+		counter-reset: code-row;
+		counter-increment: code-row;
+		display: block;
+		font-size: 0.75em;
+		letter-spacing: 0.025em;
+		margin-block: 1rem;
+		padding-block: 0.5rem;
+		padding-inline: 3.5rem 0.75rem;
+
+		> br {
+			counter-increment: code-row;
+		}
+
+		> span:first-child,
+		> br + span {
+			&::before {
+				@apply text-stone-400;
+				content: counter(code-row);
+				display: inline-block;
+				margin-inline-start: -2.75rem;
+				width: 2.75rem;
+			}
+		}
+	}
+
+	// Code-highlight
+	&__ch {
+		&__atrule,
+		&__attr,
+		&__keyword {
+			color: #07a;
+		}
+		&__boolean,
+		&__constant,
+		&__deleted,
+		&__number,
+		&__property,
+		&__symbol,
+		&__tag {
+			color: #905;
+		}
+		&__builtin,
+		&__char,
+		&__inserted,
+		&__selector,
+		&__string {
+			color: #690;
+		}
+		&__cdata,
+		&__comment,
+		&__doctype,
+		&__prolog {
+			color: slategray;
+		}
+		&__class,
+		&__class_name,
+		&__function {
+			color: #dd4a68;
+		}
+		&__entity,
+		&__operator,
+		&__url {
+			color: #9a6e3a;
+		}
+		&__important,
+		&__namespace,
+		&__regex,
+		&__variable {
+			color: #e90;
+		}
+		&__punctuation {
+			color: #999;
+		}
+	}
+
+	&__h1,
+	&__h2,
+	&__h3,
+	&__h4,
+	&__h5,
+	&__h6 {
+		font-weight: 600;
+		margin-block-end: 1rem;
+	}
+	&__h1,
+	&__h2,
+	&__h3 {
+		&:not(:first-child) {
+			margin-block-start: 2rem;
+		}
+	}
+	&__h1 {
+		font-size: 3.25em;
+		line-height: 1.25;
+	}
+	&__h2 {
+		font-size: 2em;
+		line-height: 1.25;
+	}
+	&__h3 {
+		font-size: 1.5em;
+		line-height: 1.3125;
+	}
+	&__h4 {
+		font-size: 1.25em;
+		line-height: 1.3125;
+	}
+	&__h5 {
+		font-size: 1.1em;
+		line-height: 1.375;
+	}
+	&__h6 {
+		line-height: 1.375;
+	}
+
+	&__link {
+		@apply text-primary-700;
+		cursor: pointer;
+		overflow-wrap: break-word;
+		text-decoration-line: underline;
+		word-break: break-word;
+	}
+
+	&__ol {
+		list-style-type: decimal;
+		margin-block: 1rem;
+		padding-inline-start: 2rem;
+	}
+	&__ul {
+		list-style-type: disc;
+		margin-block: 1rem;
+		padding-inline-start: 1.5rem;
+	}
+
+	&__quote {
+		@apply bg-stone-200/70;
+		border-radius: 1rem;
+		font-size: 1.25em;
+		margin-block: 1rem;
+		padding-block: 2.5rem;
+		padding-inline: 1rem;
+		position: relative;
+
+		&::before,
+		&::after {
+			@apply font-title text-stone-400/70;
+			font-size: 3em;
+			line-height: 1;
+			position: absolute;
+		}
+
+		&::before {
+			content: '“';
+			top: 0.125rem;
+			left: 0.25rem;
+		}
+
+		&::after {
+			content: '„';
+			right: 0.25rem;
+			bottom: 0.5rem;
+		}
+
+		@media screen and (min-width: 640px) {
+			padding-inline: 3.5rem;
+		}
+	}
+
+	&__t_bold {
+		font-weight: bold;
+	}
+	&__t_code {
+		@apply bg-slate-100;
+		font-size: 0.875em;
+		letter-spacing: 0.025em;
+		padding: 0.25rem;
+	}
+	&__t_italic {
+		font-style: italic;
+	}
+	&__t_strikethrough {
+		text-decoration-line: line-through;
+	}
+
+	// ---------------------- Custom node styles ----------------------
+
+	&__divider {
+		@apply border-stone-300;
+		margin-block: 2rem;
+	}
+
+	&__image {
+		margin-block: 1rem;
+		text-align: center;
+
+		> a {
+			display: inline-block;
+			margin-inline: calc(50% - 50vw);
+			max-width: max(768px, 100%);
+
+			> picture {
+				display: inline-block;
+
+				> img {
+					display: inline-block;
+				}
+			}
+		}
+
+		> figcaption {
+			@apply text-stone-600;
+			font-size: 0.9em;
+			line-height: 1.5;
+			margin-block-start: 0.5rem;
+		}
+	}
+}

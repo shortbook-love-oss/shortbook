@@ -4,20 +4,24 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { getBookCover, type BookDraftUpdateResult } from '$lib/utilities/book';
 import { getRandom } from '$lib/utilities/crypto';
-import { getLanguageTagFromUrl } from '$lib/utilities/url';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { schema as createSchema } from '$lib/validation/schema/book/draft-create';
 import { schema as updateSchema } from '$lib/validation/schema/book/draft-update';
-import { dbBookCreate } from '$lib-backend/model/book/create';
+import { dbBookRevisionCreate } from '$lib-backend/model/book/revision/create';
+import { dbBookRevisionUpdate } from '$lib-backend/model/book/revision/update';
+import {
+	dbBookCreate,
+	type BookContentCreateProp,
+	type BookOverviewCreateProp
+} from '$lib-backend/model/book/create';
 import { dbBookGet } from '$lib-backend/model/book/get';
-import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { fromEditorStateToHtml } from '$lib-backend/utilities/book';
 
-export async function POST({ request, url, locals }) {
+export async function POST({ request, locals }) {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(await request.json(), zod(createSchema));
 	if (!form.valid) {
@@ -26,49 +30,51 @@ export async function POST({ request, url, locals }) {
 	}
 
 	const urlSlug = getRandom(16);
-	const { hasContent: hasFreeArea } = await fromEditorStateToHtml(
+	const { html: freeAreaHtml, hasContent: hasFreeArea } = await fromEditorStateToHtml(
 		form.data.freeArea as unknown as SerializedEditorState
 	);
-	const { hasContent: hasPaidArea } = await fromEditorStateToHtml(
+	const { html: paidAreaHtml, hasContent: hasPaidArea } = await fromEditorStateToHtml(
 		form.data.paidArea as unknown as SerializedEditorState
 	);
-	const { hasContent: hasSalesArea } = await fromEditorStateToHtml(
+	const { html: salesAreaHtml, hasContent: hasSalesArea } = await fromEditorStateToHtml(
 		form.data.salesArea as unknown as SerializedEditorState
 	);
 	const { book, dbError: dbBookUpdateError } = await dbBookCreate({
 		...getBookCover({}),
 		userId: signInUser.id,
 		status: 0,
-		targetLanguage: requestLang,
+		urlSlug,
+		buyPoint: 200,
+		nativeLanguage: form.data.nativeLanguage,
+		isTranslateToAll: false,
+		translateLanguages: [],
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
-		hasFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
-		hasPaidArea,
 		salesArea: JSON.stringify(form.data.salesArea),
-		hasSalesArea,
-		urlSlug,
-		buyPoint: 200
+		freeAreaHtml,
+		paidAreaHtml,
+		salesAreaHtml,
+		hasFreeArea,
+		hasPaidArea,
+		hasSalesArea
 	});
 	if (!book || dbBookUpdateError) {
 		return error(500, { message: dbBookUpdateError?.message ?? '' });
 	}
 
-	const responseData: BookDraftUpdateResult = {
-		bookId: book.id
-	};
+	const responseData: BookDraftUpdateResult = { bookId: book.id };
 	const response = new Response(JSON.stringify(responseData));
 	response.headers.set('content-type', 'application/json');
 	return response;
 }
 
-export async function PUT({ request, url, locals }) {
+export async function PUT({ request, locals }) {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(await request.json(), zod(updateSchema));
 	if (!form.valid) {
@@ -84,47 +90,61 @@ export async function PUT({ request, url, locals }) {
 		bookId: form.data.bookId,
 		userId: signInUser.id
 	});
-	if (!currentBook || !bookRevision || bookRevision.contents.length === 0 || dbBookGetError) {
+	if (!currentBook || !bookRevision || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-	if (!bookLang) {
-		bookLang = bookRevision.contents[0];
-	}
 
-	const { hasContent: hasFreeArea } = await fromEditorStateToHtml(
+	const { html: freeAreaHtml, hasContent: hasFreeArea } = await fromEditorStateToHtml(
 		form.data.freeArea as unknown as SerializedEditorState
 	);
-	const { hasContent: hasPaidArea } = await fromEditorStateToHtml(
+	const { html: paidAreaHtml, hasContent: hasPaidArea } = await fromEditorStateToHtml(
 		form.data.paidArea as unknown as SerializedEditorState
 	);
-	const { hasContent: hasSalesArea } = await fromEditorStateToHtml(
+	const { html: salesAreaHtml, hasContent: hasSalesArea } = await fromEditorStateToHtml(
 		form.data.salesArea as unknown as SerializedEditorState
 	);
-	const { dbError: dbBookUpdateError } = await dbBookUpdate({
-		...getBookCover({}),
-		bookId: currentBook.id,
+
+	const bookRevisionUpsertParam: BookOverviewCreateProp & BookContentCreateProp = {
 		userId: signInUser.id,
 		status: 0,
-		targetLanguage: requestLang,
+		urlSlug: bookRevision.url_slug,
+		buyPoint: bookRevision.buy_point,
+		nativeLanguage: form.data.nativeLanguage,
+		isTranslateToAll: bookRevision.is_translate_to_all,
+		translateLanguages: bookRevision.translate_languages.map(
+			(lang) => lang.language_tag as AvailableLanguageTags
+		),
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
-		hasFreeArea,
 		paidArea: JSON.stringify(form.data.paidArea),
-		hasPaidArea,
 		salesArea: JSON.stringify(form.data.salesArea),
-		hasSalesArea,
-		urlSlug: bookRevision.url_slug,
-		buyPoint: bookRevision.buy_point
-	});
-	if (dbBookUpdateError) {
-		return error(500, { message: dbBookUpdateError?.message ?? '' });
+		freeAreaHtml,
+		paidAreaHtml,
+		salesAreaHtml,
+		hasFreeArea,
+		hasPaidArea,
+		hasSalesArea
+	};
+	if (bookRevision.status !== 0) {
+		const { dbError: dbRevCreateError } = await dbBookRevisionCreate({
+			...bookRevisionUpsertParam,
+			bookId: currentBook.id
+		});
+		if (dbRevCreateError) {
+			return error(500, { message: dbRevCreateError.message });
+		}
+	} else {
+		const { dbError: dbRevUpdateError } = await dbBookRevisionUpdate({
+			...bookRevisionUpsertParam,
+			revisionId: bookRevision.id
+		});
+		if (dbRevUpdateError) {
+			return error(500, { message: dbRevUpdateError.message });
+		}
 	}
 
-	const responseData: BookDraftUpdateResult = {
-		bookId: form.data.bookId
-	};
+	const responseData: BookDraftUpdateResult = { bookId: form.data.bookId };
 	const response = new Response(JSON.stringify(responseData));
 	response.headers.set('content-type', 'application/json');
 	return response;

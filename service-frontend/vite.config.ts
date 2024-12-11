@@ -24,6 +24,11 @@ export default defineConfig({
 			cert: fs.readFileSync('./localhost.pem')
 		}
 	},
+	css: {
+		preprocessorOptions: {
+			scss: { api: 'modern-compiler' }
+		}
+	},
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	}

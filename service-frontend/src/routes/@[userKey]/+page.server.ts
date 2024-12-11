@@ -18,30 +18,26 @@ export const load = async ({ url, params }) => {
 
 	const { books, dbError: bookDbError } = await dbBookList({
 		userId: user.id,
-		statuses: [1]
+		statuses: [1],
+		contentsLanguage: requestLang
 	});
 	if (!books || bookDbError) {
 		return error(500, { message: bookDbError?.message ?? '' });
 	}
 
-	let userLang = user.languages.find((lang) => lang.target_language === requestLang);
+	let userLang = user.languages.find((lang) => lang.language_tag === requestLang);
 	if (!userLang && user.languages.length) {
-		userLang = user.languages[0];
+		userLang = user.languages.at(0);
 	}
 
 	const bookList: BookItem[] = [];
 	for (const book of books) {
-		const bookRevision = book.revisions[0];
-		if (!bookRevision?.cover || bookRevision.contents.length === 0) {
+		const bookRevision = book.revisions.at(0);
+		const bookLang = bookRevision?.contents.at(0);
+		if (!bookRevision?.cover || bookRevision.contents.length === 0 || !bookLang) {
 			continue;
 		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!book.user || !userLang || !bookLang) {
-			continue;
-		}
+
 		const bookCover = getBookCover({
 			title: bookLang.title,
 			subtitle: bookLang.subtitle,

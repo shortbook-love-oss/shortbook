@@ -1,12 +1,22 @@
 import { Prisma } from '@prisma/client';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import prisma from '$lib-backend/database/connect';
 
-export interface DbBookListRequest {
-	bookIds?: string[];
-	userId?: string;
+type IdExclusiveProps =
+	| {
+			bookIds?: string[];
+			userId?: never;
+	  }
+	| {
+			bookIds?: never;
+			userId?: string;
+	  };
+
+export type DbBookListRequest = IdExclusiveProps & {
 	statuses?: number[]; // 0: Draft 1: Published
+	contentsLanguage?: AvailableLanguageTags;
 	isIncludeDelete?: boolean;
-}
+};
 
 export async function dbBookList(req: DbBookListRequest) {
 	let dbError: Error | undefined;
@@ -40,6 +50,16 @@ export async function dbBookList(req: DbBookListRequest) {
 		getRevisionsCount = 2;
 	}
 
+	prisma.translated_contents.findMany({
+		where: {
+			user_id: req.userId,
+			language_tag: req.contentsLanguage,
+			checksum: {
+				in: ['8yeufhjd', 'ehbrijre']
+			}
+		}
+	});
+
 	const books = await prisma.books
 		.findMany({
 			where: {
@@ -53,21 +73,28 @@ export async function dbBookList(req: DbBookListRequest) {
 						...revisionWhereByCond,
 						...whereCondDelete
 					},
-					orderBy: {
-						number: 'desc'
-					},
+					orderBy: { number: 'desc' },
 					take: getRevisionsCount,
+					// Omit + include is work, but these props doesn't omit by type definition
+					omit: {
+						free_area: true,
+						paid_area: true,
+						sales_area: true
+					},
 					include: {
+						contents: {
+							where: {
+								...whereCondDelete,
+								language_tag: req.contentsLanguage
+							},
+							select: {
+								language_tag: true,
+								title: true,
+								subtitle: true
+							}
+						},
 						cover: {
 							where: { ...whereCondDelete }
-						},
-						contents: {
-							where: { ...whereCondDelete },
-							omit: {
-								free_area: true,
-								paid_area: true,
-								sales_area: true
-							}
 						}
 					}
 				},
@@ -78,9 +105,7 @@ export async function dbBookList(req: DbBookListRequest) {
 						image_src: true,
 						languages: {
 							where: { ...whereCondDelete },
-							select: {
-								target_language: true
-							}
+							select: { language_tag: true }
 						}
 					}
 				}

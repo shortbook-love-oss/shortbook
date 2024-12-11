@@ -13,7 +13,7 @@ export async function isExistBookUrlSlug(userId: string, inputSlug: string, edit
 		if (editingBookId && editingBookId === book.id) {
 			continue;
 		}
-		if (book.revisions[0]?.url_slug === inputSlug) {
+		if (book.revisions.at(0)?.url_slug === inputSlug) {
 			return true;
 		}
 	}

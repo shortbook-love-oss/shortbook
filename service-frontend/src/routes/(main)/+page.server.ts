@@ -5,27 +5,21 @@ import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookList } from '$lib-backend/model/book/list';
 
 export const load = async ({ url }) => {
-	const { books, dbError } = await dbBookList({ statuses: [1] });
+	const requestLang = getLanguageTagFromUrl(url);
+
+	const { books, dbError } = await dbBookList({
+		statuses: [1],
+		contentsLanguage: requestLang
+	});
 	if (!books || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const bookList: BookItem[] = [];
 	for (const book of books) {
-		let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
-		if (!userLang && book.user.languages.length) {
-			userLang = book.user.languages[0];
-		}
-		const bookRevision = book.revisions[0];
-		if (book.revisions.length === 0 || bookRevision.contents.length === 0 || !bookRevision.cover) {
-			continue;
-		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!userLang || !bookLang) {
+		const bookRevision = book.revisions.at(0);
+		const bookLang = bookRevision?.contents.at(0);
+		if (bookRevision?.contents.length === 0 || !bookRevision?.cover || !bookLang) {
 			continue;
 		}
 

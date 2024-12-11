@@ -3,6 +3,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { env as envPublic } from '$env/dynamic/public';
 import { i18n } from '$i18n/init';
 import { getSessionToken } from '$lib/utilities/cookie';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { dbUserGetBySessionToken } from '$lib-backend/model/user/get-by-session-token';
 
 const handleUser: Handle = async function ({ event, resolve }) {
@@ -18,7 +19,7 @@ const handleUser: Handle = async function ({ event, resolve }) {
 				penName: user.pen_name,
 				email: user.email,
 				imageSrc: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image_src,
-				nativeLanguage: user.native_language
+				nativeLanguage: user.native_language_tag as AvailableLanguageTags
 			};
 		}
 	}

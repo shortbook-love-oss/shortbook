@@ -48,7 +48,7 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 		const uploadResultsSquad = await Promise.allSettled(
 			imageResults.map(async (imageResult, i) => {
 				const saveFilePath = `album-${getRandom(24)}`;
-				const fileName = imageFileNames[i] ?? saveFilePath;
+				const fileName = imageFileNames.at(i) ?? saveFilePath;
 				const {
 					isSuccessUpload,
 					checksum,
@@ -67,7 +67,7 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 				const { albumImage, dbError } = await dbUserAlbumImageCreate({
 					userId,
 					name: fileName,
-					filePath: saveFilePath,
+					saveFileName: saveFilePath,
 					byteLength: imageResult.value.byteLength,
 					width: imageResult.value.width,
 					height: imageResult.value.height,
@@ -83,8 +83,8 @@ export async function uploadToAlbum(files: File[], userId: string): Promise<Uplo
 					userId,
 					name: albumImage.name,
 					alt: albumImage.alt,
-					languageInImage: albumImage.language_in_image as AvailableLanguageTags | '',
-					filePath: saveFilePath,
+					imageLanguage: albumImage.in_image_language_tag as AvailableLanguageTags | '',
+					savedFileName: saveFilePath,
 					byteLength: imageResult.value.byteLength,
 					width: imageResult.value.width,
 					height: imageResult.value.height,

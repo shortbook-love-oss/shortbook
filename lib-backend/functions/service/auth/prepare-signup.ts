@@ -4,7 +4,7 @@ import { dbVerificationTokenCreate } from '$lib-backend/model/verification-token
 import { sendEmail } from '$lib-backend/utilities/email';
 import { signUpTokenName } from '$lib-backend/utilities/verification-token';
 import {
-	callbackParam,
+	redirectParam,
 	getLanguageTagFromUrl,
 	setLanguageTagToPath,
 	signConfirmTokenParam
@@ -31,11 +31,11 @@ export async function prepareSignUp(
 	const requestLang = getLanguageTagFromUrl(requestUrl);
 
 	// 5. Send magic link by email
-	const afterCallbackUrl = encodeURIComponent(requestUrl.searchParams.get(callbackParam) ?? '');
+	const afterRedirectUrl = encodeURIComponent(requestUrl.searchParams.get(redirectParam) ?? '');
 	const signUpConfirmUrl =
 		requestUrl.origin +
 		setLanguageTagToPath(
-			`/signup/done?${signConfirmTokenParam}=${encodeURIComponent(signUpConfirmToken)}&${callbackParam}=${afterCallbackUrl}`,
+			`/signup/done?${signConfirmTokenParam}=${encodeURIComponent(signUpConfirmToken)}&${redirectParam}=${afterRedirectUrl}`,
 			requestLang
 		);
 	const { sendEmailError } = await sendEmail(

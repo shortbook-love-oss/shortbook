@@ -17,7 +17,7 @@ export async function dbTicketCreate(req: DbTicketCreateRequest) {
 				category_key_name: req.categoryKeyName,
 				email: req.emailEncrypt,
 				description: req.description,
-				from_language: req.fromLanguage,
+				from_language_tag: req.fromLanguage,
 				files: {
 					createMany: {
 						data: req.fileUrls.map((fileUrl) => ({

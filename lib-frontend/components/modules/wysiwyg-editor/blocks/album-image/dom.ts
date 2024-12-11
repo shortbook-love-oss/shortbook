@@ -4,60 +4,76 @@ import {
 	getNearestEditorFromDOMNode,
 	type NodeKey
 } from 'lexical';
-import { ImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
-import { editorImageMaxWidth } from '$lib/components/modules/wysiwyg-editor/editor';
+import { ImageNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image/node';
+import {
+	editorImageMaxWidth,
+	editorImageMaxWidthNarrow,
+	getImageSizeForSrc
+} from '$lib/components/modules/wysiwyg-editor/editor';
+import { getAlbumImagePath } from '$lib/utilities/album';
 import { getUrlObject } from '$lib/utilities/url';
-import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
 
 export const imageNodeAttr = 'data-lexical-node-image';
 export const imageNodeActivatorAttr = 'data-lexical-node-image-activator';
 
 export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
+	const imageFilePath = getAlbumImagePath(node.getUserId(), node.getFileName());
+
 	const nodeRoot = document.createElement('figure');
-	nodeRoot.className = 'my-4 text-center';
+	nodeRoot.className = 'sb_bc__image';
 	if (isEditPage) {
 		nodeRoot.setAttribute(imageNodeAttr, node.getKey());
 		nodeRoot.contentEditable = 'false';
 	}
 
 	// -------------------- Image area --------------------
+	const link = document.createElement('a');
+	if (isEditPage) {
+		link.addEventListener('click', (ev) => ev.preventDefault());
+	} else {
+		link.href = `${imageFilePath}?ext=${node.getToExtension()}`;
+	}
+
 	const imageWrap = document.createElement('picture');
-	imageWrap.className = 'block mx-[calc(50%-50vw)]';
 
 	const narrowVer = document.createElement('source');
-	const narrowSrc = getUrlObject(node.getSrc());
-	if (node.getWidth() > 448 && narrowSrc) {
+	const narrowImageSize = getImageSizeForSrc(node.getWidth(), editorImageMaxWidthNarrow);
+	const narrowSrc = getUrlObject(
+		`${imageFilePath}?ext=${node.getToExtension()}&${narrowImageSize}q=60`
+	);
+	if (node.getWidth() > editorImageMaxWidthNarrow && narrowSrc) {
 		// If narrow device and large image, show small-resized image
-		narrowVer.media = '(max-width: 448px)';
+		narrowVer.media = `(max-width: ${editorImageMaxWidthNarrow}px)`;
 		// Max-width of narrow image is 480 - margins (16*2)
-		const narrowImageWidth: (typeof allowedSize)[number] = 448;
-		narrowSrc.searchParams.set('w', narrowImageWidth + '');
+		narrowSrc.searchParams.set('w', editorImageMaxWidthNarrow + '');
 		narrowSrc.searchParams.delete('h');
 		narrowVer.srcset = narrowSrc.href;
 		imageWrap.appendChild(narrowVer);
 	}
 
+	const imageSize = getImageSizeForSrc(node.getWidth(), editorImageMaxWidth);
 	const image = document.createElement('img');
-	image.src = node.getSrc();
-	image.alt = node.getAlt();
+	image.src = `${imageFilePath}?ext=${node.getToExtension()}&${imageSize}q=60`;
+	if (node.getAlt()) {
+		image.alt = node.getAlt();
+	}
 	image.width = node.getWidth();
 	image.height = node.getHeight();
 	image.decoding = 'async';
-	image.className = 'inline-block';
 	if (isEditPage) {
 		image.setAttribute(imageNodeActivatorAttr, node.getKey());
 		image.draggable = false;
 	}
-	image.style.maxWidth = `min(${editorImageMaxWidth}px, 100%)`;
 	imageWrap.appendChild(image);
 
-	nodeRoot.appendChild(imageWrap);
+	link.appendChild(imageWrap);
+	nodeRoot.appendChild(link);
 
 	if (isEditPage) {
 		// -------------------- Caption area --------------------
 		const caption = document.createElement('figcaption');
 		caption.className =
-			'mt-2 min-h-[1.5em] text-[1.25rem] leading-[1.5] text-stone-600 outline-none before:text-stone-400 empty:[&:not(:focus)]:before:content-[attr(placeholder)]';
+			'min-h-[1.5em] outline-none before:text-stone-400 empty:[&:not(:focus)]:before:content-[attr(placeholder)]';
 		caption.setAttribute('placeholder', 'Add caption ...');
 		caption.contentEditable = 'true';
 		caption.textContent = node.getCaption();
@@ -116,7 +132,6 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 	} else {
 		if (node.getCaption()) {
 			const caption = document.createElement('figcaption');
-			caption.className = 'mt-2 text-[1.25rem] leading-[1.5] text-stone-600';
 			caption.textContent = node.getCaption();
 			nodeRoot.appendChild(caption);
 		}

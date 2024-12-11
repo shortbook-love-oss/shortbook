@@ -79,7 +79,7 @@
 	<div
 		bind:this={editorRootElem}
 		contenteditable
-		class="min-h-36 flex-1 font-sans text-[1.375rem] leading-[1.625] tracking-wider text-stone-950 underline-offset-[0.15em] outline-none"
+		class="sb_bc__root min-h-36 flex-1 outline-none"
 	></div>
 	<div class="contents" class:hidden={!isActive}>
 		<Toolbar {editor} className="self-center" />

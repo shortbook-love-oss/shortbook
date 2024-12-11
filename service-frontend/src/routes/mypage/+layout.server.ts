@@ -5,5 +5,7 @@ export const load = async ({ locals, url }) => {
 		redirectToSignInPage(url);
 	}
 
-	return {};
+	return {
+		isMypage: true
+	};
 };

@@ -33,7 +33,7 @@ export const actions = {
 		const { error: deleteFileError } = await deleteFiles(
 			env.AWS_DEFAULT_REGION,
 			`${env.AWS_BUCKET_IMAGE_USER_ALBUM}`,
-			`${signInUser.id}/${albumImage.property.file_path}`
+			`${signInUser.id}/${albumImage.property.saved_file_name}`
 		);
 		if (deleteFileError) {
 			return error(500, { message: "Can't delete album image. Please contact us." });
@@ -43,7 +43,7 @@ export const actions = {
 		const { error: deleteFileCdnError } = await deleteFiles(
 			env.AWS_DEFAULT_REGION,
 			`${env.AWS_BUCKET_IMAGE_USER_ALBUM}-cdn`,
-			`${signInUser.id}/${albumImage.property.file_path}`
+			`${signInUser.id}/${albumImage.property.saved_file_name}`
 		);
 		if (deleteFileCdnError) {
 			return error(500, { message: "Can't delete album image. Please contact us." });

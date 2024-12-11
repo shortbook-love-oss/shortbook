@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isAvailableLanguageTag } from '$i18n/output/runtime';
+import { availableLanguageTags } from '$i18n/output/runtime';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 
 export const schema = z.object({
@@ -12,9 +12,7 @@ export const schema = z.object({
 		.regex(/^[\w-.]*$/, {
 			message: 'Use only alphanumeric, hyphens, underscore, and periods'
 		}),
-	nativeLanguage: z.string().max(5).refine(isAvailableLanguageTag, {
-		message: 'Please select language'
-	}),
+	nativeLanguage: z.enum(availableLanguageTags, { message: 'Please select language' }),
 	penName: z.string().min(1).max(50).refine(validateOnlyVisibleChar, {
 		message: 'Cannot register using only invisible characters'
 	}),

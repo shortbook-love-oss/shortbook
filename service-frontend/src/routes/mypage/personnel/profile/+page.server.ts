@@ -1,8 +1,7 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { AvailableLanguageTag } from '$i18n/output/runtime';
-import { languageSelect } from '$lib/utilities/language';
+import { languageSelect, type AvailableLanguageTags } from '$lib/utilities/language';
 import { schema } from '$lib/validation/schema/user/profile/update';
 import { dbUserProfileGet } from '$lib-backend/model/user/profile/get';
 import { dbUserProfileUpdate } from '$lib-backend/model/user/profile/update';
@@ -20,10 +19,10 @@ export const load = async ({ locals }) => {
 	if (!user || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	const userLangs = user.languages[0];
+	const userLangs = user.languages.at(0);
 
 	form.data.keyHandle = user.key_handle;
-	form.data.nativeLanguage = user.native_language as AvailableLanguageTag;
+	form.data.nativeLanguage = user.native_language_tag as AvailableLanguageTags;
 	form.data.penName = user.pen_name;
 	form.data.headline = userLangs?.headline ?? '';
 	form.data.selfIntroduction = userLangs?.self_introduction ?? '';

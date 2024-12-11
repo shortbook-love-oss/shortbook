@@ -5,7 +5,12 @@
 	import { page } from '$app/stores';
 	import { bookCreateUrlParam, type BookDraftUpdateResult } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
-	import { callbackParam, getLanguageTagFromUrl } from '$lib/utilities/url';
+	import {
+		redirectParam,
+		getLanguageTagFromUrl,
+		removeLanguageTagFromPath,
+		setLanguageTagToPath
+	} from '$lib/utilities/url';
 	import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
 	import HeaderArea from '$lib/components/layouts/header-area.svelte';
 	import TextAreaSingle from '$lib/components/modules/form/text-area-single.svelte';
@@ -13,6 +18,7 @@
 	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
 	import MessageWarning from '$lib/components/modules/information/message-warning.svelte';
+	import '$src/styles/book/content.scss';
 
 	let { data } = $props();
 
@@ -20,6 +26,7 @@
 
 	let bookId = $state(data.bookId);
 	let bookStatus = $state(data.bookStatus);
+	let nativeLanguage = $state(data.nativeLanguage);
 	let title = $state(data.form.data.title);
 	let subtitle = $state(data.form.data.subtitle);
 	let freeArea = $state(data.freeArea);
@@ -35,7 +42,9 @@
 	let lastUpdatedAt = $state(data.updatedAt);
 	let isAutoSaved = $state(false);
 
-	const callbackUrl = $derived($page.url.searchParams.get(callbackParam) ?? '');
+	const redirectUrl = $derived(
+		removeLanguageTagFromPath($page.url.searchParams.get(redirectParam) ?? '')
+	);
 
 	const isValidTitle = $derived(title && validateOnlyVisibleChar(title));
 	const unpublishableReasons = $derived.by(() => {
@@ -81,7 +90,7 @@
 			await save();
 		}
 		if (bookId !== '' && bookId !== bookCreateUrlParam) {
-			const url = `/write/${bookId}/publish${$page.url.search}`;
+			const url = setLanguageTagToPath(`/write/${bookId}/publish${$page.url.search}`, $page.url);
 			if (event.shiftKey || event.ctrlKey) {
 				window.open(url, '_blank', 'noreferrer');
 			} else {
@@ -95,6 +104,7 @@
 			method: bookId ? 'PUT' : 'POST',
 			body: JSON.stringify({
 				bookId,
+				nativeLanguage,
 				title,
 				subtitle,
 				freeArea,
@@ -112,7 +122,8 @@
 					isAutoSaved = false;
 				}, 2000);
 				if (bookId !== result.bookId) {
-					replaceState(`/write/${result.bookId}`, {});
+					const replaceUrl = setLanguageTagToPath(`/write/${result.bookId}`, $page.url);
+					replaceState(replaceUrl, {});
 				}
 				bookId = result.bookId;
 				return result;
@@ -135,8 +146,8 @@
 
 <HeaderArea>
 	<a
-		href={callbackUrl || '/write'}
-		class="block shrink-0 p-3 hover:bg-stone-200 focus:bg-stone-200"
+		href={redirectUrl || '/write'}
+		class="block shrink-0 p-2.5 hover:bg-stone-200 focus:bg-stone-200"
 		title="Back to my articles list"
 	>
 		<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
@@ -155,7 +166,7 @@
 			{isAutoSaved ? 'Saved' : 'Auto save'}
 		</p>
 	</div>
-	<div class="relative mx-1.5">
+	<div class="relative mx-1">
 		<button
 			type="button"
 			disabled={unpublishableReasons.length > 0}
@@ -163,7 +174,7 @@
 			onclick={finish}>{bookStatus === 1 ? 'Republish' : 'Publish'}</button
 		>
 		<div
-			class="absolute -left-4 top-12 hidden min-w-56 flex-col gap-3 rounded-lg border border-stone-300 bg-white px-4 py-3 text-lg text-red-700 peer-[:hover:disabled]:flex"
+			class="absolute -left-16 top-12 hidden min-w-56 flex-col gap-3 rounded-lg border border-stone-300 bg-white px-4 py-3 text-lg text-red-700 peer-[:hover:disabled]:flex xs:-left-2.5"
 		>
 			{#each unpublishableReasons as reason}
 				<p>{reason}</p>

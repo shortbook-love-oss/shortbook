@@ -8,6 +8,7 @@ import {
 	guessCurrencyByLang,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import {
 	chargeFee,
 	getAccuratePaymentPrice,
@@ -20,7 +21,6 @@ import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
 import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
 import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
-import { fromEditorStateToHtml } from '$lib-backend/utilities/book';
 
 export const load = async ({ url, locals, params }) => {
 	const signInUser = locals.signInUser;
@@ -35,21 +35,37 @@ export const load = async ({ url, locals, params }) => {
 		bookUrlSlug: params.bookKey,
 		userKeyHandle: params.userKey,
 		statuses: [1],
+		contentsLanguage: requestLang,
 		isIncludeDelete: true
 	});
 	if (!book || !bookRevision?.cover || dbBookGetError) {
 		return error(500, { message: dbBookGetError?.message ?? '' });
 	}
-	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
+
+	const bookNativeLang = bookRevision.native_language_tag as AvailableLanguageTags;
+	let isFallbackBookLang = false;
+	let bookLang = bookRevision.contents.at(0);
 	if (!bookLang) {
-		bookLang = bookRevision.contents[0];
+		const { bookRevision: nativeBookRevision, dbError: dbBookGetError } = await dbBookGet({
+			bookId: book.id,
+			statuses: [1],
+			contentsLanguage: bookRevision.native_language_tag as AvailableLanguageTags,
+			isIncludeDelete: true
+		});
+		if (!nativeBookRevision || dbBookGetError) {
+			return error(500, { message: dbBookGetError?.message ?? '' });
+		}
+		isFallbackBookLang = true;
+		bookLang = nativeBookRevision.contents.at(0);
 	}
 	if (!bookLang) {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
 	}
-	let userLang = book.user.languages.find((lang) => lang.target_language === requestLang);
+
+	const userNativeLang = signInUser?.nativeLanguage ?? ('' as const);
+	let userLang = book.user.languages.find((lang) => lang.language_tag === requestLang);
 	if (!userLang && book.user.languages.length) {
-		userLang = book.user.languages[0];
+		userLang = book.user.languages.at(0);
 	}
 	if (!userLang) {
 		return error(500, {
@@ -164,8 +180,8 @@ export const load = async ({ url, locals, params }) => {
 	}
 
 	const bookCover = getBookCover({
-		title: bookLang?.title ?? '',
-		subtitle: bookLang?.subtitle ?? '',
+		title: bookLang.title,
+		subtitle: bookLang.subtitle,
 		baseColorStart: bookRevision.cover.base_color_start,
 		baseColorEnd: bookRevision.cover.base_color_end,
 		baseColorDirection: bookRevision.cover.base_color_direction,
@@ -198,27 +214,26 @@ export const load = async ({ url, locals, params }) => {
 	};
 
 	if (bookRevision.has_free_area) {
-		const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.free_area));
-		bookDetail.freeArea = html;
+		bookDetail.freeArea = bookLang.free_area_html;
 	}
 	const hasPaidArea = bookRevision.has_paid_area;
 
 	if (isBoughtBook || buyPoint === 0 || isOwn) {
 		if (hasPaidArea) {
-			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.paid_area));
-			bookDetail.paidArea = html;
+			bookDetail.paidArea = bookLang.paid_area_html;
 		}
 	} else {
 		if (bookRevision.has_sales_area) {
-			const { html } = await fromEditorStateToHtml(JSON.parse(bookLang.sales_area));
-			bookDetail.salesArea = html;
+			bookDetail.salesArea = bookLang.sales_area_html;
 		}
 	}
 
 	return {
 		bookDetail,
 		hasPaidArea,
-		requestLang,
+		bookNativeLang,
+		isFallbackBookLang,
+		userNativeLang,
 		userLang,
 		isOwn,
 		isBoughtBook,

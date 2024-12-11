@@ -26,7 +26,7 @@ export const actions = {
 			imageId: params.imageId,
 			name: form.data.name,
 			alt: form.data.alt,
-			languageInImage: form.data.languageInImage as AvailableLanguageTags | '',
+			inImageLanguage: form.data.inImageLanguage as AvailableLanguageTags | '',
 			place: form.data.place,
 			copyrightOwner: form.data.copyrightOwner,
 			targetInImage: form.data.targetInImage,

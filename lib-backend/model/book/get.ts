@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import prisma from '$lib-backend/database/connect';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 type IdExclusiveProps =
 	| {
@@ -16,6 +17,7 @@ type IdExclusiveProps =
 type DbBookGetRequest = IdExclusiveProps & {
 	userId?: string;
 	statuses?: number[]; // 0: Draft 1: Published
+	contentsLanguage?: AvailableLanguageTags;
 	isIncludeDelete?: boolean;
 };
 
@@ -62,15 +64,21 @@ export async function dbBookGet(req: DbBookGetRequest) {
 						...revisionWhereByCond,
 						...whereCondDelete
 					},
-					orderBy: {
-						number: 'desc'
-					},
+					orderBy: { number: 'desc' },
 					take: getRevisionsCount,
 					include: {
-						cover: {
+						translate_languages: {
 							where: { ...whereCondDelete }
 						},
-						contents: {
+						contents: req.contentsLanguage
+							? {
+									where: {
+										...whereCondDelete,
+										language_tag: req.contentsLanguage
+									}
+								}
+							: undefined,
+						cover: {
 							where: { ...whereCondDelete }
 						}
 					}
@@ -79,11 +87,12 @@ export async function dbBookGet(req: DbBookGetRequest) {
 					select: {
 						key_handle: true,
 						pen_name: true,
+						native_language_tag: true,
 						image_src: true,
 						languages: {
 							where: { ...whereCondDelete },
 							select: {
-								target_language: true,
+								language_tag: true,
 								headline: true
 							}
 						}
@@ -112,7 +121,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			return undefined;
 		});
 
-	const bookRevision = book?.revisions[0];
+	const bookRevision = book?.revisions.at(0);
 
 	return { book, bookRevision, dbError };
 }

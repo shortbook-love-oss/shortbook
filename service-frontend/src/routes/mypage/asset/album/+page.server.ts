@@ -1,7 +1,6 @@
 import { fail, error } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { env as envPublic } from '$env/dynamic/public';
 import type { AlbumImageEditItem } from '$lib/utilities/album';
 import { getRandom } from '$lib/utilities/crypto';
 import { imageMIMEextension } from '$lib/utilities/file';
@@ -32,7 +31,7 @@ export const load = async ({ locals }) => {
 			const editForm = await superValidate(zod(schemaEdit), { id: getRandom(15) });
 			editForm.data.name = image.name;
 			editForm.data.alt = image.alt;
-			editForm.data.languageInImage = image.language_in_image;
+			editForm.data.inImageLanguage = image.in_image_language_tag as AvailableLanguageTags | '';
 			editForm.data.place = image.place;
 			editForm.data.copyrightOwner = image.license?.copyright_owner ?? '';
 			editForm.data.targetInImage = image.license?.target_in_image ?? '';
@@ -47,8 +46,8 @@ export const load = async ({ locals }) => {
 				userId: signInUser.id,
 				name: image.name,
 				alt: image.alt,
-				languageInImage: image.language_in_image as AvailableLanguageTags | '',
-				filePath: `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${signInUser.id}/${image.property?.file_path}`,
+				imageLanguage: image.in_image_language_tag as AvailableLanguageTags | '',
+				savedFileName: image.property?.saved_file_name ?? '',
 				byteLength: image.property?.byte_length ?? 0,
 				width: image.property?.width ?? 0,
 				height: image.property?.height ?? 0,

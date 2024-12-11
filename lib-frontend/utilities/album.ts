@@ -1,4 +1,5 @@
 import type { SuperValidated } from 'sveltekit-superforms';
+import { env as envPublic } from '$env/dynamic/public';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SelectItem } from '$lib/utilities/select';
 import type { AllowedToExtension } from '$lib-backend/utilities/infrastructure/image';
@@ -8,8 +9,8 @@ export interface AlbumImageItem {
 	userId: string;
 	name: string;
 	alt: string;
-	languageInImage: AvailableLanguageTags | '';
-	filePath: string;
+	imageLanguage: AvailableLanguageTags | '';
+	savedFileName: string;
 	byteLength: number;
 	width: number;
 	height: number;
@@ -46,3 +47,7 @@ export const albumImageAiSelect: SelectItem[] = [
 	{ value: 1, label: 'Yes — Use AI for correction / super scale / object remove / etc.' },
 	{ value: 2, label: 'Yes — Use generative AI' }
 ];
+
+export function getAlbumImagePath(userId: string, savedFileName: string) {
+	return `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${userId}/${savedFileName}`;
+}

@@ -20,6 +20,7 @@
 	import BookCoverEdit from '$lib/components/service/write/book-cover-edit.svelte';
 	import InputPoint from '$lib/components/service/write/input-point.svelte';
 	import PricePreview from '$lib/components/service/write/price-preview.svelte';
+	import TranslateLanguageSelect from '$lib/components/service/write/translate-language-select.svelte';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
 
@@ -59,7 +60,7 @@
 		<HeaderArea>
 			<a
 				href="/write/{$page.params.bookId}{$page.url.search}"
-				class="flex shrink-0 items-center gap-2 rounded-ee-[0.4375rem] p-3 hover:bg-stone-200 focus:bg-stone-200"
+				class="flex shrink-0 items-center gap-2 rounded-ee-[0.4375rem] p-2.5 hover:bg-stone-200 focus:bg-stone-200"
 				title="Back to book contents editor"
 			>
 				<IconArrowLeft width="24" height="24" class="rtl:rotate-180" />
@@ -74,7 +75,7 @@
 			<div class="w-full max-w-[640px]">
 				<Form
 					method="POST"
-					action="{$page.url.pathname}?/update"
+					action="{$page.url.pathname}?/publish"
 					{enhance}
 					hasInvalid={!hasVaild}
 					isLoading={$submitting}
@@ -83,18 +84,9 @@
 					className="contents"
 				>
 					<p class="text-lg">Publish setting of</p>
-					<h1 class="mb-8 whitespace-pre-wrap break-words text-3xl font-semibold">
+					<h1 class="mb-12 whitespace-pre-wrap break-words text-3xl font-semibold">
 						"{data.initTitle}"
 					</h1>
-					<Select
-						bind:value={$form.targetLanguage as string}
-						name="targetLanguage"
-						list={data.langTags}
-						required={true}
-						label="Native language"
-						errorMessages={$errors.targetLanguage}
-						className="mb-8 max-w-72"
-					/>
 					<TextField
 						bind:value={$form.urlSlug}
 						name="urlSlug"
@@ -103,20 +95,20 @@
 						errorMessages={$errors.urlSlug}
 						className="mb-1"
 					/>
-					<p class="mb-8 break-words">
+					<p class="mb-12 break-words">
 						{$page.url.origin}/@{$page.data.signInUser.keyHandle}/book/{$form.urlSlug}
 					</p>
 					<InputPoint
 						bind:point={$form.buyPoint}
 						errorMessages={$errors.buyPoint}
-						className="mb-8 {data.hasPaidArea ? '' : 'hidden'}"
+						className="mb-4 {data.hasPaidArea ? '' : 'hidden'}"
 					/>
 					{#if data.hasPaidArea}
 						<PricePreview
 							point={$form.buyPoint}
 							userCurrencyCode={data.userCurrencyCode}
 							currencyRates={data.currencyRateIndex}
-							className="mb-8"
+							className="mb-12"
 						/>
 					{:else}
 						<Number
@@ -128,9 +120,30 @@
 						/>
 						<MessageInfo
 							message="This book has no paid content. Publish as a free book."
-							className="mb-8"
+							className="mb-12"
 						/>
 					{/if}
+					<section class="mb-10">
+						<h2 class="mb-2 text-lg font-semibold">Reach it to the world!</h2>
+						<TranslateLanguageSelect
+							allCheckerName="isTranslateToAll"
+							bind:isAllChecked={$form.isTranslateToAll}
+							eachCheckerName="translateLanguages"
+							bind:selectedLanguages={$form.translateLanguages}
+							nativaLanguage={$form.nativeLanguage}
+						>
+							{#snippet sourceLanguage()}
+								<Select
+									bind:value={$form.nativeLanguage as string}
+									name="nativeLanguage"
+									list={data.langTags}
+									label="Native language"
+									errorMessages={$errors.nativeLanguage}
+									className="max-w-52"
+								/>
+							{/snippet}
+						</TranslateLanguageSelect>
+					</section>
 					<BookCoverEdit
 						bind:baseColorStart={$form.baseColorStart}
 						bind:baseColorEnd={$form.baseColorEnd}

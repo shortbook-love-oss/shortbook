@@ -15,9 +15,9 @@ export const load = async ({ url, params, locals }) => {
 		user.image_src = envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image_src;
 	}
 
-	let userLang = user.languages.find((lang) => lang.target_language === requestLang);
+	let userLang = user.languages.find((lang) => lang.language_tag === requestLang);
 	if (!userLang && user.languages.length) {
-		userLang = user.languages[0];
+		userLang = user.languages.at(0);
 	}
 
 	const isOwn = user.id === signInUser?.id;

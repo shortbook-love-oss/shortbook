@@ -17,11 +17,12 @@
 		<a
 			href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={primaryCurrency.value}"
 			class="block rounded-md bg-primary-700 px-4 py-3 text-2xl font-semibold text-white hover:bg-primary-500 focus:bg-primary-500"
+			rel="nofollow"
 			data-sveltekit-reload>Buy for <span translate="no">{primaryCurrency.text}</span></a
 		>
 	{/if}
 	<Dialog
-		name="lang_select"
+		name="buy_currency_select"
 		title="Buy in your currency"
 		openerColorClass=""
 		dialogSizeClass="max-w-xl"
@@ -39,6 +40,7 @@
 						<div class="mb-6 flex flex-col gap-x-4 gap-y-2 xs:flex-row xs:items-center">
 							<a
 								href="/redirect/book/{bookId}/buy?{paymentCurrencyParam}={currency.value}"
+								rel="nofollow"
 								translate="no"
 								data-sveltekit-reload
 								class="text-3xl font-semibold hover:underline">{currency.text}</a

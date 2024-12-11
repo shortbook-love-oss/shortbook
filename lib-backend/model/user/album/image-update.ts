@@ -6,7 +6,7 @@ export interface DbUserAlbumImageUpdateRequest {
 	imageId: string;
 	name: string;
 	alt: string;
-	languageInImage: AvailableLanguageTags | '';
+	inImageLanguage: AvailableLanguageTags | '';
 	place: string;
 	copyrightOwner: string;
 	targetInImage: string;
@@ -44,7 +44,7 @@ export async function dbUserAlbumImageUpdate(req: DbUserAlbumImageUpdateRequest)
 					name: req.name,
 					alt: req.alt,
 					image_created_at: null,
-					language_in_image: req.languageInImage,
+					in_image_language_tag: req.inImageLanguage,
 					place: req.place,
 					is_sensitive: req.isSensitive,
 					is_ai: req.isAi

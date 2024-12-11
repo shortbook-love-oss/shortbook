@@ -17,7 +17,7 @@ export function createDeviderNodeDOM(node: DividerNode, isEditPage: boolean) {
 		return nodeRoot;
 	} else {
 		const nodeRoot = document.createElement('hr');
-		nodeRoot.className = 'my-8 border-stone-300';
+		nodeRoot.className = 'sb_bc__divider';
 
 		return nodeRoot;
 	}

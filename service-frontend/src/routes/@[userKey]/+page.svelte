@@ -2,6 +2,7 @@
 	import IconEdit from '~icons/mdi/edit-outline';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookItem from '$lib/components/service/read/book-item.svelte';
+	import '$src/styles/user/profile.scss';
 
 	let { data } = $props();
 </script>
@@ -52,7 +53,7 @@
 			: 'hidden'}"
 	>
 		<div
-			class="article_content h-full overflow-y-hidden whitespace-pre-wrap break-words rounded bg-white p-3"
+			class="profile_intro h-full overflow-y-hidden whitespace-pre-wrap break-words rounded bg-white p-3"
 		>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html data.userSelfIntro}

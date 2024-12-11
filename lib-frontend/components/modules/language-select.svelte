@@ -2,28 +2,38 @@
 	import IconArrow from '~icons/mdi/chevron-down';
 	import { page } from '$app/stores';
 	import { languageTag } from '$i18n/output/runtime';
-	import { languageSelect } from '$lib/utilities/language';
+	import { languageSelect, type AvailableLanguageTags } from '$lib/utilities/language';
 	import { removeLanguageTagFromPath } from '$lib/utilities/url';
-	import Dropdown from '$lib/components/layouts/dropdown.svelte';
+	import Dialog from '$lib/components/layouts/dialog.svelte';
+
+	function getActualLength(value: string, lang: AvailableLanguageTags) {
+		const segmenter = new Intl.Segmenter(lang, { granularity: 'grapheme' });
+		return [...segmenter.segment(value)].length;
+	}
 </script>
 
-<Dropdown name="lang_select" dropdownClass="bottom-10 min-w-72">
+<Dialog
+	name="base_language_select"
+	title="Change language"
+	openerClass="w-fit"
+	dialogSizeClass="max-w-xl"
+>
 	{#snippet opener()}
 		<div class="flex items-center rounded-lg border border-stone-700 px-2 py-1">
 			<p class="inline-block px-1">Change language</p>
-			<IconArrow width="28" height="28" class="peer-checked/common_footer_lang_open:rotate-180" />
+			<IconArrow width="28" height="28" />
 		</div>
 	{/snippet}
-	<ul class="grid grid-cols-2">
-		<li class="col-span-2 mb-3 border-b border-stone-300 p-3 pb-5" aria-current="page">
-			<p>Current language</p>
-			<p class="text-2xl">
-				{languageSelect.find((lang) => lang.value === languageTag())?.label}
-			</p>
-		</li>
+	<div class="mb-3 border-b border-stone-300 pb-4 xs:px-3">
+		<p>Current language</p>
+		<p class="text-2xl" aria-current="page">
+			{languageSelect.find((lang) => lang.value === languageTag())?.label}
+		</p>
+	</div>
+	<ul class="grid grid-cols-2 gap-x-3 gap-y-4 py-2 xs:px-3">
 		{#each languageSelect as lang}
-			{#if lang.value !== languageTag()}
-				<li class="p-3 {lang.label.length >= 12 ? 'col-span-2' : ''}">
+			{#if lang.value && lang.value !== languageTag()}
+				<li class={getActualLength(lang.label, lang.value) >= 14 ? 'max-xs:col-span-2' : ''}>
 					<a
 						href={removeLanguageTagFromPath($page.url.pathname + $page.url.search)}
 						hreflang={lang.value}
@@ -35,4 +45,4 @@
 			{/if}
 		{/each}
 	</ul>
-</Dropdown>
+</Dialog>

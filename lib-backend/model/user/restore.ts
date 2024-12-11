@@ -85,7 +85,7 @@ export async function dbUserRestore(req: DbUserRestoreRequest) {
 					},
 					data: { deleted_at: null }
 				});
-				await tx.book_covers.updateMany({
+				await tx.book_translate_languages.updateMany({
 					where: {
 						book_revision: {
 							book_id: { in: deletedBookIds }
@@ -94,6 +94,14 @@ export async function dbUserRestore(req: DbUserRestoreRequest) {
 					data: { deleted_at: null }
 				});
 				await tx.book_contents.updateMany({
+					where: {
+						book_revision: {
+							book_id: { in: deletedBookIds }
+						}
+					},
+					data: { deleted_at: null }
+				});
+				await tx.book_covers.updateMany({
 					where: {
 						book_revision: {
 							book_id: { in: deletedBookIds }

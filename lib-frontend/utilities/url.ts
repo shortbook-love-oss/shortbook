@@ -1,7 +1,7 @@
 import { i18n } from '$i18n/init';
 import type { AvailableLanguageTags } from '$lib/utilities/language';
 
-export const callbackParam = 'callbackUrl';
+export const redirectParam = 'redirect-to';
 export const paymentBookInfoParam = 'bookInfo';
 export const paymentSessionIdParam = 'sessionId';
 export const signConfirmTokenParam = 'enjoyYourShortBookLife';

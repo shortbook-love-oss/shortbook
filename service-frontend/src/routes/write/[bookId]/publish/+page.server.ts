@@ -1,24 +1,24 @@
 import { fail, error, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { AvailableLanguageTag } from '$i18n/output/runtime';
+import { availableLanguageTags } from '$i18n/output/runtime';
 import { getBookCover } from '$lib/utilities/book';
-import { languageSelect } from '$lib/utilities/language';
-import { getLanguageTagFromUrl, setLanguageTagToPath } from '$lib/utilities/url';
+import { languageSelect, type AvailableLanguageTags } from '$lib/utilities/language';
+import { setLanguageTagToPath } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/book/update';
 import { validateOnlyVisibleChar } from '$lib/validation/rules/string';
-import { isExistBookUrlSlug } from '$lib-backend/functions/service/write/edit-action';
-import { editLoad } from '$lib-backend/functions/service/write/edit-load';
+import { isExistBookUrlSlug } from '$lib-backend/functions/service/book/edit-action';
+import { editLoad } from '$lib-backend/functions/service/book/edit-load';
+import { translateBookContents } from '$lib-backend/functions/service/book/translate-to-other';
 import { dbBookGet } from '$lib-backend/model/book/get';
 import { dbBookUpdate } from '$lib-backend/model/book/update';
 import { dbBookBuyList } from '$lib-backend/model/book-buy/list';
 
-export const load = async ({ url, locals, params }) => {
+export const load = async ({ locals, params }) => {
 	const signInUser = locals.signInUser;
 	if (!signInUser) {
 		return error(401, { message: 'Unauthorized' });
 	}
-	const requestLang = getLanguageTagFromUrl(url);
 
 	const form = await superValidate(zod(schema));
 	const langTags = languageSelect;
@@ -30,16 +30,12 @@ export const load = async ({ url, locals, params }) => {
 	if (dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
-	if (!book || !bookRevision?.cover || bookRevision.contents.length === 0) {
+	if (!book || !bookRevision?.cover) {
 		return error(500, { message: `Can't find book. Book ID=${params.bookId}` });
-	}
-	let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-	if (!bookLang) {
-		bookLang = bookRevision.contents[0];
 	}
 
 	if (
-		!validateOnlyVisibleChar(bookLang.title) ||
+		!validateOnlyVisibleChar(bookRevision.title) ||
 		!(bookRevision.has_free_area || bookRevision.has_paid_area)
 	) {
 		redirect(303, `/write/${book.id}`);
@@ -48,8 +44,8 @@ export const load = async ({ url, locals, params }) => {
 	const { userCurrencyCode, currencyRateIndex } = await editLoad(signInUser);
 
 	const bookCover = getBookCover({
-		title: bookLang.title,
-		subtitle: bookLang.subtitle,
+		title: bookRevision.title,
+		subtitle: bookRevision.subtitle,
 		baseColorStart: bookRevision.cover.base_color_start,
 		baseColorEnd: bookRevision.cover.base_color_end,
 		baseColorDirection: bookRevision.cover.base_color_direction,
@@ -68,12 +64,16 @@ export const load = async ({ url, locals, params }) => {
 			form.data[prop] = bookCover[prop] as never;
 		}
 	}
-	form.data.targetLanguage = bookRevision.native_language as AvailableLanguageTag;
 	form.data.urlSlug = bookRevision.url_slug;
 	form.data.buyPoint = bookRevision.buy_point;
+	form.data.nativeLanguage = bookRevision.native_language_tag as AvailableLanguageTags;
+	form.data.isTranslateToAll = bookRevision.is_translate_to_all;
+	form.data.translateLanguages = bookRevision.translate_languages.map(
+		(lang) => lang.language_tag as AvailableLanguageTags
+	);
 
-	const initTitle = bookLang.title;
-	const initSubtitle = bookLang.subtitle;
+	const initTitle = bookRevision.title;
+	const initSubtitle = bookRevision.subtitle;
 	const status = bookRevision.status;
 	const hasPaidArea = bookRevision.has_paid_area;
 
@@ -90,12 +90,11 @@ export const load = async ({ url, locals, params }) => {
 };
 
 export const actions = {
-	update: async ({ request, url, locals, params }) => {
+	publish: async ({ request, url, locals, params }) => {
 		const signInUser = locals.signInUser;
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
-		const requestLang = getLanguageTagFromUrl(url);
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
@@ -111,37 +110,29 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
-			bookId: params.bookId,
-			userId: signInUser.id
-		});
-		if (!bookRevision || dbBookGetError) {
-			return error(500, { message: dbBookGetError?.message ?? '' });
-		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!bookLang) {
-			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
-		}
-
-		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
+		const { bookRevision, dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			userId: signInUser.id,
 			status: 1,
-			...form.data,
-			title: bookLang.title,
-			subtitle: bookLang.subtitle,
-			freeArea: bookLang.free_area,
-			hasFreeArea: bookRevision.has_free_area,
-			paidArea: bookLang.paid_area,
-			hasPaidArea: bookRevision.has_paid_area,
-			salesArea: bookLang.sales_area,
-			hasSalesArea: bookRevision.has_sales_area
+			...form.data
 		});
-		if (!book || dbBookUpdateError) {
+		if (!bookRevision || dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
+		}
+
+		const bookNativeLang = bookRevision.native_language_tag as AvailableLanguageTags;
+		let outputLangs = availableLanguageTags.filter((langTag) => {
+			return langTag !== bookNativeLang;
+		});
+		if (!bookRevision.is_translate_to_all) {
+			outputLangs = form.data.translateLanguages.filter((langTag) => {
+				return langTag !== bookNativeLang;
+			});
+		}
+		// Translate only a paid book
+		if (outputLangs.length > 0) {
+			// Paid area will withhold translation until someone buy the book
+			await translateBookContents(bookRevision.id, bookNativeLang, outputLangs);
 		}
 
 		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${form.data.urlSlug}`, url));
@@ -152,7 +143,6 @@ export const actions = {
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
 		}
-		const requestLang = getLanguageTagFromUrl(url);
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
@@ -178,35 +168,13 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { bookRevision, dbError: dbBookGetError } = await dbBookGet({
-			bookId: params.bookId,
-			userId: signInUser.id
-		});
-		if (!bookRevision || dbBookGetError) {
-			return error(500, { message: dbBookGetError?.message ?? '' });
-		}
-		let bookLang = bookRevision.contents.find((lang) => lang.target_language === requestLang);
-		if (!bookLang) {
-			bookLang = bookRevision.contents[0];
-		}
-		if (!bookLang) {
-			return error(500, { message: `Failed to get book contents. Book ID=${params.bookId}` });
-		}
-		const { book, dbError: dbBookUpdateError } = await dbBookUpdate({
+		const { dbError: dbBookUpdateError } = await dbBookUpdate({
 			bookId: params.bookId,
 			userId: signInUser.id,
 			status: 0,
-			...form.data,
-			title: bookLang.title,
-			subtitle: bookLang.subtitle,
-			freeArea: bookLang.free_area,
-			hasFreeArea: bookRevision.has_free_area,
-			paidArea: bookLang.paid_area,
-			hasPaidArea: bookRevision.has_paid_area,
-			salesArea: bookLang.sales_area,
-			hasSalesArea: bookRevision.has_sales_area
+			...form.data
 		});
-		if (!book || dbBookUpdateError) {
+		if (dbBookUpdateError) {
 			return error(500, { message: dbBookUpdateError?.message ?? '' });
 		}
 

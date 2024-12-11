@@ -2,7 +2,7 @@
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	import { page, updated } from '$app/stores';
 	import { i18n } from '$i18n/init';
-	import '../app.css';
+	import '../styles/app.css';
 
 	let { children } = $props();
 </script>

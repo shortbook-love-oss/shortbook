@@ -42,9 +42,9 @@ function insertImagePlaceholders(
 	});
 
 	// The caller holds the key of the added node
-	for (let i = 0; i < uploadingImages.length; i++) {
-		uploadedImageNodes.push({ nodeKey: insertedNodes[i].getKey() });
-	}
+	insertedNodes.forEach((insertedNode) => {
+		uploadedImageNodes.push({ nodeKey: insertedNode.getKey() });
+	});
 
 	return true;
 }

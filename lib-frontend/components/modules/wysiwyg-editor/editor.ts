@@ -7,7 +7,7 @@ import {
 } from '@lexical/code';
 import { registerDragonSupport } from '@lexical/dragon';
 import { createEmptyHistoryState, registerHistory } from '@lexical/history';
-import { AutoLinkNode, LinkNode, type SerializedLinkNode } from '@lexical/link';
+import { LinkNode, type SerializedLinkNode } from '@lexical/link';
 import {
 	$isListNode,
 	ListItemNode,
@@ -47,8 +47,8 @@ import { writable } from 'svelte/store';
 import {
 	ImageNode,
 	type SerializedImageNode
-} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
-import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image/node';
+import { registerImagePlugin } from '$lib/components/modules/wysiwyg-editor/blocks/album-image/plugin';
 import {
 	ImageUploadingNode,
 	type SerializedImageUploadingNode
@@ -64,7 +64,7 @@ import { registerListItemEscape } from '$lib/components/modules/wysiwyg-editor/p
 import { registerPluginPasteLinkReplacer } from '$lib/components/modules/wysiwyg-editor/plugins/paste-link-replacer';
 import { theme } from '$lib/components/modules/wysiwyg-editor/themes/default';
 import type { SelectItemSingle } from '$lib/utilities/select';
-import { allowedSize } from '$lib-backend/utilities/infrastructure/image';
+import type { AllowedSize } from '$lib-backend/utilities/infrastructure/image';
 
 export type BlockNode = ElementNode | DecoratorNode<HTMLElement>;
 
@@ -84,7 +84,8 @@ export type EditorState = SerializedEditorState<
 	| SerializedDividerNode
 >;
 
-export const editorImageMaxWidth: (typeof allowedSize)[number] = 768;
+export const editorImageMaxWidth: AllowedSize = 768;
+export const editorImageMaxWidthNarrow: AllowedSize = 448;
 
 export const lastActiveEditor = writable('');
 
@@ -94,7 +95,6 @@ export const initEditorConfig: CreateEditorArgs = {
 		CodeNode,
 		HeadingNode,
 		LinkNode,
-		AutoLinkNode,
 		ListNode,
 		ListItemNode,
 		QuoteNode,
@@ -264,7 +264,7 @@ export function insertBlockNodeToNext<T extends LexicalNode>(
 	return insertNode;
 }
 
-export function getImageSizeForSrc(width: number, maxWidth: number) {
+export function getImageSizeForSrc(width: number, maxWidth: AllowedSize) {
 	if (width <= maxWidth) {
 		// width=150 ... w="" (keep original size)
 		return '';

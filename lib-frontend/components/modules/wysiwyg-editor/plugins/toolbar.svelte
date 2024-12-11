@@ -49,7 +49,7 @@
 	import IconFormatStrikethrough from '~icons/mdi/format-strikethrough';
 	import IconHorizontalLine from '~icons/mdi/horizontal-line';
 	import IconImage from '~icons/mdi/image-outline';
-	import { INSERT_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/plugin';
+	import { INSERT_IMAGE_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/album-image/plugin';
 	import { INSERT_DIVIDER_BLOCK_COMMAND } from '$lib/components/modules/wysiwyg-editor/blocks/divider/plugin';
 	import {
 		codeLanguageSelect,

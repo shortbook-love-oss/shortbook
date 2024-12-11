@@ -8,15 +8,14 @@ import {
 	type LexicalCommand,
 	type LexicalEditor
 } from 'lexical';
-import { env as envPublic } from '$env/dynamic/public';
 import {
 	imageNodeActivatorAttr,
 	imageNodeAttr
-} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/dom';
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image/dom';
 import {
 	$createImageNode,
 	$isImageNode
-} from '$lib/components/modules/wysiwyg-editor/blocks/album-image-editor/node';
+} from '$lib/components/modules/wysiwyg-editor/blocks/album-image/node';
 import { ImageUploadingNode } from '$lib/components/modules/wysiwyg-editor/blocks/album-image-uploading/node';
 import {
 	editorImageMaxWidth,
@@ -25,7 +24,7 @@ import {
 	insertBlockNodeToNext,
 	selectSingleNode
 } from '$lib/components/modules/wysiwyg-editor/editor';
-import type { AlbumImageItem } from '$lib/utilities/album';
+import { getAlbumImagePath, type AlbumImageItem } from '$lib/utilities/album';
 
 export interface AlbumImageNodeItem {
 	nodeKey: string;
@@ -39,11 +38,6 @@ export const CHANGE_IMAGE_BLOCK_COMMAND: LexicalCommand<AlbumImageNodeItem> = cr
 	'CHANGE_IMAGE_BLOCK_COMMAND'
 );
 
-function getImageSrc(albumImage: AlbumImageItem) {
-	const imageSize = getImageSizeForSrc(albumImage.width, editorImageMaxWidth);
-	return `${envPublic.PUBLIC_ORIGIN_IMAGE_CDN}/user-album/${albumImage.userId}/${albumImage.filePath}?ext=${albumImage.toExtension}&${imageSize}q=60`;
-}
-
 function insertImage(albumImage: AlbumImageItem) {
 	const { selectedBlock } = getSelectedBlock();
 	if (!selectedBlock) {
@@ -52,10 +46,12 @@ function insertImage(albumImage: AlbumImageItem) {
 
 	const imageNode = $createImageNode(
 		albumImage.id,
-		getImageSrc(albumImage),
+		albumImage.userId,
+		albumImage.savedFileName,
 		albumImage.alt,
 		albumImage.width,
 		albumImage.height,
+		albumImage.toExtension,
 		''
 	);
 	insertBlockNodeToNext(selectedBlock, imageNode);
@@ -72,19 +68,23 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 	// First, cache the image by CDN
 	// By doing so, switch quickly to image node
 	const albumImage = imageItem.albumImage;
-	const imageSrc = getImageSrc(albumImage);
+	const imageSrc = getAlbumImagePath(albumImage.userId, albumImage.savedFileName);
+	const imageSize = getImageSizeForSrc(albumImage.width, editorImageMaxWidth);
+
 	const imgCacher = document.createElement('img');
-	imgCacher.src = imageSrc;
+	imgCacher.src = `${imageSrc}?ext=${albumImage.toExtension}&${imageSize}q=60`;
 	imgCacher.onload = () => {
 		editor.update(
 			() => {
 				URL.revokeObjectURL(imageUploaderNode.getDataUrl());
 				const imageNode = $createImageNode(
 					albumImage.id,
-					imageSrc,
+					albumImage.userId,
+					albumImage.savedFileName,
 					albumImage.alt,
 					albumImage.width,
 					albumImage.height,
+					albumImage.toExtension,
 					''
 				);
 				imageUploaderNode.replace(imageNode);
@@ -92,6 +92,7 @@ function replaceByImage(editor: LexicalEditor, imageItem: AlbumImageNodeItem) {
 			{ tag: 'history-merge' }
 		);
 	};
+
 	return true;
 }
 
