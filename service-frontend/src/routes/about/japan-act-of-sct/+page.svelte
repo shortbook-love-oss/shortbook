@@ -1,11 +1,13 @@
 <script lang="ts">
-	import CompanyInfoItem from '$lib/components/service/about/company-info-item.svelte';
-	import * as m from '$i18n/output/messages';
 	import { env as envPublic } from '$env/dynamic/public';
+	import * as m from '$i18n/output/messages';
+	import CompanyInfoItem from '$lib/components/service/about/company-info-item.svelte';
+	import Ogp from '$lib/components/service/ogp.svelte';
 </script>
 
 <svelte:head>
 	<title>{m.about_sct_title()} | ShortBook</title>
+	<Ogp pageType="website" title="ShortBook — {m.about_sct_title()}" />
 </svelte:head>
 
 <section class="mx-auto mb-16 max-w-2xl px-4 text-xl sm:px-8">

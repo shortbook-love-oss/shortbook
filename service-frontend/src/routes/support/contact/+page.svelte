@@ -9,6 +9,7 @@
 	import Select from '$lib/components/modules/form/select.svelte';
 	import TextArea from '$lib/components/modules/form/text-area.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
+	import Ogp from '$lib/components/service/ogp.svelte';
 
 	let { data } = $props();
 
@@ -31,6 +32,7 @@
 
 <svelte:head>
 	<title>Contact | ShortBook</title>
+	<Ogp pageType="website" title="Contact | ShortBook" />
 </svelte:head>
 
 <section class="mx-auto mb-8 max-w-xl text-lg">
