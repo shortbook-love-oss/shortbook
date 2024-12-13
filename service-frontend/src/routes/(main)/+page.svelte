@@ -2,12 +2,14 @@
 	import IconPlus from '~icons/mdi/plus';
 	import * as m from '$i18n/output/messages';
 	import BookItem from '$lib/components/service/read/book-item.svelte';
+	import Ogp from '$lib/components/service/ogp.svelte';
 
 	let { data } = $props();
 </script>
 
 <svelte:head>
 	<title>ShortBook — Writing platform</title>
+	<Ogp pageType="website" title="ShortBook — Writing platform" />
 </svelte:head>
 
 <div class="mx-auto max-w-3xl">

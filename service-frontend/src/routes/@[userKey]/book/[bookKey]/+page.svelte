@@ -18,6 +18,7 @@
 	import BookCover from '$lib/components/service/read/book-cover.svelte';
 	import PaymentAction from '$lib/components/service/read/payment-action.svelte';
 	import SalesMessage from '$lib/components/service/read/sales-message.svelte';
+	import Ogp from '$lib/components/service/ogp.svelte';
 	import '$src/styles/book/content.scss';
 
 	let { data } = $props();
@@ -36,6 +37,7 @@
 
 <svelte:head>
 	<title>{data.bookDetail.title} | {data.bookDetail.penName}</title>
+	<Ogp pageType="profile" title="{data.bookDetail.penName} — {data.bookDetail.title}" />
 </svelte:head>
 
 <article class="flex flex-col items-center justify-center gap-16 xl:flex-row xl:items-stretch">

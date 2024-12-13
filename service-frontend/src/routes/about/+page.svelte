@@ -1,10 +1,12 @@
 <script lang="ts">
-	import CompanyInfoItem from '$lib/components/service/about/company-info-item.svelte';
 	import * as m from '$i18n/output/messages';
+	import CompanyInfoItem from '$lib/components/service/about/company-info-item.svelte';
+	import Ogp from '$lib/components/service/ogp.svelte';
 </script>
 
 <svelte:head>
 	<title>About | ShortBook</title>
+	<Ogp pageType="website" title="ShortBook — About" />
 </svelte:head>
 
 <div class="mb-32 flex w-full items-center justify-between">

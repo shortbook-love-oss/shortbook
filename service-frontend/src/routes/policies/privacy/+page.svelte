@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { env as envPublic } from '$env/dynamic/public';
+	import Ogp from '$lib/components/service/ogp.svelte';
 	import * as m from '$i18n/output/messages';
 </script>
 
 <svelte:head>
 	<title>{m.policy_privacy_title()} | ShortBook</title>
+	<Ogp pageType="website" title="{m.policy_privacy_title()} | ShortBook" />
 </svelte:head>
 
 <section class="mx-auto flex max-w-2xl flex-col gap-4">

@@ -2,6 +2,7 @@
 	import IconEdit from '~icons/mdi/edit-outline';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
 	import BookItem from '$lib/components/service/read/book-item.svelte';
+	import Ogp from '$lib/components/service/ogp.svelte';
 	import '$src/styles/user/profile.scss';
 
 	let { data } = $props();
@@ -9,6 +10,9 @@
 
 <svelte:head>
 	<title>Profile and books | {data.user.key_handle}</title>
+	<Ogp pageType="profile" title="{data.user.key_handle} — Profile and books">
+		<meta property="og:profile:username" content={data.user.pen_name} />
+	</Ogp>
 </svelte:head>
 
 <div
