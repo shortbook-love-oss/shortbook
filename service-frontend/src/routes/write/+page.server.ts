@@ -11,7 +11,10 @@ export const load = async ({ url, locals }) => {
 	}
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { books, dbError } = await dbBookList({ userId: signInUser.id });
+	const { books, dbError } = await dbBookList({
+		userId: signInUser.id,
+		isIncludeAdmin: true
+	});
 	if (!books || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
@@ -47,7 +50,8 @@ export const load = async ({ url, locals }) => {
 			hasPublishedRevision: book.revisions.some((rev) => rev.status === 1),
 			translateLanguages: bookRevision.contents.map(
 				(lang) => lang.language_tag as AvailableLanguageTags
-			)
+			),
+			isAdmin: book.is_admin
 		});
 	}
 

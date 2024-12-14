@@ -212,6 +212,7 @@ model books {
 
   id                      String              @id @db.VarChar(36) @default(uuid(7))
   user_id                 String              @db.VarChar(36)
+  is_admin                Boolean
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

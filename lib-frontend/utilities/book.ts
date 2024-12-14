@@ -37,6 +37,7 @@ export interface BookItem extends BookItemBase {
 export interface MyBookItem extends BookItemBase {
 	hasPublishedRevision: boolean;
 	translateLanguages: AvailableLanguageTags[];
+	isAdmin: boolean;
 }
 
 export interface BookDetail extends BookItem {
