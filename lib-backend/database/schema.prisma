@@ -20,6 +20,7 @@ model users {
   email_hash              String              @unique @db.VarChar(127)
   native_language_tag     String              @db.VarChar(5)
   image_src               String              @db.VarChar(510)
+  is_admin                Boolean
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted_at              DateTime?

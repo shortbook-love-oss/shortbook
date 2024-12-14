@@ -19,7 +19,8 @@ const handleUser: Handle = async function ({ event, resolve }) {
 				penName: user.pen_name,
 				email: user.email,
 				imageSrc: envPublic.PUBLIC_ORIGIN_IMAGE_CDN + user.image_src,
-				nativeLanguage: user.native_language_tag as AvailableLanguageTags
+				nativeLanguage: user.native_language_tag as AvailableLanguageTags,
+				isAdmin: user.is_admin
 			};
 		}
 	}

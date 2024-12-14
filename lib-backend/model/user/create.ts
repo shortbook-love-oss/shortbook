@@ -24,6 +24,7 @@ export async function dbUserCreate(req: DbUserCreateRequest) {
 				email_hash: req.emailHash,
 				image_src: req.imageSrc,
 				native_language_tag: req.nativeLanguage,
+				is_admin: false,
 				languages: {
 					create: {
 						language_tag: '',
