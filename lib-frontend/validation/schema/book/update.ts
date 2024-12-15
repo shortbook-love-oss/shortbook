@@ -23,6 +23,7 @@ export const schema = z
 		translateLanguages: z
 			.enum(availableLanguageTags, { message: 'Please select language' })
 			.array(),
+		isAdmin: z.boolean(),
 		// For book cover design
 		baseColorStart: z.string().max(15).refine(validateColor, {
 			message: 'Please specify valid color (e.g. #01FC78)'

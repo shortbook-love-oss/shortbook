@@ -9,6 +9,7 @@
 	import { schema } from '$lib/validation/schema/book/update';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
 	import HeaderArea from '$lib/components/layouts/header-area.svelte';
+	import Checkbox from '$lib/components/modules/form/checkbox.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import Number from '$lib/components/modules/form/number.svelte';
 	import Select from '$lib/components/modules/form/select.svelte';
@@ -25,6 +26,8 @@
 	import Meta from '$lib/components/service/meta.svelte';
 
 	let { data } = $props();
+
+	const signInUser = $page.data.signInUser;
 
 	let isEnableJS = $state(false);
 	onMount(() => (isEnableJS = true));
@@ -96,33 +99,42 @@
 						className="mb-1"
 					/>
 					<p class="mb-12 break-words">
-						{$page.url.origin}/@{$page.data.signInUser.keyHandle}/book/{$form.urlSlug}
+						{$page.url.origin}/@{signInUser.keyHandle}/book/{$form.urlSlug}
 					</p>
-					<InputPoint
-						bind:point={$form.buyPoint}
-						errorMessages={$errors.buyPoint}
-						className="mb-4 {data.hasPaidArea ? '' : 'hidden'}"
+					<Checkbox
+						bind:checked={$form.isAdmin}
+						name="isAdmin"
+						label="Publish as administrator"
+						errorMessages={$errors.isAdmin}
+						className="mb-12 {signInUser.isAdmin ? '' : 'hidden'}"
 					/>
-					{#if data.hasPaidArea}
-						<PricePreview
-							point={$form.buyPoint}
-							userCurrencyCode={data.userCurrencyCode}
-							currencyRates={data.currencyRateIndex}
-							className="mb-12"
+					<div class={signInUser.isAdmin ? 'hidden' : 'contents'}>
+						<InputPoint
+							bind:point={$form.buyPoint}
+							errorMessages={$errors.buyPoint}
+							className="mb-4 {data.hasPaidArea ? '' : 'hidden'}"
 						/>
-					{:else}
-						<Number
-							value={0}
-							label="Selling point amount"
-							name=""
-							disabled={true}
-							className="mb-2 w-48"
-						/>
-						<MessageInfo
-							message="This book has no paid content. Publish as a free book."
-							className="mb-12"
-						/>
-					{/if}
+						{#if data.hasPaidArea}
+							<PricePreview
+								point={$form.buyPoint}
+								userCurrencyCode={data.userCurrencyCode}
+								currencyRates={data.currencyRateIndex}
+								className="mb-12"
+							/>
+						{:else}
+							<Number
+								value={0}
+								label="Selling point amount"
+								name=""
+								disabled={true}
+								className="mb-2 w-48"
+							/>
+							<MessageInfo
+								message="This book has no paid content. Publish as a free book."
+								className="mb-12"
+							/>
+						{/if}
+					</div>
 					<section class="mb-10">
 						<h2 class="mb-2 text-lg font-semibold">Reach it to the world!</h2>
 						<TranslateLanguageSelect
@@ -158,7 +170,7 @@
 						bind:writerColor={$form.writerColor}
 						title={data.initTitle}
 						subtitle={data.initSubtitle}
-						penName={$page.data.signInUser.penName}
+						penName={signInUser.penName}
 						errors={$errors}
 						className="mb-12 mx-auto w-fit"
 					/>

@@ -71,6 +71,7 @@ export const load = async ({ locals, params }) => {
 	form.data.translateLanguages = bookRevision.translate_languages.map(
 		(lang) => lang.language_tag as AvailableLanguageTags
 	);
+	form.data.isAdmin = book.is_admin;
 
 	const initTitle = bookRevision.title;
 	const initSubtitle = bookRevision.subtitle;
@@ -90,7 +91,7 @@ export const load = async ({ locals, params }) => {
 };
 
 export const actions = {
-	publish: async ({ request, url, locals, params }) => {
+	publish: async ({ request, url, params, locals }) => {
 		const signInUser = locals.signInUser;
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
@@ -108,6 +109,10 @@ export const actions = {
 		if (!form.valid) {
 			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
+		}
+
+		if (!signInUser.isAdmin && form.data.isAdmin) {
+			form.data.isAdmin = false;
 		}
 
 		const { bookRevision, dbError: dbBookUpdateError } = await dbBookUpdate({
@@ -138,7 +143,7 @@ export const actions = {
 		redirect(303, setLanguageTagToPath(`/@${signInUser.keyHandle}/book/${form.data.urlSlug}`, url));
 	},
 
-	draft: async ({ request, url, locals, params }) => {
+	draft: async ({ request, url, params, locals }) => {
 		const signInUser = locals.signInUser;
 		if (!signInUser) {
 			return error(401, { message: 'Unauthorized' });
@@ -166,6 +171,10 @@ export const actions = {
 		if (!form.valid) {
 			message(form, 'There was an error. please check your input and resubmit.');
 			return fail(400, { form });
+		}
+
+		if (!signInUser.isAdmin && form.data.isAdmin) {
+			form.data.isAdmin = false;
 		}
 
 		const { dbError: dbBookUpdateError } = await dbBookUpdate({

@@ -39,9 +39,11 @@ export type BookContentCreateProp = {
 	hasSalesArea: boolean;
 };
 
-export async function dbBookCreate(
-	req: BookOverviewCreateProp & BookCoverCreateProp & BookContentCreateProp
-) {
+export type DbBookCreateRequest = BookOverviewCreateProp &
+	BookCoverCreateProp &
+	BookContentCreateProp & { isAdmin: boolean };
+
+export async function dbBookCreate(req: DbBookCreateRequest) {
 	let dbError: Error | undefined;
 
 	const book = await prisma

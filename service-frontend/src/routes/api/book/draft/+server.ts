@@ -48,6 +48,7 @@ export async function POST({ request, locals }) {
 		nativeLanguage: form.data.nativeLanguage,
 		isTranslateToAll: false,
 		translateLanguages: [],
+		isAdmin: false,
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
