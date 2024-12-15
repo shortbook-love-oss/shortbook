@@ -1,5 +1,4 @@
 import 'unplugin-icons/types/svelte';
-import type { AvailableLanguageTags } from '$lib/utilities/language';
 import type { SignInUser } from '$lib/utilities/signin';
 
 // See https://kit.svelte.dev/docs/types#app

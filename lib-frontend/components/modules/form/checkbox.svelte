@@ -34,7 +34,7 @@
 				{name}
 				{required}
 				bind:checked
-				class="peer absolute left-0 top-0 z-[-1] box-border h-full w-full appearance-none rounded"
+				class="peer absolute left-0 top-0 z-[-1] box-border h-full w-full appearance-none rounded {inputClass}"
 				aria-invalid={errorMessages?.length ? true : undefined}
 			/>
 			<IconCheck
