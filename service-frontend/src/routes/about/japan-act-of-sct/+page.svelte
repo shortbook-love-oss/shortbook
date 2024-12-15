@@ -6,12 +6,12 @@
 </script>
 
 <svelte:head>
-	<title>{m.about_sct_title()} | ShortBook</title>
-	<Ogp pageType="website" title="ShortBook — {m.about_sct_title()}" />
+	<title>{m.about_sct_page_title()} | ShortBook</title>
+	<Ogp pageType="website" title="ShortBook — {m.about_sct_page_title()}" />
 </svelte:head>
 
 <section class="mx-auto mb-16 max-w-2xl px-4 text-xl sm:px-8">
-	<h1 class="mb-4 text-4xl font-bold">{m.about_sct_title()}</h1>
+	<h1 class="mb-4 text-4xl font-bold">{m.about_sct_page_title()}</h1>
 	<p>特定商取引に関する法律第11条「通信販売についての広告」に基づき、以下に明示いたします。</p>
 	<p>この文章は日本に在住している方を対象としております。</p>
 	<p>よく読み、安心して執筆ライフをお過ごしください。</p>
@@ -20,12 +20,12 @@
 	<p>有料記事投稿サービス「ShortBook」</p>
 	<p><a href="/" target="_blank" class="text-primary-700 underline">https://shortbook.life</a></p>
 </CompanyInfoItem>
-<CompanyInfoItem heading="事業者名" content={m.company_name()} />
+<CompanyInfoItem heading="事業者名" content={m.about_company_name()} />
 <CompanyInfoItem
 	heading="通信販売に関する業務の責任者"
-	content="代表社員 {m.company_chief_name()}"
+	content="代表社員 {m.about_company_chief_name()}"
 />
-<CompanyInfoItem heading={m.company_address_title()} content={m.company_address()} />
+<CompanyInfoItem heading={m.about_company_address_title()} content={m.about_company_address()} />
 <CompanyInfoItem heading="事業者へのお問い合わせ">
 	<p>
 		お問い合わせはフォームまたはメールでのみ受け付けております。送信後18時間以内に返信いたします。

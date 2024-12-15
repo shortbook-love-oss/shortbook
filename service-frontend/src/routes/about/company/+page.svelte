@@ -5,8 +5,8 @@
 </script>
 
 <svelte:head>
-	<title>About | ShortBook</title>
-	<Ogp pageType="website" title="ShortBook — About" />
+	<title>{m.about_company_page_title()} | ShortBook</title>
+	<Ogp pageType="website" title="ShortBook — {m.about_company_page_title()}" />
 </svelte:head>
 
 <div class="mb-32 flex w-full items-center justify-between">

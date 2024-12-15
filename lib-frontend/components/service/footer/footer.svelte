@@ -17,7 +17,7 @@
 	class="flex flex-col justify-center border-t border-stone-300 bg-white pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] {className}"
 >
 	<nav class="flex w-full flex-wrap gap-x-16 gap-y-8 px-4 py-12 sm:mx-auto sm:w-fit sm:px-8">
-		<div class="relative w-full sm:w-auto sm:pt-1.5">
+		<div class="relative w-full sm:pt-1.5 md:w-auto">
 			<a href="/" class="mb-2 inline-block" aria-label="Go to top page">
 				<img
 					src="/assets/shortbook-logotype.svg"
@@ -25,7 +25,7 @@
 					alt={m.logotype_alt()}
 				/>
 			</a>
-			<small class="mb-4 block text-base">© {servicePeriod} {m.company_name()}</small>
+			<small class="mb-4 block text-base">© {servicePeriod} {m.about_company_name()}</small>
 			<div class="relative">
 				<LanguageSelect />
 			</div>

@@ -1,3 +1,4 @@
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import * as m from '$i18n/output/messages';
 
 type FooterItem = {
@@ -10,24 +11,25 @@ type FooterItemChild = {
 	href: string;
 };
 
-export function categories(languageTag: string): FooterItem[] {
+export function categories(languageTag: AvailableLanguageTags): FooterItem[] {
 	return [
 		{
-			name: m.footer_about_company_heading({ languageTag }),
+			name: m.footer_about_shortbook_heading({ languageTag }),
 			childs: [
-				{ name: m.footer_about_company_about({ languageTag }), href: '/about' },
-				{ name: m.footer_about_company_contact({ languageTag }), href: '/support/contact' },
+				{ name: m.footer_about_shortbook_about({ languageTag }), href: '/about' },
+				{ name: m.footer_about_shortbook_term({ languageTag }), href: '/policies/term' },
+				{ name: m.footer_about_shortbook_privacy({ languageTag }), href: '/policies/privacy' },
 				{
-					name: m.footer_about_company_sct({ languageTag }),
+					name: m.footer_about_shortbook_sct({ languageTag }),
 					href: '/about/japan-act-of-sct'
 				}
 			]
 		},
 		{
-			name: m.footer_about_shortbook_heading({ languageTag }),
+			name: m.footer_about_company_heading({ languageTag }),
 			childs: [
-				{ name: m.footer_about_shortbook_term({ languageTag }), href: '/policies/term' },
-				{ name: m.footer_about_shortbook_privacy({ languageTag }), href: '/policies/privacy' }
+				{ name: m.footer_about_company_about({ languageTag }), href: '/about/company' },
+				{ name: m.footer_about_company_contact({ languageTag }), href: '/support/contact' }
 			]
 		}
 	];
