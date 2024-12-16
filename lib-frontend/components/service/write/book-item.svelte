@@ -45,6 +45,9 @@
 				{:else if book.status === 1}
 					<p>Published</p>
 				{/if}
+				{#if book.isAdmin}
+					<p class="rounded-md border-2 border-primary-700 px-2">Admin</p>
+				{/if}
 			</div>
 		</div>
 	</a>

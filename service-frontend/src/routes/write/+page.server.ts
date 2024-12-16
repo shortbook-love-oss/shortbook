@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import { getBookCover, type MyBookItem } from '$lib/utilities/book';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookList } from '$lib-backend/model/book/list';
-import type { AvailableLanguageTags } from '$lib/utilities/language.js';
 
 export const load = async ({ url, locals }) => {
 	const signInUser = locals.signInUser;
