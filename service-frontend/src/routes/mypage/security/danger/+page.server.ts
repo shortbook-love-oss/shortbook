@@ -20,7 +20,7 @@ export const load = async ({ locals }) => {
 export const actions = {
 	default: async ({ request, url, cookies, locals }) => {
 		const signInUser = locals.signInUser;
-		if (!signInUser) {
+		if (!signInUser || signInUser.isAdmin) {
 			return error(401, { message: 'Unauthorized' });
 		}
 

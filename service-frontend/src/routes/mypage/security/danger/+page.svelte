@@ -6,6 +6,7 @@
 	import { schema } from '$lib/validation/schema/user/delete';
 	import Form from '$lib/components/modules/form/form.svelte';
 	import TextField from '$lib/components/modules/form/text-field.svelte';
+	import MessageInfo from '$lib/components/modules/information/message-info.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 
 	let { data } = $props();
@@ -38,21 +39,25 @@
 	imageSrc={$page.data.signInUser.imageSrc}
 	className="mb-8"
 />
-<Form
-	method="POST"
-	action={$page.url.pathname}
-	{enhance}
-	hasInvalid={!hasVaild}
-	isLoading={$submitting}
-	submitLabel="Delete user"
-	{warnMessage}
-	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
->
-	<TextField
-		bind:value={$form.keyHandle}
-		name="keyHandle"
-		label="Type &quot;{$page.data.signInUser.keyHandle}&quot; to delete user data."
-		errorMessages={$errors.keyHandle}
-		className="mb-8"
-	/>
-</Form>
+{#if $page.data.signInUser.isAdmin}
+	<MessageInfo message="Can't delete admin-user." />
+{:else}
+	<Form
+		method="POST"
+		action={$page.url.pathname}
+		{enhance}
+		hasInvalid={!hasVaild}
+		isLoading={$submitting}
+		submitLabel="Delete user"
+		{warnMessage}
+		errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
+	>
+		<TextField
+			bind:value={$form.keyHandle}
+			name="keyHandle"
+			label="Type &quot;{$page.data.signInUser.keyHandle}&quot; to delete user data."
+			errorMessages={$errors.keyHandle}
+			className="mb-8"
+		/>
+	</Form>
+{/if}
