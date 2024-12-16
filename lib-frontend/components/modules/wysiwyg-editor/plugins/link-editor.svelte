@@ -2,8 +2,8 @@
 	import { LinkNode } from '@lexical/link';
 	import { $getNearestNodeOfType as getNearestNodeOfType, mergeRegister } from '@lexical/utils';
 	import {
-		COMMAND_PRIORITY_CRITICAL,
-		COMMAND_PRIORITY_HIGH,
+		CLICK_COMMAND,
+		COMMAND_PRIORITY_NORMAL,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
 		KEY_ESCAPE_COMMAND,
@@ -30,6 +30,15 @@
 	onMount(() => {
 		const removeListener = mergeRegister(
 			editor.registerCommand(
+				CLICK_COMMAND,
+				(event) => {
+					event.preventDefault();
+					return false;
+				},
+				COMMAND_PRIORITY_NORMAL
+			),
+
+			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
 				(_, targetEditor) => {
 					if (editor.getKey() === targetEditor.getKey()) {
@@ -41,7 +50,7 @@
 					}
 					return false;
 				},
-				COMMAND_PRIORITY_CRITICAL
+				COMMAND_PRIORITY_NORMAL
 			),
 
 			editor.registerCommand(
@@ -53,7 +62,7 @@
 					}
 					return false;
 				},
-				COMMAND_PRIORITY_HIGH
+				COMMAND_PRIORITY_NORMAL
 			)
 		);
 
