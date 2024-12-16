@@ -35,12 +35,12 @@ export const theme: EditorThemeClasses = {
 		variable: 'sb_bc__ch__variable'
 	},
 	heading: {
-		h1: 'sb_bc_h1',
-		h2: 'sb_bc_h2',
-		h3: 'sb_bc_h3',
-		h4: 'sb_bc_h4',
-		h5: 'sb_bc_h5',
-		h6: 'sb_bc_h6'
+		h1: 'sb_bc__h1',
+		h2: 'sb_bc__h2',
+		h3: 'sb_bc__h3',
+		h4: 'sb_bc__h4',
+		h5: 'sb_bc__h5',
+		h6: 'sb_bc__h6'
 	},
 	link: 'sb_bc__link',
 	list: {
