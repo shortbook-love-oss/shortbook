@@ -28,6 +28,8 @@
 	let { data } = $props();
 
 	const requestLang = getLanguageTagFromUrl($page.url);
+	const isShowPaidArea = data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn;
+	const isSignedAsAdmin = $page.data.signInUser?.isAdmin ?? false;
 	const updatedAt = toLocaleDate(data.bookDetail.updatedAt, requestLang);
 	const requestLangItem = getLanguageItem(requestLang);
 	const bookNativeLangItem = getLanguageItem(data.bookNativeLang);
@@ -143,18 +145,18 @@
 			</section>
 		{/if}
 		{#if data.hasPaidArea}
-			{#if data.isBoughtBook || data.bookDetail.buyPoint === 0 || data.isOwn}
-				<section class="sb_bc__root">
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html data.bookDetail.paidArea}
-				</section>
-			{:else}
+			{#if !isShowPaidArea || isSignedAsAdmin}
 				<SalesMessage imageSrc={data.bookDetail.userImage}>
 					<section class="sb_bc__root mb-4">
 						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html data.bookDetail.salesArea}
 					</section>
-					{#if data.hasEnoughPoint}
+					{#if isSignedAsAdmin}
+						<div class="mb-2 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl">
+							Buy for {data.primaryCurrency?.text}
+						</div>
+						<p>(Admin mode)</p>
+					{:else if data.hasEnoughPoint}
 						<a
 							href="/redirect/book/{data.bookDetail.id}/buy"
 							class="mb-2 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl hover:bg-primary-300 focus:bg-primary-300"
@@ -169,6 +171,12 @@
 						/>
 					{/if}
 				</SalesMessage>
+			{/if}
+			{#if isShowPaidArea || isSignedAsAdmin}
+				<section class="sb_bc__root">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+					{@html data.bookDetail.paidArea}
+				</section>
 			{/if}
 		{/if}
 	</div>

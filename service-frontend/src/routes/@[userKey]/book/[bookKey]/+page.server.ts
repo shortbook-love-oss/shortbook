@@ -22,7 +22,7 @@ import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
 import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
 
-export const load = async ({ url, locals, params }) => {
+export const load = async ({ url, params, locals }) => {
 	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
@@ -62,7 +62,6 @@ export const load = async ({ url, locals, params }) => {
 		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
 	}
 
-	const userNativeLang = signInUser?.nativeLanguage ?? ('' as const);
 	let userLang = book.user.languages.find((lang) => lang.language_tag === requestLang);
 	if (!userLang && book.user.languages.length) {
 		userLang = book.user.languages.at(0);
@@ -218,11 +217,12 @@ export const load = async ({ url, locals, params }) => {
 	}
 	const hasPaidArea = bookRevision.has_paid_area;
 
-	if (isBoughtBook || buyPoint === 0 || isOwn) {
+	const isShowPaidArea = isBoughtBook || bookDetail.buyPoint === 0 || isOwn;
+	if (isShowPaidArea || signInUser?.isAdmin) {
 		if (hasPaidArea) {
 			bookDetail.paidArea = bookLang.paid_area_html;
 		}
-	} else {
+	} else if (signInUser?.isAdmin) {
 		if (bookRevision.has_sales_area) {
 			bookDetail.salesArea = bookLang.sales_area_html;
 		}
@@ -233,7 +233,6 @@ export const load = async ({ url, locals, params }) => {
 		hasPaidArea,
 		bookNativeLang,
 		isFallbackBookLang,
-		userNativeLang,
 		userLang,
 		isOwn,
 		isBoughtBook,
