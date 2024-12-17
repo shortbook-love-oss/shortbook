@@ -9,7 +9,7 @@ export const load = async ({ url, params, locals }) => {
 	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { user, dbError } = await dbUserGetByKeyHandle({ keyHandle: params.userKey });
+	const { user, dbError } = await dbUserGetByKeyHandle({ keyHandle: params.userKey.toLowerCase() });
 	if (!user || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}

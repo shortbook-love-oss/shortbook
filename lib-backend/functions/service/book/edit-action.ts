@@ -1,23 +1,19 @@
 import { error } from '@sveltejs/kit';
-import { dbBookList } from '$lib-backend/model/book/list';
+import { dbBookGet } from '$lib-backend/model/book/get';
 
-export async function isExistBookUrlSlug(userId: string, inputSlug: string, editingBookId: string) {
-	const { books, dbError: dbBookListError } = await dbBookList({
-		userId,
-		statuses: [1],
-		isIncludeAdmin: true
+export async function isExistBookUrlSlug(
+	userKeyHandle: string,
+	bookUrlSlug: string,
+	editingBookId: string
+) {
+	const { book, dbError: dbBookListError } = await dbBookGet({
+		bookUrlSlug: bookUrlSlug.toLowerCase(),
+		userKeyHandle: userKeyHandle.toLowerCase(),
+		statuses: [1]
 	});
-	if (!books || dbBookListError) {
-		return error(500, { message: dbBookListError?.message ?? '' });
-	}
-	for (const book of books) {
-		if (editingBookId && editingBookId === book.id) {
-			continue;
-		}
-		if (book.revisions.at(0)?.url_slug === inputSlug) {
-			return true;
-		}
+	if (dbBookListError) {
+		return error(500, { message: dbBookListError.message });
 	}
 
-	return false;
+	return book != undefined && book.id !== editingBookId;
 }

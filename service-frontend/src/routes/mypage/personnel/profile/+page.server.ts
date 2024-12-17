@@ -41,7 +41,9 @@ export const actions = {
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
 			// If already use key-name, show error message near the input
-			const { user, dbError } = await dbUserGetByKeyHandle({ keyHandle: form.data.keyHandle });
+			const { user, dbError } = await dbUserGetByKeyHandle({
+				keyHandle: form.data.keyHandle.toLowerCase()
+			});
 			if (dbError) {
 				return error(500, { message: dbError.message });
 			}

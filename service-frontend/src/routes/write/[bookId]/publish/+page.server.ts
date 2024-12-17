@@ -99,7 +99,11 @@ export const actions = {
 
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
-			const isExist = await isExistBookUrlSlug(signInUser.id, form.data.urlSlug, params.bookId);
+			const isExist = await isExistBookUrlSlug(
+				signInUser.keyHandle,
+				form.data.urlSlug,
+				params.bookId
+			);
 			if (isExist) {
 				form.valid = false;
 				form.errors.urlSlug = form.errors.urlSlug ?? [];
@@ -161,7 +165,11 @@ export const actions = {
 			}
 		}
 		if (form.valid) {
-			const isExist = await isExistBookUrlSlug(signInUser.id, form.data.urlSlug, params.bookId);
+			const isExist = await isExistBookUrlSlug(
+				signInUser.keyHandle,
+				form.data.urlSlug,
+				params.bookId
+			);
 			if (isExist) {
 				form.valid = false;
 				form.errors.urlSlug = form.errors.urlSlug ?? [];

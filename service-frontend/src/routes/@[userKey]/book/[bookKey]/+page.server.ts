@@ -32,8 +32,8 @@ export const load = async ({ url, params, locals }) => {
 		bookRevision,
 		dbError: dbBookGetError
 	} = await dbBookGet({
-		bookUrlSlug: params.bookKey,
-		userKeyHandle: params.userKey,
+		bookUrlSlug: params.bookKey.toLowerCase(),
+		userKeyHandle: params.userKey.toLowerCase(),
 		statuses: [1],
 		contentsLanguage: requestLang,
 		isIncludeDelete: true
@@ -222,7 +222,8 @@ export const load = async ({ url, params, locals }) => {
 		if (hasPaidArea) {
 			bookDetail.paidArea = bookLang.paid_area_html;
 		}
-	} else if (signInUser?.isAdmin) {
+	}
+	if (!isShowPaidArea || signInUser?.isAdmin) {
 		if (bookRevision.has_sales_area) {
 			bookDetail.salesArea = bookLang.sales_area_html;
 		}
