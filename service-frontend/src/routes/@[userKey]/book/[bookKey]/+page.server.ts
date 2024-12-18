@@ -37,7 +37,7 @@ export const load = async ({ url, params, locals }) => {
 	if (errorMessage != undefined) {
 		return error(500, { message: errorMessage });
 	} else if (bookRevision?.cover == null || bookNativeLang == undefined) {
-		return error(500, { message: 'Failed to get the book-cover.' });
+		return error(404, { message: 'Not found' });
 	}
 
 	// Check buy book if it's paid and written by another
@@ -177,6 +177,7 @@ export const load = async ({ url, params, locals }) => {
 		freeArea: '',
 		paidArea: '',
 		salesArea: '',
+		isAdminBook: book.is_admin,
 		isBookDeleted: book.deleted_at != null
 	};
 

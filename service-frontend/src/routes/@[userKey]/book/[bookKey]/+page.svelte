@@ -55,6 +55,9 @@
 <svelte:head>
 	<title>{data.bookDetail.title} | {data.bookDetail.penName}</title>
 	<Ogp pageType="profile" title="{data.bookDetail.penName} — {data.bookDetail.title}" />
+	{#if data.bookDetail.isAdminBook}
+		<meta name="robots" content="noindex" />
+	{/if}
 </svelte:head>
 
 <BookRead>

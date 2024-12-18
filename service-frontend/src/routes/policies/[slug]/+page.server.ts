@@ -16,6 +16,8 @@ export const load = async ({ url, params }) => {
 		return error(500, { message: errorMessage });
 	} else if (bookRevision?.cover == null) {
 		return error(404, { message: 'Not found' });
+	} else if (!book.is_admin) {
+		return error(404, { message: 'Not found' });
 	}
 
 	const bookCover = getBookCover({
@@ -49,6 +51,7 @@ export const load = async ({ url, params }) => {
 		freeArea: bookLang.free_area_html,
 		paidArea: '',
 		salesArea: '',
+		isAdminBook: book.is_admin,
 		isBookDeleted: book.deleted_at != null
 	};
 

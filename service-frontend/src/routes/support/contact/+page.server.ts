@@ -129,7 +129,7 @@ export const actions = {
 		await sendEmail(
 			'ShortBook Support Team',
 			env.EMAIL_FROM,
-			['kurachiweb@shortbook.life'],
+			[form.data.email],
 			'Your inquiry has been sent.',
 			`<p>We will check your email and reply within 24 hours.</p><p>Here is your sent contents.</p><blockquote style="margin: 0 0 1em; padding: 16px; background-color: #eee; white-space: pre-wrap; overflow-wrap: break-word; color: #222;">${escapeHTML(sentDescription)}</blockquote><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>`,
 			`We will check your email and reply within 24 hours.\n\nHere is your sent contents.\n\n${sentDescription}\n\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`

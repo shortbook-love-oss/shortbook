@@ -51,7 +51,7 @@ export const load = async ({ url, locals }) => {
 			translateLanguages: bookRevision.contents.map(
 				(lang) => lang.language_tag as AvailableLanguageTags
 			),
-			isAdmin: book.is_admin
+			isAdminBook: book.is_admin
 		});
 	}
 

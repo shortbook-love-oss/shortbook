@@ -37,7 +37,7 @@ export interface BookItem extends BookItemBase {
 export interface MyBookItem extends BookItemBase {
 	hasPublishedRevision: boolean;
 	translateLanguages: AvailableLanguageTags[];
-	isAdmin: boolean;
+	isAdminBook: boolean;
 }
 
 export interface BookDetail extends BookItem {
@@ -45,6 +45,7 @@ export interface BookDetail extends BookItem {
 	freeArea: string;
 	paidArea: string;
 	salesArea: string;
+	isAdminBook: boolean;
 	isBookDeleted: boolean;
 }
 
