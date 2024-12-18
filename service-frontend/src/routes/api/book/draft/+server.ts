@@ -91,8 +91,10 @@ export async function PUT({ request, locals }) {
 		bookId: form.data.bookId,
 		userId: signInUser.id
 	});
-	if (!currentBook || !bookRevision || dbBookGetError) {
-		return error(500, { message: dbBookGetError?.message ?? '' });
+	if (dbBookGetError) {
+		return error(500, { message: dbBookGetError.message });
+	} else if (!currentBook || !bookRevision) {
+		return error(500, { message: `Can't find the book. Book Id=${form.data.bookId}` });
 	}
 
 	const { html: freeAreaHtml, hasContent: hasFreeArea } = await fromEditorStateToHtml(

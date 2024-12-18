@@ -45,8 +45,10 @@ export const load = async ({ url, params, locals }) => {
 		bookId,
 		statuses: [1]
 	});
-	if (!book?.user || !bookRevision || dbBookGetError) {
-		return error(500, { message: dbBookGetError?.message ?? '' });
+	if (dbBookGetError) {
+		return error(500, { message: dbBookGetError.message });
+	} else if (!book?.user || !bookRevision) {
+		return error(500, { message: `Can't find the book. Book Id=${bookId}` });
 	}
 	const afterPaymentUrl = new URL(
 		url.origin + setLanguageTagToPath(`/redirect/book/${params.bookId}/bought`, requestLang)

@@ -28,9 +28,8 @@ export const load = async ({ locals, params }) => {
 		userId: signInUser.id
 	});
 	if (dbError) {
-		return error(500, { message: dbError?.message ?? '' });
-	}
-	if (!book || !bookRevision?.cover) {
+		return error(500, { message: dbError.message });
+	} else if (!book || !bookRevision?.cover) {
 		return error(500, { message: `Can't find book. Book ID=${params.bookId}` });
 	}
 

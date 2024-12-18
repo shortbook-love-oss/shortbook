@@ -22,8 +22,6 @@ type DbBookGetRequest = IdExclusiveProps & {
 };
 
 export async function dbBookGet(req: DbBookGetRequest) {
-	let dbError: Error | undefined;
-
 	const whereByCond: Prisma.booksWhereInput = {};
 	if (req.statuses != null || (req.userKeyHandle && req.bookUrlSlug)) {
 		whereByCond.revisions = {
@@ -51,7 +49,7 @@ export async function dbBookGet(req: DbBookGetRequest) {
 		getRevisionsCount = 2;
 	}
 
-	const book = await prisma.books
+	const { book, dbError } = await prisma.books
 		.findFirst({
 			where: {
 				...whereByCond,
@@ -101,24 +99,20 @@ export async function dbBookGet(req: DbBookGetRequest) {
 			}
 		})
 		.then((book) => {
-			if (!book) {
-				dbError ??= new Error(
-					`Can't find book. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
-				);
-				return undefined;
-			} else if (req.userId && book.user_id !== req.userId) {
-				dbError ??= new Error(
+			if (book && req.userId && book.user_id !== req.userId) {
+				const dbError = new Error(
 					`Can't edit book written by other writer. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
 				);
-				return undefined;
+				return { book: undefined, dbError };
 			}
-			return book;
+			return { book, dbError: undefined };
 		})
-		.catch(() => {
-			dbError ??= new Error(
+		.catch((error: Error) => {
+			console.error('dbBookGet', req, 'error', error);
+			const dbError = new Error(
 				`Failed to get book. Book ID=${req.bookId} or Key-name=${req.bookUrlSlug}`
 			);
-			return undefined;
+			return { book: undefined, dbError };
 		});
 
 	const bookRevision = book?.revisions.at(0);

@@ -67,8 +67,10 @@ export const load = async ({ url }) => {
 				contentsLanguage: requestLang,
 				isIncludeDelete: true
 			});
-			if (!book?.user || !bookRevision || dbBookGetError) {
-				throw new Error(dbBookGetError?.message ?? '');
+			if (dbBookGetError) {
+				throw dbBookGetError;
+			} else if (!book?.user || !bookRevision) {
+				throw new Error(`Can't find the book. Book Id=${bookPaymentInfo.bookId}`);
 			}
 			return { book, bookRevision };
 		})(),
