@@ -40,7 +40,7 @@
 			<p class="pe-4 text-xl">Mypage</p>
 		</div>
 	{/snippet}
-	<div class="justify-center gap-16 sm:flex">
+	<div class="justify-center gap-16 sm:flex sm:pt-8">
 		<div class="w-40 shrink-0 max-sm:hidden">
 			<NavLinkSmall name="Back" href={redirectUrl} className="-mx-3 mb-4">
 				<IconArrowLeft width="24" height="24" class="-mx-1 shrink-0" />
