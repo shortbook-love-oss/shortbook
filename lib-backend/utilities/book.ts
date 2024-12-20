@@ -108,6 +108,14 @@ function normalizeBookContentDom(rootElem: HTMLElement) {
 		}
 	});
 
+	// <p dir="ltr">FooBar</p> → <p>FooBar</p>
+	const unnecessaryDirections = rootElem.querySelectorAll(':not(bdo,bdi)[dir]');
+	unnecessaryDirections.forEach((elem) => {
+		if (elem instanceof HTMLElement) {
+			elem.removeAttribute('dir');
+		}
+	});
+
 	// Lexical maybe can't add the "target" attribute on SSR
 	const extraLinks = rootElem.querySelectorAll('a[rel="noreferrer ugc"]');
 	extraLinks.forEach((elem) => {
