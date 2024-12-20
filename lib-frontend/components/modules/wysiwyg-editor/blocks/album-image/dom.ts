@@ -32,6 +32,8 @@ export function createImageNodeDOM(node: ImageNode, isEditPage: boolean) {
 		link.addEventListener('click', (ev) => ev.preventDefault());
 	} else {
 		link.href = `${imageFilePath}?ext=${node.getToExtension()}`;
+		link.target = '_blank';
+		link.rel = 'noreferrer ugc';
 	}
 
 	const imageWrap = document.createElement('picture');
