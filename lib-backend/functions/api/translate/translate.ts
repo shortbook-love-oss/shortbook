@@ -6,7 +6,6 @@ import type { AvailableLanguageTags } from '$lib/utilities/language';
 
 const deeplSourceLangIndex = {
 	'en-US': 'en',
-	ar: 'ar',
 	nb: 'nb',
 	sv: 'sv',
 	fi: 'fi',
@@ -17,7 +16,6 @@ const deeplSourceLangIndex = {
 	nl: 'nl',
 	de: 'de',
 	da: 'da',
-	cs: 'cs',
 	hu: 'hu',
 	uk: 'uk',
 	ru: 'ru',
@@ -29,7 +27,13 @@ const deeplSourceLangIndex = {
 export type DeeplLangKey = keyof typeof deeplSourceLangIndex;
 export const deeplLangKeys = Object.keys(deeplSourceLangIndex) as DeeplLangKey[];
 
-const googleLangIndex = ['hi', 'zh-CN', 'zh-TW'] as const satisfies AvailableLanguageTags[];
+const googleLangIndex = [
+	'ar',
+	'cs',
+	'hi',
+	'zh-CN',
+	'zh-TW'
+] as const satisfies AvailableLanguageTags[];
 export type GoogleLangKey = (typeof googleLangIndex)[number];
 export const googleLangKeys = googleLangIndex as GoogleLangKey[];
 
