@@ -83,7 +83,7 @@
 			{data.bookDetail.subtitle}
 		</p>
 	{/if}
-	<div class="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+	<div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
 		<ProfileCard
 			name={data.bookDetail.penName}
 			keyHandle={data.bookDetail.userKeyHandle}
@@ -94,17 +94,24 @@
 			{/if}
 		</ProfileCard>
 	</div>
-	<div class="mb-8 flex items-center gap-4">
+	<div class="mb-8 flex flex-wrap items-center gap-4">
 		<time datetime={data.bookDetail.updatedAt.toISOString()} class="text-stone-600"
 			>{updatedAt}</time
 		>
+		{#if !data.isFallbackBookLang && bookNativeLangItem != undefined && bookNativeLangItem.value !== requestLang}
+			<a
+				href={removeLanguageTagFromPath($page.url.pathname + $page.url.search)}
+				hreflang={bookNativeLangItem.value}
+				class="underline">Original : {bookNativeLangItem.english}</a
+			>
+		{/if}
 		{#if data.isOwn && !data.bookDetail.isBookDeleted}
-			<NavLinkSmall name="Edit" href={editUrl} className="w-fit">
+			<NavLinkSmall name="Edit" href={editUrl} className="-my-2 w-fit">
 				<IconWrite width="20" height="20" className="-me-1" />
 			</NavLinkSmall>
 		{/if}
 		{#if data.isBoughtBook}
-			<NavLinkSmall name="Bought" colorClass="bg-green-200" className="w-fit">
+			<NavLinkSmall name="Bought" colorClass="bg-green-200" className="-my-2 w-fit">
 				<IconCheck width="20" height="20" class="-mx-1" />
 			</NavLinkSmall>
 		{/if}
@@ -133,11 +140,6 @@
 			</p>
 			{@render switchLanguage(bookNativeLangItem)}
 		</MessageWarning>
-	{:else if bookNativeLangItem != undefined && bookNativeLangItem.value !== requestLang}
-		<MessageInfo className="mb-6">
-			<p class="mb-1">Want to read it in the original language?</p>
-			{@render switchLanguage(bookNativeLangItem)}
-		</MessageInfo>
 	{/if}
 	<hr class="my-8 border-stone-300" />
 	{#if data.bookDetail.freeArea}
