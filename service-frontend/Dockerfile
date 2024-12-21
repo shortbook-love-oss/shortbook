@@ -55,6 +55,7 @@ COPY ./lib-frontend ./lib-frontend
 COPY ./lib-backend ./lib-backend
 
 # Production-setting build
+RUN npm run schema-generate
 RUN npm run build
 
 FROM node:22.12.0-bookworm-slim AS prd

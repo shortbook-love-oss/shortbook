@@ -184,7 +184,7 @@
 </HeaderArea>
 
 <div class="flex flex-col items-center px-4 pb-24 pt-16">
-	<div class="flex min-h-dvh w-full max-w-[640px] flex-1 flex-col">
+	<div class="flex min-h-[calc(100dvh-10rem)] w-full max-w-[640px] flex-1 flex-col">
 		<TextAreaSingle
 			bind:value={title}
 			name="title"
@@ -212,37 +212,39 @@
 			placeholder="Free area... Write your knowledge..."
 			onInput={autoSave}
 		/>
-		<p class="mt-8 text-center text-lg text-stone-500">Free area end</p>
-		<hr class="my-2 border-t-4 border-double border-stone-300" />
-		<p class="mb-8 text-center text-lg text-stone-500">Paid area start</p>
-		<Editor
-			bind:value={paidArea}
-			bind:hasContent={hasPaidArea}
-			namespace="book-paid-area"
-			placeholder="Paid area... Write special contents..."
-			onInput={autoSave}
-		/>
-		<p class="mt-8 text-center text-lg text-stone-500">Paid area end</p>
-		<hr class="my-2 border-t-4 border-double border-stone-300" />
-		<p class="mb-8 text-center text-lg text-stone-500">Bonus: Write a sales pitch</p>
-		<SalesMessage imageSrc={$page.data.signInUser.imageSrc}>
+		{#if !$page.data.signInUser.isAdmin}
+			<p class="mt-8 text-center text-lg text-stone-500">Free area end</p>
+			<hr class="my-2 border-t-4 border-double border-stone-300" />
+			<p class="mb-8 text-center text-lg text-stone-500">Paid area start</p>
 			<Editor
-				bind:value={salesArea}
-				bind:hasContent={hasSalesArea}
-				namespace="book-sales-area"
-				placeholder="Appeal &quot;Buy and read this!&quot;..."
+				bind:value={paidArea}
+				bind:hasContent={hasPaidArea}
+				namespace="book-paid-area"
+				placeholder="Paid area... Write special contents..."
 				onInput={autoSave}
 			/>
-			{#if !hasPaidArea && hasSalesArea}
-				<MessageWarning
-					message="If you do not write the paid area, this area will not be displayed to users."
-					className="mt-4"
+			<p class="mt-8 text-center text-lg text-stone-500">Paid area end</p>
+			<hr class="my-2 border-t-4 border-double border-stone-300" />
+			<p class="mb-8 text-center text-lg text-stone-500">Bonus: Write a sales pitch</p>
+			<SalesMessage imageSrc={$page.data.signInUser.imageSrc}>
+				<Editor
+					bind:value={salesArea}
+					bind:hasContent={hasSalesArea}
+					namespace="book-sales-area"
+					placeholder="Appeal &quot;Buy and read this!&quot;..."
+					onInput={autoSave}
 				/>
-			{:else}
-				<div class="mt-4 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl">
-					Buy for $◯.◯◯
-				</div>
-			{/if}
-		</SalesMessage>
+				{#if !hasPaidArea && hasSalesArea}
+					<MessageWarning
+						message="If you do not write the paid area, this area will not be displayed to users."
+						className="mt-4"
+					/>
+				{:else}
+					<div class="mt-4 inline-block rounded-lg bg-primary-200 px-4 py-3 text-2xl">
+						Buy for $◯.◯◯
+					</div>
+				{/if}
+			</SalesMessage>
+		{/if}
 	</div>
 </div>

@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import { getBookCover, type MyBookItem } from '$lib/utilities/book';
+import type { AvailableLanguageTags } from '$lib/utilities/language';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookList } from '$lib-backend/model/book/list';
-import type { AvailableLanguageTags } from '$lib/utilities/language.js';
 
 export const load = async ({ url, locals }) => {
 	const signInUser = locals.signInUser;
@@ -11,7 +11,10 @@ export const load = async ({ url, locals }) => {
 	}
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { books, dbError } = await dbBookList({ userId: signInUser.id });
+	const { books, dbError } = await dbBookList({
+		userId: signInUser.id,
+		isIncludeAdmin: true
+	});
 	if (!books || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
@@ -47,7 +50,8 @@ export const load = async ({ url, locals }) => {
 			hasPublishedRevision: book.revisions.some((rev) => rev.status === 1),
 			translateLanguages: bookRevision.contents.map(
 				(lang) => lang.language_tag as AvailableLanguageTags
-			)
+			),
+			isAdminBook: book.is_admin
 		});
 	}
 

@@ -40,10 +40,8 @@
 			{@render contents()}
 		{:else}
 			<div class="flex-1 pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]">
-				<main class="min-h-80 w-full flex-1 px-4 pb-24 pt-12 sm:px-8 sm:pt-24">
-					{#if children}
-						{@render children()}
-					{/if}
+				<main class="min-h-80 w-full flex-1 px-4 pb-24 pt-12 sm:px-8 {header ? '' : 'sm:pt-24'}">
+					{@render children?.()}
 				</main>
 			</div>
 			{#if footer}

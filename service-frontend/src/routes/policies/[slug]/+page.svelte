@@ -7,8 +7,8 @@
 </script>
 
 <svelte:head>
-	<title>{data.bookDetail.title} | ShortBook</title>
-	<Ogp pageType="website" title="ShortBook — {data.bookDetail.title}" />
+	<title>{data.bookDetail.title}</title>
+	<Ogp pageType="website" title={data.bookDetail.title} />
 </svelte:head>
 
 <BookRead>

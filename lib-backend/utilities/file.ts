@@ -57,27 +57,22 @@ export async function copyFile(
 ) {
 	const s3 = createStorageClient(region);
 
-	let isSuccessCopy = false;
-	let error: Error | undefined;
-
 	const command = new CopyObjectCommand({
 		Bucket: bucketName,
 		CopySource: `${bucketName}/${filePathFrom}`,
 		Key: filePathTo
 	});
-	await s3
+	return await s3
 		.send(command)
 		.then((response) => {
-			const statusCode = response.$metadata.httpStatusCode;
-			if (statusCode) {
-				isSuccessCopy = 200 <= statusCode && statusCode < 300;
-			}
+			const resCode = response.$metadata.httpStatusCode;
+			const isSuccessCopy = resCode != undefined && 200 <= resCode && resCode < 300;
+			return { isSuccessCopy, error: undefined };
 		})
-		.catch((e: Error) => {
-			error = e;
+		.catch((error: Error) => {
+			console.error(error);
+			return { isSuccessCopy: false, error };
 		});
-
-	return { isSuccessCopy, error };
 }
 
 export async function uploadFile(
@@ -89,10 +84,6 @@ export async function uploadFile(
 ) {
 	const s3 = createStorageClient(region);
 
-	let isSuccessUpload = false;
-	let checksum = '';
-	let error: Error | undefined;
-
 	const command = new PutObjectCommand({
 		Bucket: bucketName,
 		Key: filePath,
@@ -100,29 +91,22 @@ export async function uploadFile(
 		ContentType: contentType,
 		ChecksumAlgorithm: 'SHA256'
 	});
-	await s3
+	return await s3
 		.send(command)
 		.then((response) => {
-			const statusCode = response.$metadata.httpStatusCode;
-			if (statusCode) {
-				isSuccessUpload = 200 <= statusCode && statusCode < 300;
-			}
-			if (response.ChecksumSHA256) {
-				checksum = response.ChecksumSHA256;
-			}
+			const resCode = response.$metadata.httpStatusCode;
+			const isSuccessUpload = resCode != undefined && 200 <= resCode && resCode < 300;
+			const checksum = response.ChecksumSHA256 ?? '';
+			return { isSuccessUpload, checksum, error: undefined };
 		})
-		.catch((e: Error) => {
-			error = e;
+		.catch((error: Error) => {
+			console.error(error);
+			return { isSuccessUpload: false, checksum: '', error };
 		});
-
-	return { isSuccessUpload, checksum, error };
 }
 
 export async function deleteFiles(region: string, bucketName: string, filePrefix: string) {
 	const s3 = createStorageClient(region);
-
-	let isSuccessDelete = false;
-	let error: Error | undefined;
 
 	// S3 isn't support directory-delete
 	// Search by prefix and delete matched objects
@@ -130,16 +114,21 @@ export async function deleteFiles(region: string, bucketName: string, filePrefix
 		Bucket: bucketName,
 		Prefix: filePrefix
 	});
-	const list = await s3.send(listCommand).catch((e: Error) => {
-		error = e;
-		return undefined;
-	});
-	if (!list || error) {
-		return { isSuccessDelete: false, error };
+	const { list, error: listError } = await s3
+		.send(listCommand)
+		.then((list) => {
+			return { list: list?.Contents, error: undefined };
+		})
+		.catch((error: Error) => {
+			console.error(error);
+			return { list: undefined, error };
+		});
+	if (!list || listError) {
+		return { isSuccessDelete: false, error: listError };
 	}
 
 	const deleteTargetKeys: string[] = [];
-	list.Contents?.forEach((object) => {
+	list.forEach((object) => {
 		if (!object.Key) {
 			return;
 		}
@@ -158,17 +147,15 @@ export async function deleteFiles(region: string, bucketName: string, filePrefix
 			Objects: deleteTargetKeys.map((key) => ({ Key: key }))
 		}
 	});
-	await s3
+	return await s3
 		.send(deleteCommand)
 		.then((response) => {
-			const statusCode = response.$metadata.httpStatusCode;
-			if (statusCode) {
-				isSuccessDelete = 200 <= statusCode && statusCode < 300;
-			}
+			const resCode = response.$metadata.httpStatusCode;
+			const isSuccessDelete = resCode != undefined && 200 <= resCode && resCode < 300;
+			return { isSuccessDelete, error: undefined };
 		})
-		.catch((e: Error) => {
-			error = e;
+		.catch((error: Error) => {
+			console.error(error);
+			return { isSuccessDelete: false, error };
 		});
-
-	return { isSuccessDelete, error };
 }

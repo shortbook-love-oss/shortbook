@@ -8,7 +8,6 @@ import {
 	guessCurrencyByLang,
 	type CurrencySupportCodes
 } from '$lib/utilities/currency';
-import type { AvailableLanguageTags } from '$lib/utilities/language';
 import {
 	chargeFee,
 	getAccuratePaymentPrice,
@@ -16,61 +15,29 @@ import {
 } from '$lib/utilities/payment';
 import { isSelectGroup, type SelectItem, type SelectItemSingle } from '$lib/utilities/select';
 import { getLanguageTagFromUrl } from '$lib/utilities/url';
-import { dbBookGet } from '$lib-backend/model/book/get';
+import { getBookByUrlSlug } from '$lib-backend/functions/service/book/get-by-url-slug';
 import { dbBookBuyGet } from '$lib-backend/model/book-buy/get';
 import { dbCurrencyRateGet } from '$lib-backend/model/currency/get';
 import { dbUserPaymentSettingGet } from '$lib-backend/model/user/payment-setting/get';
 import { dbUserPointList } from '$lib-backend/model/user/point/list';
 
-export const load = async ({ url, locals, params }) => {
+export const load = async ({ url, params, locals }) => {
 	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	// Get a book even if it's a draft, and filter it later
 	const {
 		book,
 		bookRevision,
-		dbError: dbBookGetError
-	} = await dbBookGet({
-		bookUrlSlug: params.bookKey,
-		userKeyHandle: params.userKey,
-		statuses: [1],
-		contentsLanguage: requestLang,
-		isIncludeDelete: true
-	});
-	if (!book || !bookRevision?.cover || dbBookGetError) {
-		return error(500, { message: dbBookGetError?.message ?? '' });
-	}
-
-	const bookNativeLang = bookRevision.native_language_tag as AvailableLanguageTags;
-	let isFallbackBookLang = false;
-	let bookLang = bookRevision.contents.at(0);
-	if (!bookLang) {
-		const { bookRevision: nativeBookRevision, dbError: dbBookGetError } = await dbBookGet({
-			bookId: book.id,
-			statuses: [1],
-			contentsLanguage: bookRevision.native_language_tag as AvailableLanguageTags,
-			isIncludeDelete: true
-		});
-		if (!nativeBookRevision || dbBookGetError) {
-			return error(500, { message: dbBookGetError?.message ?? '' });
-		}
-		isFallbackBookLang = true;
-		bookLang = nativeBookRevision.contents.at(0);
-	}
-	if (!bookLang) {
-		return error(500, { message: `Failed to get book contents. Book Key-name=${params.bookKey}` });
-	}
-
-	const userNativeLang = signInUser?.nativeLanguage ?? ('' as const);
-	let userLang = book.user.languages.find((lang) => lang.language_tag === requestLang);
-	if (!userLang && book.user.languages.length) {
-		userLang = book.user.languages.at(0);
-	}
-	if (!userLang) {
-		return error(500, {
-			message: `Failed to get profile contents. User Key-name=${params.userKey}`
-		});
+		bookLang,
+		userLang,
+		bookNativeLang,
+		isFallbackBookLang,
+		errorMessage
+	} = await getBookByUrlSlug(params.userKey, params.bookKey, requestLang);
+	if (errorMessage != undefined) {
+		return error(500, { message: errorMessage });
+	} else if (bookRevision?.cover == null || bookNativeLang == undefined) {
+		return error(404, { message: 'Not found' });
 	}
 
 	// Check buy book if it's paid and written by another
@@ -210,6 +177,7 @@ export const load = async ({ url, locals, params }) => {
 		freeArea: '',
 		paidArea: '',
 		salesArea: '',
+		isAdminBook: book.is_admin,
 		isBookDeleted: book.deleted_at != null
 	};
 
@@ -218,11 +186,13 @@ export const load = async ({ url, locals, params }) => {
 	}
 	const hasPaidArea = bookRevision.has_paid_area;
 
-	if (isBoughtBook || buyPoint === 0 || isOwn) {
+	const isShowPaidArea = isBoughtBook || bookDetail.buyPoint === 0 || isOwn;
+	if (isShowPaidArea || signInUser?.isAdmin) {
 		if (hasPaidArea) {
 			bookDetail.paidArea = bookLang.paid_area_html;
 		}
-	} else {
+	}
+	if (!isShowPaidArea || signInUser?.isAdmin) {
 		if (bookRevision.has_sales_area) {
 			bookDetail.salesArea = bookLang.sales_area_html;
 		}
@@ -233,7 +203,6 @@ export const load = async ({ url, locals, params }) => {
 		hasPaidArea,
 		bookNativeLang,
 		isFallbackBookLang,
-		userNativeLang,
 		userLang,
 		isOwn,
 		isBoughtBook,

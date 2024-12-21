@@ -2,7 +2,11 @@ import prisma from '$lib-backend/database/connect';
 import type { BookCoverCreateProp, BookOverviewCreateProp } from '$lib-backend/model/book/create';
 import { isArrayHaveSameValues } from '$lib/utilities/array';
 
-export type DbBookUpdateRequest = BookOverviewCreateProp & BookCoverCreateProp & { bookId: string };
+export type DbBookUpdateRequest = BookOverviewCreateProp &
+	BookCoverCreateProp & {
+		bookId: string;
+		isAdmin: boolean;
+	};
 
 export async function dbBookUpdate(req: DbBookUpdateRequest) {
 	const { bookRevision, dbError } = await prisma
@@ -18,6 +22,16 @@ export async function dbBookUpdate(req: DbBookUpdateRequest) {
 			} else if (bookBeforeEdit.user_id !== req.userId) {
 				throw new Error(`Can't edit book written by other writer. Book ID=${req.bookId}`);
 			}
+
+			await tx.books.update({
+				where: {
+					id: bookBeforeEdit.id,
+					deleted_at: null
+				},
+				data: {
+					is_admin: req.isAdmin
+				}
+			});
 
 			const latestRevision = await tx.book_revisions.findFirst({
 				where: {

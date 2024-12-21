@@ -11,4 +11,5 @@ export interface SignInUser {
 	email: string;
 	imageSrc: string;
 	nativeLanguage: AvailableLanguageTags;
+	isAdmin: boolean;
 }

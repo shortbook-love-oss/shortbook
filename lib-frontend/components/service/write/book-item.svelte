@@ -3,10 +3,10 @@
 	import type { MyBookItem } from '$lib/utilities/book';
 	import { toLocaleDatetime } from '$lib/utilities/date';
 	import type { AvailableLanguageTags } from '$lib/utilities/language';
-	import Dropdown from '$lib/components/layouts/dropdown.svelte';
-	import BookCover from '$lib/components/service/read/book-cover.svelte';
 	import Dialog from '$lib/components/layouts/dialog.svelte';
-	import NavLinkSmall from '../navigation/nav-link-small.svelte';
+	import Dropdown from '$lib/components/layouts/dropdown.svelte';
+	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';
+	import BookCover from '$lib/components/service/read/book-cover.svelte';
 
 	type Props = {
 		book: MyBookItem;
@@ -44,6 +44,9 @@
 					</p>
 				{:else if book.status === 1}
 					<p>Published</p>
+				{/if}
+				{#if book.isAdminBook}
+					<p class="rounded-md border-2 border-primary-700 px-2">Admin</p>
 				{/if}
 			</div>
 		</div>

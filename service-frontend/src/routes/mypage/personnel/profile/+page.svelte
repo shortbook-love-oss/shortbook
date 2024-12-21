@@ -48,6 +48,9 @@
 	{#if initForm.headline}
 		<p class="mt-1 whitespace-pre-wrap">{initForm.headline}</p>
 	{/if}
+	{#if $page.data.signInUser.isAdmin}
+		<p class="mt-2 w-fit rounded-md border-2 border-primary-700 px-2 py-0.5">Admin user</p>
+	{/if}
 </ProfileCard>
 <Form
 	method="POST"

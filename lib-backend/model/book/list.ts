@@ -15,6 +15,7 @@ type IdExclusiveProps =
 export type DbBookListRequest = IdExclusiveProps & {
 	statuses?: number[]; // 0: Draft 1: Published
 	contentsLanguage?: AvailableLanguageTags;
+	isIncludeAdmin?: boolean;
 	isIncludeDelete?: boolean;
 };
 
@@ -38,6 +39,9 @@ export async function dbBookList(req: DbBookListRequest) {
 	const revisionWhereByCond: Prisma.book_revisionsWhereInput = {};
 	if (req.statuses) {
 		revisionWhereByCond.status = { in: req.statuses };
+	}
+	if (!req.isIncludeAdmin) {
+		revisionWhereByCond.book = { is_admin: false };
 	}
 	const whereCondDelete: { deleted_at?: null } = {};
 	if (!req.isIncludeDelete) {

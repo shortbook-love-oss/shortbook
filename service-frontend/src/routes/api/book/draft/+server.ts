@@ -48,6 +48,7 @@ export async function POST({ request, locals }) {
 		nativeLanguage: form.data.nativeLanguage,
 		isTranslateToAll: false,
 		translateLanguages: [],
+		isAdmin: false,
 		title: form.data.title,
 		subtitle: form.data.subtitle,
 		freeArea: JSON.stringify(form.data.freeArea),
@@ -90,8 +91,10 @@ export async function PUT({ request, locals }) {
 		bookId: form.data.bookId,
 		userId: signInUser.id
 	});
-	if (!currentBook || !bookRevision || dbBookGetError) {
-		return error(500, { message: dbBookGetError?.message ?? '' });
+	if (dbBookGetError) {
+		return error(500, { message: dbBookGetError.message });
+	} else if (!currentBook || !bookRevision) {
+		return error(500, { message: `Can't find the book. Book Id=${form.data.bookId}` });
 	}
 
 	const { html: freeAreaHtml, hasContent: hasFreeArea } = await fromEditorStateToHtml(

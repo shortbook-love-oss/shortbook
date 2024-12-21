@@ -35,8 +35,10 @@ export const load = async ({ url, locals, params }) => {
 			bookId: params.bookId,
 			userId: signInUser.id
 		});
-		if (!book || !bookRevision || dbError) {
-			return error(500, { message: dbError?.message ?? '' });
+		if (dbError) {
+			return error(500, { message: dbError.message });
+		} else if (!book || !bookRevision) {
+			return error(500, { message: `Can't find the book. Book Id=${params.bookId}` });
 		}
 
 		// If the latest version is a draft, check for exist published revision

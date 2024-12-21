@@ -5,10 +5,11 @@ import { getLanguageTagFromUrl } from '$lib/utilities/url';
 import { dbBookList } from '$lib-backend/model/book/list';
 import { dbUserGetByKeyHandle } from '$lib-backend/model/user/get-by-key-handle';
 
-export const load = async ({ url, params }) => {
+export const load = async ({ url, params, locals }) => {
+	const signInUser = locals.signInUser;
 	const requestLang = getLanguageTagFromUrl(url);
 
-	const { user, dbError } = await dbUserGetByKeyHandle({ keyHandle: params.userKey });
+	const { user, dbError } = await dbUserGetByKeyHandle({ keyHandle: params.userKey.toLowerCase() });
 	if (!user || dbError) {
 		return error(500, { message: dbError?.message ?? '' });
 	}
@@ -19,7 +20,8 @@ export const load = async ({ url, params }) => {
 	const { books, dbError: bookDbError } = await dbBookList({
 		userId: user.id,
 		statuses: [1],
-		contentsLanguage: requestLang
+		contentsLanguage: requestLang,
+		isIncludeAdmin: signInUser?.id === user.id
 	});
 	if (!books || bookDbError) {
 		return error(500, { message: bookDbError?.message ?? '' });
