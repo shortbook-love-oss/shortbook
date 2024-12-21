@@ -7,7 +7,7 @@ import {
 	aws_ssm,
 	Duration,
 	Stack,
-	StackProps,
+	StackProps
 } from 'aws-cdk-lib';
 import { type EdgeLambda, type BehaviorOptions, HttpVersion } from 'aws-cdk-lib/aws-cloudfront';
 import { Construct } from 'constructs';
@@ -84,24 +84,22 @@ export class CloudFrontAssetsStack extends Stack {
 		const viewerProtocolPolicy = aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS;
 		// See decodeQuerystring at utilities.ts
 		const cacheQueryAllowList = ['ext', 'w', 'h', 'fit', 'q'];
-		const cachePolicy = new aws_cloudfront.CachePolicy(
-			this,
-			`${PREFIX}-cache-policy`,
-			{
-				minTtl: Duration.seconds(0),
-				defaultTtl: Duration.days(14),
-				maxTtl: Duration.days(14),
-				queryStringBehavior: aws_cloudfront.CacheQueryStringBehavior.allowList(...cacheQueryAllowList),
-				enableAcceptEncodingGzip: true,
-				enableAcceptEncodingBrotli: true
-			}
-		);
+		const cachePolicy = new aws_cloudfront.CachePolicy(this, `${PREFIX}-cache-policy`, {
+			minTtl: Duration.seconds(0),
+			defaultTtl: Duration.days(14),
+			maxTtl: Duration.days(14),
+			queryStringBehavior: aws_cloudfront.CacheQueryStringBehavior.allowList(
+				...cacheQueryAllowList
+			),
+			enableAcceptEncodingGzip: true,
+			enableAcceptEncodingBrotli: true
+		});
 
 		const transfer = {} as Record<`${ImageBucketTransferKey}/*`, BehaviorOptions>;
 		for (const transferKey in params.cloudfront.cfTransferIndex) {
 			const tKey = transferKey as ImageBucketTransferKey;
 			transfer[`${tKey}/*`] = {
-				origin: new aws_cloudfront_origins.S3Origin(
+				origin: aws_cloudfront_origins.S3BucketOrigin.withOriginAccessControl(
 					aws_s3.Bucket.fromBucketName(
 						this,
 						`${PREFIX}-source-${transferKey}`,
