@@ -16,7 +16,7 @@
 
 <Dialog name={dialogName} {openerClass} dialogSizeClass="max-w-fit">
 	{#snippet opener()}
-		<p class="w-full px-3 py-2 text-lg text-red-800">{m.signout_label()}</p>
+		<p class="w-full px-3 py-2 text-lg text-red-800">{m.signout_title()}</p>
 	{/snippet}
 	<p>{m.signout_confirm()}</p>
 	{#snippet actions()}
@@ -25,7 +25,7 @@
 				href="/signout?{redirectParam}={redirectUrl}"
 				data-sveltekit-reload
 				class="rounded-lg px-3 py-2 text-lg text-red-800 hover:bg-stone-200 focus:bg-stone-200"
-				>{m.signout_label()}
+				>{m.signout_title()}
 			</a>
 		</div>
 	{/snippet}

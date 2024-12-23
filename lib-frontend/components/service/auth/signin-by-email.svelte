@@ -49,7 +49,7 @@
 		name="email"
 		autocomplete="email"
 		required={true}
-		label={m.sign_form_email_label()}
+		label={m.input_label_email()}
 		placeholder="your-address@email.example"
 		errorMessages={$errors.email}
 		className="mb-4"

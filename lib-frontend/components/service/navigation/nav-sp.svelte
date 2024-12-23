@@ -22,29 +22,29 @@
 	<nav>
 		<ul class="flex justify-center">
 			<li>
-				<NavLinkSp name={m.header_home()} href="/">
+				<NavLinkSp name={m.header_link_home()} href="/">
 					<IconHome width="30" height="30" />
 				</NavLinkSp>
 			</li>
 			{#if $page.data.signInUser}
 				<li>
-					<NavLinkSp name={m.header_sp_write()} href="/write">
+					<NavLinkSp name={m.header_link_sp_write()} href="/write">
 						<IconWrite width="30" height="30" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name={m.header_mypage()} href="/mypage">
+					<NavLinkSp name={m.header_link_mypage()} href="/mypage">
 						<IconUser width="30" height="30" />
 					</NavLinkSp>
 				</li>
 			{:else}
 				<li>
-					<NavLinkSp name={m.signin_label()} href="/signin?{redirectParam}={redirectPathname}">
+					<NavLinkSp name={m.signin_title()} href="/signin?{redirectParam}={redirectPathname}">
 						<IconSignin width="30" height="30" />
 					</NavLinkSp>
 				</li>
 				<li>
-					<NavLinkSp name={m.signup_label()} href="/signup?{redirectParam}={redirectPathname}">
+					<NavLinkSp name={m.signup_title()} href="/signup?{redirectParam}={redirectPathname}">
 						<IconSignup width="30" height="30" />
 					</NavLinkSp>
 				</li>
@@ -53,7 +53,7 @@
 				<li class="relative">
 					<Dropdown name="sp_submenu" dropdownClass="bottom-16 end-0 min-w-40">
 						{#snippet opener()}
-							<NavLinkSp name={m.header_more()}>
+							<NavLinkSp name={m.header_link_more()}>
 								<IconMore width="30" height="30" />
 							</NavLinkSp>
 						{/snippet}
