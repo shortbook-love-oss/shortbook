@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ValidationErrors } from 'sveltekit-superforms';
+	import * as m from '$i18n/output/messages';
 	import { isSelectGroup, type SelectItem } from '$lib/utilities/select';
 
 	type Props = {
@@ -31,7 +32,7 @@
 		<div class="mb-1 flex items-end gap-4">
 			<p class="pb-px text-lg">{label}</p>
 			{#if required}
-				<div class="pb-1 text-base text-red-800">Required</div>
+				<div class="pb-1 text-base text-red-800">{m.input_required()}</div>
 			{/if}
 		</div>
 	{/if}

@@ -82,9 +82,9 @@
 	<File
 		filesProxy={filesAttach}
 		name="files"
-		multiple="true"
 		label="Attachment files"
-		buttonSubLabel="Max size 20MB"
+		multiple={true}
+		maxSize={20}
 		errorMessages={$errors.files}
 		className="mb-8 w-full max-w-96"
 	/>

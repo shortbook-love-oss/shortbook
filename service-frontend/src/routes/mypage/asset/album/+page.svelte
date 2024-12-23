@@ -46,11 +46,11 @@
 	<File
 		filesProxy={fileImages}
 		name="images"
-		required={true}
-		multiple
-		acceptTypes={Object.keys(imageMIMEextension)}
 		label="Select new album images"
-		buttonSubLabel="Max size 28 MB"
+		multiple={true}
+		required={true}
+		maxSize={28}
+		acceptTypes={Object.keys(imageMIMEextension)}
 		errorMessages={$errors.images}
 		className="mb-8"
 	/>

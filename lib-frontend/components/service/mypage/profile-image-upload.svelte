@@ -45,10 +45,10 @@
 	<File
 		filesProxy={fileProfileImage}
 		name="profileImage"
-		required={true}
-		acceptTypes={Object.keys(imageMIMEextension)}
 		label="Profile image select"
-		buttonSubLabel="Max size 2MB"
+		required={true}
+		maxSize={2}
+		acceptTypes={Object.keys(imageMIMEextension)}
 		errorMessages={$errors.profileImage}
 		className="mb-8 w-full max-w-96"
 	/>
