@@ -31,7 +31,7 @@
 							<img
 								src="/assets/shortbook-logotype.svg"
 								class="aspect-logotype h-6"
-								alt="Short book logo"
+								alt={m.logotype_alt()}
 							/>
 						</a>
 					</div>
