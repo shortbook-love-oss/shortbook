@@ -17,7 +17,9 @@ import { sendEmail } from '$lib-backend/utilities/email';
 import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib-backend/utilities/log-action';
 
 export const load = async ({ url, getClientAddress }) => {
-	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
+	const requestLang = getLanguageTagFromUrl(url);
+	const ipAddressHash = toHash(getClientAddress(), env.HASH_IP_ADDRESS);
+
 	const form = await superValidate(zod(schema));
 	const categoryAutoSelect = url.searchParams.get(inquiryCategoryParam);
 
@@ -34,9 +36,10 @@ export const load = async ({ url, getClientAddress }) => {
 	}
 	const isHitLimitRate = logActions.length >= sendInquiryRateLimit;
 
-	let initCategoryKey = contactCategorySelect[0].value;
+	const contactCategories = contactCategorySelect(requestLang);
+	let initCategoryKey = contactCategories[0].value;
 	if (categoryAutoSelect) {
-		for (const item of contactCategorySelect) {
+		for (const item of contactCategories) {
 			if (item.value === categoryAutoSelect) {
 				initCategoryKey = item.value;
 				break;
@@ -48,13 +51,14 @@ export const load = async ({ url, getClientAddress }) => {
 	form.data.email = '';
 	form.data.description = '';
 
-	return { form, isHitLimitRate, contactCategories: contactCategorySelect };
+	return { form, isHitLimitRate, contactCategories };
 };
 
 export const actions = {
 	default: async ({ request, url, getClientAddress }) => {
 		const requestLang = getLanguageTagFromUrl(url);
 		const ipAddressHash = toHash(getClientAddress(), env.HASH_IP_ADDRESS);
+
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
 			// Block if rate limit exceeded
