@@ -32,7 +32,7 @@
 
 <svelte:head>
 	<title>Contact | ShortBook</title>
-	<Ogp pageType="website" title="Contact | ShortBook" />
+	<Ogp pageType="website" title="ShortBook — Contact" />
 </svelte:head>
 
 <section class="mx-auto mb-8 max-w-xl text-lg">
@@ -52,13 +52,21 @@
 	class="mx-auto max-w-xl"
 >
 	<Select
-		bind:value={$form.categoryKeyName as string}
-		name="categoryKeyName"
+		bind:value={$form.category as string}
+		name="category"
 		list={data.contactCategories}
-		required={true}
 		label="Category"
-		errorMessages={$errors.categoryKeyName}
-		className="mb-8 max-w-96"
+		errorMessages={$errors.category}
+		className="mb-8 max-w-[28rem]"
+	/>
+	<TextField
+		bind:value={$form.personName}
+		name="personName"
+		autocomplete="name"
+		required={true}
+		label="Your name"
+		errorMessages={$errors.personName}
+		className="mb-8 max-w-[28rem]"
 	/>
 	<TextField
 		bind:value={$form.email}
@@ -86,7 +94,7 @@
 		multiple={true}
 		maxSize={20}
 		errorMessages={$errors.files}
-		className="mb-8 w-full max-w-96"
+		className="mb-8 w-full max-w-[28rem]"
 	/>
 	{#if data.isHitLimitRate}
 		<p class="mb-8">

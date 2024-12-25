@@ -2,6 +2,7 @@ import prisma from '$lib-backend/database/connect';
 
 export interface DbTicketCreateRequest {
 	categoryKeyName: string;
+	personName: string;
 	emailEncrypt: string;
 	description: string;
 	fromLanguage: string;
@@ -15,6 +16,7 @@ export async function dbTicketCreate(req: DbTicketCreateRequest) {
 		.create({
 			data: {
 				category_key_name: req.categoryKeyName,
+				person_name: req.personName,
 				email: req.emailEncrypt,
 				description: req.description,
 				from_language_tag: req.fromLanguage,

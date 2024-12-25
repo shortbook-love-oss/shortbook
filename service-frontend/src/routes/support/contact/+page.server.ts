@@ -47,7 +47,8 @@ export const load = async ({ url, getClientAddress }) => {
 		}
 	}
 
-	form.data.categoryKeyName = initCategoryKey;
+	form.data.category = initCategoryKey;
+	form.data.personName = '';
 	form.data.email = '';
 	form.data.description = '';
 
@@ -119,7 +120,8 @@ export const actions = {
 
 		// Create support ticket
 		const { dbError: dbTicketCreateError } = await dbTicketCreate({
-			categoryKeyName: form.data.categoryKeyName,
+			categoryKeyName: form.data.category,
+			personName: form.data.personName,
 			emailEncrypt: encryptAndFlat(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT),
 			description: form.data.description,
 			fromLanguage: requestLang,
@@ -129,14 +131,15 @@ export const actions = {
 			return error(500, { message: dbTicketCreateError.message });
 		}
 
+		const sentPersonName = form.data.personName;
 		const sentDescription = form.data.description;
 		await sendEmail(
 			'ShortBook Support Team',
 			env.EMAIL_FROM,
 			[form.data.email],
 			'Your inquiry has been sent.',
-			`<p>We will check your email and reply within 24 hours.</p><p>Here is your sent contents.</p><blockquote style="margin: 0 0 1em; padding: 16px; background-color: #eee; white-space: pre-wrap; overflow-wrap: break-word; color: #222;">${escapeHTML(sentDescription)}</blockquote><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>`,
-			`We will check your email and reply within 24 hours.\n\nHere is your sent contents.\n\n${sentDescription}\n\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
+			`<p>Thank you for the message, ${sentPersonName}.</p><p>We will check your email and reply within 18 hours.</p><p>Here is your sent contents.</p><blockquote style="margin: 0 0 1em; padding: 16px; background-color: #eee; white-space: pre-wrap; overflow-wrap: break-word; color: #222;">${escapeHTML(sentDescription)}</blockquote><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>`,
+			`Thank you for the message, ${sentPersonName}.\nWe will check your email and reply within 18 hours.\n\nHere is your sent contents.\n\n${sentDescription}\n\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
 		);
 
 		return message(form, 'Inquiry sent successfully.');
