@@ -3,6 +3,7 @@ import { fileTypeFromBuffer } from 'file-type';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
+import * as m from '$i18n/output/messages';
 import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
 import { escapeHTML } from '$lib/utilities/html';
@@ -142,6 +143,6 @@ export const actions = {
 			`Thank you for the message, ${sentPersonName}.\nWe will check your email and reply within 18 hours.\n\nHere is your sent contents.\n\n${sentDescription}\n\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
 		);
 
-		return message(form, 'Inquiry sent successfully.');
+		return message(form, m.contact_form_success());
 	}
 };
