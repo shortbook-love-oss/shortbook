@@ -3,14 +3,16 @@
 	import IconCheck from '~icons/mdi/check';
 	import IconImage from '~icons/mdi/file-image-outline';
 	import IconFile from '~icons/mdi/file-outline';
+	import * as m from '$i18n/output/messages';
 	import type { SelectedFile } from '$lib/utilities/file';
 
 	type Props = {
 		filesProxy: Writable<FileList | File[]>;
 		name: string;
 		label?: string;
-		buttonSubLabel?: string;
+		multiple?: boolean;
 		required?: boolean;
+		maxSize?: number;
 		acceptTypes?: string[];
 		errorMessages?: { _errors?: string[] } & Record<string | number, string[]>;
 		className?: string;
@@ -21,8 +23,9 @@
 		filesProxy,
 		name,
 		label = '',
-		buttonSubLabel = '',
+		multiple = false,
 		required = false,
+		maxSize,
 		acceptTypes,
 		errorMessages = undefined,
 		className = '',
@@ -78,7 +81,7 @@
 		<div class="mb-1 flex items-end gap-4">
 			<p class="pb-px text-lg">{label}</p>
 			{#if required}
-				<div class="pb-1 text-base text-red-800">Required</div>
+				<div class="pb-1 text-base text-red-800">{m.input_required()}</div>
 			{/if}
 		</div>
 	{/if}
@@ -86,28 +89,35 @@
 		<input
 			type="file"
 			{...restProps}
+			{multiple}
 			bind:files={$filesProxy as FileList}
 			{name}
 			{required}
 			accept={acceptTypes?.join()}
-			class="peer w-full rounded-lg file:min-h-20 file:w-full file:appearance-none file:rounded-lg file:border-solid file:bg-white file:text-transparent hover:file:bg-stone-200 focus:file:bg-stone-200 {errorMsgs.length
+			class="peer absolute start-0 top-0 h-full w-full rounded-lg file:h-full file:w-full file:appearance-none file:rounded-lg file:border-solid file:bg-white file:text-transparent hover:file:bg-stone-200 focus:file:bg-stone-200 {errorMsgs.length
 				? 'file:border-2 file:border-red-700'
 				: 'file:border file:border-stone-600'}"
 			aria-invalid={errorMsgs.length ? true : undefined}
 			oninput={updateSelectedList}
 		/>
 		<div
-			class="absolute start-0 top-0 flex h-full w-full cursor-pointer items-center justify-start gap-2 rounded-lg p-3 {inputClass}"
+			class="pointer-events-none relative flex cursor-pointer items-center justify-start gap-2 rounded-lg p-3 {inputClass}"
 		>
 			{#if isImageUploader}
 				<IconImage width="48" height="48" class="text-stone-600" />
 			{:else}
 				<IconFile width="48" height="48" class="text-stone-600" />
 			{/if}
-			<div>
-				<p class="text-lg">File select or drag</p>
-				{#if buttonSubLabel}
-					<p>{buttonSubLabel}</p>
+			<div class="leading-snug">
+				<p class="text-lg">
+					{#if multiple}
+						{m.file_input_select_multiple_guide()}
+					{:else}
+						{m.file_input_select_single_guide()}
+					{/if}
+				</p>
+				{#if maxSize && maxSize > 0}
+					<p class="mt-0.5">{m.file_input_size_limit({ size: `${maxSize} MB` })}</p>
 				{/if}
 			</div>
 		</div>
@@ -124,10 +134,7 @@
 						{:else}
 							<IconFile width="48" height="48" class="text-stone-600" />
 						{/if}
-						<div class="overflow-x-hidden">
-							<p>Selected :</p>
-							<p class="break-words font-semibold">{selected.file.name}</p>
-						</div>
+						<p class="break-words font-semibold [word-break:break-word]">{selected.file.name}</p>
 					</li>
 				{/each}
 			</ul>

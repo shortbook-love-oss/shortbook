@@ -8,13 +8,13 @@
 </script>
 
 <svelte:head>
-	<title>{m.signup_label()} | ShortBook</title>
-	<Ogp pageType="website" title="ShortBook — {m.signup_label()}" />
+	<title>{m.signup_title()} | ShortBook</title>
+	<Ogp pageType="website" title="ShortBook — {m.signup_title()}" />
 </svelte:head>
 
 <section class="flex flex-col gap-8 text-lg">
 	<div>
-		<h1 class="mb-2 text-center text-4xl font-semibold">{m.signup_label()}</h1>
+		<h1 class="mb-2 text-center text-4xl font-semibold">{m.signup_title()}</h1>
 		<p class="mb-1">{m.signup_need_agree()}</p>
 		<div class="flex flex-wrap items-center gap-x-6 gap-y-4">
 			<a href="/policies/term" target="_blank" class="underline"
@@ -25,7 +25,7 @@
 			>
 		</div>
 	</div>
-	<SigninByEmail formData={data.form} submitLabel={m.signup_label()} />
+	<SigninByEmail formData={data.form} submitLabel={m.signup_title()} />
 	<hr class="border-stone-300" />
 	<p class="text-center">
 		<a href="/signin{$page.url.search}" class="break-keep underline">{m.signup_to_signin()}</a>

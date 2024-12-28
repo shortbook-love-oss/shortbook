@@ -19,10 +19,9 @@ export function categories(languageTag: AvailableLanguageTags): FooterItem[] {
 				{ name: m.footer_about_shortbook_about({ languageTag }), href: '/about' },
 				{ name: m.footer_about_shortbook_term({ languageTag }), href: '/policies/term' },
 				{ name: m.footer_about_shortbook_privacy({ languageTag }), href: '/policies/privacy' },
-				{
-					name: m.footer_about_shortbook_sct({ languageTag }),
-					href: '/about/japan-act-of-sct'
-				}
+				...(languageTag === 'ja'
+					? [{ name: '特定商取引法に基づく表記', href: '/about/japan-act-of-sct' }]
+					: [])
 			]
 		},
 		{

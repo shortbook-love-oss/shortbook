@@ -40,33 +40,33 @@
 		<ul class="flex items-center">
 			{#if $page.data.signInUser}
 				<li>
-					<NavLink name={m.header_write()} href="/write" />
+					<NavLink name={m.header_link_write()} href="/write" />
 				</li>
 				<li>
-					<NavLink name={m.header_mypage()} href="/mypage?{redirectParam}={redirectUrl}" />
+					<NavLink name={m.header_link_mypage()} href="/mypage?{redirectParam}={redirectUrl}" />
 				</li>
 				<li class="relative">
 					<Dropdown
-						name="header_submenu"
+						name="header_link_submenu"
 						openerClass="rounded-ee-[0.4375rem]"
 						dropdownClass="top-12 min-w-40"
 					>
 						{#snippet opener()}
-							<NavLink name={m.header_more()} className="rounded-ee-[0.4375rem]" />
+							<NavLink name={m.header_link_more()} className="rounded-ee-[0.4375rem]" />
 						{/snippet}
 						<ul>
 							<li>
-								<Signout dialogName="header_signout" />
+								<Signout dialogName="header_link_signout" />
 							</li>
 						</ul>
 					</Dropdown>
 				</li>
 			{:else}
 				<li>
-					<NavLink name={m.signin_label()} href="/signin?{redirectParam}={redirectUrl}" />
+					<NavLink name={m.signin_title()} href="/signin?{redirectParam}={redirectUrl}" />
 				</li>
 				<li>
-					<NavLink name={m.signup_label()} href="/signup?{redirectParam}={redirectUrl}" />
+					<NavLink name={m.signup_title()} href="/signup?{redirectParam}={redirectUrl}" />
 				</li>
 			{/if}
 		</ul>

@@ -3,6 +3,7 @@ import { fileTypeFromBuffer } from 'file-type';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
+import * as m from '$i18n/output/messages';
 import { contactCategorySelect } from '$lib/utilities/contact';
 import { getRandom } from '$lib/utilities/crypto';
 import { escapeHTML } from '$lib/utilities/html';
@@ -17,7 +18,9 @@ import { sendEmail } from '$lib-backend/utilities/email';
 import { sendInquiryLogActionName, sendInquiryRateLimit } from '$lib-backend/utilities/log-action';
 
 export const load = async ({ url, getClientAddress }) => {
-	const ipAddressHash = toHash(await getClientAddress(), env.HASH_IP_ADDRESS);
+	const requestLang = getLanguageTagFromUrl(url);
+	const ipAddressHash = toHash(getClientAddress(), env.HASH_IP_ADDRESS);
+
 	const form = await superValidate(zod(schema));
 	const categoryAutoSelect = url.searchParams.get(inquiryCategoryParam);
 
@@ -34,9 +37,10 @@ export const load = async ({ url, getClientAddress }) => {
 	}
 	const isHitLimitRate = logActions.length >= sendInquiryRateLimit;
 
-	let initCategoryKey = contactCategorySelect[0].value;
+	const contactCategories = contactCategorySelect(requestLang);
+	let initCategoryKey = contactCategories[0].value;
 	if (categoryAutoSelect) {
-		for (const item of contactCategorySelect) {
+		for (const item of contactCategories) {
 			if (item.value === categoryAutoSelect) {
 				initCategoryKey = item.value;
 				break;
@@ -44,17 +48,19 @@ export const load = async ({ url, getClientAddress }) => {
 		}
 	}
 
-	form.data.categoryKeyName = initCategoryKey;
+	form.data.category = initCategoryKey;
+	form.data.personName = '';
 	form.data.email = '';
 	form.data.description = '';
 
-	return { form, isHitLimitRate, contactCategories: contactCategorySelect };
+	return { form, isHitLimitRate, contactCategories };
 };
 
 export const actions = {
 	default: async ({ request, url, getClientAddress }) => {
 		const requestLang = getLanguageTagFromUrl(url);
 		const ipAddressHash = toHash(getClientAddress(), env.HASH_IP_ADDRESS);
+
 		const form = await superValidate(request, zod(schema));
 		if (form.valid) {
 			// Block if rate limit exceeded
@@ -115,7 +121,8 @@ export const actions = {
 
 		// Create support ticket
 		const { dbError: dbTicketCreateError } = await dbTicketCreate({
-			categoryKeyName: form.data.categoryKeyName,
+			categoryKeyName: form.data.category,
+			personName: form.data.personName,
 			emailEncrypt: encryptAndFlat(form.data.email, env.ENCRYPT_EMAIL_INQUIRY, env.ENCRYPT_SALT),
 			description: form.data.description,
 			fromLanguage: requestLang,
@@ -125,16 +132,17 @@ export const actions = {
 			return error(500, { message: dbTicketCreateError.message });
 		}
 
+		const sentPersonName = form.data.personName;
 		const sentDescription = form.data.description;
 		await sendEmail(
 			'ShortBook Support Team',
 			env.EMAIL_FROM,
 			[form.data.email],
 			'Your inquiry has been sent.',
-			`<p>We will check your email and reply within 24 hours.</p><p>Here is your sent contents.</p><blockquote style="margin: 0 0 1em; padding: 16px; background-color: #eee; white-space: pre-wrap; overflow-wrap: break-word; color: #222;">${escapeHTML(sentDescription)}</blockquote><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>`,
-			`We will check your email and reply within 24 hours.\n\nHere is your sent contents.\n\n${sentDescription}\n\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
+			`<p>Thank you for the message, ${sentPersonName}.</p><p>We will check your email and reply within 18 hours.</p><p>Here is your sent contents.</p><blockquote style="margin: 0 0 1em; padding: 16px; background-color: #eee; white-space: pre-wrap; overflow-wrap: break-word; color: #222;">${escapeHTML(sentDescription)}</blockquote><p>ShortBook LLC</p><p>Shunsuke Kurachi (KurachiWeb)</p>`,
+			`Thank you for the message, ${sentPersonName}.\nWe will check your email and reply within 18 hours.\n\nHere is your sent contents.\n\n${sentDescription}\n\nSincerely thank.\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
 		);
 
-		return message(form, 'Inquiry sent successfully.');
+		return message(form, m.contact_form_success());
 	}
 };

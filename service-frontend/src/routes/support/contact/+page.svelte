@@ -3,6 +3,7 @@
 	import { superForm, filesProxy } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { page } from '$app/stores';
+	import * as m from '$i18n/output/messages';
 	import { schema } from '$lib/validation/schema/support/ticket-create';
 	import File from '$lib/components/modules/form/file.svelte';
 	import Form from '$lib/components/modules/form/form.svelte';
@@ -28,16 +29,20 @@
 	const formObserver = form.subscribe(() => validateBackground());
 	onMount(() => validateBackground());
 	onDestroy(() => formObserver());
+
+	const selectedCategory = $derived.by(() => {
+		return data.contactCategories.find((category) => category.value === $form.category);
+	});
 </script>
 
 <svelte:head>
-	<title>Contact | ShortBook</title>
-	<Ogp pageType="website" title="Contact | ShortBook" />
+	<title>{m.contact_title()} | ShortBook</title>
+	<Ogp pageType="website" title="ShortBook — {m.contact_title()}" />
 </svelte:head>
 
 <section class="mx-auto mb-8 max-w-xl text-lg">
-	<h1 class="mb-8 text-4xl font-semibold">Contact</h1>
-	<p>We will check your email and reply within 18 hours.</p>
+	<h1 class="mb-8 text-4xl font-semibold">{m.contact_title()}</h1>
+	<p>{m.contact_introduction()}</p>
 </section>
 <Form
 	method="POST"
@@ -46,19 +51,34 @@
 	{enhance}
 	hasInvalid={!hasVaild}
 	isLoading={$submitting}
-	submitLabel="Send message"
+	submitLabel={m.contact_submit_label()}
 	successMessage={$page.status === 200 ? $message : ''}
 	errorMessage={400 <= $page.status && $page.status <= 599 ? $message : ''}
 	class="mx-auto max-w-xl"
 >
 	<Select
-		bind:value={$form.categoryKeyName as string}
-		name="categoryKeyName"
+		bind:value={$form.category as string}
+		name="category"
 		list={data.contactCategories}
+		label={m.contact_input_label_category()}
+		errorMessages={$errors.category}
+		className="max-w-[28rem] {selectedCategory?.notice ? 'mb-2' : 'mb-8'}"
+	/>
+	{#if selectedCategory?.notice}
+		<div class="mb-8">
+			{#each selectedCategory.notice.split('\n') as noticeLine}
+				<p class="mb-2">{noticeLine}</p>
+			{/each}
+		</div>
+	{/if}
+	<TextField
+		bind:value={$form.personName}
+		name="personName"
+		autocomplete="name"
 		required={true}
-		label="Category"
-		errorMessages={$errors.categoryKeyName}
-		className="mb-8 max-w-96"
+		label={m.contact_input_label_person_name()}
+		errorMessages={$errors.personName}
+		className="mb-8 max-w-[28rem]"
 	/>
 	<TextField
 		bind:value={$form.email}
@@ -66,7 +86,7 @@
 		name="email"
 		autocomplete="email"
 		required={true}
-		label="Email"
+		label={m.contact_input_label_email()}
 		placeholder="your-address@email.example"
 		errorMessages={$errors.email}
 		className="mb-8"
@@ -75,23 +95,20 @@
 		bind:value={$form.description}
 		name="description"
 		required={true}
-		label="Description"
+		label={m.contact_input_label_message()}
 		errorMessages={$errors.description}
 		className="mb-8"
 	/>
 	<File
 		filesProxy={filesAttach}
 		name="files"
-		multiple="true"
-		label="Attachment files"
-		buttonSubLabel="Max size 20MB"
+		label={m.contact_input_label_file()}
+		multiple={true}
+		maxSize={20}
 		errorMessages={$errors.files}
-		className="mb-8 w-full max-w-96"
+		className="mb-8 w-full max-w-[28rem]"
 	/>
 	{#if data.isHitLimitRate}
-		<p class="mb-8">
-			For security reasons, there is a limit to the number of times you can send your message.
-			Please try again in an hour.
-		</p>
+		<p class="mb-8">{m.contact_limit_rate_over_notice()}</p>
 	{/if}
 </Form>

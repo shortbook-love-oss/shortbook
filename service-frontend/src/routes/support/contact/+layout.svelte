@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$i18n/output/messages';
 	import LayoutRule from '$lib/components/service/layout-rule.svelte';
 	import Meta from '$lib/components/service/meta.svelte';
 
@@ -20,7 +21,7 @@
 				<img
 					src="/assets/shortbook-logotype.svg"
 					class="aspect-logotype w-48"
-					alt="Short book logo"
+					alt={m.logotype_alt()}
 				/>
 			</a>
 		</div>

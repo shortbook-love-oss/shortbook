@@ -1,14 +1,15 @@
 import { env } from '$env/dynamic/private';
-import type { SignResult } from '$lib-backend/functions/service/auth/action-init';
-import { dbVerificationTokenCreate } from '$lib-backend/model/verification-token/create';
-import { sendEmail } from '$lib-backend/utilities/email';
-import { signUpTokenName } from '$lib-backend/utilities/verification-token';
+import * as m from '$i18n/output/messages';
 import {
 	redirectParam,
 	getLanguageTagFromUrl,
 	setLanguageTagToPath,
 	signConfirmTokenParam
 } from '$lib/utilities/url';
+import type { SignResult } from '$lib-backend/functions/service/auth/action-init';
+import { dbVerificationTokenCreate } from '$lib-backend/model/verification-token/create';
+import { sendEmail } from '$lib-backend/utilities/email';
+import { signUpTokenName } from '$lib-backend/utilities/verification-token';
 
 export async function prepareSignUp(
 	requestUrl: URL,
@@ -38,17 +39,21 @@ export async function prepareSignUp(
 			`/signup/done?${signConfirmTokenParam}=${encodeURIComponent(signUpConfirmToken)}&${redirectParam}=${afterRedirectUrl}`,
 			requestLang
 		);
+	const mailContentIntroductions = m
+		.signup_mail_introduction({ languageTag: requestLang })
+		.split('\n');
+	const mailContentThank = m.message_thank({ languageTag: requestLang });
 	const { sendEmailError } = await sendEmail(
-		'ShortBook Service',
+		m.mail_sender_account({ languageTag: requestLang }),
 		env.EMAIL_FROM,
 		[emailTo],
-		'Sign up almost done | ShortBook',
-		`<p>Thank you for signing up.</p>
-		<p>Please click this button to confirm.</p>
-		<p style="margin-bottom: 2rem;"><a href="${signUpConfirmUrl}" style="border-radius: 0.25em; background-color: #924240; color: #fff; display: inline-block; font-size: 2.5rem; font-weight: bold; padding: 0.5em;">Confirm Sign Up</a></p>
+		m.signup_mail_title({ languageTag: requestLang }),
+		`<div style="margin-bottom: 2rem;">${mailContentIntroductions.map((line) => `<p>${line}</p>`).join('')}</div>
+		<p style="margin-bottom: 2rem;"><a href="${signUpConfirmUrl}" style="border-radius: 0.25em; background-color: #924240; color: #fff; display: inline-block; font-size: 2.5rem; font-weight: bold; padding: 0.5em; text-underline-offset: 0.15em;">${m.signup_title({ languageTag: requestLang })}</a></p>
+		${mailContentThank ? `<p style="margin-bottom: 2rem;">${mailContentThank}</p>` : ''}
 		<p>ShortBook LLC</p>
 		<p>Shunsuke Kurachi (KurachiWeb)</p>`,
-		`Thank you for signing up.\nPlease click this button to confirm.\n${signUpConfirmUrl}\n\nShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
+		`${mailContentIntroductions.join('\n')}\n\n${signUpConfirmUrl}\n\n${mailContentThank ? `${mailContentThank}\n\n` : ''}ShortBook LLC\nShunsuke Kurachi (KurachiWeb)`
 	);
 	if (sendEmailError instanceof Error) {
 		return { error: null, fail: "Can't sent email." };

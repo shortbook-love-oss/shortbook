@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import type { ValidationErrors } from 'sveltekit-superforms';
 	import IconCheck from '~icons/mdi/check-bold';
+	import * as m from '$i18n/output/messages';
 
 	type Props = {
 		checked: boolean;
@@ -50,7 +51,7 @@
 				<p class="text-lg [word-break:break-word]">{label}</p>
 			{/if}
 			{#if required}
-				<div class="text-base text-red-800">Required</div>
+				<div class="text-base text-red-800">{m.input_required()}</div>
 			{/if}
 		</div>
 	</label>

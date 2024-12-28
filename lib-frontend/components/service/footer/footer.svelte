@@ -25,7 +25,7 @@
 					alt={m.logotype_alt()}
 				/>
 			</a>
-			<small class="mb-4 block text-base">© {servicePeriod} {m.about_company_name()}</small>
+			<small class="mb-4 block text-base">© {servicePeriod} {m.company_name()}</small>
 			<div class="relative">
 				<LanguageSelect />
 			</div>

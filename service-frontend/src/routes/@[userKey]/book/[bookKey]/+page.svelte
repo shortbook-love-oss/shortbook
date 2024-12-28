@@ -16,7 +16,6 @@
 		removeLanguageTagFromPath
 	} from '$lib/utilities/url';
 	import BookRead from '$lib/components/layouts/book-read.svelte';
-	import MessageInfo from '$lib/components/modules/information/message-info.svelte';
 	import MessageWarning from '$lib/components/modules/information/message-warning.svelte';
 	import ProfileCard from '$lib/components/service/mypage/profile-card.svelte';
 	import NavLinkSmall from '$lib/components/service/navigation/nav-link-small.svelte';

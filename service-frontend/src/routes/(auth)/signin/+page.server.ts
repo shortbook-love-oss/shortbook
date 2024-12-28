@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { env } from '$env/dynamic/private';
+import * as m from '$i18n/output/messages';
 import { redirectParam, getSafetyUrl } from '$lib/utilities/url';
 import { schema } from '$lib/validation/schema/user/signin-by-email';
 import { beforeSign, type SignResult } from '$lib-backend/functions/service/auth/action-init';
@@ -61,6 +62,6 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		return message(form, 'Sent confirm link to your email.');
+		return message(form, m.signin_form_success());
 	}
 };

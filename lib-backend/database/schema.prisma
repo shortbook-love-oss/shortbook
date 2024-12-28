@@ -323,6 +323,7 @@ model book_buys {
 model tickets {
   id                      String              @id @db.VarChar(36) @default(uuid(7))
   category_key_name       String              @db.VarChar(31)
+  person_name             String              @db.VarChar(700) // Length 0 - 100
   email                   String              @db.VarChar(510) // Encrypted
   description             String              @db.LongText
   from_language_tag       String              @db.VarChar(5)
