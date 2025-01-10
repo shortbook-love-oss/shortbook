@@ -1,5 +1,5 @@
 # Debian 12 Node.js
-FROM node:22.12.0-bookworm-slim AS base
+FROM node:22.13.0-bookworm-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl
 
@@ -58,7 +58,7 @@ COPY ./lib-backend ./lib-backend
 RUN npm run schema-generate
 RUN npm run build
 
-FROM node:22.12.0-bookworm-slim AS prd
+FROM node:22.13.0-bookworm-slim AS prd
 
 RUN apt-get update -y \
   && apt-get install -y openssl \
